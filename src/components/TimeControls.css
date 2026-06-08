@@ -1,0 +1,107 @@
+.timebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: 10px var(--space-lg);
+  background: linear-gradient(180deg, rgba(20, 16, 12, 0.92), rgba(10, 7, 5, 0.96));
+  border-top: 1px solid var(--leather-light);
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.1),
+    0 -8px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.timebar__clock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timebar__season {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  font-size: 10px;
+  color: var(--amber-deep);
+}
+
+.timebar__date {
+  font-family: var(--font-slab);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--parchment);
+  letter-spacing: 0.01em;
+}
+
+.timebar__controls {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.timebar__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 124px;
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--leather-light), var(--leather-dark));
+  border: 1px solid #0c0907;
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.14),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  transition:
+    color var(--t-fast) var(--ease-warm),
+    box-shadow var(--t-fast) var(--ease-warm),
+    transform var(--t-fast) var(--ease-warm);
+}
+
+.timebar__btn-main {
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 13px;
+  color: var(--text-warm);
+}
+
+.timebar__btn-sub {
+  font-family: var(--font-typewriter);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.timebar__btn:hover {
+  color: var(--amber-bright);
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.2),
+    0 0 14px rgba(217, 154, 78, 0.22),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.timebar__btn:hover .timebar__btn-main {
+  color: var(--amber-bright);
+}
+
+.timebar__btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.timebar__btn--week .timebar__btn-main {
+  color: var(--amber);
+}
+
+@media (max-width: 640px) {
+  .timebar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+  .timebar__controls {
+    justify-content: stretch;
+  }
+  .timebar__btn {
+    flex: 1;
+  }
+}

@@ -1,0 +1,119 @@
+/* Global reset + base atmosphere */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--leather-black);
+  color: var(--text-warm);
+  font-family: var(--font-slab);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden; /* the game owns the viewport; screens scroll internally */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: var(--amber);
+}
+
+/* Worn amber scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ink-black);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--leather-light);
+  border-radius: 6px;
+  border: 2px solid var(--ink-black);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber-ember);
+}
+
+::selection {
+  background: var(--amber-deep);
+  color: var(--ink-black);
+}
+
+/* Utility: full-bleed layer */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Utility: a fine film grain + vignette to age every screen.
+   Applied via .worn on a positioned container. */
+.worn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 50% 38%,
+      transparent 40%,
+      rgba(0, 0, 0, 0.35) 88%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+  mix-blend-mode: multiply;
+  z-index: 50;
+}
+
+/* Reusable focus ring — amber, visible, period-appropriate */
+:focus-visible {
+  outline: 2px solid var(--amber-bright);
+  outline-offset: 2px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

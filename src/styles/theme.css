@@ -1,0 +1,70 @@
+/*
+  THE SWEET SCIENCE — Design Tokens
+  --------------------------------------------------------------------------
+  The aesthetic language of a gym that has been there since the fifties.
+  Dark backgrounds, amber and brown tones, scuffed leather, a desk lamp on
+  while someone waits outside. Every color here is pulled from that world and
+  from the walk-in card reference. Change a value here, change it everywhere.
+*/
+
+:root {
+  /* --- Core surfaces (darkest to lightest) --- */
+  --ink-black: #0c0907; /* deepest shadow, the back of the room */
+  --leather-black: #14100c; /* primary app background */
+  --leather-dark: #1f1812; /* raised panels */
+  --leather: #2a1f15; /* scuffed leather surfaces */
+  --leather-light: #3a2a1c; /* lit leather, borders */
+  --wood: #4a3722; /* worn wood, floorboards */
+
+  /* --- Parchment (the card stock) --- */
+  --parchment: #e8dcc0; /* primary aged paper */
+  --parchment-dark: #d9c9a3; /* shadowed paper */
+  --parchment-deep: #c4b088; /* creased / worn paper */
+
+  /* --- Amber (the desk lamp, the warmth) --- */
+  --amber: #d99a4e; /* primary accent */
+  --amber-bright: #e8b566; /* highlight, hover glow */
+  --amber-deep: #b87a2e; /* pressed, shadowed amber */
+  --amber-ember: #8a5320; /* dim ember */
+
+  /* --- Blood red (the WALK-IN CARD banner, names, danger) --- */
+  --oxblood: #7a2e1e; /* banner / heading red */
+  --oxblood-bright: #9c3a26; /* lit red */
+  --rust: #a6432a; /* fighter name red on parchment */
+
+  /* --- Text --- */
+  --text-warm: #e8dcc0; /* primary text on dark */
+  --text-muted: #a8987c; /* secondary text on dark */
+  --text-dim: #6f6450; /* tertiary / disabled */
+  --text-ink: #2a2118; /* text on parchment */
+  --text-ink-soft: #4a3e2e; /* secondary on parchment */
+
+  /* --- Functional --- */
+  --gold-line: #b88a4a; /* hairline dividers, gold leaf */
+  --shadow-cast: rgba(0, 0, 0, 0.55);
+
+  /* --- Type families (web font, then graceful system fallback) --- */
+  --font-display: 'Big Shoulders Display', 'Oswald', 'Arial Narrow', sans-serif;
+  --font-condensed: 'Oswald', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  --font-slab: 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --font-typewriter: 'Special Elite', 'Courier New', Courier, monospace;
+
+  /* --- Spacing scale --- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* --- Radii (cards are barely rounded — utilitarian, not soft) --- */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* --- Timing --- */
+  --ease-warm: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-fast: 140ms;
+  --t-med: 280ms;
+  --t-slow: 600ms;
+}

@@ -1,0 +1,235 @@
+.gym {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gym__bg {
+  z-index: 0;
+}
+
+/* --- Top chrome --- */
+.gym__chrome {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: 10px var(--space-lg);
+  background: linear-gradient(180deg, rgba(10, 7, 5, 0.94), rgba(10, 7, 5, 0.4));
+  border-bottom: 1px solid rgba(58, 42, 28, 0.7);
+}
+
+.gym__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gym__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--parchment);
+}
+
+.gym__region {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 10px;
+  color: var(--amber-deep);
+}
+
+.gym__dev {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  opacity: 0.85;
+}
+
+.gym__dev-tag {
+  font-family: var(--font-typewriter);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.gym__dev-switch {
+  display: flex;
+  gap: 3px;
+}
+
+.gym__dev-btn {
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 4px 7px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.35);
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.gym__dev-btn:hover {
+  color: var(--amber-bright);
+}
+.gym__dev-btn--on {
+  color: var(--ink-black);
+  background: var(--amber);
+  border-color: var(--amber-deep);
+}
+
+.gym__exit {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.35);
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.gym__exit:hover {
+  color: var(--amber-bright);
+  border-color: var(--amber-deep);
+}
+
+/* --- The floor --- */
+.gym__floor {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+}
+
+.gym__rooms {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-lg);
+  width: min(1100px, 96vw);
+}
+
+/* A room door — a lit signboard standing in the dark gym. */
+.room-door {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-height: 220px;
+  padding: var(--space-lg);
+  text-align: left;
+  color: var(--text-warm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--leather-light);
+  background:
+    linear-gradient(180deg, rgba(31, 24, 18, 0.82), rgba(10, 7, 5, 0.88));
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.1),
+    0 10px 26px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  transition:
+    transform var(--t-med) var(--ease-warm),
+    border-color var(--t-med) var(--ease-warm),
+    box-shadow var(--t-med) var(--ease-warm);
+}
+
+.room-door::before {
+  /* a hanging amber bulb glow at the top of each signboard */
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 40px;
+  background: radial-gradient(ellipse at center top, rgba(217, 154, 78, 0.28), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--t-med) var(--ease-warm);
+  pointer-events: none;
+}
+
+.room-door:hover {
+  transform: translateY(-4px);
+  border-color: var(--amber-deep);
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.16),
+    0 0 26px rgba(217, 154, 78, 0.2),
+    0 14px 30px rgba(0, 0, 0, 0.55);
+}
+.room-door:hover::before {
+  opacity: 1;
+}
+
+.room-door__glyph {
+  color: var(--amber);
+  transition: color var(--t-med) var(--ease-warm);
+}
+.room-door:hover .room-door__glyph {
+  color: var(--amber-bright);
+}
+
+.room-door__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.03em;
+  color: var(--parchment);
+}
+
+.room-door__tag {
+  flex: 1;
+  font-family: var(--font-slab);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.room-door__enter {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: var(--amber-deep);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--t-med) var(--ease-warm), transform var(--t-med) var(--ease-warm);
+}
+.room-door:hover .room-door__enter {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--amber-bright);
+}
+
+/* --- Time bar wrapper --- */
+.gym__timebar {
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive: stack the four doors as the floor narrows. */
+@media (max-width: 900px) {
+  .gym__rooms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 520px) {
+  .gym__rooms {
+    grid-template-columns: 1fr;
+  }
+  .room-door {
+    min-height: 0;
+  }
+  .gym__dev {
+    display: none;
+  }
+}
