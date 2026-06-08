@@ -1,63 +1,82 @@
 /*
   Persistence
   --------------------------------------------------------------------------
-  A deliberately small save slot for Phase 1, so the Home screen's "Continue"
-  is real rather than decorative. It stores only what the shell currently
-  knows: which region's gym you're in and the game date.
-
-  The shape is versioned. As later phases add fighters, lockers, coaches,
-  finances, and the rival ecosystem, `GameSave` grows and `migrate()` handles
-  older saves. Keeping one writer/reader here means save logic never leaks
-  into UI components.
+  The save slot. With the Phase 2 New Game flow in place, a save now carries
+  the gym's name, the manager, and the chosen city; the region is derived from
+  the city rather than stored. One reader/writer here keeps save logic out of
+  the UI. The shape is versioned and migrated forward as later phases add
+  fighters, lockers, coaches, and finances.
 */
 
-import type { RegionKey } from '../game/regions';
 import type { CityId } from '../game/cities';
+import { getCity } from '../game/cities';
+import type { RegionKey } from '../game/regions';
+import type { Appearance } from '../game/appearance';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+
+export const MANAGER_START_AGE = 25;
+
+export interface Manager {
+  name: string;
+  /** Fixed at 25 in every run, per the bible. */
+  age: number;
+  appearance: Appearance;
+}
 
 export interface GameSave {
   version: number;
-  /** Which regional gym background is showing. */
-  region: RegionKey;
-  /** Set once city selection (Phase 2) exists; null in the Phase 1 shell. */
-  cityId: CityId | null;
+  gymName: string;
+  manager: Manager;
+  cityId: CityId;
   /** Day-count since the 1975 epoch (see game/time.ts). */
   dayCount: number;
-  /** Epoch ms when the save was first created. */
   createdAt: number;
-  /** Epoch ms of the last write. */
   updatedAt: number;
 }
 
-export function createNewSave(region: RegionKey): GameSave {
+export interface NewGameDraft {
+  gymName: string;
+  manager: Manager;
+  cityId: CityId;
+}
+
+export function createSaveFromDraft(draft: NewGameDraft): GameSave {
   const now = Date.now();
   return {
     version: SAVE_VERSION,
-    region,
-    cityId: null,
+    gymName: draft.gymName,
+    manager: draft.manager,
+    cityId: draft.cityId,
     dayCount: 0,
     createdAt: now,
     updatedAt: now,
   };
 }
 
-/** Bring an older save forward. No-op today; the hook exists for later phases. */
+/** Region is always derived from the city — never stored. */
+export function regionOf(save: GameSave): RegionKey {
+  return getCity(save.cityId).region;
+}
+
+/** Bring an older save forward. Pre-v2 shell saves lack a manager/city, so
+    they can't be resumed meaningfully — drop them rather than fake a manager. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
-  const data = raw as Partial<GameSave>;
-  if (typeof data.region !== 'string' || typeof data.dayCount !== 'number') {
-    return null;
+  const data = raw as Partial<GameSave> & { region?: string };
+
+  if (typeof data.version === 'number' && data.version >= 2) {
+    if (
+      typeof data.gymName === 'string' &&
+      data.manager &&
+      typeof data.cityId === 'string' &&
+      typeof data.dayCount === 'number'
+    ) {
+      return data as GameSave;
+    }
   }
-  return {
-    version: SAVE_VERSION,
-    region: data.region as RegionKey,
-    cityId: (data.cityId as CityId | null) ?? null,
-    dayCount: data.dayCount,
-    createdAt: data.createdAt ?? Date.now(),
-    updatedAt: data.updatedAt ?? Date.now(),
-  };
+  return null;
 }
 
 export function loadSave(): GameSave | null {
@@ -75,7 +94,7 @@ export function writeSave(save: GameSave): void {
     const next: GameSave = { ...save, updatedAt: Date.now() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
-    /* storage unavailable (private mode, quota) — fail quiet for Phase 1 */
+    /* storage unavailable (private mode, quota) — fail quiet */
   }
 }
 

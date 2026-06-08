@@ -1,0 +1,201 @@
+/* ============================================================
+   Opening Scene — slow, deliberate, cinematic
+   Long transition durations are intentional. The silence is the point.
+   ============================================================ */
+
+.opening {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The room, revealed beneath the titles */
+.opening__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 3s var(--ease-warm);
+}
+.opening__bg.in {
+  opacity: 1;
+}
+.opening__bg-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 50%, transparent 30%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.7));
+}
+
+/* Year + city, alone on black */
+.opening__titles {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(0);
+  transition:
+    opacity 2.2s var(--ease-warm),
+    transform 2.4s var(--ease-warm);
+}
+.opening__titles.in {
+  opacity: 1;
+}
+.opening__titles.out {
+  opacity: 0;
+  transform: translateY(-46px);
+  transition:
+    opacity 2.4s var(--ease-warm),
+    transform 2.8s var(--ease-warm);
+}
+
+.opening__year {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(72px, 14vw, 150px);
+  letter-spacing: 0.08em;
+  color: var(--parchment);
+  line-height: 1;
+  text-shadow: 0 0 40px rgba(217, 154, 78, 0.2);
+}
+
+.opening__city {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 5vw, 52px);
+  letter-spacing: 0.22em;
+  color: var(--amber-bright);
+  margin-top: var(--space-md);
+  /* the city surfaces a beat after the year */
+  transition-delay: 0.7s;
+}
+
+.opening__state {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: var(--space-sm);
+  margin-left: 0.4em;
+}
+
+/* The city's words */
+.opening__text {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+  padding: var(--space-xl);
+  text-align: center;
+  opacity: 0;
+  transition: opacity 2s var(--ease-warm);
+}
+.opening__text.in {
+  opacity: 1;
+}
+.opening__lede {
+  font-family: var(--font-slab);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(22px, 3.2vw, 30px);
+  line-height: 1.5;
+  color: var(--parchment);
+  margin-bottom: var(--space-lg);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+.opening__para {
+  font-family: var(--font-slab);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--text-warm);
+  margin-bottom: var(--space-md);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* The invitation */
+.opening__ready {
+  position: absolute;
+  z-index: 4;
+  bottom: clamp(40px, 9vh, 96px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-warm);
+}
+.opening__ready.in {
+  opacity: 1;
+}
+.opening__gym {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  color: var(--parchment);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+.opening__begin {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 16px;
+  color: var(--ink-black);
+  padding: 14px 34px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--amber-bright), var(--amber-deep));
+  border: 1px solid #5c3c14;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 210, 0.5),
+    0 0 24px rgba(217, 154, 78, 0.3),
+    0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  animation: begin-pulse 3.4s var(--ease-warm) infinite;
+}
+.opening__begin:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 210, 0.6),
+    0 0 34px rgba(217, 154, 78, 0.5),
+    0 6px 14px rgba(0, 0, 0, 0.5);
+}
+@keyframes begin-pulse {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 240, 210, 0.5),
+      0 0 20px rgba(217, 154, 78, 0.25),
+      0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 240, 210, 0.5),
+      0 0 32px rgba(217, 154, 78, 0.45),
+      0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Quiet skip */
+.opening__skip {
+  position: absolute;
+  z-index: 5;
+  right: var(--space-lg);
+  bottom: var(--space-md);
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 6px 10px;
+  transition: color var(--t-fast);
+}
+.opening__skip:hover {
+  color: var(--amber);
+}

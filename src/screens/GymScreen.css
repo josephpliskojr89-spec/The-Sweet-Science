@@ -44,46 +44,8 @@
   color: var(--amber-deep);
 }
 
-.gym__dev {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  opacity: 0.85;
-}
-
-.gym__dev-tag {
-  font-family: var(--font-typewriter);
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-.gym__dev-switch {
-  display: flex;
-  gap: 3px;
-}
-
-.gym__dev-btn {
-  font-family: var(--font-condensed);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  padding: 4px 7px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--leather-light);
-  background: rgba(0, 0, 0, 0.35);
-  transition: color var(--t-fast), border-color var(--t-fast);
-}
-.gym__dev-btn:hover {
-  color: var(--amber-bright);
-}
-.gym__dev-btn--on {
-  color: var(--ink-black);
-  background: var(--amber);
-  border-color: var(--amber-deep);
-}
-
 .gym__exit {
+  margin-left: auto;
   font-family: var(--font-condensed);
   text-transform: uppercase;
   letter-spacing: 0.14em;
@@ -228,8 +190,5 @@
   }
   .room-door {
     min-height: 0;
-  }
-  .gym__dev {
-    display: none;
   }
 }

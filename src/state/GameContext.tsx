@@ -2,13 +2,12 @@
   GameContext
   --------------------------------------------------------------------------
   The single source of truth for the shell: which screen is showing, which
-  room (if any) is open, and the live game save. UI components read and act
-  through this context rather than touching persistence or time directly.
+  room (if any) is open, and the live game save. UI reads and acts through this
+  context rather than touching persistence or time directly.
 
-  Phase 1 is a small state machine — Home -> (New Game | Continue) -> Gym, with
-  Settings reachable from Home. The New Game flow itself (gym naming, manager
-  creation, city selection, opening scene) is Phase 2 and will slot in between
-  Home and Gym without disturbing this contract.
+  Flow: Home -> New Game (Phase 2 multi-step + opening scene) -> Gym, with
+  Settings and Continue reachable from Home. The New Game screen owns its own
+  step state and hands back a finished draft via startGame().
 */
 
 import {
@@ -19,17 +18,17 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { RegionKey } from '../game/regions';
 import { advance, type TimeStep } from '../game/time';
 import {
-  createNewSave,
+  createSaveFromDraft,
   loadSave,
   writeSave,
   clearSave,
   type GameSave,
+  type NewGameDraft,
 } from './persistence';
 
-export type Screen = 'home' | 'settings' | 'game';
+export type Screen = 'home' | 'settings' | 'newgame' | 'game';
 
 export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker';
 
@@ -37,25 +36,23 @@ interface GameContextValue {
   screen: Screen;
   /** The room currently open over the gym floor, or null when on the floor. */
   activeRoom: RoomKey | null;
-  /** Live save while in-game; null on the home/settings screens. */
+  /** Live save while in-game; null on home/settings/newgame screens. */
   save: GameSave | null;
   /** Whether a resumable save exists on disk (drives Continue). */
   canContinue: boolean;
 
   goHome: () => void;
   openSettings: () => void;
-  /** Phase 1: starts directly into the gym with a chosen region.
-      Phase 2's New Game flow will call this at the end of the opening scene. */
-  startNewGame: (region: RegionKey) => void;
+  /** Enter the New Game flow (gym name -> manager -> city -> opening scene). */
+  openNewGame: () => void;
+  /** Commit a finished draft and drop into the gym. Called by the opening scene. */
+  startGame: (draft: NewGameDraft) => void;
   continueGame: () => void;
 
   openRoom: (room: RoomKey) => void;
   closeRoom: () => void;
 
   advanceTime: (step: TimeStep) => void;
-  /** Review-only: swap the regional gym background in place. Removed in Phase 2
-      once the real city-driven region is locked at game start. */
-  setRegion: (region: RegionKey) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -66,12 +63,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [save, setSave] = useState<GameSave | null>(null);
   const [canContinue, setCanContinue] = useState<boolean>(() => loadSave() !== null);
 
-  const persist = useCallback((next: GameSave) => {
-    writeSave(next);
-    setSave(next);
-    setCanContinue(true);
-  }, []);
-
   const goHome = useCallback(() => {
     setActiveRoom(null);
     setScreen('home');
@@ -79,16 +70,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const openSettings = useCallback(() => setScreen('settings'), []);
+  const openNewGame = useCallback(() => setScreen('newgame'), []);
 
-  const startNewGame = useCallback(
-    (region: RegionKey) => {
-      const fresh = createNewSave(region);
-      persist(fresh);
-      setActiveRoom(null);
-      setScreen('game');
-    },
-    [persist],
-  );
+  const startGame = useCallback((draft: NewGameDraft) => {
+    const fresh = createSaveFromDraft(draft);
+    writeSave(fresh);
+    setSave(fresh);
+    setCanContinue(true);
+    setActiveRoom(null);
+    setScreen('game');
+  }, []);
 
   const continueGame = useCallback(() => {
     const loaded = loadSave();
@@ -101,22 +92,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const openRoom = useCallback((room: RoomKey) => setActiveRoom(room), []);
   const closeRoom = useCallback(() => setActiveRoom(null), []);
 
-  const advanceTime = useCallback(
-    (step: TimeStep) => {
-      setSave((prev) => {
-        if (!prev) return prev;
-        const next: GameSave = { ...prev, dayCount: advance(prev.dayCount, step) };
-        writeSave(next);
-        return next;
-      });
-    },
-    [],
-  );
-
-  const setRegion = useCallback((region: RegionKey) => {
+  const advanceTime = useCallback((step: TimeStep) => {
     setSave((prev) => {
       if (!prev) return prev;
-      const next: GameSave = { ...prev, region };
+      const next: GameSave = { ...prev, dayCount: advance(prev.dayCount, step) };
       writeSave(next);
       return next;
     });
@@ -130,12 +109,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       canContinue,
       goHome,
       openSettings,
-      startNewGame,
+      openNewGame,
+      startGame,
       continueGame,
       openRoom,
       closeRoom,
       advanceTime,
-      setRegion,
     }),
     [
       screen,
@@ -144,12 +123,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       canContinue,
       goHome,
       openSettings,
-      startNewGame,
+      openNewGame,
+      startGame,
       continueGame,
       openRoom,
       closeRoom,
       advanceTime,
-      setRegion,
     ],
   );
 

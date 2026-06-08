@@ -13,27 +13,28 @@ foundational commitment of the project — every system serves it.
 
 ---
 
-## Status — Phase 1: Shell & Navigation ✅
+## Status — Phases 1–2 complete ✅
 
-The home screen and main navigation shell. **No gameplay systems yet** — those
-arrive in later phases and are intentionally not built.
+**Phase 1 — Shell & Navigation.** Home screen, Settings stub, and the main game
+screen: a procedural regional gym background with four spatial room panels (My
+Office, Calendar, My Gym, Locker Room) that open full-screen to labeled
+placeholders, plus day/week time advancement and a real Continue save.
 
-What's here:
+**Phase 2 — New Game Flow.**
 
-- **Home screen** — title placeholder, Continue / New Game / Settings.
-- **Settings** — styled stub (difficulty + volume land later).
-- **Main game screen** — a procedural regional gym background with four spatial
-  room panels (My Office, Calendar, My Gym, Locker Room), each opening to a
-  labeled placeholder describing what will live there.
-- **Time advancement** — Advance Day / Advance Week move the 1975 game clock.
-- **Save/Continue** — a minimal localStorage save so Continue is real.
+- **Name your gym** — with a "Surprise me" composer.
+- **Create your manager** — name + skin tone / hair color / hair style, with a
+  live procedural portrait (layered base / skin / hair). Age fixed at 25.
+  "Surprise me" draws from the real name database; "Randomize look" rolls the
+  appearance.
+- **Choose your city** — all 15 cities with full descriptions and style lines.
+  Las Vegas is present but non-selectable, framed as a destination.
+- **Opening scene** — deliberately unhurried. Black; the year and city surface
+  and hold in silence; the gym fades in beneath; the city's own words settle;
+  then a quiet "Step inside." Respects `prefers-reduced-motion`.
 
-Two pieces are temporary Phase-1 scaffolding, clearly marked in the UI, and get
-replaced in Phase 2 by the real New Game flow (gym naming, manager creation,
-city selection, opening scene):
-
-- The **region picker** on New Game.
-- The **`[dev] region`** switcher in the gym's top bar.
+**No gameplay systems yet** (walk-ins, fighters, training, finances, fights) —
+those arrive in Phases 3+ and are intentionally not built.
 
 ---
 
@@ -64,18 +65,27 @@ Stack: **React + TypeScript + Vite**.
 
 ```
 src/
+  data/            Provided databases (version-controlled assets)
+    names.json       Fighter/coach name generation database
+    gyms.json        Competing-gym database (used in Phase 6)
   game/            World data + rules (the procedural source of truth)
     regions.ts       4 regions + palettes that drive the gym backgrounds
     cities.ts        15 cities: region, archetype, descriptions (Vegas = destination)
     rooms.ts         The four rooms and what each will hold
     time.ts          The game clock (day-count since the 1975 epoch)
+    appearance.ts    Skin/hair params that drive procedural portraits
+    names.ts         Weighted name generation off names.json
+    gymNames.ts      "Surprise me" gym-name composer
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)
   assets/
-    backgrounds.tsx  Background REGISTRY — the asset-replacement seam
-  components/        Button, TimeControls, RegionalGymBackground, glyphs
-  screens/           HomeScreen, SettingsScreen, GymScreen
+    backgrounds.tsx  Background REGISTRY — asset-replacement seam
+    portraits.tsx    Portrait REGISTRY — asset-replacement seam
+  components/        Button, TimeControls, RegionalGymBackground, Portrait, glyphs
+  screens/
+    HomeScreen, SettingsScreen, GymScreen
+    newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
   rooms/             RoomPlaceholder (the interior a room opens into)
   styles/            theme.css (design tokens) + global.css
 ```

@@ -1,19 +1,18 @@
 /*
   GymScreen — the main game screen
   --------------------------------------------------------------------------
-  The regional gym background fills the viewport. Over it sit four spatial
-  room panels (the physical navigation metaphor — you cross the floor to a
-  room, you don't click a dashboard tab). A thin top bar carries gym identity
+  The regional gym background (derived from the chosen city) fills the
+  viewport. Over it sit four spatial room panels — the physical navigation
+  metaphor, you cross the floor to a room. A thin top bar carries gym identity
   and the exit; the time controls sit on the floor along the bottom edge.
 
-  Phase 1 boundaries:
-  - Rooms open to labeled placeholders (RoomPlaceholder).
-  - The "[dev] region" switcher is review-only scaffolding and is removed in
-    Phase 2 once city selection fixes the region at game start.
+  Rooms open to labeled placeholders (RoomPlaceholder) until their phases land.
 */
 
 import { useGame } from '../state/GameContext';
-import { getRegion, REGION_ORDER } from '../game/regions';
+import { regionOf } from '../state/persistence';
+import { getRegion } from '../game/regions';
+import { getCity } from '../game/cities';
 import { ROOM_ORDER, ROOMS } from '../game/rooms';
 import { GymBackground } from '../assets/backgrounds';
 import { TimeControls } from '../components/TimeControls';
@@ -22,41 +21,25 @@ import { RoomGlyph } from '../components/RoomGlyph';
 import './GymScreen.css';
 
 export function GymScreen() {
-  const { save, openRoom, goHome, setRegion } = useGame();
+  const { save, openRoom, goHome } = useGame();
   if (!save) return null;
 
-  const region = getRegion(save.region);
+  const region = getRegion(regionOf(save));
+  const city = getCity(save.cityId);
 
   return (
     <div className="gym worn">
       <div className="gym__bg layer">
-        <GymBackground region={save.region} />
+        <GymBackground region={region.key} />
       </div>
 
       {/* Top chrome — gym identity + exit */}
       <header className="gym__chrome">
         <div className="gym__identity">
-          <span className="gym__name">Your Gym</span>
-          <span className="gym__region">{region.name} · Local</span>
-        </div>
-
-        {/* Review-only region switcher (removed in Phase 2). */}
-        <div className="gym__dev">
-          <span className="gym__dev-tag">[dev] region</span>
-          <div className="gym__dev-switch">
-            {REGION_ORDER.map((key) => (
-              <button
-                key={key}
-                className={
-                  'gym__dev-btn' + (key === save.region ? ' gym__dev-btn--on' : '')
-                }
-                onClick={() => setRegion(key)}
-                title={getRegion(key).name}
-              >
-                {getRegion(key).name.slice(0, 2).toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <span className="gym__name">{save.gymName}</span>
+          <span className="gym__region">
+            {city.name}, {city.state} · Local
+          </span>
         </div>
 
         <button className="gym__exit" onClick={goHome} title="Leave for the home screen">
