@@ -1,38 +1,36 @@
 /*
   RoomPlaceholder
   --------------------------------------------------------------------------
-  The interior each room opens into for Phase 1. It isn't empty — it states the
+  The full-screen interior a not-yet-built room opens into. It states the
   room's purpose and lists what will live here, with the phase that brings it
-  online. That keeps the navigation meaningful to review and gives every later
-  system a labeled home to build into.
-
-  Presented FULL-SCREEN — you've walked into the room and the gym floor is
-  behind you, not a panel sliding over it. A persistent "back to the floor"
-  affordance (and Esc) returns you.
+  online — so the navigation stays meaningful and every later system has a
+  labeled home. An optional `summary` lets a room show real, current data
+  (e.g. the Locker Room's roster count) above the roadmap.
 */
 
-import { useEffect } from 'react';
-import { useGame } from '../state/GameContext';
+import { useEffect, type ReactNode } from 'react';
+import { useGame, type RoomKey } from '../state/GameContext';
 import { ROOMS } from '../game/rooms';
 import { RoomGlyph } from '../components/RoomGlyph';
 import { GlovesEmblem } from '../components/GlovesEmblem';
 import './RoomPlaceholder.css';
 
-export function RoomPlaceholder() {
-  const { activeRoom, closeRoom } = useGame();
+interface Props {
+  roomKey: RoomKey;
+  summary?: ReactNode;
+}
 
-  // Escape closes the room — physical "step back onto the floor".
+export function RoomPlaceholder({ roomKey, summary }: Props) {
+  const { closeRoom } = useGame();
+  const room = ROOMS[roomKey];
+
   useEffect(() => {
-    if (!activeRoom) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeRoom();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [activeRoom, closeRoom]);
-
-  if (!activeRoom) return null;
-  const room = ROOMS[activeRoom];
+  }, [closeRoom]);
 
   return (
     <div className="room-screen worn" role="dialog" aria-label={room.name}>
@@ -49,7 +47,7 @@ export function RoomPlaceholder() {
         <div className="room-panel">
           <header className="room-panel__head">
             <span className="room-panel__glyph">
-              <RoomGlyph room={room.key} size={56} />
+              <RoomGlyph room={roomKey} size={56} />
             </span>
             <div>
               <p className="room-panel__eyebrow">You step into</p>
@@ -58,6 +56,8 @@ export function RoomPlaceholder() {
           </header>
 
           <p className="room-panel__tagline">{room.tagline}</p>
+
+          {summary && <div className="room-panel__summary">{summary}</div>}
 
           <div className="room-panel__divider">
             <span className="room-panel__divider-seg" />

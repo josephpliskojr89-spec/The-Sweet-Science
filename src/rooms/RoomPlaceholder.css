@@ -143,6 +143,18 @@
   text-align: center;
 }
 
+.room-panel__summary {
+  margin: var(--space-md) 0 var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  background: rgba(217, 154, 78, 0.08);
+  border: 1px solid var(--amber-ember);
+  text-align: center;
+  font-family: var(--font-slab);
+  font-size: 15px;
+  color: var(--text-warm);
+}
+
 .room-panel__divider {
   display: flex;
   align-items: center;

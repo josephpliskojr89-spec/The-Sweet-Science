@@ -33,8 +33,26 @@ placeholders, plus day/week time advancement and a real Continue save.
   and hold in silence; the gym fades in beneath; the city's own words settle;
   then a quiet "Step inside." Respects `prefers-reduced-motion`.
 
-**No gameplay systems yet** (walk-ins, fighters, training, finances, fights) —
-those arrive in Phases 3+ and are intentionally not built.
+**Phase 3 — Walk-In System.** The heartbeat.
+
+- **Procedural fighter generation** off the name database: names that cohere
+  with the city, coherent appearance, attributes + hidden/visible traits,
+  physique, weight class (skewed by city archetype), a voiced written
+  statement, and a gut-read First Impression. Concealable traits (Lionheart)
+  stay hidden; a new gym mostly draws raw prospects, with room for surprises.
+- **The walk-in card** — the reference clipboard: leather border, oxblood
+  banner, framed portrait, name + nickname, vitals, typewritten statement,
+  First Impression.
+- **Notification** after advancing time → View Now / View Later; later cards
+  queue in **My Office** (door badge shows the count). Walk-ins carry
+  **patience** — ignore one too long and he finds another gym.
+- **The decision** — give a locker (respects the 20-locker cap), train without
+  one, or turn him away. Accepted fighters join a roster the Locker Room shows
+  a live count of.
+
+Deferred to upcoming phases: the 3-exchange interview, fighter profiles and
+locker hierarchy (Phase 4), training (Phase 5), the rest of My Office (Phase 6),
+and the fight engine (Phase 8).
 
 ---
 
@@ -76,17 +94,23 @@ src/
     appearance.ts    Skin/hair params that drive procedural portraits
     names.ts         Weighted name generation off names.json
     gymNames.ts      "Surprise me" gym-name composer
+    weightClasses.ts The five launch divisions; class derived from weight
+    traits.ts        The nine personality traits (with conceal bias)
+    statements.ts    Voiced walk-in statements + First Impressions
+    fighters.ts      Fighter generation — the procedural heart
+    walkins.ts       Walk-in scheduling, patience, expiry
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)
   assets/
     backgrounds.tsx  Background REGISTRY — asset-replacement seam
     portraits.tsx    Portrait REGISTRY — asset-replacement seam
-  components/        Button, TimeControls, RegionalGymBackground, Portrait, glyphs
+  components/        Button, TimeControls, RegionalGymBackground, Portrait,
+                     WalkInCard, ArrivalNotice, glyphs
   screens/
-    HomeScreen, SettingsScreen, GymScreen
+    HomeScreen, SettingsScreen, GymScreen, WalkInViewer
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
-  rooms/             RoomPlaceholder (the interior a room opens into)
+  rooms/             RoomRouter, OfficeRoom (walk-in desk), RoomPlaceholder
   styles/            theme.css (design tokens) + global.css
 ```
 

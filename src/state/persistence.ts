@@ -1,28 +1,39 @@
 /*
   Persistence
   --------------------------------------------------------------------------
-  The save slot. With the Phase 2 New Game flow in place, a save now carries
-  the gym's name, the manager, and the chosen city; the region is derived from
-  the city rather than stored. One reader/writer here keeps save logic out of
-  the UI. The shape is versioned and migrated forward as later phases add
-  fighters, lockers, coaches, and finances.
+  The save slot. v3 adds the roster (fighters who've joined the gym) and the
+  walk-in queue (cards waiting at the door / in My Office). Region is still
+  derived from the city, never stored. One reader/writer here keeps save logic
+  out of the UI; the shape is versioned and migrated forward.
 */
 
 import type { CityId } from '../game/cities';
 import { getCity } from '../game/cities';
 import type { RegionKey } from '../game/regions';
 import type { Appearance } from '../game/appearance';
+import type { Fighter } from '../game/fighters';
+import type { WalkIn } from '../game/walkins';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export const MANAGER_START_AGE = 25;
+/** The gym starts with twenty lockers — its primary resource and constraint. */
+export const LOCKER_CAP = 20;
 
 export interface Manager {
   name: string;
   /** Fixed at 25 in every run, per the bible. */
   age: number;
   appearance: Appearance;
+}
+
+export interface RosterEntry {
+  fighter: Fighter;
+  /** Locker holders develop fully; others train in limited mode (Phase 4/5). */
+  hasLocker: boolean;
+  /** Day-count when he joined the gym. */
+  joinedDayCount: number;
 }
 
 export interface GameSave {
@@ -32,6 +43,8 @@ export interface GameSave {
   cityId: CityId;
   /** Day-count since the 1975 epoch (see game/time.ts). */
   dayCount: number;
+  roster: RosterEntry[];
+  walkIns: WalkIn[];
   createdAt: number;
   updatedAt: number;
 }
@@ -50,6 +63,8 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     manager: draft.manager,
     cityId: draft.cityId,
     dayCount: 0,
+    roster: [],
+    walkIns: [],
     createdAt: now,
     updatedAt: now,
   };
@@ -60,21 +75,36 @@ export function regionOf(save: GameSave): RegionKey {
   return getCity(save.cityId).region;
 }
 
-/** Bring an older save forward. Pre-v2 shell saves lack a manager/city, so
-    they can't be resumed meaningfully — drop them rather than fake a manager. */
+/** Locker holders currently in the gym. */
+export function lockersUsed(save: GameSave): number {
+  return save.roster.reduce((n, e) => n + (e.hasLocker ? 1 : 0), 0);
+}
+
+/** Bring an older save forward. v2 lacked roster/walk-ins; seed them empty.
+    Pre-v2 shell saves can't be resumed meaningfully — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
-  const data = raw as Partial<GameSave> & { region?: string };
+  const data = raw as Partial<GameSave>;
 
-  if (typeof data.version === 'number' && data.version >= 2) {
-    if (
-      typeof data.gymName === 'string' &&
-      data.manager &&
-      typeof data.cityId === 'string' &&
-      typeof data.dayCount === 'number'
-    ) {
-      return data as GameSave;
-    }
+  if (
+    typeof data.version === 'number' &&
+    data.version >= 2 &&
+    typeof data.gymName === 'string' &&
+    data.manager &&
+    typeof data.cityId === 'string' &&
+    typeof data.dayCount === 'number'
+  ) {
+    return {
+      version: SAVE_VERSION,
+      gymName: data.gymName,
+      manager: data.manager,
+      cityId: data.cityId as CityId,
+      dayCount: data.dayCount,
+      roster: Array.isArray(data.roster) ? data.roster : [],
+      walkIns: Array.isArray(data.walkIns) ? data.walkIns : [],
+      createdAt: data.createdAt ?? Date.now(),
+      updatedAt: data.updatedAt ?? Date.now(),
+    };
   }
   return null;
 }

@@ -132,6 +132,35 @@
   opacity: 1;
 }
 
+.room-door__badge {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  z-index: 2;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-black);
+  background: var(--parchment-dark);
+  border: 1px solid #0c0907;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.room-door__badge--alert {
+  color: var(--parchment);
+  background: linear-gradient(180deg, var(--oxblood-bright), var(--oxblood));
+  animation: door-badge-pulse 2.4s var(--ease-warm) infinite;
+}
+@keyframes door-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(156, 58, 38, 0); }
+  50% { box-shadow: 0 0 14px rgba(156, 58, 38, 0.7); }
+}
+
 .room-door__glyph {
   color: var(--amber);
   transition: color var(--t-med) var(--ease-warm);

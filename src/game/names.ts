@@ -56,6 +56,9 @@ export interface GeneratedName {
   first: string;
   last: string;
   full: string;
+  /** Subpools drawn from — an ethnic proxy used to cohere appearance/nickname. */
+  firstSubpool: string;
+  lastSubpool: string;
 }
 
 /**
@@ -79,7 +82,7 @@ export function generateName(city: CityId): GeneratedName {
   const first = randomPick(poolFor(regionPools.first_names, firstSubpool));
   const last = randomPick(poolFor(regionPools.last_names, lastSubpool));
 
-  return { first, last, full: `${first} ${last}` };
+  return { first, last, full: `${first} ${last}`, firstSubpool, lastSubpool };
 }
 
 /** A name with no city context yet — used by the manager screen. */
