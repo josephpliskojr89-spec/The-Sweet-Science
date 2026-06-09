@@ -1,14 +1,16 @@
 /*
   GameContext
   --------------------------------------------------------------------------
-  The single source of truth for the shell and, now, the walk-in loop. Time
+  The single source of truth for the shell and the walk-in loop. Time
   advancement rolls new walk-ins and ages the queue; arrivals surface as a
-  notice the player answers with View Now / View Later. The card viewer walks a
-  sequence of walk-ins, and each decision (locker / no locker / turn away)
-  updates the roster and queue.
+  notice answered with View Now / View Later. The card viewer walks a sequence
+  of walk-ins, and each decision updates the roster and queue.
 
-  Flow: Home -> New Game -> Gym. Walk-in generation/persistence lives here so it
-  never leaks into UI components.
+  Purity note: all mutations are computed in event handlers (not inside
+  setState updaters) using `saveRef` for the latest state, then committed once.
+  Random rolls and side effects must never live in an updater — React
+  StrictMode double-invokes updaters, which would desync the roll from the
+  committed state (e.g. an arrival notice with nobody in the queue).
 */
 
 import {
@@ -16,6 +18,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -54,9 +57,7 @@ interface GameContextValue {
   save: GameSave | null;
   canContinue: boolean;
 
-  /** Notice shown after a time advance, until answered. */
   arrival: ArrivalNotice | null;
-  /** The walk-in id sequence currently open in the card viewer, or null. */
   viewerIds: string[] | null;
   viewerIndex: number;
 
@@ -71,11 +72,9 @@ interface GameContextValue {
 
   advanceTime: (step: TimeStep) => void;
 
-  /** Answer the arrival notice. */
   viewArrivalsNow: () => void;
   dismissArrival: () => void;
 
-  /** Open a specific set of walk-ins (e.g. from the My Office queue). */
   openWalkIns: (ids: string[], startIndex?: number) => void;
   closeWalkInViewer: () => void;
   decideWalkIn: (id: string, decision: WalkInDecision) => void;
@@ -95,6 +94,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [viewerIds, setViewerIds] = useState<string[] | null>(null);
   const [viewerIndex, setViewerIndex] = useState(0);
 
+  // The latest save, readable synchronously inside event handlers so mutations
+  // stay pure (no rolling or persistence inside a setState updater).
+  const saveRef = useRef<GameSave | null>(null);
+
+  /** Single commit path: keep ref, state, and disk in lockstep. */
+  const commit = useCallback((next: GameSave) => {
+    saveRef.current = next;
+    setSave(next);
+    writeSave(next);
+    setCanContinue(true);
+  }, []);
+
   const goHome = useCallback(() => {
     setActiveRoom(null);
     setArrival(null);
@@ -106,18 +117,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const openSettings = useCallback(() => setScreen('settings'), []);
   const openNewGame = useCallback(() => setScreen('newgame'), []);
 
-  const startGame = useCallback((draft: NewGameDraft) => {
-    const fresh = createSaveFromDraft(draft);
-    writeSave(fresh);
-    setSave(fresh);
-    setCanContinue(true);
-    setActiveRoom(null);
-    setScreen('game');
-  }, []);
+  const startGame = useCallback(
+    (draft: NewGameDraft) => {
+      commit(createSaveFromDraft(draft));
+      setActiveRoom(null);
+      setScreen('game');
+    },
+    [commit],
+  );
 
   const continueGame = useCallback(() => {
     const loaded = loadSave();
     if (!loaded) return;
+    saveRef.current = loaded;
     setSave(loaded);
     setActiveRoom(null);
     setScreen('game');
@@ -126,21 +138,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const openRoom = useCallback((room: RoomKey) => setActiveRoom(room), []);
   const closeRoom = useCallback(() => setActiveRoom(null), []);
 
-  const advanceTime = useCallback((step: TimeStep) => {
-    setSave((prev) => {
-      if (!prev) return prev;
+  const advanceTime = useCallback(
+    (step: TimeStep) => {
+      const prev = saveRef.current;
+      if (!prev) return;
       const days = TIME_STEP_DAYS[step];
 
-      // Age the existing queue, then roll fresh arrivals.
+      // Pure computation, once, in the handler — not in an updater.
       const aged = ageWalkIns(prev.walkIns, days);
       const fresh = rollNewWalkIns(days, prev.cityId, qualityFor(prev));
 
-      const next: GameSave = {
+      commit({
         ...prev,
         dayCount: advance(prev.dayCount, step),
         walkIns: [...aged.surviving, ...fresh],
-      };
-      writeSave(next);
+      });
 
       if (fresh.length || aged.expired.length) {
         setArrival({
@@ -148,9 +160,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
           expired: aged.expired.map((w) => w.fighter),
         });
       }
-      return next;
-    });
-  }, []);
+    },
+    [commit],
+  );
 
   const openWalkIns = useCallback((ids: string[], startIndex = 0) => {
     if (!ids.length) return;
@@ -159,27 +171,26 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const viewArrivalsNow = useCallback(() => {
-    setArrival((cur) => {
-      if (cur && cur.arrived.length) {
-        setViewerIds(cur.arrived.map((f) => f.id));
-        setViewerIndex(0);
-      }
-      return null;
-    });
-  }, []);
+    const cur = arrival;
+    if (cur && cur.arrived.length) {
+      setViewerIds(cur.arrived.map((f) => f.id));
+      setViewerIndex(0);
+    }
+    setArrival(null);
+  }, [arrival]);
 
   const dismissArrival = useCallback(() => setArrival(null), []);
   const closeWalkInViewer = useCallback(() => setViewerIds(null), []);
 
-  const decideWalkIn = useCallback((id: string, decision: WalkInDecision) => {
-    setSave((prev) => {
-      if (!prev) return prev;
+  const decideWalkIn = useCallback(
+    (id: string, decision: WalkInDecision) => {
+      const prev = saveRef.current;
+      if (!prev) return;
       const target = prev.walkIns.find((w) => w.fighter.id === id);
-      if (!target) return prev;
+      if (!target) return;
 
       const walkIns = prev.walkIns.filter((w) => w.fighter.id !== id);
       let roster = prev.roster;
-
       if (decision === 'locker' || decision === 'no_locker') {
         const entry: RosterEntry = {
           fighter: target.fighter,
@@ -189,14 +200,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         roster = [...prev.roster, entry];
       }
 
-      const next: GameSave = { ...prev, walkIns, roster };
-      writeSave(next);
-      return next;
-    });
-
-    // Advance the viewer past the decided card.
-    setViewerIndex((i) => i + 1);
-  }, []);
+      commit({ ...prev, walkIns, roster });
+      setViewerIndex((i) => i + 1);
+    },
+    [commit],
+  );
 
   const value = useMemo<GameContextValue>(
     () => ({
