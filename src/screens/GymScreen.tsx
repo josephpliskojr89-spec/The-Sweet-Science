@@ -22,7 +22,9 @@ import { TimeControls } from '../components/TimeControls';
 import { RoomRouter } from '../rooms/RoomRouter';
 import { RoomGlyph } from '../components/RoomGlyph';
 import { ArrivalNotice } from '../components/ArrivalNotice';
+import { Toast } from '../components/Toast';
 import { WalkInViewer } from './WalkInViewer';
+import { FighterProfile } from './FighterProfile';
 import './GymScreen.css';
 
 export function GymScreen() {
@@ -103,7 +105,9 @@ export function GymScreen() {
       {/* Overlays */}
       <ArrivalNotice />
       <RoomRouter />
+      <FighterProfile />
       <WalkInViewer />
+      <Toast />
     </div>
   );
 }

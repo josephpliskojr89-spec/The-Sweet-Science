@@ -1,16 +1,15 @@
 /*
   GameContext
   --------------------------------------------------------------------------
-  The single source of truth for the shell and the walk-in loop. Time
-  advancement rolls new walk-ins and ages the queue; arrivals surface as a
-  notice answered with View Now / View Later. The card viewer walks a sequence
-  of walk-ins, and each decision updates the roster and queue.
+  The single source of truth for the shell, the walk-in loop, and (Phase 4)
+  roster management. Time advancement rolls walk-ins, ages the queue, and
+  evaluates departures; the post-advance notice reports all three. Locker and
+  hierarchy changes and cuts run through pure handlers.
 
   Purity note: all mutations are computed in event handlers (not inside
   setState updaters) using `saveRef` for the latest state, then committed once.
-  Random rolls and side effects must never live in an updater — React
-  StrictMode double-invokes updaters, which would desync the roll from the
-  committed state (e.g. an arrival notice with nobody in the queue).
+  Random rolls and side effects must never live in an updater — StrictMode
+  double-invokes updaters, which would desync rolls from committed state.
 */
 
 import {
@@ -23,8 +22,15 @@ import {
   type ReactNode,
 } from 'react';
 import { advance, TIME_STEP_DAYS, type TimeStep } from '../game/time';
-import type { Fighter } from '../game/fighters';
+import { type Fighter, fighterFullName } from '../game/fighters';
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
+import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
+import {
+  evaluateDepartures,
+  resolveCut,
+  type Departure,
+  type DepartureReason,
+} from '../game/departures';
 import {
   createSaveFromDraft,
   loadSave,
@@ -34,7 +40,6 @@ import {
   LOCKER_CAP,
   type GameSave,
   type NewGameDraft,
-  type RosterEntry,
 } from './persistence';
 
 export type Screen = 'home' | 'settings' | 'newgame' | 'game';
@@ -46,9 +51,10 @@ function qualityFor(_save: GameSave): number {
   return 0.2;
 }
 
-export interface ArrivalNotice {
+export interface AdvanceNotice {
   arrived: Fighter[];
   expired: Fighter[];
+  departed: Departure[];
 }
 
 interface GameContextValue {
@@ -57,9 +63,11 @@ interface GameContextValue {
   save: GameSave | null;
   canContinue: boolean;
 
-  arrival: ArrivalNotice | null;
+  arrival: AdvanceNotice | null;
   viewerIds: string[] | null;
   viewerIndex: number;
+  profileId: string | null;
+  flash: string | null;
 
   goHome: () => void;
   openSettings: () => void;
@@ -79,6 +87,13 @@ interface GameContextValue {
   closeWalkInViewer: () => void;
   decideWalkIn: (id: string, decision: WalkInDecision) => void;
 
+  openProfile: (id: string) => void;
+  closeProfile: () => void;
+  setLocker: (id: string, hasLocker: boolean) => void;
+  setTier: (id: string, tier: HierarchyTier) => void;
+  cutFighter: (id: string) => void;
+  clearFlash: () => void;
+
   lockerCap: number;
 }
 
@@ -90,15 +105,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [save, setSave] = useState<GameSave | null>(null);
   const [canContinue, setCanContinue] = useState<boolean>(() => loadSave() !== null);
 
-  const [arrival, setArrival] = useState<ArrivalNotice | null>(null);
+  const [arrival, setArrival] = useState<AdvanceNotice | null>(null);
   const [viewerIds, setViewerIds] = useState<string[] | null>(null);
   const [viewerIndex, setViewerIndex] = useState(0);
+  const [profileId, setProfileId] = useState<string | null>(null);
+  const [flash, setFlash] = useState<string | null>(null);
 
-  // The latest save, readable synchronously inside event handlers so mutations
-  // stay pure (no rolling or persistence inside a setState updater).
+  // Latest save, readable synchronously in handlers so mutations stay pure.
   const saveRef = useRef<GameSave | null>(null);
 
-  /** Single commit path: keep ref, state, and disk in lockstep. */
   const commit = useCallback((next: GameSave) => {
     saveRef.current = next;
     setSave(next);
@@ -110,6 +125,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setActiveRoom(null);
     setArrival(null);
     setViewerIds(null);
+    setProfileId(null);
     setScreen('home');
     setCanContinue(loadSave() !== null);
   }, []);
@@ -147,17 +163,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
       // Pure computation, once, in the handler — not in an updater.
       const aged = ageWalkIns(prev.walkIns, days);
       const fresh = rollNewWalkIns(days, prev.cityId, qualityFor(prev));
+      const dep = evaluateDepartures(prev.roster, days);
 
       commit({
         ...prev,
         dayCount: advance(prev.dayCount, step),
         walkIns: [...aged.surviving, ...fresh],
+        roster: dep.staying,
       });
 
-      if (fresh.length || aged.expired.length) {
+      if (fresh.length || aged.expired.length || dep.departed.length) {
         setArrival({
           arrived: fresh.map((w) => w.fighter),
           expired: aged.expired.map((w) => w.fighter),
+          departed: dep.departed,
         });
       }
     },
@@ -195,6 +214,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         const entry: RosterEntry = {
           fighter: target.fighter,
           hasLocker: decision === 'locker',
+          tier: DEFAULT_TIER,
           joinedDayCount: prev.dayCount,
         };
         roster = [...prev.roster, entry];
@@ -202,6 +222,68 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       commit({ ...prev, walkIns, roster });
       setViewerIndex((i) => i + 1);
+    },
+    [commit],
+  );
+
+  // --- roster management ---------------------------------------------------
+
+  const openProfile = useCallback((id: string) => setProfileId(id), []);
+  const closeProfile = useCallback(() => setProfileId(null), []);
+  const clearFlash = useCallback(() => setFlash(null), []);
+
+  const setLocker = useCallback(
+    (id: string, hasLocker: boolean) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry || entry.hasLocker === hasLocker) return;
+
+      if (hasLocker && lockersUsed(prev) >= LOCKER_CAP) {
+        setFlash('All twenty lockers are full. Free one before you give another.');
+        return;
+      }
+      const roster = prev.roster.map((e) =>
+        e.fighter.id === id ? { ...e, hasLocker } : e,
+      );
+      commit({ ...prev, roster });
+    },
+    [commit],
+  );
+
+  const setTier = useCallback(
+    (id: string, tier: HierarchyTier) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const roster = prev.roster.map((e) =>
+        e.fighter.id === id ? { ...e, tier } : e,
+      );
+      commit({ ...prev, roster });
+    },
+    [commit],
+  );
+
+  const cutFighter = useCallback(
+    (id: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry) return;
+
+      const name = fighterFullName(entry.fighter);
+      const outcome = resolveCut(entry);
+
+      if (outcome === 'vanish') {
+        commit({ ...prev, roster: prev.roster.filter((e) => e.fighter.id !== id) });
+        setFlash(`${name} cleared out his locker and was gone by morning.`);
+      } else {
+        const roster = prev.roster.map((e) =>
+          e.fighter.id === id ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier } : e,
+        );
+        commit({ ...prev, roster });
+        setFlash(`${name} asked to stay and earn his spot back — no locker.`);
+      }
+      setProfileId((cur) => (cur === id && outcome === 'vanish' ? null : cur));
     },
     [commit],
   );
@@ -215,6 +297,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       arrival,
       viewerIds,
       viewerIndex,
+      profileId,
+      flash,
       goHome,
       openSettings,
       openNewGame,
@@ -228,6 +312,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       openWalkIns,
       closeWalkInViewer,
       decideWalkIn,
+      openProfile,
+      closeProfile,
+      setLocker,
+      setTier,
+      cutFighter,
+      clearFlash,
       lockerCap: LOCKER_CAP,
     }),
     [
@@ -238,6 +328,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       arrival,
       viewerIds,
       viewerIndex,
+      profileId,
+      flash,
       goHome,
       openSettings,
       openNewGame,
@@ -251,6 +343,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       openWalkIns,
       closeWalkInViewer,
       decideWalkIn,
+      openProfile,
+      closeProfile,
+      setLocker,
+      setTier,
+      cutFighter,
+      clearFlash,
     ],
   );
 
@@ -265,3 +363,4 @@ export function useGame(): GameContextValue {
 }
 
 export { clearSave, lockersUsed };
+export type { DepartureReason };

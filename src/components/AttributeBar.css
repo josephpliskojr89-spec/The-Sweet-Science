@@ -1,0 +1,39 @@
+.attr {
+  display: grid;
+  grid-template-columns: 92px 1fr 28px;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.attr__label {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.attr__track {
+  position: relative;
+  height: 9px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.attr__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--amber-ember), var(--amber));
+  box-shadow: 0 0 8px rgba(217, 154, 78, 0.4);
+}
+
+.attr__value {
+  font-family: var(--font-slab);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--parchment);
+  text-align: right;
+}

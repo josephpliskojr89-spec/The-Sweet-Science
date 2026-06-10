@@ -1,0 +1,15 @@
+.trait-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--amber-bright);
+  padding: 3px 9px;
+  border-radius: 10px;
+  border: 1px solid var(--amber-ember);
+  background: rgba(217, 154, 78, 0.1);
+  cursor: help;
+  white-space: nowrap;
+}

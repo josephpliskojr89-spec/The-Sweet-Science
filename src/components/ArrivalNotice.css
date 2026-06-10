@@ -51,6 +51,20 @@
   margin-top: 6px;
 }
 
+.arrival__departures {
+  list-style: none;
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.arrival__departures li {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--rust);
+}
+
 .arrival__actions {
   display: flex;
   gap: var(--space-sm);

@@ -1,20 +1,37 @@
 /*
   ArrivalNotice
   --------------------------------------------------------------------------
-  Surfaces after a time advance. New walk-ins are answered with View Now (open
-  the cards) or View Later (they wait in My Office). It also quietly reports any
-  walk-ins who gave up and left while you were busy — the cost of delay is real.
+  The post-advance notice. New walk-ins are answered with View Now / View Later
+  (later cards wait in My Office). It also reports walk-ins who gave up while
+  you were busy, and fighters who left the gym — quit, or lured away by a bigger
+  opportunity. The cost of neglect is made visible.
 */
 
 import { useGame } from '../state/GameContext';
+import { fighterFullName } from '../game/fighters';
+import type { Departure } from '../game/departures';
 import './ArrivalNotice.css';
+
+function departureLine(d: Departure): string {
+  const name = fighterFullName(d.entry.fighter);
+  return d.reason === 'left_for_opportunity'
+    ? `${name} left for a bigger opportunity.`
+    : `${name} lost faith and walked away.`;
+}
 
 export function ArrivalNotice() {
   const { arrival, viewArrivalsNow, dismissArrival } = useGame();
   if (!arrival) return null;
 
-  const { arrived, expired } = arrival;
+  const { arrived, expired, departed } = arrival;
   const hasArrivals = arrived.length > 0;
+
+  const expiredLine =
+    expired.length === 0
+      ? null
+      : expired.length === 1
+        ? 'One who’d been waiting gave up and found another gym.'
+        : `${expired.length} who’d been waiting gave up and found other gyms.`;
 
   return (
     <div className="arrival" role="alert">
@@ -28,12 +45,13 @@ export function ArrivalNotice() {
               ? 'Someone walked in looking for a gym.'
               : `${arrived.length} fighters walked in looking for a gym.`}
           </p>
-          {expired.length > 0 && (
-            <p className="arrival__sub">
-              {expired.length === 1
-                ? 'One who’d been waiting gave up and found another gym.'
-                : `${expired.length} who’d been waiting gave up and found other gyms.`}
-            </p>
+          {expiredLine && <p className="arrival__sub">{expiredLine}</p>}
+          {departed.length > 0 && (
+            <ul className="arrival__departures">
+              {departed.map((d) => (
+                <li key={d.entry.fighter.id}>{departureLine(d)}</li>
+              ))}
+            </ul>
           )}
           <div className="arrival__actions">
             <button className="arrival__btn arrival__btn--now" onClick={viewArrivalsNow}>
@@ -47,11 +65,14 @@ export function ArrivalNotice() {
       ) : (
         <>
           <p className="arrival__eyebrow">While you were busy</p>
-          <p className="arrival__line">
-            {expired.length === 1
-              ? 'A waiting fighter gave up and found another gym.'
-              : `${expired.length} waiting fighters gave up and found other gyms.`}
-          </p>
+          {expiredLine && <p className="arrival__line">{expiredLine}</p>}
+          {departed.length > 0 && (
+            <ul className="arrival__departures">
+              {departed.map((d) => (
+                <li key={d.entry.fighter.id}>{departureLine(d)}</li>
+              ))}
+            </ul>
+          )}
           <div className="arrival__actions">
             <button className="arrival__btn" onClick={dismissArrival}>
               Noted

@@ -11,11 +11,13 @@ import type { CityId } from '../game/cities';
 import { getCity } from '../game/cities';
 import type { RegionKey } from '../game/regions';
 import type { Appearance } from '../game/appearance';
-import type { Fighter } from '../game/fighters';
 import type { WalkIn } from '../game/walkins';
+import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
+
+export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export const MANAGER_START_AGE = 25;
 /** The gym starts with twenty lockers — its primary resource and constraint. */
@@ -26,14 +28,6 @@ export interface Manager {
   /** Fixed at 25 in every run, per the bible. */
   age: number;
   appearance: Appearance;
-}
-
-export interface RosterEntry {
-  fighter: Fighter;
-  /** Locker holders develop fully; others train in limited mode (Phase 4/5). */
-  hasLocker: boolean;
-  /** Day-count when he joined the gym. */
-  joinedDayCount: number;
 }
 
 export interface GameSave {
@@ -80,8 +74,9 @@ export function lockersUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 1 : 0), 0);
 }
 
-/** Bring an older save forward. v2 lacked roster/walk-ins; seed them empty.
-    Pre-v2 shell saves can't be resumed meaningfully — drop them. */
+/** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
+    tiers (normalized to the default here). Pre-v2 shell saves can't be resumed
+    meaningfully — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -94,13 +89,16 @@ function migrate(raw: unknown): GameSave | null {
     typeof data.cityId === 'string' &&
     typeof data.dayCount === 'number'
   ) {
+    const roster: RosterEntry[] = Array.isArray(data.roster)
+      ? data.roster.map((e) => ({ ...e, tier: e.tier ?? DEFAULT_TIER }))
+      : [];
     return {
       version: SAVE_VERSION,
       gymName: data.gymName,
       manager: data.manager,
       cityId: data.cityId as CityId,
       dayCount: data.dayCount,
-      roster: Array.isArray(data.roster) ? data.roster : [],
+      roster,
       walkIns: Array.isArray(data.walkIns) ? data.walkIns : [],
       createdAt: data.createdAt ?? Date.now(),
       updatedAt: data.updatedAt ?? Date.now(),

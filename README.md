@@ -50,9 +50,22 @@ placeholders, plus day/week time advancement and a real Continue save.
   one, or turn him away. Accepted fighters join a roster the Locker Room shows
   a live count of.
 
-Deferred to upcoming phases: the 3-exchange interview, fighter profiles and
-locker hierarchy (Phase 4), training (Phase 5), the rest of My Office (Phase 6),
-and the fight engine (Phase 8).
+**Phase 4 — Locker Room & Fighter Management.**
+
+- **Fighter profiles** — portrait, vitals, attribute gauges, and the traits
+  you've learned. Hidden traits stay hidden; the profile only hints there's
+  more to a man than you've seen.
+- **Locker allocation** — the 20-locker cap bites: give and pull lockers, and
+  you can't exceed twenty without freeing one first.
+- **Hierarchy** — Must Keep / Watch List / Chopping Block, set per fighter.
+- **Departures** — fighters quit when neglected (no locker, on the block);
+  genuine talent left lockerless may leave for a better opportunity; cutting a
+  man plays out two ways — some vanish, some stay to earn it back. The
+  post-advance notice reports who left and why.
+
+Deferred to upcoming phases: the 3-exchange interview, training (Phase 5), the
+rest of My Office (Phase 6), the Calendar (Phase 7), and the fight engine
+(Phase 8).
 
 ---
 
@@ -99,6 +112,8 @@ src/
     statements.ts    Voiced walk-in statements + First Impressions
     fighters.ts      Fighter generation — the procedural heart
     walkins.ts       Walk-in scheduling, patience, expiry
+    roster.ts        Roster entries + the three hierarchy tiers
+    departures.ts    Quit / leave-for-opportunity / cut logic
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)
@@ -106,11 +121,12 @@ src/
     backgrounds.tsx  Background REGISTRY — asset-replacement seam
     portraits.tsx    Portrait REGISTRY — asset-replacement seam
   components/        Button, TimeControls, RegionalGymBackground, Portrait,
-                     WalkInCard, ArrivalNotice, glyphs
+                     WalkInCard, ArrivalNotice, Toast, AttributeBar, TraitChip
   screens/
-    HomeScreen, SettingsScreen, GymScreen, WalkInViewer
+    HomeScreen, SettingsScreen, GymScreen, WalkInViewer, FighterProfile
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
-  rooms/             RoomRouter, OfficeRoom (walk-in desk), RoomPlaceholder
+  rooms/             RoomRouter, OfficeRoom (walk-in desk),
+                     LockerRoom (roster + hierarchy), RoomPlaceholder
   styles/            theme.css (design tokens) + global.css
 ```
 
