@@ -9,8 +9,8 @@
 */
 
 import { useEffect, useState } from 'react';
-import { useGame, lockersUsed } from '../state/GameContext';
-import { LOCKER_CAP } from '../state/persistence';
+import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
+import { LOCKER_CAP, NO_LOCKER_CAP } from '../state/persistence';
 import { TIER_META, TIER_ORDER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
@@ -32,6 +32,8 @@ export function LockerRoom() {
   if (!save) return null;
   const used = lockersUsed(save);
   const lockersFull = used >= LOCKER_CAP;
+  const noLockerCount = noLockerUsed(save);
+  const noLockerFull = noLockerCount >= NO_LOCKER_CAP;
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="Locker Room">
@@ -56,8 +58,7 @@ export function LockerRoom() {
                 />
               </span>
               <span className="locker__meter-label">
-                {used} / {LOCKER_CAP} lockers · {save.roster.length}{' '}
-                {save.roster.length === 1 ? 'fighter' : 'fighters'}
+                {used} / {LOCKER_CAP} lockers · {noLockerCount} / {NO_LOCKER_CAP} without
               </span>
             </div>
           </header>
@@ -91,6 +92,7 @@ export function LockerRoom() {
                           entry={entry}
                           dayCount={save.dayCount}
                           lockersFull={lockersFull}
+                          noLockerFull={noLockerFull}
                         />
                       ))}
                     </ul>
@@ -109,10 +111,12 @@ function FighterRow({
   entry,
   dayCount,
   lockersFull,
+  noLockerFull,
 }: {
   entry: RosterEntry;
   dayCount: number;
   lockersFull: boolean;
+  noLockerFull: boolean;
 }) {
   const { openProfile, setLocker, setTier, cutFighter } = useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
@@ -165,7 +169,12 @@ function FighterRow({
         </div>
 
         {entry.hasLocker ? (
-          <button className="frow__act" onClick={() => setLocker(f.id, false)}>
+          <button
+            className="frow__act"
+            disabled={noLockerFull}
+            onClick={() => setLocker(f.id, false)}
+            title={noLockerFull ? 'No room to carry another without a locker' : undefined}
+          >
             Take Locker
           </button>
         ) : (

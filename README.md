@@ -46,6 +46,10 @@ placeholders, plus day/week time advancement and a real Continue save.
 - **Notification** after advancing time → View Now / View Later; later cards
   queue in **My Office** (door badge shows the count). Walk-ins carry
   **patience** — ignore one too long and he finds another gym.
+- **Frequency** follows a novelty curve: an opening-weeks bump (~1.2/wk) that
+  tapers to a quiet baseline (~1 every 2.4 wks) for an unknown gym. A
+  reputation term is wired in and zeroed until Phase 6, where it scales the
+  rate back up as the gym earns a name.
 - **The decision** — give a locker (respects the 20-locker cap), train without
   one, or turn him away. Accepted fighters join a roster the Locker Room shows
   a live count of.
@@ -56,7 +60,9 @@ placeholders, plus day/week time advancement and a real Continue save.
   you've learned. Hidden traits stay hidden; the profile only hints there's
   more to a man than you've seen.
 - **Locker allocation** — the 20-locker cap bites: give and pull lockers, and
-  you can't exceed twenty without freeing one first.
+  you can't exceed twenty without freeing one first. A separate **no-locker
+  cap** (6) limits hangers-on, so you can't stockpile fighters in limbo just to
+  scout their attributes.
 - **Hierarchy** — Must Keep / Watch List / Chopping Block, set per fighter.
 - **Departures** — fighters quit when neglected (no locker, on the block);
   genuine talent left lockerless may leave for a better opportunity; cutting a

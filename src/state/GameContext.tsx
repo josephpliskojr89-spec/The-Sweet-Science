@@ -37,7 +37,9 @@ import {
   writeSave,
   clearSave,
   lockersUsed,
+  noLockerUsed,
   LOCKER_CAP,
+  NO_LOCKER_CAP,
   type GameSave,
   type NewGameDraft,
 } from './persistence';
@@ -49,6 +51,11 @@ export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 /** Reputation-driven quality of the walk-in pool. New gym = low; rises later. */
 function qualityFor(_save: GameSave): number {
   return 0.2;
+}
+
+/** Gym reputation 0..1. Wired into walk-in frequency; real value lands Phase 6. */
+function reputationFor(_save: GameSave): number {
+  return 0;
 }
 
 export interface AdvanceNotice {
@@ -95,6 +102,7 @@ interface GameContextValue {
   clearFlash: () => void;
 
   lockerCap: number;
+  noLockerCap: number;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -162,7 +170,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       // Pure computation, once, in the handler — not in an updater.
       const aged = ageWalkIns(prev.walkIns, days);
-      const fresh = rollNewWalkIns(days, prev.cityId, qualityFor(prev));
+      const fresh = rollNewWalkIns(days, {
+        cityId: prev.cityId,
+        dayCount: prev.dayCount,
+        reputation: reputationFor(prev),
+        quality: qualityFor(prev),
+      });
       const dep = evaluateDepartures(prev.roster, days);
 
       commit({
@@ -208,6 +221,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const target = prev.walkIns.find((w) => w.fighter.id === id);
       if (!target) return;
 
+      // Capacity guards (the UI also disables these, but never trust the UI).
+      if (decision === 'locker' && lockersUsed(prev) >= LOCKER_CAP) {
+        setFlash('All twenty lockers are full. Free one before you give another.');
+        return;
+      }
+      if (decision === 'no_locker' && noLockerUsed(prev) >= NO_LOCKER_CAP) {
+        setFlash('No room to carry another fighter without a locker.');
+        return;
+      }
+
       const walkIns = prev.walkIns.filter((w) => w.fighter.id !== id);
       let roster = prev.roster;
       if (decision === 'locker' || decision === 'no_locker') {
@@ -241,6 +264,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       if (hasLocker && lockersUsed(prev) >= LOCKER_CAP) {
         setFlash('All twenty lockers are full. Free one before you give another.');
+        return;
+      }
+      if (!hasLocker && noLockerUsed(prev) >= NO_LOCKER_CAP) {
+        setFlash('No room to carry another fighter without a locker. Cut someone first.');
         return;
       }
       const roster = prev.roster.map((e) =>
@@ -319,6 +346,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       cutFighter,
       clearFlash,
       lockerCap: LOCKER_CAP,
+      noLockerCap: NO_LOCKER_CAP,
     }),
     [
       screen,
@@ -362,5 +390,5 @@ export function useGame(): GameContextValue {
   return ctx;
 }
 
-export { clearSave, lockersUsed };
+export { clearSave, lockersUsed, noLockerUsed };
 export type { DepartureReason };

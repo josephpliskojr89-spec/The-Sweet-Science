@@ -8,8 +8,8 @@
 */
 
 import { useEffect, useState } from 'react';
-import { useGame, lockersUsed } from '../state/GameContext';
-import { LOCKER_CAP } from '../state/persistence';
+import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
+import { LOCKER_CAP, NO_LOCKER_CAP } from '../state/persistence';
 import { TIER_META, TIER_ORDER, type HierarchyTier } from '../game/roster';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../game/weightClasses';
@@ -54,6 +54,7 @@ export function FighterProfile() {
   const cls = WEIGHT_CLASSES[f.weightClass];
   const home = getCity(f.homeCityId);
   const lockersFull = lockersUsed(save) >= LOCKER_CAP;
+  const noLockerFull = noLockerUsed(save) >= NO_LOCKER_CAP;
   const days = save.dayCount - entry.joinedDayCount;
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
 
@@ -148,7 +149,12 @@ export function FighterProfile() {
 
                 <div className="fp__action-row">
                   {entry.hasLocker ? (
-                    <button className="fp__act" onClick={() => setLocker(f.id, false)}>
+                    <button
+                      className="fp__act"
+                      disabled={noLockerFull}
+                      onClick={() => setLocker(f.id, false)}
+                      title={noLockerFull ? 'No room to carry another without a locker' : undefined}
+                    >
                       Take his locker
                     </button>
                   ) : (

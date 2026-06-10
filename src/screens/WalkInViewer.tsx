@@ -11,7 +11,7 @@
 */
 
 import { useEffect } from 'react';
-import { useGame, lockersUsed } from '../state/GameContext';
+import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
 import { WalkInCard } from '../components/WalkInCard/WalkInCard';
 import './WalkInViewer.css';
 
@@ -23,6 +23,7 @@ export function WalkInViewer() {
     decideWalkIn,
     closeWalkInViewer,
     lockerCap,
+    noLockerCap,
   } = useGame();
 
   const done = !viewerIds || viewerIndex >= viewerIds.length;
@@ -41,6 +42,8 @@ export function WalkInViewer() {
   const total = viewerIds.length;
   const lockersFull = lockersUsed(save) >= lockerCap;
   const lockersLeft = lockerCap - lockersUsed(save);
+  const noLockerFull = noLockerUsed(save) >= noLockerCap;
+  const noLockerLeft = noLockerCap - noLockerUsed(save);
 
   return (
     <div className="wiv" role="dialog" aria-label="Walk-in">
@@ -77,10 +80,16 @@ export function WalkInViewer() {
 
             <button
               className="wiv__btn"
+              disabled={noLockerFull}
               onClick={() => decideWalkIn(currentId, 'no_locker')}
+              title={noLockerFull ? 'No room to carry another without a locker' : undefined}
             >
               <span className="wiv__btn-main">Train without a locker</span>
-              <span className="wiv__btn-sub">provisional · limited development</span>
+              <span className="wiv__btn-sub">
+                {noLockerFull
+                  ? 'no room — gym is full'
+                  : `provisional · ${noLockerLeft} of ${noLockerCap} spots`}
+              </span>
             </button>
 
             <button

@@ -22,6 +22,9 @@ export const SAVE_VERSION = 4;
 export const MANAGER_START_AGE = 25;
 /** The gym starts with twenty lockers — its primary resource and constraint. */
 export const LOCKER_CAP = 20;
+/** How many hopefuls you can carry without a locker. Keeps the gym from
+    becoming a free scouting buffer — you can't hold everyone in limbo. */
+export const NO_LOCKER_CAP = 6;
 
 export interface Manager {
   name: string;
@@ -72,6 +75,11 @@ export function regionOf(save: GameSave): RegionKey {
 /** Locker holders currently in the gym. */
 export function lockersUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 1 : 0), 0);
+}
+
+/** Fighters currently carried without a locker. */
+export function noLockerUsed(save: GameSave): number {
+  return save.roster.reduce((n, e) => n + (e.hasLocker ? 0 : 1), 0);
 }
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
