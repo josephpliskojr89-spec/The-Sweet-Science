@@ -50,6 +50,12 @@ export interface Fighter {
   attributes: Attributes;
   /** Hidden ceiling — never shown directly. */
   potential: number;
+  /** Public reputation 0..100 — how known/regarded he is in the sport, separate
+      from gym-internal standing. A walk-in prospect is essentially unknown.
+      The press system (Phase 9) reads and writes this; fights move it. It sits
+      mostly unused until then but must exist from the start (bible v2.8,
+      Architectural Commitments). */
+  publicReputation: number;
   /** Hinted at signing. */
   visibleTraits: TraitKey[];
   /** Concealed until pressure reveals them (Phase 8). */
@@ -314,6 +320,12 @@ export function generateFighter(opts: GenerateFighterOptions): Fighter {
   const { visible, hidden } = assignTraits(quality);
   const { attributes, potential } = generateAttributes(quality, archetype);
 
+  // A walk-in is a nobody to the wider sport. A handful arrive with a whisper
+  // of a name — a decent amateur run, a gym story that traveled a few blocks.
+  const publicReputation = Math.round(
+    Math.random() < 0.15 ? rand(5, 14) : rand(0, 5),
+  );
+
   return {
     id: makeId(),
     firstName: name.first,
@@ -327,6 +339,7 @@ export function generateFighter(opts: GenerateFighterOptions): Fighter {
     appearance,
     attributes,
     potential,
+    publicReputation,
     visibleTraits: visible,
     hiddenTraits: hidden,
     statement: generateStatement([...visible, ...hidden]),

@@ -22,6 +22,7 @@ import {
   type ReactNode,
 } from 'react';
 import { advance, TIME_STEP_DAYS, type TimeStep } from '../game/time';
+import { emitGameEvent } from '../game/events';
 import { type Fighter, fighterFullName } from '../game/fighters';
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
@@ -134,6 +135,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setArrival(null);
     setViewerIds(null);
     setProfileId(null);
+    setFlash(null);
     setScreen('home');
     setCanContinue(loadSave() !== null);
   }, []);
@@ -184,6 +186,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         walkIns: [...aged.surviving, ...fresh],
         roster: dep.staying,
       });
+
+      for (const d of dep.departed) {
+        emitGameEvent({
+          type: d.reason === 'left_for_opportunity' ? 'fighter_left_for_opportunity' : 'fighter_quit',
+          fighterId: d.entry.fighter.id,
+        });
+      }
 
       if (fresh.length || aged.expired.length || dep.departed.length) {
         setArrival({
@@ -241,6 +250,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
           joinedDayCount: prev.dayCount,
         };
         roster = [...prev.roster, entry];
+        emitGameEvent({ type: 'walkin_accepted', fighterId: id, withLocker: decision === 'locker' });
+      } else {
+        emitGameEvent({ type: 'walkin_turned_away', fighterId: id });
       }
 
       commit({ ...prev, walkIns, roster });
@@ -274,6 +286,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         e.fighter.id === id ? { ...e, hasLocker } : e,
       );
       commit({ ...prev, roster });
+      emitGameEvent({ type: hasLocker ? 'locker_granted' : 'locker_taken', fighterId: id });
     },
     [commit],
   );
@@ -299,6 +312,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       const name = fighterFullName(entry.fighter);
       const outcome = resolveCut(entry);
+      emitGameEvent({ type: 'fighter_cut', fighterId: id, stayed: outcome === 'stay' });
 
       if (outcome === 'vanish') {
         commit({ ...prev, roster: prev.roster.filter((e) => e.fighter.id !== id) });

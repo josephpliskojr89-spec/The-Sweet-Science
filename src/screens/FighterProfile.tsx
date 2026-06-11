@@ -30,21 +30,23 @@ const ATTR_ROWS: Array<[string, keyof import('../game/fighters').Attributes]> = 
 ];
 
 export function FighterProfile() {
-  const { save, profileId, closeProfile, setLocker, setTier, cutFighter } = useGame();
+  const { save, profileId, viewerIds, closeProfile, setLocker, setTier, cutFighter } =
+    useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
 
   useEffect(() => {
     setConfirmingCut(false);
   }, [profileId]);
 
+  // Esc closes the profile — unless the walk-in viewer is layered above us.
   useEffect(() => {
-    if (!profileId) return;
+    if (!profileId || viewerIds !== null) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeProfile();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [profileId, closeProfile]);
+  }, [profileId, viewerIds, closeProfile]);
 
   if (!save || !profileId) return null;
   const entry = save.roster.find((e) => e.fighter.id === profileId);
@@ -171,7 +173,13 @@ export function FighterProfile() {
                   {confirmingCut ? (
                     <span className="fp__confirm">
                       <span className="fp__confirm-q">Cut him loose?</span>
-                      <button className="fp__cut-yes" onClick={() => cutFighter(f.id)}>
+                      <button
+                        className="fp__cut-yes"
+                        onClick={() => {
+                          cutFighter(f.id);
+                          setConfirmingCut(false);
+                        }}
+                      >
                         Confirm
                       </button>
                       <button className="fp__cut-no" onClick={() => setConfirmingCut(false)}>

@@ -25,15 +25,18 @@ const FUTURE_DESK = [
 ];
 
 export function OfficeRoom() {
-  const { save, closeRoom, openWalkIns } = useGame();
+  const { save, closeRoom, openWalkIns, profileId, viewerIds } = useGame();
 
+  // Esc steps back to the floor — but only when this room is the top layer.
+  const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
+    if (overlayOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeRoom();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [closeRoom]);
+  }, [closeRoom, overlayOpen]);
 
   if (!save) return null;
   const queue = save.walkIns;

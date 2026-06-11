@@ -8,8 +8,10 @@ whoever shows up.
 fixed champions. Every save generates a unique boxing ecosystem. This is the
 foundational commitment of the project — every system serves it.
 
-> Built from the Game Bible v2.7. This repository is being implemented in the
-> bible's 8-phase build order.
+> Built from the Game Bible v2.8. This repository is being implemented in the
+> bible's 9-phase build order. The v2.8 architectural commitments — fighter
+> public reputation and an event-driven trait bus — are in place ahead of the
+> systems that use them.
 
 ---
 
@@ -105,6 +107,7 @@ src/
   data/            Provided databases (version-controlled assets)
     names.json       Fighter/coach name generation database
     gyms.json        Competing-gym database (used in Phase 6)
+    press_clippings.json  Press template database (used in Phase 9)
   game/            World data + rules (the procedural source of truth)
     regions.ts       4 regions + palettes that drive the gym backgrounds
     cities.ts        15 cities: region, archetype, descriptions (Vegas = destination)
@@ -120,6 +123,7 @@ src/
     walkins.ts       Walk-in scheduling, patience, expiry
     roster.ts        Roster entries + the three hierarchy tiers
     departures.ts    Quit / leave-for-opportunity / cut logic
+    events.ts        Game event bus + trait-response stub (bible v2.8)
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)

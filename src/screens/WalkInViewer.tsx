@@ -22,22 +22,31 @@ export function WalkInViewer() {
     viewerIndex,
     decideWalkIn,
     closeWalkInViewer,
+    openWalkIns,
     lockerCap,
     noLockerCap,
   } = useGame();
 
   const done = !viewerIds || viewerIndex >= viewerIds.length;
 
-  // Close once the sequence is worked through.
+  const currentId = done ? null : viewerIds[viewerIndex];
+  const walkIn =
+    currentId && save
+      ? save.walkIns.find((w) => w.fighter.id === currentId)
+      : undefined;
+
+  // Close once the sequence is worked through; skip cards that vanished from
+  // the queue (expired or decided elsewhere) so the viewer never stalls.
   useEffect(() => {
-    if (viewerIds && viewerIndex >= viewerIds.length) closeWalkInViewer();
-  }, [viewerIds, viewerIndex, closeWalkInViewer]);
+    if (!viewerIds) return;
+    if (viewerIndex >= viewerIds.length) {
+      closeWalkInViewer();
+    } else if (currentId && !walkIn) {
+      openWalkIns(viewerIds, viewerIndex + 1);
+    }
+  }, [viewerIds, viewerIndex, currentId, walkIn, closeWalkInViewer, openWalkIns]);
 
-  if (!save || done) return null;
-
-  const currentId = viewerIds[viewerIndex];
-  const walkIn = save.walkIns.find((w) => w.fighter.id === currentId);
-  if (!walkIn) return null; // decided/expired between renders
+  if (!save || done || !currentId || !walkIn) return null;
 
   const total = viewerIds.length;
   const lockersFull = lockersUsed(save) >= lockerCap;

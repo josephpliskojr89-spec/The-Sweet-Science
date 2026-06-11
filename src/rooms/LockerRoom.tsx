@@ -19,15 +19,19 @@ import { TraitChip } from '../components/TraitChip';
 import './LockerRoom.css';
 
 export function LockerRoom() {
-  const { save, closeRoom } = useGame();
+  const { save, closeRoom, profileId, viewerIds } = useGame();
 
+  // Esc steps back to the floor — but only when this room is the top layer.
+  // A profile or walk-in viewer above us owns the key while it's open.
+  const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
+    if (overlayOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeRoom();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [closeRoom]);
+  }, [closeRoom, overlayOpen]);
 
   if (!save) return null;
   const used = lockersUsed(save);

@@ -17,7 +17,7 @@ import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 export const MANAGER_START_AGE = 25;
 /** The gym starts with twenty lockers — its primary resource and constraint. */
@@ -82,9 +82,14 @@ export function noLockerUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 0 : 1), 0);
 }
 
+/** Pre-v5 fighters lack publicReputation; backfill the unknown-prospect value. */
+function migrateFighter<T extends { publicReputation?: number }>(f: T): T {
+  return { ...f, publicReputation: f.publicReputation ?? 2 };
+}
+
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
-    tiers (normalized to the default here). Pre-v2 shell saves can't be resumed
-    meaningfully — drop them. */
+    tiers; v4 lacked fighter publicReputation. Pre-v2 shell saves can't be
+    resumed meaningfully — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -98,7 +103,14 @@ function migrate(raw: unknown): GameSave | null {
     typeof data.dayCount === 'number'
   ) {
     const roster: RosterEntry[] = Array.isArray(data.roster)
-      ? data.roster.map((e) => ({ ...e, tier: e.tier ?? DEFAULT_TIER }))
+      ? data.roster.map((e) => ({
+          ...e,
+          tier: e.tier ?? DEFAULT_TIER,
+          fighter: migrateFighter(e.fighter),
+        }))
+      : [];
+    const walkIns: WalkIn[] = Array.isArray(data.walkIns)
+      ? data.walkIns.map((w) => ({ ...w, fighter: migrateFighter(w.fighter) }))
       : [];
     return {
       version: SAVE_VERSION,
@@ -107,7 +119,7 @@ function migrate(raw: unknown): GameSave | null {
       cityId: data.cityId as CityId,
       dayCount: data.dayCount,
       roster,
-      walkIns: Array.isArray(data.walkIns) ? data.walkIns : [],
+      walkIns,
       createdAt: data.createdAt ?? Date.now(),
       updatedAt: data.updatedAt ?? Date.now(),
     };

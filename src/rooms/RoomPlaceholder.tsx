@@ -21,16 +21,19 @@ interface Props {
 }
 
 export function RoomPlaceholder({ roomKey, summary }: Props) {
-  const { closeRoom } = useGame();
+  const { closeRoom, profileId, viewerIds } = useGame();
   const room = ROOMS[roomKey];
 
+  // Esc steps back to the floor — but only when this room is the top layer.
+  const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
+    if (overlayOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeRoom();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [closeRoom]);
+  }, [closeRoom, overlayOpen]);
 
   return (
     <div className="room-screen worn" role="dialog" aria-label={room.name}>

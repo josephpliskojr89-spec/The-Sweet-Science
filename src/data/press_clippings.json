@@ -1,0 +1,428 @@
+{
+  "meta": {
+    "name": "The Sweet Science — Press Clipping Template Database",
+    "version": "1.0",
+    "description": "Procedural press templates for the living world system. Templates are written in the voice of 1975 local and regional sportswriters. Tone follows the game bible commentary guidance: human, tense, physical, occasionally poetic, never overwritten. Claude Code should select templates by category and trigger condition, fill variables from game state, and avoid repeating a template for the same fighter within a configurable cooldown window (suggested: 10 in-game weeks per template id).",
+    "variable_glossary": {
+      "{fighter_first}": "Fighter first name",
+      "{fighter_last}": "Fighter last name",
+      "{fighter_full}": "Full name with nickname, e.g. Anthony 'Nicky' Russo",
+      "{nickname}": "Fighter nickname only",
+      "{opponent_full}": "Opponent full name",
+      "{opponent_last}": "Opponent last name",
+      "{gym_name}": "Player gym name",
+      "{rival_gym}": "Rival gym name",
+      "{rival_manager}": "Rival gym manager name",
+      "{coach_name}": "Coach name",
+      "{city}": "City name",
+      "{neighborhood}": "Neighborhood or district flavor string from city data",
+      "{venue}": "Card venue name",
+      "{weight_class}": "Weight class",
+      "{record}": "Fighter record, e.g. 12-1",
+      "{opponent_record}": "Opponent record",
+      "{round}": "Round number of stoppage",
+      "{method}": "Method of victory, e.g. unanimous decision, TKO",
+      "{ranking}": "Current ranking number",
+      "{age}": "Fighter age",
+      "{purse}": "Era-appropriate purse figure",
+      "{champion_full}": "Current division champion full name",
+      "{writer_name}": "Procedurally generated writer byline"
+    },
+    "tone_key": {
+      "straight": "Neutral beat reporting. The default voice.",
+      "homer": "Local writer favorable to hometown fighters and gyms.",
+      "skeptic": "Doubting voice. Useful for trait-interaction hooks later.",
+      "hype": "Building a fighter up. Useful for trait-interaction hooks later.",
+      "color": "Atmosphere and texture pieces. No mechanical weight.",
+      "rumor": "Unverified items. May be true, false, or premature."
+    },
+    "implementation_notes": [
+      "Templates marked future_hook: true reference systems not yet built (press opinion values, trait responses). Safe to use now as flavor; they become mechanical later.",
+      "Byline rotation: assign 2-4 persistent writer names per city at world generation so clippings feel authored, not generated.",
+      "Mix lengths. A world where every clipping is the same size feels procedural. Short items should appear more often than long ones.",
+      "Player fighters should NOT appear in every press cycle. Items about rival gyms and unrelated fighters are what make the world feel alive."
+    ]
+  },
+  "categories": {
+
+    "player_fight_results_win": [
+      {
+        "id": "win_dec_001",
+        "trigger": "player fighter wins by decision",
+        "tone": "straight",
+        "text": "{fighter_full} took a {method} over {opponent_full} at {venue} Saturday night, running his record to {record}. It was not the kind of fight anyone will be talking about next month, but it was professional work, and {fighter_last} did what winning fighters do — he made the other man fight his fight."
+      },
+      {
+        "id": "win_dec_002",
+        "trigger": "player fighter wins by decision, close scorecards",
+        "tone": "straight",
+        "text": "The judges saw it for {fighter_full} over {opponent_full}, though there were people at {venue} who left believing otherwise. Close fights get decided by small things — a stronger final round, a cleaner jab, a fighter who looked like he wanted it more when both men were tired. {fighter_last} had those small things Saturday."
+      },
+      {
+        "id": "win_dec_003",
+        "trigger": "player fighter wins by decision, dominant",
+        "tone": "homer",
+        "text": "It was a boxing lesson at {venue}. {fighter_full} won nearly every minute of every round against {opponent_full}, and by the eighth the only question was whether {opponent_last}'s corner would do the merciful thing. They did not, and the scorecards said the rest. {gym_name} has something in this kid."
+      },
+      {
+        "id": "win_ko_001",
+        "trigger": "player fighter wins by KO/TKO",
+        "tone": "straight",
+        "text": "{fighter_full} stopped {opponent_full} in the {round} round at {venue} Saturday. The end came quick — a fighter is fine until he is not, and {opponent_last} was not. {fighter_last} moves to {record} and the people who follow the {weight_class} division in this part of the country are starting to write his name down."
+      },
+      {
+        "id": "win_ko_002",
+        "trigger": "player fighter wins by early KO",
+        "tone": "color",
+        "text": "Some nights you pay for a full evening of boxing and get two minutes of it. The crowd at {venue} barely had their coats off when {fighter_full} put {opponent_full} on the canvas for good. Nobody asked for a refund. There is something about a finish like that which sends a room home satisfied."
+      },
+      {
+        "id": "win_ko_003",
+        "trigger": "player fighter wins by late stoppage after hard fight",
+        "tone": "straight",
+        "text": "For {round} rounds Saturday night, {fighter_full} and {opponent_full} took turns asking each other hard questions. {fighter_last} answered the last one. The stoppage came with {opponent_last} on his feet but no longer defending himself, and the referee did his job. Fights like this one make careers and shorten them at the same time."
+      },
+      {
+        "id": "win_upset_001",
+        "trigger": "player fighter wins as underdog",
+        "tone": "straight",
+        "text": "Nobody gave {fighter_full} much of a chance against {opponent_full}, including, reportedly, some of the people paid to know better. The scorecards at {venue} disagreed. {fighter_last}, now {record}, fought like a man who had read his own write-ups and taken them personally."
+      },
+      {
+        "id": "win_upset_002",
+        "trigger": "player fighter wins major upset",
+        "tone": "homer",
+        "text": "Remember where you were. {fighter_full} of {gym_name} beat {opponent_full} Saturday night at {venue}, and if you were not there you will spend years pretending you were. {opponent_last} came in at {opponent_record} and left with the kind of loss that changes how a man gets introduced for the rest of his career."
+      }
+    ],
+
+    "player_fight_results_loss": [
+      {
+        "id": "loss_dec_001",
+        "trigger": "player fighter loses by decision",
+        "tone": "straight",
+        "text": "{opponent_full} handed {fighter_full} a loss at {venue} Saturday, and it was the right call. {fighter_last} had his moments — most fighters do — but the night belonged to the other man. The question now is what {fighter_last} and the people at {gym_name} do with it. A loss is a fact. What it means is a decision."
+      },
+      {
+        "id": "loss_dec_002",
+        "trigger": "player fighter loses close/controversial decision",
+        "tone": "homer",
+        "text": "Ask ten people at {venue} who won between {fighter_full} and {opponent_full} and you will get an argument worth the price of admission. The judges gave it to {opponent_last}. This writer scored it differently, for whatever that is worth, which in this sport is nothing. {fighter_last} should not change a thing except his luck."
+      },
+      {
+        "id": "loss_ko_001",
+        "trigger": "player fighter loses by KO/TKO",
+        "tone": "straight",
+        "text": "{opponent_full} stopped {fighter_full} in the {round} round Saturday night. There is no kind way to write that sentence and no kind way to read it. {fighter_last} was caught with a shot he did not see, which is how it usually happens, and the rest was the referee doing his job. What this means for the kid from {gym_name} is a question for another day."
+      },
+      {
+        "id": "loss_ko_002",
+        "trigger": "player fighter badly stopped, was favored",
+        "tone": "skeptic",
+        "future_hook": true,
+        "text": "The people who had been talking up {fighter_full} got quiet Saturday night. {opponent_full} did not just beat him at {venue} — he exposed him, and there is a difference. Every prospect looks like a champion until somebody asks him the hard question. {fighter_last} did not have an answer. Maybe he finds one. Plenty never do."
+      },
+      {
+        "id": "loss_gallant_001",
+        "trigger": "player fighter loses but performs admirably against superior opponent",
+        "tone": "straight",
+        "text": "{fighter_full} lost to {opponent_full} Saturday, and somehow left {venue} with more believers than he walked in with. He was outgunned and knew it and fought anyway, the way you hope a fighter will. Records show wins and losses. They do not show nights like this one, which is a flaw in how records work."
+      }
+    ],
+
+    "other_gym_results": [
+      {
+        "id": "world_result_001",
+        "trigger": "rival gym fighter wins on local card",
+        "tone": "straight",
+        "text": "{opponent_full}, who trains out of {rival_gym}, picked up a {method} win at {venue} over the weekend. {rival_manager}'s operation has been quietly putting together a respectable stretch, and the local {weight_class} picture is getting more interesting because of it."
+      },
+      {
+        "id": "world_result_002",
+        "trigger": "rival gym fighter wins impressively",
+        "tone": "straight",
+        "text": "Keep an eye on {opponent_full} out of {rival_gym}. He stopped his man in {round} rounds Saturday and made it look like a sparring session. {rival_manager} has been telling anyone who will listen that he has a real one. Saturday, for the first time, he looked right."
+      },
+      {
+        "id": "world_result_003",
+        "trigger": "rival gym fighter loses",
+        "tone": "straight",
+        "text": "A rough weekend for {rival_gym}. {opponent_full} dropped a {method} at {venue}, and what looked like a promising run now looks like a question mark. {rival_manager} told reporters afterward that they would regroup. That is what managers say. Sometimes it is even true."
+      },
+      {
+        "id": "world_result_004",
+        "trigger": "fight between two non-player fighters, notable result",
+        "tone": "straight",
+        "text": "{opponent_full} and {fighter_full} put on the best fight of the night at {venue}, and neither one trains anywhere you have heard of, which is the way this sport works. The {weight_class} division in this region keeps producing fighters faster than anyone can keep track of them. Saturday was a reminder."
+      },
+      {
+        "id": "world_result_005",
+        "trigger": "regional contender defends position",
+        "tone": "straight",
+        "text": "{opponent_full} remains the man to beat in the regional {weight_class} picture after another workmanlike win Saturday. He is not exciting and he does not have to be. Somebody around here is going to have to figure him out, because the road through this division runs straight through him."
+      }
+    ],
+
+    "prospect_notices": [
+      {
+        "id": "prospect_001",
+        "trigger": "player fighter wins first 3-4 fights",
+        "tone": "straight",
+        "text": "A name to file away: {fighter_full}, fighting out of {gym_name}, is {record} since turning professional. It is early — it is always early — but the people who watch the club shows for a living have started staying in their seats for his fights, which around here counts as a standing ovation."
+      },
+      {
+        "id": "prospect_002",
+        "trigger": "player fighter generating local buzz",
+        "tone": "homer",
+        "text": "The regulars at {venue} have adopted {fighter_full}. The {nickname} business started in the crowd and stuck, the way the good ones do. He is {record}, he fights like he means it, and he is from here, which still matters in this city even if it does not matter anywhere else."
+      },
+      {
+        "id": "prospect_003",
+        "trigger": "rival gym has hot prospect",
+        "tone": "straight",
+        "text": "The prospect everyone in {city} is talking about this month trains at {rival_gym}. {opponent_full} is {opponent_record} and looks better every time out. {rival_manager} is bringing him along carefully, which is either patience or protection depending on who you ask. Both can be true."
+      },
+      {
+        "id": "prospect_004",
+        "trigger": "player fighter young and unbeaten, gaining attention",
+        "tone": "hype",
+        "future_hook": true,
+        "text": "This writer has seen a lot of {weight_class} fighters come through {city}, and most of them taught me nothing except patience. {fighter_full} is different. Write it down so you can say you read it here: the kid from {gym_name} is going to fight for something that matters someday, and it will not take as long as you think."
+      },
+      {
+        "id": "prospect_005",
+        "trigger": "player fighter unbeaten but untested",
+        "tone": "skeptic",
+        "future_hook": true,
+        "text": "{fighter_full} is {record}, and the record is doing a lot of work in that sentence. Look at who those wins came against. The kid may well be everything {gym_name} thinks he is, but nobody knows yet, including the kid. There is a difference between unbeaten and proven, and {city} fight crowds know it better than most."
+      }
+    ],
+
+    "rumor_column": [
+      {
+        "id": "rumor_001",
+        "trigger": "random ambient, rival gym instability",
+        "tone": "rumor",
+        "text": "AROUND THE GYMS: Word is things are tense over at {rival_gym}. Nobody will say anything on the record, which usually means there is something worth saying. {rival_manager} called the talk 'nonsense,' which is also what he would call it if it were true."
+      },
+      {
+        "id": "rumor_002",
+        "trigger": "random ambient, coach movement speculation",
+        "tone": "rumor",
+        "text": "AROUND THE GYMS: A well-traveled trainer was seen having a long lunch with people from {rival_gym} this week. Could be nothing. In this business a long lunch is never nothing."
+      },
+      {
+        "id": "rumor_003",
+        "trigger": "rival fighter unhappy, potential availability",
+        "tone": "rumor",
+        "text": "AROUND THE GYMS: They say {opponent_full} is not happy with how his career is being handled, and that he has said so in rooms where saying so gets repeated. Fighters and gyms split up the same way marriages do — slowly, then all at once."
+      },
+      {
+        "id": "rumor_004",
+        "trigger": "ambient, promoter activity in region",
+        "tone": "rumor",
+        "text": "AROUND THE GYMS: A promoter from out of town has been making calls about the local {weight_class} scene. When out-of-town money starts asking questions, it means somebody here is worth more than the local rate. The question is who."
+      },
+      {
+        "id": "rumor_005",
+        "trigger": "player gym gaining reputation, ambient acknowledgment",
+        "tone": "rumor",
+        "future_hook": true,
+        "text": "AROUND THE GYMS: People in other cities have started asking about {gym_name}. That is how it begins — not with headlines, with questions. {city} has seen gyms get hot before. The ones that last are the ones that act like they have been there."
+      },
+      {
+        "id": "rumor_006",
+        "trigger": "ambient, champion camp news",
+        "tone": "rumor",
+        "text": "AROUND THE GYMS: The word out of {champion_full}'s camp is that all is well, which is exactly what they said the last time all was not well. Champions' camps are like old houses. Something is always settling."
+      }
+    ],
+
+    "rankings_movement": [
+      {
+        "id": "rank_001",
+        "trigger": "player fighter enters top 15",
+        "tone": "straight",
+        "text": "It is official: {fighter_full} is a ranked {weight_class}. The new lists are out and the kid from {gym_name} sits at number {ranking}, which means the sport is now obligated to take him seriously. Getting ranked is the easy part, relatively speaking. Staying ranked is a career."
+      },
+      {
+        "id": "rank_002",
+        "trigger": "player fighter climbs rankings significantly",
+        "tone": "straight",
+        "text": "{fighter_full} jumped to number {ranking} in the new {weight_class} rankings, and nobody is calling it generous. He has earned every rung. The names above him on that list are running out, and the ones that remain all come with money and risk attached. This is where management earns its percentage."
+      },
+      {
+        "id": "rank_003",
+        "trigger": "player fighter drops in rankings",
+        "tone": "straight",
+        "text": "The new rankings were unkind to {fighter_full}, who slips to number {ranking}. The men who vote on these things have short memories and long doubts. The only known cure is winning, preferably against someone whose name they recognize."
+      },
+      {
+        "id": "rank_004",
+        "trigger": "rival fighter enters rankings",
+        "tone": "straight",
+        "text": "{opponent_full} of {rival_gym} cracked the {weight_class} top 15 this week. {rival_manager} has been promising this for two years, and credit where due — he delivered. The regional picture now has a ranked fighter in it, which changes the math for everybody else."
+      },
+      {
+        "id": "rank_005",
+        "trigger": "player fighter near title shot",
+        "tone": "straight",
+        "text": "At number {ranking}, {fighter_full} is in the conversation now, whether the men above him like it or not. There are only so many ways to avoid a ranked contender, and {champion_full}'s people know all of them. The kid from {gym_name} has done his part. The rest is politics, which is its own kind of fight."
+      }
+    ],
+
+    "milestone_pieces": [
+      {
+        "id": "milestone_001",
+        "trigger": "player fighter reaches 10-0 or similar landmark record",
+        "tone": "straight",
+        "text": "Ten wins, no losses. {fighter_full} hit the mark Saturday, and around {gym_name} they are being careful not to celebrate too loudly. A 10-0 record is a story the sport has heard before. It is what a fighter does with it that decides whether anyone remembers. The hard part starts now."
+      },
+      {
+        "id": "milestone_002",
+        "trigger": "player fighter wins first regional title or significant belt",
+        "tone": "homer",
+        "text": "There is new hardware at {gym_name}. {fighter_full} won the belt Saturday night and carried it around {venue} like a man who had been rehearsing in his head for years, because he had been. Regional titles do not make a fighter rich. They make him real. {fighter_last} is real now."
+      },
+      {
+        "id": "milestone_003",
+        "trigger": "player gym milestone, multiple ranked fighters or reputation tier increase",
+        "tone": "straight",
+        "future_hook": true,
+        "text": "Something is happening at {gym_name}. The gym in {neighborhood} now has more than one fighter worth the gas money to go watch, and people in the business have noticed. Gyms become factories one fighter at a time, and then all at once. It is too early to say that here. It is no longer too early to wonder."
+      },
+      {
+        "id": "milestone_004",
+        "trigger": "player fighter books first fight on national card",
+        "tone": "straight",
+        "text": "{fighter_full} is going national. The kid from {gym_name} has been booked onto a card that people outside this city will actually see, fighting for the kind of purse — reported at {purse} — that changes a man's relationship with the sport. Everything before this was the local paper. This is the test."
+      }
+    ],
+
+    "doubt_and_hype": [
+      {
+        "id": "doubt_001",
+        "trigger": "press opinion of player fighter is negative before a fight",
+        "tone": "skeptic",
+        "future_hook": true,
+        "text": "This corner is not sold on {fighter_full}, and Saturday is a chance to be proven wrong. {opponent_full} is exactly the kind of opponent who finds out what a prospect is made of. The guess here is that {fighter_last} is made of slightly less than his record suggests. Happy to print a correction."
+      },
+      {
+        "id": "doubt_002",
+        "trigger": "player fighter coming off a loss, press skeptical of comeback",
+        "tone": "skeptic",
+        "future_hook": true,
+        "text": "{fighter_full} returns Saturday, and the question is which version shows up — the one from before the loss, or the one the loss made. Some fighters come back from a beating. Most come back changed, and not in the direction their managers hope. The eyes will tell. They always do."
+      },
+      {
+        "id": "hype_001",
+        "trigger": "press opinion of player fighter strongly positive before a fight",
+        "tone": "hype",
+        "future_hook": true,
+        "text": "Everything this writer hears about {fighter_full}'s camp says the same thing: the kid is ready. Sparring partners do not lie, and the ones leaving {gym_name} lately have the look of men reconsidering their career choices. {opponent_full} is a credible test. The prediction here is that he fails it."
+      },
+      {
+        "id": "hype_002",
+        "trigger": "press building a player fighter toward a big fight",
+        "tone": "hype",
+        "future_hook": true,
+        "text": "It is time. {fighter_full} has done everything asked of him, beaten everyone put in front of him, and there is exactly one fight left in this region that means anything: {opponent_full}. The people want it. This newspaper wants it. The only people who do not seem to want it are the ones who would have to take the risk, and that tells you something too."
+      },
+      {
+        "id": "pressure_001",
+        "trigger": "press pushing for a specific matchup, matchmaking pressure event",
+        "tone": "hype",
+        "future_hook": true,
+        "text": "Let this column say plainly what everyone at the fights has been saying quietly: {fighter_full} versus {opponent_full} is the fight, and every week it does not get made, somebody is being protected. Both camps say they want it. Fine. The paper, the ink, and the date are all available. Prove it."
+      }
+    ],
+
+    "gym_and_business_items": [
+      {
+        "id": "gym_001",
+        "trigger": "new rival gym opens in city",
+        "tone": "straight",
+        "text": "There is a new gym in {city}. {rival_gym} opened its doors this month under {rival_manager}, who has been around the sport long enough to know better and is doing it anyway. Every gym opens with the same speech about developing local kids the right way. Check back in three years."
+      },
+      {
+        "id": "gym_002",
+        "trigger": "rival gym closes or declines significantly",
+        "tone": "color",
+        "text": "The lights are off at {rival_gym}. The gym had been struggling for a while — fighters leaving, dues drying up, the usual slow arithmetic. A boxing gym closing never makes front-page news, but a neighborhood loses something when one goes, and {city} lost something this week."
+      },
+      {
+        "id": "gym_003",
+        "trigger": "notable coach hired by rival gym",
+        "tone": "straight",
+        "text": "{rival_gym} made a hire worth noticing: {coach_name} is now working corners and running floors for {rival_manager}. Trainers like that do not change addresses for sentiment. Either the money was right or he saw something in that stable he wanted to build. Possibly both. The other gyms in {city} should consider themselves notified."
+      },
+      {
+        "id": "gym_004",
+        "trigger": "fighter departs player gym for rival, poaching event",
+        "tone": "straight",
+        "text": "{fighter_full} has left {gym_name} and will train out of {rival_gym} going forward. These things are never just business and never just personal — they are both, in proportions outsiders never learn. {gym_name} developed him. {rival_gym} gets what comes next. The sport keeps its own books on arrangements like this."
+      },
+      {
+        "id": "gym_005",
+        "trigger": "player gym expands or upgrades facility",
+        "tone": "straight",
+        "future_hook": true,
+        "text": "Changes at {gym_name}: the operation in {neighborhood} has been investing in itself — new equipment, more room, the look of a place planning to be around a while. Gyms spend money for one of two reasons: because they have it, or because they expect to. Either is news in this business."
+      }
+    ],
+
+    "color_and_atmosphere": [
+      {
+        "id": "color_001",
+        "trigger": "ambient, slow news week",
+        "tone": "color",
+        "text": "Slow week at the fights, which gives a writer time to notice things. The old men at the gyms in {city} say the talent comes in waves, and that we are due. They have been saying this for thirty years. The remarkable thing is how often they turn out to be right."
+      },
+      {
+        "id": "color_002",
+        "trigger": "ambient, local boxing scene texture",
+        "tone": "color",
+        "text": "Spend a Tuesday afternoon in any gym in {city} and you will see the whole sport in miniature: one kid who could be something, three who think they are, and a trainer who has seen enough of both to keep his opinions in his pocket until they are worth money."
+      },
+      {
+        "id": "color_003",
+        "trigger": "ambient, era texture, national boxing context",
+        "tone": "color",
+        "text": "The big names get the television money and the magazine covers, but the sport lives in rooms like the ones here in {city} — small cards, working fighters, purses that pay rent instead of buying houses. Every champion came from a room like that. Most of them remember it. The ones who forget tend to find their way back."
+      },
+      {
+        "id": "color_004",
+        "trigger": "ambient, after a strong local card",
+        "tone": "color",
+        "text": "Saturday's card at {venue} was the kind of night that reminds you why people keep paying to sit in folding chairs. No titles, no television, nothing at stake but the things fighters actually fight for. The crowd went home hoarse. In this business, that is the only review that matters."
+      },
+      {
+        "id": "color_005",
+        "trigger": "ambient, seasonal or year-end retrospective",
+        "tone": "color",
+        "text": "Another year of fights in the books for {city}. The accounting is the usual kind: some prospects became contenders, some contenders became opponents, and a few kids walked into gyms for the first time carrying everything they own in a duffel bag. The sport does not change. The names do."
+      }
+    ],
+
+    "decline_and_farewell": [
+      {
+        "id": "decline_001",
+        "trigger": "veteran player fighter showing visible decline",
+        "tone": "straight",
+        "text": "{fighter_full} won Saturday, but the win raised more questions than it settled. The reflexes that used to bail him out arrived late all night. He is {age} now, and {age} in this sport is not what it is in other lines of work. The people at {gym_name} have a decision approaching, and the kind thing and the easy thing are not the same thing."
+      },
+      {
+        "id": "decline_002",
+        "trigger": "fighter retires from player gym",
+        "tone": "color",
+        "text": "{fighter_full} is done. The retirement was announced quietly, which suited him. He finishes at {record}, and the record tells you what happened but not what it cost or what it meant. He was a professional fighter in every sense that matters, and {city} fight crowds were better for having watched him work."
+      },
+      {
+        "id": "decline_003",
+        "trigger": "veteran journeyman fighter, context piece",
+        "tone": "color",
+        "text": "{opponent_full} fought again Saturday, his {record} doing the math on a long career spent making younger men look good or look foolish, depending on the night. Every region has a fighter like him. He is the test the prospects have to pass, and he has failed more of them than anyone wants to admit."
+      }
+    ]
+  }
+}
