@@ -1,0 +1,104 @@
+/* The corkboard — pinned bottom-left of the floor, above the timebar. */
+.logboard {
+  position: absolute;
+  z-index: 8;
+  left: var(--space-lg);
+  bottom: 86px;
+  width: min(320px, 86vw);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--leather-light);
+  background: linear-gradient(180deg, rgba(31, 24, 18, 0.88), rgba(12, 9, 7, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(232, 181, 102, 0.1),
+    0 12px 30px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+}
+
+.logboard--closed {
+  width: auto;
+}
+
+.logboard__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(58, 42, 28, 0.7);
+  transition: background var(--t-fast);
+}
+.logboard--closed .logboard__head {
+  border-bottom: none;
+}
+.logboard__head:hover {
+  background: rgba(58, 42, 28, 0.35);
+}
+
+.logboard__title {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 11px;
+  color: var(--amber-deep);
+}
+
+.logboard__toggle {
+  font-family: var(--font-typewriter);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.logboard__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.logboard__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(58, 42, 28, 0.45);
+}
+.logboard__item:last-child {
+  border-bottom: none;
+}
+.logboard__item:first-child {
+  animation: log-pin var(--t-med) var(--ease-warm);
+}
+@keyframes log-pin {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logboard__date {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+.logboard__text {
+  font-family: var(--font-slab);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-warm);
+}
+
+@media (max-width: 700px) {
+  .logboard {
+    display: none; /* small screens: the log still lives in the save; board returns with a mobile pass */
+  }
+}

@@ -14,11 +14,19 @@ import type { Appearance } from '../game/appearance';
 import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 import { initialRelationship } from '../game/relationship';
+import { initPressState, type PressState } from '../game/press';
+import type { LogLine } from '../game/gymLog';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 6;
+export const SAVE_VERSION = 7;
+
+/** One remembered moment in the gym's history. */
+export interface LedgerEntry {
+  dayCount: number;
+  text: string;
+}
 
 export const MANAGER_START_AGE = 25;
 /** The gym starts with twenty lockers — its primary resource and constraint. */
@@ -43,6 +51,12 @@ export interface GameSave {
   dayCount: number;
   roster: RosterEntry[];
   walkIns: WalkIn[];
+  /** The local paper — writers, venues, clippings (game/press.ts). */
+  press: PressState;
+  /** The gym ledger — remembered milestones, oldest first. */
+  history: LedgerEntry[];
+  /** The corkboard — latest gym-log lines, newest first. */
+  recentLog: LogLine[];
   createdAt: number;
   updatedAt: number;
 }
@@ -63,6 +77,19 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     dayCount: 0,
     roster: [],
     walkIns: [],
+    press: initPressState(draft.cityId),
+    history: [
+      {
+        dayCount: 0,
+        text: `You signed the lease and put the name on the door: ${draft.gymName}.`,
+      },
+    ],
+    recentLog: [
+      {
+        dayCount: 0,
+        text: 'The door is open. The bags are hung. Now you wait and see who walks in.',
+      },
+    ],
     createdAt: now,
     updatedAt: now,
   };
@@ -89,8 +116,9 @@ function migrateFighter<T extends { publicReputation?: number }>(f: T): T {
 }
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
-    tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer.
-    Pre-v2 shell saves can't be resumed meaningfully — drop them. */
+    tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
+    v6 lacked the living-world layer (press, ledger, gym log). Pre-v2 shell
+    saves can't be resumed meaningfully — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -127,6 +155,11 @@ function migrate(raw: unknown): GameSave | null {
       dayCount: data.dayCount,
       roster,
       walkIns,
+      press: data.press ?? initPressState(data.cityId as CityId),
+      history:
+        data.history ??
+        [{ dayCount: 0, text: `You signed the lease and put the name on the door: ${data.gymName}.` }],
+      recentLog: data.recentLog ?? [],
       createdAt: data.createdAt ?? Date.now(),
       updatedAt: data.updatedAt ?? Date.now(),
     };

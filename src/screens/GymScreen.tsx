@@ -22,6 +22,7 @@ import { TimeControls } from '../components/TimeControls';
 import { RoomRouter } from '../rooms/RoomRouter';
 import { RoomGlyph } from '../components/RoomGlyph';
 import { ArrivalNotice } from '../components/ArrivalNotice';
+import { GymLogBoard } from '../components/GymLogBoard';
 import { Toast } from '../components/Toast';
 import { WalkInViewer } from './WalkInViewer';
 import { FighterProfile } from './FighterProfile';
@@ -101,6 +102,9 @@ export function GymScreen() {
       <footer className="gym__timebar">
         <TimeControls />
       </footer>
+
+      {/* The corkboard — the gym's quiet life */}
+      <GymLogBoard />
 
       {/* Overlays */}
       <ArrivalNotice />

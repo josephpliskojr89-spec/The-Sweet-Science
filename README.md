@@ -77,9 +77,28 @@ placeholders, plus day/week time advancement and a real Continue save.
   you've churned him. A one-off demotion is forgivable; yo-yoing is not.
   Surfaced as a one-word mood (Settled … On the brink), never a raw number.
 
+**Living World pass** (between Phases 4 and 5):
+
+- **The Gym Log** — a corkboard on the gym floor with quiet observations
+  generated from real state: trait behavior, sparring pairings, mood fallout,
+  dues day, anniversaries, season/city texture. Never required reading;
+  rewards attention.
+- **Traits reveal in the gym** — weeks of observation can surface a hidden
+  trait (locker holders are read sooner). Tuned so a man gives up roughly one
+  secret a year; deep prospects stay unknown for years.
+- **Life events** — rare, trait-extrapolated moments (the hot-tempered
+  Saturday night, the expecting wife) that ripple into morale/trust.
+- **The Paper** — an early ambient edition of Phase 9's press: weekly
+  clippings from the delivered template database (rumors, color, rival-gym
+  results) with persistent per-city bylines, persistent local venues, and the
+  10-week template cooldown. The player's gym does not appear — correct for an
+  unknown operation.
+- **The Ledger** — the gym's remembered history in My Office: who walked in,
+  who you cut and how he took it, who quit, what you learned, anniversaries.
+
 Deferred to upcoming phases: the 3-exchange interview, training (Phase 5), the
-rest of My Office (Phase 6), the Calendar (Phase 7), and the fight engine
-(Phase 8).
+rest of My Office (Phase 6), the Calendar (Phase 7), the fight engine
+(Phase 8), and the mechanical press (Phase 9).
 
 ---
 
@@ -131,6 +150,9 @@ src/
     relationship.ts  Per-fighter morale + trust; locker-decision fallout
     departures.ts    Quit / leave-for-opportunity / cut logic
     events.ts        Game event bus + trait-response stub (bible v2.8)
+    gymLog.ts        The gym's daily life: observations, in-gym trait reveals
+    lifeEvents.ts    Rare trait-extrapolated life events
+    press.ts         The local paper: ambient clippings, bylines, venues
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)

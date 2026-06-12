@@ -1,20 +1,26 @@
 /*
-  OfficeRoom — My Office (Phase 3 slice)
+  OfficeRoom — My Office
   --------------------------------------------------------------------------
-  The business side. Phase 3 brings the walk-in review desk online: cards the
-  player chose to look at later queue here, each showing the man, his read, and
-  how long he'll keep waiting. Clicking one reopens the card and its decision.
+  Three things on the desk now:
+    Desk    — the walk-in review queue (Phase 3) + the Phase 6 roadmap
+    Paper   — the local sporting page: ambient press clippings with persistent
+              bylines. The world talking whether or not you listen.
+    Ledger  — the gym's remembered history: who walked in, who you cut, what
+              you learned about your fighters, anniversaries.
 
-  The rest of the office (finances, upgrades, coaches, fight booking, rival
-  gyms) is Phase 6 and shown as a roadmap so the room reads complete.
+  Finances, upgrades, coaches, fight booking, and the Rival Gyms tab land in
+  Phase 6.
 */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGame } from '../state/GameContext';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
+import { formatDate } from '../game/time';
 import { Portrait } from '../assets/portraits';
 import './OfficeRoom.css';
+
+type OfficeTab = 'desk' | 'paper' | 'ledger';
 
 const FUTURE_DESK = [
   'View and manage finances',
@@ -26,6 +32,7 @@ const FUTURE_DESK = [
 
 export function OfficeRoom() {
   const { save, closeRoom, openWalkIns, profileId, viewerIds } = useGame();
+  const [tab, setTab] = useState<OfficeTab>('desk');
 
   // Esc steps back to the floor — but only when this room is the top layer.
   const overlayOpen = profileId !== null || viewerIds !== null;
@@ -40,7 +47,6 @@ export function OfficeRoom() {
 
   if (!save) return null;
   const queue = save.walkIns;
-  const ids = queue.map((w) => w.fighter.id);
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="My Office">
@@ -51,72 +57,153 @@ export function OfficeRoom() {
           ← Back to the floor
         </button>
         <span className="room-screen__breadcrumb">Your Gym · My Office</span>
+
+        <nav className="office__tabs" aria-label="Office sections">
+          {(
+            [
+              ['desk', `Desk${queue.length ? ` (${queue.length})` : ''}`],
+              ['paper', 'The Paper'],
+              ['ledger', 'Ledger'],
+            ] as Array<[OfficeTab, string]>
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              className={'office__tab' + (tab === key ? ' office__tab--on' : '')}
+              onClick={() => setTab(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
       </header>
 
       <div className="room-screen__body office__body">
-        <div className="office">
-          <header className="office__head">
-            <h2 className="office__title">Walk-Ins</h2>
-            <span className="office__count">
-              {queue.length === 0
-                ? 'No one waiting'
-                : `${queue.length} waiting for an answer`}
-            </span>
-          </header>
-
-          {queue.length === 0 ? (
-            <p className="office__empty">
-              The bench by the door is empty. Advance time and keep the lights
-              on — word spreads, and someone always walks in eventually.
-            </p>
-          ) : (
-            <ul className="office__queue">
-              {queue.map((w, i) => {
-                const f = w.fighter;
-                return (
-                  <li key={f.id}>
-                    <button className="qrow" onClick={() => openWalkIns(ids, i)}>
-                      <span className="qrow__portrait">
-                        <Portrait appearance={f.appearance} size={48} />
-                      </span>
-                      <span className="qrow__main">
-                        <span className="qrow__name">{fighterFullName(f)}</span>
-                        <span className="qrow__meta">
-                          {f.age} yrs · {WEIGHT_CLASSES[f.weightClass].name}
-                        </span>
-                        <span className="qrow__impression">“{f.firstImpression}”</span>
-                      </span>
-                      <span className="qrow__right">
-                        <span
-                          className={
-                            'qrow__patience' +
-                            (w.patience <= 3 ? ' qrow__patience--low' : '')
-                          }
-                        >
-                          {w.patience <= 3 ? 'impatient' : `~${w.patience}d`}
-                        </span>
-                        <span className="qrow__review">Review →</span>
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-
-          <div className="office__divider">
-            <span className="office__divider-seg" />
-            <span className="office__divider-label">The rest of the desk</span>
-            <span className="office__divider-seg" />
-          </div>
-          <ul className="office__future">
-            {FUTURE_DESK.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-          <p className="office__future-note">Comes online in Phase 6</p>
-        </div>
+        {tab === 'desk' && <DeskTab />}
+        {tab === 'paper' && <PaperTab />}
+        {tab === 'ledger' && <LedgerTab />}
       </div>
     </div>
   );
+
+  function DeskTab() {
+    if (!save) return null;
+    const ids = queue.map((w) => w.fighter.id);
+    return (
+      <div className="office">
+        <header className="office__head">
+          <h2 className="office__title">Walk-Ins</h2>
+          <span className="office__count">
+            {queue.length === 0 ? 'No one waiting' : `${queue.length} waiting for an answer`}
+          </span>
+        </header>
+
+        {queue.length === 0 ? (
+          <p className="office__empty">
+            The bench by the door is empty. Advance time and keep the lights
+            on — word spreads, and someone always walks in eventually.
+          </p>
+        ) : (
+          <ul className="office__queue">
+            {queue.map((w, i) => {
+              const f = w.fighter;
+              return (
+                <li key={f.id}>
+                  <button className="qrow" onClick={() => openWalkIns(ids, i)}>
+                    <span className="qrow__portrait">
+                      <Portrait appearance={f.appearance} size={48} />
+                    </span>
+                    <span className="qrow__main">
+                      <span className="qrow__name">{fighterFullName(f)}</span>
+                      <span className="qrow__meta">
+                        {f.age} yrs · {WEIGHT_CLASSES[f.weightClass].name}
+                      </span>
+                      <span className="qrow__impression">“{f.firstImpression}”</span>
+                    </span>
+                    <span className="qrow__right">
+                      <span
+                        className={
+                          'qrow__patience' + (w.patience <= 3 ? ' qrow__patience--low' : '')
+                        }
+                      >
+                        {w.patience <= 3 ? 'impatient' : `~${w.patience}d`}
+                      </span>
+                      <span className="qrow__review">Review →</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <div className="office__divider">
+          <span className="office__divider-seg" />
+          <span className="office__divider-label">The rest of the desk</span>
+          <span className="office__divider-seg" />
+        </div>
+        <ul className="office__future">
+          {FUTURE_DESK.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+        <p className="office__future-note">Comes online in Phase 6</p>
+      </div>
+    );
+  }
+
+  function PaperTab() {
+    if (!save) return null;
+    const { paperName, clippings } = save.press;
+    return (
+      <div className="paper">
+        <header className="paper__masthead">
+          <h2 className="paper__name">{paperName}</h2>
+          <p className="paper__tagline">Sporting Pages · {formatDate(save.dayCount).full}</p>
+        </header>
+
+        {clippings.length === 0 ? (
+          <p className="paper__empty">
+            Nothing on the local fight scene this week. Slow news is still
+            news — check back after some time passes.
+          </p>
+        ) : (
+          <div className="paper__columns">
+            {clippings.map((c, i) => (
+              <article className="clipping" key={`${c.templateId}-${c.dayCount}-${i}`}>
+                <p className="clipping__date">{formatDate(c.dayCount).compact}</p>
+                <p className="clipping__text">{c.text}</p>
+                <p className="clipping__byline">— {c.byline}</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  function LedgerTab() {
+    if (!save) return null;
+    const entries = [...save.history].reverse();
+    return (
+      <div className="ledgerbook">
+        <header className="office__head">
+          <h2 className="office__title">The Ledger</h2>
+          <span className="office__count">
+            {entries.length} {entries.length === 1 ? 'entry' : 'entries'}
+          </span>
+        </header>
+        <p className="ledgerbook__note">
+          What happened here, written down. Gyms forget nothing.
+        </p>
+        <ul className="ledgerbook__list">
+          {entries.map((e, i) => (
+            <li className="ledgerbook__row" key={`${e.dayCount}-${i}`}>
+              <span className="ledgerbook__date">{formatDate(e.dayCount).compact}</span>
+              <span className="ledgerbook__text">{e.text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }

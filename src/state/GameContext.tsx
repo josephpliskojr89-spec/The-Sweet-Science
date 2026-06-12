@@ -21,9 +21,13 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { advance, TIME_STEP_DAYS, type TimeStep } from '../game/time';
+import { advance, formatDate, seasonOf, TIME_STEP_DAYS, type TimeStep } from '../game/time';
 import { emitGameEvent } from '../game/events';
 import { type Fighter, fighterFullName } from '../game/fighters';
+import { getCity } from '../game/cities';
+import { observeGym, type LogLine } from '../game/gymLog';
+import { runLifeEvents } from '../game/lifeEvents';
+import { runPressCycle } from '../game/press';
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
@@ -176,25 +180,66 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const prev = saveRef.current;
       if (!prev) return;
       const days = TIME_STEP_DAYS[step];
+      const fromDay = prev.dayCount;
+      const toDay = advance(fromDay, step);
 
       // Pure computation, once, in the handler — not in an updater.
       const aged = ageWalkIns(prev.walkIns, days);
       const fresh = rollNewWalkIns(days, {
         cityId: prev.cityId,
-        dayCount: prev.dayCount,
+        dayCount: fromDay,
         reputation: reputationFor(prev),
         quality: qualityFor(prev),
       });
-      // Moods drift back toward baseline and trust mends slowly before we see
-      // who's had enough and walked.
-      const recovered = prev.roster.map((e) => recover(e, days));
-      const dep = evaluateDepartures(recovered, days);
+
+      // The gym lives: moods recover, the floor gets observed (hidden traits
+      // can surface), and the fighters' lives outside intrude — all before we
+      // see who's had enough and walked.
+      let roster = prev.roster.map((e) => recover(e, days));
+      const obs = observeGym(roster, {
+        days,
+        fromDay,
+        region: getCity(prev.cityId).region,
+        season: seasonOf(toDay),
+        crossesMonth: formatDate(fromDay).month !== formatDate(toDay).month,
+      });
+      roster = obs.roster;
+      const life = runLifeEvents(roster, days);
+      roster = life.roster;
+      const dep = evaluateDepartures(roster, days);
+
+      // The paper runs on its own week, whether or not you read it.
+      let press = prev.press;
+      const cycles = Math.floor(toDay / 7) - Math.floor(fromDay / 7);
+      for (let i = 0; i < cycles; i++) {
+        press = runPressCycle(press, prev.cityId, toDay).state;
+      }
+
+      const newLines: LogLine[] = [...obs.lines, ...life.lines].map((text) => ({
+        dayCount: toDay,
+        text,
+      }));
+      const departureMemories = dep.departed.map((d) => ({
+        dayCount: toDay,
+        text:
+          d.reason === 'left_for_opportunity'
+            ? `${fighterFullName(d.entry.fighter)} left for a bigger operation. Someone noticed what you built in him.`
+            : `${fighterFullName(d.entry.fighter)} quit. He felt forgotten — and maybe he was.`,
+      }));
+      const history = [
+        ...prev.history,
+        ...[...obs.milestones, ...life.milestones].map((text) => ({ dayCount: toDay, text })),
+        ...departureMemories,
+      ].slice(-250);
 
       commit({
         ...prev,
-        dayCount: advance(prev.dayCount, step),
+        dayCount: toDay,
         walkIns: [...aged.surviving, ...fresh],
         roster: dep.staying,
+        press,
+        history,
+        recentLog: [...newLines, ...prev.recentLog].slice(0, 12),
       });
 
       for (const d of dep.departed) {
@@ -252,6 +297,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       const walkIns = prev.walkIns.filter((w) => w.fighter.id !== id);
       let roster = prev.roster;
+      let history = prev.history;
       if (decision === 'locker' || decision === 'no_locker') {
         const hasLocker = decision === 'locker';
         const entry: RosterEntry = {
@@ -262,12 +308,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ...initialRelationship(hasLocker),
         };
         roster = [...prev.roster, entry];
-        emitGameEvent({ type: 'walkin_accepted', fighterId: id, withLocker: decision === 'locker' });
+        history = [
+          ...prev.history,
+          {
+            dayCount: prev.dayCount,
+            text: `${fighterFullName(target.fighter)} walked in off the street and you ${
+              hasLocker ? 'gave him a locker' : 'let him train on provisional terms'
+            }.`,
+          },
+        ].slice(-250);
+        emitGameEvent({ type: 'walkin_accepted', fighterId: id, withLocker: hasLocker });
       } else {
         emitGameEvent({ type: 'walkin_turned_away', fighterId: id });
       }
 
-      commit({ ...prev, walkIns, roster });
+      commit({ ...prev, walkIns, roster, history });
       setViewerIndex((i) => i + 1);
     },
     [commit],
@@ -330,8 +385,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const outcome = resolveCut(entry);
       emitGameEvent({ type: 'fighter_cut', fighterId: id, stayed: outcome === 'stay' });
 
+      const memory = {
+        dayCount: prev.dayCount,
+        text:
+          outcome === 'vanish'
+            ? `You cut ${name}. He cleared out his locker and was gone by morning.`
+            : `You cut ${name}. He asked to stay and earn it back. That told you something.`,
+      };
+      const history = [...prev.history, memory].slice(-250);
+
       if (outcome === 'vanish') {
-        commit({ ...prev, roster: prev.roster.filter((e) => e.fighter.id !== id) });
+        commit({ ...prev, roster: prev.roster.filter((e) => e.fighter.id !== id), history });
         setFlash(`${name} cleared out his locker and was gone by morning.`);
       } else {
         const roster = prev.roster.map((e) =>
@@ -339,7 +403,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
             ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier, ...applyCutStayed(e) }
             : e,
         );
-        commit({ ...prev, roster });
+        commit({ ...prev, roster, history });
         setFlash(`${name} asked to stay and earn his spot back — no locker.`);
       }
       setProfileId((cur) => (cur === id && outcome === 'vanish' ? null : cur));
