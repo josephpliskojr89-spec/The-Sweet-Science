@@ -15,29 +15,34 @@ import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../game/weightClasses';
 import { getCity } from '../game/cities';
 import { TRAITS } from '../game/traits';
-import { developmentState, focusLabel } from '../game/training';
+import {
+  developmentState,
+  focusLabel,
+  attributeTrend,
+  attributeSeries,
+  ATTR_KEYS,
+  ATTR_LABELS,
+  type AttrKey,
+} from '../game/training';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
+import { Sparkline } from '../components/Sparkline';
 import { MoodChip } from '../components/MoodChip';
 import './FighterProfile.css';
 
-const ATTR_ROWS: Array<[string, keyof import('../game/fighters').Attributes]> = [
-  ['Power', 'power'],
-  ['Speed', 'speed'],
-  ['Chin', 'chin'],
-  ['Stamina', 'stamina'],
-  ['Defense', 'defense'],
-  ['Ring IQ', 'ringIq'],
-  ['Footwork', 'footwork'],
-];
+const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
+
+type ProfileTab = 'overview' | 'development';
 
 export function FighterProfile() {
   const { save, profileId, viewerIds, closeProfile, setLocker, setTier, cutFighter } =
     useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
+  const [tab, setTab] = useState<ProfileTab>('overview');
 
   useEffect(() => {
     setConfirmingCut(false);
+    setTab('overview');
   }, [profileId]);
 
   // Esc closes the profile — unless the walk-in viewer is layered above us.
@@ -61,6 +66,7 @@ export function FighterProfile() {
   const lockersFull = lockersUsed(save) >= LOCKER_CAP;
   const noLockerFull = noLockerUsed(save) >= NO_LOCKER_CAP;
   const days = save.dayCount - entry.joinedDayCount;
+  const weeks = Math.max(0, Math.floor(days / 7));
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
 
   return (
@@ -108,8 +114,61 @@ export function FighterProfile() {
             </div>
           </div>
 
-          {/* Right column — attributes, traits, actions */}
+          {/* Right column — tabbed: Overview / Development */}
           <div className="fp__right">
+            <nav className="fp__tabs" aria-label="Profile sections">
+              <button
+                className={'fp__tab' + (tab === 'overview' ? ' fp__tab--on' : '')}
+                onClick={() => setTab('overview')}
+              >
+                Overview
+              </button>
+              <button
+                className={'fp__tab' + (tab === 'development' ? ' fp__tab--on' : '')}
+                onClick={() => setTab('development')}
+              >
+                Development
+              </button>
+            </nav>
+
+            {tab === 'development' ? (
+              <section className="fp__section">
+                <div className="fp__section-head">
+                  <h3 className="fp__section-title">Development</h3>
+                  <div className="fp__dev">
+                    {entry.focus && (
+                      <span className="fp__focus-tag">Focused · {focusLabel(entry.focus)}</span>
+                    )}
+                    <span className={`fp__dev-tag fp__dev-tag--${dev.tone}`}>{dev.label}</span>
+                  </div>
+                </div>
+
+                <div className="fp__track">
+                  {ATTR_KEYS.map((k: AttrKey) => {
+                    const tr = attributeTrend(entry, k, save.dayCount);
+                    const cls2 =
+                      tr.totalChange >= 0.05 ? 'up' : tr.totalChange <= -0.05 ? 'down' : 'flat';
+                    return (
+                      <div className="fp__track-row" key={k}>
+                        <span className="fp__track-label">{ATTR_LABELS[k]}</span>
+                        <Sparkline values={attributeSeries(entry, k)} trend={tr.dir} />
+                        <span className="fp__track-now">{Math.round(f.attributes[k])}</span>
+                        <span className={`fp__track-change fp__track-change--${cls2}`}>
+                          {signed(tr.totalChange)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className="fp__track-note">
+                  {weeks < 2
+                    ? 'Not much to chart yet — give it a few weeks of training.'
+                    : `Arrows show recent form; totals are the change since he walked in ${weeks} weeks ago.`}
+                </p>
+              </section>
+            ) : (
+              <>
             <section className="fp__section">
               <div className="fp__section-head">
                 <h3 className="fp__section-title">Attributes</h3>
@@ -121,14 +180,18 @@ export function FighterProfile() {
                 </div>
               </div>
               <div className="fp__attrs">
-                {ATTR_ROWS.map(([label, key]) => (
-                  <AttributeBar
-                    key={key}
-                    label={label}
-                    value={f.attributes[key]}
-                    delta={entry.lastDelta?.[key]}
-                  />
-                ))}
+                {ATTR_KEYS.map((key: AttrKey) => {
+                  const tr = attributeTrend(entry, key, save.dayCount);
+                  return (
+                    <AttributeBar
+                      key={key}
+                      label={ATTR_LABELS[key]}
+                      value={f.attributes[key]}
+                      trend={tr.dir}
+                      tooltip={`${signed(tr.windowChange)} recent · ${signed(tr.totalChange)} since he arrived`}
+                    />
+                  );
+                })}
               </div>
             </section>
 
@@ -214,6 +277,8 @@ export function FighterProfile() {
                 </div>
               </div>
             </section>
+              </>
+            )}
           </div>
         </article>
       </div>

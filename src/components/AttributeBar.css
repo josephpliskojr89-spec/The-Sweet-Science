@@ -1,8 +1,34 @@
 .attr {
+  position: relative;
   display: grid;
-  grid-template-columns: 92px 1fr 28px;
+  grid-template-columns: 92px 1fr 34px;
   align-items: center;
   gap: var(--space-md);
+}
+
+/* Hover detail — the real movement behind the arrow */
+.attr__tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  white-space: nowrap;
+  font-family: var(--font-typewriter);
+  font-size: 11px;
+  color: var(--parchment);
+  background: linear-gradient(180deg, rgba(31, 24, 18, 0.98), rgba(12, 9, 7, 0.98));
+  border: 1px solid var(--amber-deep);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(3px);
+  pointer-events: none;
+  transition: opacity var(--t-fast), transform var(--t-fast);
+}
+.attr:hover .attr__tip {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .attr__label {

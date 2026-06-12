@@ -28,7 +28,15 @@ import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
 import { runPressCycle } from '../game/press';
-import { trainFighter, FOCUS_SLOTS_BASE, type TrainingFocus } from '../game/training';
+import {
+  trainFighter,
+  snapshotAttrs,
+  FOCUS_SLOTS_BASE,
+  type TrainingFocus,
+} from '../game/training';
+
+/** Keep ~10 years of monthly progression snapshots per fighter. */
+const MAX_HISTORY = 120;
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
@@ -186,6 +194,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const days = TIME_STEP_DAYS[step];
       const fromDay = prev.dayCount;
       const toDay = advance(fromDay, step);
+      const crossesMonth = formatDate(fromDay).month !== formatDate(toDay).month;
 
       // Pure computation, once, in the handler — not in an updater.
       const aged = ageWalkIns(prev.walkIns, days);
@@ -216,7 +225,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         fromDay,
         region: getCity(prev.cityId).region,
         season: seasonOf(toDay),
-        crossesMonth: formatDate(fromDay).month !== formatDate(toDay).month,
+        crossesMonth,
       });
       roster = obs.roster;
       const life = runLifeEvents(roster, days);
@@ -251,11 +260,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
         ...departureMemories,
       ].slice(-250);
 
+      // Take a monthly progression snapshot of each fighter's attributes.
+      const staying = crossesMonth
+        ? dep.staying.map((e) => ({
+            ...e,
+            history: [...e.history, snapshotAttrs(e.fighter.attributes, toDay)].slice(-MAX_HISTORY),
+          }))
+        : dep.staying;
+
       commit({
         ...prev,
         dayCount: toDay,
         walkIns: [...aged.surviving, ...fresh],
-        roster: dep.staying,
+        roster: staying,
         press,
         history,
         recentLog: [...newLines, ...prev.recentLog].slice(0, 12),
@@ -327,6 +344,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ...initialRelationship(hasLocker),
           focus: null,
           lastDelta: {},
+          history: [snapshotAttrs(target.fighter.attributes, prev.dayCount)],
         };
         roster = [...prev.roster, entry];
         history = [

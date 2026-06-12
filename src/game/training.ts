@@ -227,3 +227,59 @@ export function developmentState(entry: RosterEntry): DevState {
 export function focusLabel(focus: TrainingFocus): string {
   return focus === 'rounded' ? 'Well-rounded' : ATTR_LABELS[focus];
 }
+
+// --- attribute history & trends (FM-style progression) ----------------------
+
+/** A dated record of a fighter's attributes, for the progression view. */
+export interface AttrSnapshot {
+  day: number;
+  attrs: Record<AttrKey, number>;
+}
+
+export function snapshotAttrs(attrs: Attributes, day: number): AttrSnapshot {
+  const a = {} as Record<AttrKey, number>;
+  for (const k of ATTR_KEYS) a[k] = attrs[k];
+  return { day, attrs: a };
+}
+
+/** The window an arrow reflects — recent form, not one session or a whole career. */
+const TREND_WINDOW_DAYS = 49;
+/** Change needed to show an arrow at all. */
+const TREND_THRESHOLD = 0.6;
+
+export interface AttrTrend {
+  dir: 'up' | 'down' | null;
+  /** Change over the recent window (drives the arrow). */
+  windowChange: number;
+  /** Change since he first walked in. */
+  totalChange: number;
+}
+
+export function attributeTrend(
+  entry: RosterEntry,
+  k: AttrKey,
+  currentDay: number,
+): AttrTrend {
+  const hist = entry.history ?? [];
+  const cur = entry.fighter.attributes[k];
+  if (hist.length === 0) return { dir: null, windowChange: 0, totalChange: 0 };
+
+  // Latest snapshot at or before the window cutoff; else the earliest we have.
+  const cutoff = currentDay - TREND_WINDOW_DAYS;
+  let baseline = hist[0];
+  for (const s of hist) {
+    if (s.day <= cutoff) baseline = s;
+  }
+
+  const windowChange = cur - baseline.attrs[k];
+  const totalChange = cur - hist[0].attrs[k];
+  const dir =
+    windowChange >= TREND_THRESHOLD ? 'up' : windowChange <= -TREND_THRESHOLD ? 'down' : null;
+  return { dir, windowChange, totalChange };
+}
+
+/** The series for a sparkline — historical snapshots plus the live value. */
+export function attributeSeries(entry: RosterEntry, k: AttrKey): number[] {
+  const hist = entry.history ?? [];
+  return [...hist.map((s) => s.attrs[k]), entry.fighter.attributes[k]];
+}

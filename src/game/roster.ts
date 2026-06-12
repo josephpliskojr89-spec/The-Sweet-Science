@@ -12,7 +12,7 @@
 */
 
 import type { Fighter } from './fighters';
-import type { TrainingFocus, AttrKey } from './training';
+import type { TrainingFocus, AttrKey, AttrSnapshot } from './training';
 
 export type HierarchyTier = 'must_keep' | 'watch' | 'chopping';
 
@@ -34,6 +34,8 @@ export interface RosterEntry {
   focus: TrainingFocus | null;
   /** Per-attribute change from the most recent advance (for trend display). */
   lastDelta: Partial<Record<AttrKey, number>>;
+  /** Dated attribute snapshots for the progression view (oldest first). */
+  history: AttrSnapshot[];
 }
 
 export interface TierMeta {

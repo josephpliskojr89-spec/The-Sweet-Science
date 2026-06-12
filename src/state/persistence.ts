@@ -14,13 +14,14 @@ import type { Appearance } from '../game/appearance';
 import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 import { initialRelationship } from '../game/relationship';
+import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import type { LogLine } from '../game/gymLog';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 8;
+export const SAVE_VERSION = 9;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -134,6 +135,7 @@ function migrate(raw: unknown): GameSave | null {
     const roster: RosterEntry[] = Array.isArray(data.roster)
       ? data.roster.map((e) => {
           const rel = initialRelationship(e.hasLocker);
+          const fighter = migrateFighter(e.fighter);
           return {
             ...e,
             tier: e.tier ?? DEFAULT_TIER,
@@ -142,7 +144,9 @@ function migrate(raw: unknown): GameSave | null {
             lockerLossCount: e.lockerLossCount ?? 0,
             focus: e.focus ?? null,
             lastDelta: e.lastDelta ?? {},
-            fighter: migrateFighter(e.fighter),
+            // Begin tracking progression from now for pre-v9 fighters.
+            history: e.history ?? [snapshotAttrs(fighter.attributes, data.dayCount!)],
+            fighter,
           };
         })
       : [];

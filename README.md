@@ -107,8 +107,11 @@ placeholders, plus day/week time advancement and a real Continue save.
   and toward a focus area you choose. Assigned in My Gym; clears if he loses
   his locker.
 - **Progress is visible** — a development read per fighter (Developing /
-  Coming on / Steady / Plateaued / Declining / Limited), attribute trend arrows
-  on the profile, and the gym log notes notable gains.
+  Coming on / Steady / Plateaued / Declining / Limited); FM-style trend arrows
+  on the profile attributes (recent-form window, green up / red down) with a
+  hover tooltip of the actual movement; and a **Development** tab that charts
+  each attribute's history as a sparkline with its total gain since he walked
+  in. The gym log also notes notable gains.
 
 Deferred to upcoming phases: the 3-exchange interview, the rest of My Office
 (Phase 6), the Calendar (Phase 7), the fight engine (Phase 8), and the
@@ -175,7 +178,8 @@ src/
     backgrounds.tsx  Background REGISTRY — asset-replacement seam
     portraits.tsx    Portrait REGISTRY — asset-replacement seam
   components/        Button, TimeControls, RegionalGymBackground, Portrait,
-                     WalkInCard, ArrivalNotice, Toast, AttributeBar, TraitChip
+                     WalkInCard, ArrivalNotice, Toast, AttributeBar, TraitChip,
+                     MoodChip, GymLogBoard, Sparkline
   screens/
     HomeScreen, SettingsScreen, GymScreen, WalkInViewer, FighterProfile
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
