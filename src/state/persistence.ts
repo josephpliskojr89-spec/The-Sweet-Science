@@ -20,7 +20,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 7;
+export const SAVE_VERSION = 8;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -117,8 +117,8 @@ function migrateFighter<T extends { publicReputation?: number }>(f: T): T {
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
     tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
-    v6 lacked the living-world layer (press, ledger, gym log). Pre-v2 shell
-    saves can't be resumed meaningfully — drop them. */
+    v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
+    training fields. Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -140,6 +140,8 @@ function migrate(raw: unknown): GameSave | null {
             morale: e.morale ?? rel.morale,
             trust: e.trust ?? rel.trust,
             lockerLossCount: e.lockerLossCount ?? 0,
+            focus: e.focus ?? null,
+            lastDelta: e.lastDelta ?? {},
             fighter: migrateFighter(e.fighter),
           };
         })

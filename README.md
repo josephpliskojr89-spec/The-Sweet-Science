@@ -96,9 +96,23 @@ placeholders, plus day/week time advancement and a real Continue save.
 - **The Ledger** — the gym's remembered history in My Office: who walked in,
   who you cut and how he took it, who quit, what you learned, anniversaries.
 
-Deferred to upcoming phases: the 3-exchange interview, training (Phase 5), the
-rest of My Office (Phase 6), the Calendar (Phase 7), the fight engine
-(Phase 8), and the mechanical press (Phase 9).
+**Phase 5 — My Gym & Training.**
+
+- **General training** runs automatically each advance for locker holders,
+  under the gym's style philosophy (your city archetype) — so a gym produces a
+  certain kind of fighter. No-locker men train in limited mode; low morale
+  drags development; young men grow fast and old men decline (reflexes first).
+- **Focused training** is your scarce personal attention — two slots at first
+  (just you; coaches expand it in Phase 6). A focused fighter develops faster
+  and toward a focus area you choose. Assigned in My Gym; clears if he loses
+  his locker.
+- **Progress is visible** — a development read per fighter (Developing /
+  Coming on / Steady / Plateaued / Declining / Limited), attribute trend arrows
+  on the profile, and the gym log notes notable gains.
+
+Deferred to upcoming phases: the 3-exchange interview, the rest of My Office
+(Phase 6), the Calendar (Phase 7), the fight engine (Phase 8), and the
+mechanical press (Phase 9).
 
 ---
 
@@ -153,6 +167,7 @@ src/
     gymLog.ts        The gym's daily life: observations, in-gym trait reveals
     lifeEvents.ts    Rare trait-extrapolated life events
     press.ts         The local paper: ambient clippings, bylines, venues
+    training.ts      Development + decline; general & focused training
   state/
     GameContext.tsx  The shell state machine (screen, room, save)
     persistence.ts   Versioned localStorage save (one reader/writer)
@@ -164,8 +179,9 @@ src/
   screens/
     HomeScreen, SettingsScreen, GymScreen, WalkInViewer, FighterProfile
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
-  rooms/             RoomRouter, OfficeRoom (walk-in desk),
-                     LockerRoom (roster + hierarchy), RoomPlaceholder
+  rooms/             RoomRouter, OfficeRoom (desk/paper/ledger),
+                     LockerRoom (roster + hierarchy), MyGymRoom (training),
+                     RoomPlaceholder
   styles/            theme.css (design tokens) + global.css
 ```
 

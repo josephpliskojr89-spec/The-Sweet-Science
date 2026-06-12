@@ -12,12 +12,13 @@
 */
 
 import type { Fighter } from './fighters';
+import type { TrainingFocus, AttrKey } from './training';
 
 export type HierarchyTier = 'must_keep' | 'watch' | 'chopping';
 
 export interface RosterEntry {
   fighter: Fighter;
-  /** Locker holders develop fully; others train in limited mode (Phase 5). */
+  /** Locker holders develop fully; others train in limited mode. */
   hasLocker: boolean;
   /** Where he sits in your hierarchy. */
   tier: HierarchyTier;
@@ -29,6 +30,10 @@ export interface RosterEntry {
   trust: number;
   /** Times you've pulled his locker — durable memory that compounds. */
   lockerLossCount: number;
+  /** Focused-training assignment, or null for general training only. */
+  focus: TrainingFocus | null;
+  /** Per-attribute change from the most recent advance (for trend display). */
+  lastDelta: Partial<Record<AttrKey, number>>;
 }
 
 export interface TierMeta {

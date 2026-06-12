@@ -15,6 +15,7 @@ import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../game/weightClasses';
 import { getCity } from '../game/cities';
 import { TRAITS } from '../game/traits';
+import { developmentState, focusLabel } from '../game/training';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
 import { MoodChip } from '../components/MoodChip';
@@ -56,6 +57,7 @@ export function FighterProfile() {
   const f = entry.fighter;
   const cls = WEIGHT_CLASSES[f.weightClass];
   const home = getCity(f.homeCityId);
+  const dev = developmentState(entry);
   const lockersFull = lockersUsed(save) >= LOCKER_CAP;
   const noLockerFull = noLockerUsed(save) >= NO_LOCKER_CAP;
   const days = save.dayCount - entry.joinedDayCount;
@@ -109,10 +111,23 @@ export function FighterProfile() {
           {/* Right column — attributes, traits, actions */}
           <div className="fp__right">
             <section className="fp__section">
-              <h3 className="fp__section-title">Attributes</h3>
+              <div className="fp__section-head">
+                <h3 className="fp__section-title">Attributes</h3>
+                <div className="fp__dev">
+                  {entry.focus && (
+                    <span className="fp__focus-tag">Focused · {focusLabel(entry.focus)}</span>
+                  )}
+                  <span className={`fp__dev-tag fp__dev-tag--${dev.tone}`}>{dev.label}</span>
+                </div>
+              </div>
               <div className="fp__attrs">
                 {ATTR_ROWS.map(([label, key]) => (
-                  <AttributeBar key={key} label={label} value={f.attributes[key]} />
+                  <AttributeBar
+                    key={key}
+                    label={label}
+                    value={f.attributes[key]}
+                    delta={entry.lastDelta?.[key]}
+                  />
                 ))}
               </div>
             </section>

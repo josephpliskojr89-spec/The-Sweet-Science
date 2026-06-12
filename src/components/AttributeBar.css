@@ -36,4 +36,17 @@
   font-size: 14px;
   color: var(--parchment);
   text-align: right;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 3px;
+}
+.attr__trend {
+  font-size: 8px;
+}
+.attr__trend--up {
+  color: #7bbf6a;
+}
+.attr__trend--down {
+  color: var(--rust);
 }

@@ -28,6 +28,7 @@ import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
 import { runPressCycle } from '../game/press';
+import { trainFighter, FOCUS_SLOTS_BASE, type TrainingFocus } from '../game/training';
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
@@ -110,11 +111,14 @@ interface GameContextValue {
   closeProfile: () => void;
   setLocker: (id: string, hasLocker: boolean) => void;
   setTier: (id: string, tier: HierarchyTier) => void;
+  setFocus: (id: string, focus: TrainingFocus | null) => void;
   cutFighter: (id: string) => void;
   clearFlash: () => void;
 
   lockerCap: number;
   noLockerCap: number;
+  /** Focused-training slots available (manager only for now). */
+  focusCapacity: number;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -192,10 +196,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
         quality: qualityFor(prev),
       });
 
-      // The gym lives: moods recover, the floor gets observed (hidden traits
-      // can surface), and the fighters' lives outside intrude — all before we
-      // see who's had enough and walked.
-      let roster = prev.roster.map((e) => recover(e, days));
+      // The gym lives: moods recover, fighters develop on the floor (and age),
+      // the floor gets observed (hidden traits can surface), and the fighters'
+      // lives outside intrude — all before we see who's had enough and walked.
+      const gymArchetype = getCity(prev.cityId).archetype;
+      const trainingNotes: string[] = [];
+      let roster = prev.roster.map((e) => {
+        const settled = recover(e, days);
+        const t = trainFighter(settled, gymArchetype, days);
+        if (t.note) trainingNotes.push(t.note);
+        return {
+          ...settled,
+          fighter: { ...settled.fighter, attributes: t.attributes },
+          lastDelta: t.lastDelta,
+        };
+      });
       const obs = observeGym(roster, {
         days,
         fromDay,
@@ -215,7 +230,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         press = runPressCycle(press, prev.cityId, toDay).state;
       }
 
-      const newLines: LogLine[] = [...obs.lines, ...life.lines].map((text) => ({
+      const newLines: LogLine[] = [
+        ...trainingNotes.slice(0, 1),
+        ...obs.lines,
+        ...life.lines,
+      ].map((text) => ({
         dayCount: toDay,
         text,
       }));
@@ -306,6 +325,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
           tier: DEFAULT_TIER,
           joinedDayCount: prev.dayCount,
           ...initialRelationship(hasLocker),
+          focus: null,
+          lastDelta: {},
         };
         roster = [...prev.roster, entry];
         history = [
@@ -353,8 +374,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (e.fighter.id !== id) return e;
         // Pulling a locker stings and is remembered; giving one lifts him, but
         // never fully undoes the memory. Repeats compound (see relationship.ts).
+        // A man who loses his locker also loses his focused-training slot.
         const rel = hasLocker ? applyLockerGranted(e) : applyLockerTaken(e);
-        return { ...e, hasLocker, ...rel };
+        return { ...e, hasLocker, focus: hasLocker ? e.focus : null, ...rel };
       });
       commit({ ...prev, roster });
       emitGameEvent({ type: hasLocker ? 'locker_granted' : 'locker_taken', fighterId: id });
@@ -368,6 +390,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!prev) return;
       const roster = prev.roster.map((e) =>
         e.fighter.id === id ? { ...e, tier } : e,
+      );
+      commit({ ...prev, roster });
+    },
+    [commit],
+  );
+
+  const setFocus = useCallback(
+    (id: string, focus: TrainingFocus | null) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry) return;
+
+      if (focus !== null) {
+        if (!entry.hasLocker) {
+          setFlash('Only locker holders get your focused attention.');
+          return;
+        }
+        const focusedCount = prev.roster.filter((e) => e.focus !== null).length;
+        if (entry.focus === null && focusedCount >= FOCUS_SLOTS_BASE) {
+          setFlash('No focused slots left — you can only give so much personal attention.');
+          return;
+        }
+      }
+      const roster = prev.roster.map((e) =>
+        e.fighter.id === id ? { ...e, focus } : e,
       );
       commit({ ...prev, roster });
     },
@@ -400,7 +448,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       } else {
         const roster = prev.roster.map((e) =>
           e.fighter.id === id
-            ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier, ...applyCutStayed(e) }
+            ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier, focus: null, ...applyCutStayed(e) }
             : e,
         );
         commit({ ...prev, roster, history });
@@ -439,10 +487,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
       closeProfile,
       setLocker,
       setTier,
+      setFocus,
       cutFighter,
       clearFlash,
       lockerCap: LOCKER_CAP,
       noLockerCap: NO_LOCKER_CAP,
+      focusCapacity: FOCUS_SLOTS_BASE,
     }),
     [
       screen,
@@ -471,6 +521,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       closeProfile,
       setLocker,
       setTier,
+      setFocus,
       cutFighter,
       clearFlash,
     ],
