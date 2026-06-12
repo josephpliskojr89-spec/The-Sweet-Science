@@ -13,11 +13,12 @@ import type { RegionKey } from '../game/regions';
 import type { Appearance } from '../game/appearance';
 import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
+import { initialRelationship } from '../game/relationship';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 export const MANAGER_START_AGE = 25;
 /** The gym starts with twenty lockers — its primary resource and constraint. */
@@ -88,8 +89,8 @@ function migrateFighter<T extends { publicReputation?: number }>(f: T): T {
 }
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
-    tiers; v4 lacked fighter publicReputation. Pre-v2 shell saves can't be
-    resumed meaningfully — drop them. */
+    tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer.
+    Pre-v2 shell saves can't be resumed meaningfully — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -103,11 +104,17 @@ function migrate(raw: unknown): GameSave | null {
     typeof data.dayCount === 'number'
   ) {
     const roster: RosterEntry[] = Array.isArray(data.roster)
-      ? data.roster.map((e) => ({
-          ...e,
-          tier: e.tier ?? DEFAULT_TIER,
-          fighter: migrateFighter(e.fighter),
-        }))
+      ? data.roster.map((e) => {
+          const rel = initialRelationship(e.hasLocker);
+          return {
+            ...e,
+            tier: e.tier ?? DEFAULT_TIER,
+            morale: e.morale ?? rel.morale,
+            trust: e.trust ?? rel.trust,
+            lockerLossCount: e.lockerLossCount ?? 0,
+            fighter: migrateFighter(e.fighter),
+          };
+        })
       : [];
     const walkIns: WalkIn[] = Array.isArray(data.walkIns)
       ? data.walkIns.map((w) => ({ ...w, fighter: migrateFighter(w.fighter) }))

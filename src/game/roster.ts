@@ -23,6 +23,12 @@ export interface RosterEntry {
   tier: HierarchyTier;
   /** Day-count when he joined the gym. */
   joinedDayCount: number;
+  /** Short-term mood (0–100). See game/relationship.ts. */
+  morale: number;
+  /** Relationship with you (0–100) — breaks easily, heals slowly. */
+  trust: number;
+  /** Times you've pulled his locker — durable memory that compounds. */
+  lockerLossCount: number;
 }
 
 export interface TierMeta {

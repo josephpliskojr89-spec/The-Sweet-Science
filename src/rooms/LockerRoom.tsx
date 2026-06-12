@@ -16,6 +16,7 @@ import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
 import { Portrait } from '../assets/portraits';
 import { TraitChip } from '../components/TraitChip';
+import { MoodChip } from '../components/MoodChip';
 import './LockerRoom.css';
 
 export function LockerRoom() {
@@ -155,6 +156,7 @@ function FighterRow({
       </button>
 
       <div className="frow__controls">
+        <MoodChip entry={entry} />
         <span className={'frow__locker' + (entry.hasLocker ? ' frow__locker--on' : '')}>
           {entry.hasLocker ? '● Locker' : '○ No locker'}
         </span>

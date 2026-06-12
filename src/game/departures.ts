@@ -17,6 +17,7 @@
 */
 
 import type { RosterEntry } from './roster';
+import { relationshipQuitBonus } from './relationship';
 
 export type DepartureReason = 'quit' | 'left_for_opportunity';
 
@@ -25,8 +26,8 @@ export interface Departure {
   reason: DepartureReason;
 }
 
-/** Daily probability this fighter walks away on his own. */
-function dailyQuitChance(e: RosterEntry): number {
+/** Structural daily quit chance from his place in the gym. */
+function structuralQuitChance(e: RosterEntry): number {
   if (e.hasLocker) {
     // His needs are largely met. Locker holders rarely quit, and the men you've
     // committed to almost never walk on their own (~5%/yr).
@@ -38,6 +39,12 @@ function dailyQuitChance(e: RosterEntry): number {
   if (e.tier === 'must_keep') return 0.006; // valued yet unsettled; a contradiction he feels
   if (e.tier === 'watch') return 0.012;
   return 0.03; // neglected and on the block
+}
+
+/** Daily probability this fighter walks away on his own — structure plus the
+    pull of a damaged relationship (a betrayed locker holder leaves anyway). */
+function dailyQuitChance(e: RosterEntry): number {
+  return Math.min(structuralQuitChance(e) + relationshipQuitBonus(e), 0.06);
 }
 
 /** Genuine talent left lockerless is the one a rival might lure away. */

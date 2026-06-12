@@ -27,6 +27,13 @@ import { type Fighter, fighterFullName } from '../game/fighters';
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
+  initialRelationship,
+  applyLockerTaken,
+  applyLockerGranted,
+  applyCutStayed,
+  recover,
+} from '../game/relationship';
+import {
   evaluateDepartures,
   resolveCut,
   type Departure,
@@ -178,7 +185,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
         reputation: reputationFor(prev),
         quality: qualityFor(prev),
       });
-      const dep = evaluateDepartures(prev.roster, days);
+      // Moods drift back toward baseline and trust mends slowly before we see
+      // who's had enough and walked.
+      const recovered = prev.roster.map((e) => recover(e, days));
+      const dep = evaluateDepartures(recovered, days);
 
       commit({
         ...prev,
@@ -243,11 +253,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const walkIns = prev.walkIns.filter((w) => w.fighter.id !== id);
       let roster = prev.roster;
       if (decision === 'locker' || decision === 'no_locker') {
+        const hasLocker = decision === 'locker';
         const entry: RosterEntry = {
           fighter: target.fighter,
-          hasLocker: decision === 'locker',
+          hasLocker,
           tier: DEFAULT_TIER,
           joinedDayCount: prev.dayCount,
+          ...initialRelationship(hasLocker),
         };
         roster = [...prev.roster, entry];
         emitGameEvent({ type: 'walkin_accepted', fighterId: id, withLocker: decision === 'locker' });
@@ -282,9 +294,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setFlash('No room to carry another fighter without a locker. Cut someone first.');
         return;
       }
-      const roster = prev.roster.map((e) =>
-        e.fighter.id === id ? { ...e, hasLocker } : e,
-      );
+      const roster = prev.roster.map((e) => {
+        if (e.fighter.id !== id) return e;
+        // Pulling a locker stings and is remembered; giving one lifts him, but
+        // never fully undoes the memory. Repeats compound (see relationship.ts).
+        const rel = hasLocker ? applyLockerGranted(e) : applyLockerTaken(e);
+        return { ...e, hasLocker, ...rel };
+      });
       commit({ ...prev, roster });
       emitGameEvent({ type: hasLocker ? 'locker_granted' : 'locker_taken', fighterId: id });
     },
@@ -319,7 +335,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setFlash(`${name} cleared out his locker and was gone by morning.`);
       } else {
         const roster = prev.roster.map((e) =>
-          e.fighter.id === id ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier } : e,
+          e.fighter.id === id
+            ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier, ...applyCutStayed(e) }
+            : e,
         );
         commit({ ...prev, roster });
         setFlash(`${name} asked to stay and earn his spot back — no locker.`);

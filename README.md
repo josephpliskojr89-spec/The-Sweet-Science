@@ -70,6 +70,12 @@ placeholders, plus day/week time advancement and a real Continue save.
   genuine talent left lockerless may leave for a better opportunity; cutting a
   man plays out two ways — some vanish, some stay to earn it back. The
   post-advance notice reports who left and why.
+- **Relationship (morale + trust)** — each fighter has a mood that recovers
+  fast and a trust in you that breaks easily and heals slowly. Pulling a locker
+  hurts; giving it back helps less; doing it repeatedly compounds and craters
+  trust, which feeds quit risk — so a fighter can leave even with a locker if
+  you've churned him. A one-off demotion is forgivable; yo-yoing is not.
+  Surfaced as a one-word mood (Settled … On the brink), never a raw number.
 
 Deferred to upcoming phases: the 3-exchange interview, training (Phase 5), the
 rest of My Office (Phase 6), the Calendar (Phase 7), and the fight engine
@@ -122,6 +128,7 @@ src/
     fighters.ts      Fighter generation — the procedural heart
     walkins.ts       Walk-in scheduling, patience, expiry
     roster.ts        Roster entries + the three hierarchy tiers
+    relationship.ts  Per-fighter morale + trust; locker-decision fallout
     departures.ts    Quit / leave-for-opportunity / cut logic
     events.ts        Game event bus + trait-response stub (bible v2.8)
   state/

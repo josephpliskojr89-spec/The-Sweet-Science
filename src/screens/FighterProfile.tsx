@@ -17,6 +17,7 @@ import { getCity } from '../game/cities';
 import { TRAITS } from '../game/traits';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
+import { MoodChip } from '../components/MoodChip';
 import './FighterProfile.css';
 
 const ATTR_ROWS: Array<[string, keyof import('../game/fighters').Attributes]> = [
@@ -96,6 +97,10 @@ export function FighterProfile() {
             <div className="fp__status">
               <span className={'fp__locker' + (entry.hasLocker ? ' fp__locker--on' : '')}>
                 {entry.hasLocker ? '● Has a locker' : '○ No locker — limited training'}
+              </span>
+              <span className="fp__mood-row">
+                <span className="fp__mood-label">Mood</span>
+                <MoodChip entry={entry} />
               </span>
               <span className="fp__tenure">{tenure}</span>
             </div>
