@@ -49,13 +49,14 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
   gym: {
     key: 'gym',
     name: 'My Gym',
-    tagline: 'Active training management. The day-to-day craft.',
+    tagline: 'Your training identity and coaching staff.',
     contents: [
-      'Assign focused training to individual fighters',
-      'Set training focuses for each coach',
-      'Monitor fighter development in progress',
+      'Your gym’s training philosophy',
+      'Focused-training capacity (you, plus coaches)',
+      'Hire and assign coaches (Phase 6)',
+      'Per-fighter training lives in the Locker Room',
     ],
-    arrivesIn: 'Phase 5',
+    arrivesIn: 'Phase 6',
   },
   locker: {
     key: 'locker',

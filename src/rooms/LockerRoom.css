@@ -57,6 +57,36 @@
   color: var(--text-muted);
 }
 
+.locker__meters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+.locker__focus-meter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  padding-left: var(--space-lg);
+  border-left: 1px solid var(--leather-light);
+}
+.locker__focus-count {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--amber-bright);
+}
+.locker__focus-count--full {
+  color: var(--text-muted);
+}
+.locker__focus-label {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
 .locker__empty {
   font-family: var(--font-slab);
   font-style: italic;
@@ -196,11 +226,78 @@
 }
 
 /* Controls */
+/* Status chips between identity and controls */
+.frow__chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.frow__dev,
+.frow__feel {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 9px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.frow__dev--good,
+.frow__feel--good {
+  color: #7bbf6a;
+  background: rgba(123, 191, 106, 0.1);
+}
+.frow__dev--ok {
+  color: var(--parchment-dark);
+  background: rgba(217, 201, 163, 0.07);
+}
+.frow__dev--warn,
+.frow__feel--warn {
+  color: #c98a4a;
+  background: rgba(201, 138, 74, 0.1);
+}
+.frow__dev--crit {
+  color: var(--rust);
+  background: rgba(166, 67, 42, 0.12);
+}
+.frow__feel {
+  cursor: help;
+}
+
 .frow__controls {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   flex-wrap: wrap;
+}
+
+/* Training assignment select */
+.frow__focus-select {
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-warm);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--leather-light);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.frow__focus-select:hover {
+  color: var(--amber-bright);
+  border-color: var(--amber-deep);
+}
+.frow__focus-select:focus-visible {
+  outline: 2px solid var(--amber-bright);
+}
+
+.frow__limited {
+  font-family: var(--font-typewriter);
+  font-size: 11px;
+  color: var(--text-dim);
 }
 
 .frow__locker {

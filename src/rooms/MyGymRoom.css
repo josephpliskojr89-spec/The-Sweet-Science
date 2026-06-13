@@ -3,7 +3,7 @@
 }
 
 .mygym {
-  width: min(820px, 96vw);
+  width: min(720px, 96vw);
   margin: 0 auto;
   padding: var(--space-xl);
   border-radius: var(--radius-lg);
@@ -14,263 +14,177 @@
 }
 
 .mygym__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-lg);
   border-bottom: 1px solid var(--leather-light);
   padding-bottom: var(--space-md);
   margin-bottom: var(--space-lg);
+}
+.mygym__eyebrow {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 11px;
+  color: var(--amber-deep);
 }
 .mygym__title {
   font-size: 36px;
   color: var(--amber-bright);
   letter-spacing: 0.03em;
+  margin-top: 2px;
 }
-.mygym__philosophy {
+
+.mygym__section {
+  margin-bottom: var(--space-xl);
+}
+.mygym__section-title {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 12px;
+  color: var(--amber-deep);
+  margin-bottom: var(--space-md);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--leather-light);
+}
+
+.mygym__identity {
   font-family: var(--font-slab);
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 1.7;
   color: var(--text-muted);
-  margin-top: 4px;
 }
-.mygym__philosophy strong {
+.mygym__identity strong {
   color: var(--amber);
   font-style: italic;
   font-weight: 500;
 }
-
-.mygym__slots {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-  flex: 0 0 auto;
+.mygym__link {
+  color: var(--amber-bright);
+  font-family: inherit;
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0 4px;
 }
-.mygym__slots-count {
+.mygym__link:hover {
+  color: var(--amber);
+}
+
+.mygym__capacity {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.mygym__cap-count {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 26px;
+  font-size: 32px;
   color: var(--amber-bright);
 }
-.mygym__slots-label {
+.mygym__cap-label {
   font-family: var(--font-condensed);
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
 }
-.mygym__slots-note {
-  font-family: var(--font-typewriter);
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-top: 3px;
-  max-width: 220px;
-  text-align: right;
-}
 
-.mygym__empty {
+.mygym__none {
   font-family: var(--font-slab);
   font-style: italic;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-muted);
-  text-align: center;
-  padding: var(--space-2xl) var(--space-md);
 }
 
-.mygym__list {
+.mygym__focused {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
 }
-
-/* Training row */
-.trow {
+.mygym__focused-row {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  flex-wrap: wrap;
-  padding: 9px 12px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--leather-light);
   background: rgba(0, 0, 0, 0.28);
+  transition: border-color var(--t-fast), background var(--t-fast);
 }
-.trow--limited {
-  opacity: 0.62;
+.mygym__focused-row:hover {
+  border-color: var(--amber-deep);
+  background: rgba(58, 42, 28, 0.4);
 }
-
-.trow__id {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  text-align: left;
-  flex: 1;
-  min-width: 200px;
-}
-.trow__id:hover .trow__name {
-  color: var(--amber-bright);
-}
-.trow__portrait {
+.mygym__focused-portrait {
   flex: 0 0 auto;
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
   border-radius: 3px;
   overflow: hidden;
   border: 1px solid var(--leather-light);
   background: var(--ink-black);
   line-height: 0;
 }
-.trow__portrait svg {
-  width: 46px;
+.mygym__focused-portrait svg {
+  width: 40px;
   height: auto;
   transform: translateY(2px) scale(1.15);
   transform-origin: top center;
 }
-.trow__identity {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-.trow__name {
+.mygym__focused-name {
+  flex: 1;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 16px;
   letter-spacing: 0.02em;
   color: var(--parchment);
-  transition: color var(--t-fast);
 }
-.trow__meta {
+.mygym__focused-area {
   font-family: var(--font-condensed);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--ink-black);
+  background: var(--amber);
+  padding: 3px 10px;
+  border-radius: 9px;
+}
+
+.mygym__staff-you {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.28);
+}
+.mygym__staff-role {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
   font-size: 10px;
-  color: var(--text-dim);
+  color: var(--amber-deep);
 }
-
-.trow__dev {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 11px;
-  padding: 3px 9px;
-  border-radius: 9px;
-  border: 1px solid currentColor;
-  flex: 0 0 auto;
+.mygym__staff-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--parchment);
 }
-.trow__dev--good {
-  color: #7bbf6a;
-  background: rgba(123, 191, 106, 0.1);
-}
-.trow__dev--ok {
-  color: var(--parchment-dark);
-  background: rgba(217, 201, 163, 0.07);
-}
-.trow__dev--warn {
-  color: #c98a4a;
-  background: rgba(201, 138, 74, 0.1);
-}
-.trow__dev--crit {
-  color: var(--rust);
-  background: rgba(166, 67, 42, 0.12);
-}
-
-.trow__focus {
-  flex: 0 0 auto;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
-.trow__limited-tag {
-  font-family: var(--font-typewriter);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.trow__focused {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.trow__focused-tag {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 11px;
-  color: var(--ink-black);
-  background: var(--amber);
-  padding: 4px 10px;
-  border-radius: 9px;
-}
-
-.trow__focus-btn {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 11px;
+.mygym__staff-note {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
   color: var(--text-muted);
-  padding: 5px 10px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--leather-light);
-  background: rgba(0, 0, 0, 0.3);
-  transition: color var(--t-fast), border-color var(--t-fast);
 }
-.trow__focus-btn:hover:not(:disabled) {
-  color: var(--amber-bright);
-  border-color: var(--amber-deep);
-}
-.trow__focus-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.trow__focus-btn--assign:hover:not(:disabled) {
-  color: var(--ink-black);
-  background: var(--amber);
-}
-
-.trow__picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: flex-end;
-  max-width: 420px;
-}
-.trow__pick {
-  font-family: var(--font-condensed);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  padding: 4px 9px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--leather-light);
-  background: rgba(0, 0, 0, 0.3);
-  transition: color var(--t-fast), background var(--t-fast);
-}
-.trow__pick:hover {
-  color: var(--ink-black);
-  background: var(--amber);
-}
-.trow__pick--on {
-  color: var(--ink-black);
-  background: var(--amber);
-}
-.trow__pick--stop {
+.mygym__staff-future {
+  font-family: var(--font-slab);
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--text-dim);
-}
-.trow__pick--cancel {
-  color: var(--rust);
-}
-
-@media (max-width: 620px) {
-  .trow__focus {
-    margin-left: 0;
-    width: 100%;
-  }
-  .mygym__head {
-    flex-direction: column;
-  }
-  .mygym__slots {
-    align-items: flex-start;
-  }
+  margin-top: var(--space-md);
 }

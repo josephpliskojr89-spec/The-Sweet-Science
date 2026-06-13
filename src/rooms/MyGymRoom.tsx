@@ -1,35 +1,25 @@
 /*
-  MyGymRoom — My Gym (Phase 5)
+  MyGymRoom — My Gym: Coaching & Staff (Phase 5+, expands in Phase 6)
   --------------------------------------------------------------------------
-  The day-to-day craft. Locker holders train automatically under the gym's
-  general philosophy (your city's style archetype). Your personal attention —
-  focused training — is the scarce thing: a couple of slots at first (just you),
-  expanded later by coaches. A focused fighter develops faster, and you steer
-  what he works on.
+  The gym-wide, above-the-individual view. Your training identity (the city's
+  style philosophy), your focused-training capacity and who's currently using
+  it, and your coaching staff. Per-fighter training assignment lives in the
+  Locker Room now — this room is the gym, not the man.
 
-  Development itself runs on time advance (game/training.ts). This room is where
-  you assign focus and read where each man is in his arc.
+  Coach hiring and assigning fighters to coaches arrive in Phase 6; the staff
+  section is the placeholder for it.
 */
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useGame } from '../state/GameContext';
 import { getCity } from '../game/cities';
 import { fighterFullName } from '../game/fighters';
-import { WEIGHT_CLASSES } from '../game/weightClasses';
-import type { RosterEntry } from '../game/roster';
-import {
-  ATTR_KEYS,
-  ATTR_LABELS,
-  developmentState,
-  focusLabel,
-  gymPhilosophyLabel,
-  type TrainingFocus,
-} from '../game/training';
+import { focusLabel, gymPhilosophyLabel } from '../game/training';
 import { Portrait } from '../assets/portraits';
 import './MyGymRoom.css';
 
 export function MyGymRoom() {
-  const { save, closeRoom, profileId, viewerIds, focusCapacity } = useGame();
+  const { save, closeRoom, profileId, viewerIds, focusCapacity, openRoom, openProfile } = useGame();
 
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
@@ -44,13 +34,7 @@ export function MyGymRoom() {
   if (!save) return null;
 
   const philosophy = gymPhilosophyLabel(getCity(save.cityId).archetype);
-  const focusedCount = save.roster.filter((e) => e.focus !== null).length;
-
-  const ordered = [...save.roster].sort((a, b) => {
-    if (a.hasLocker !== b.hasLocker) return a.hasLocker ? -1 : 1;
-    if ((a.focus !== null) !== (b.focus !== null)) return a.focus !== null ? -1 : 1;
-    return a.fighter.lastName.localeCompare(b.fighter.lastName);
-  });
+  const focused = save.roster.filter((e) => e.focus !== null);
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="My Gym">
@@ -67,108 +51,74 @@ export function MyGymRoom() {
         <div className="mygym">
           <header className="mygym__head">
             <div>
+              <p className="mygym__eyebrow">Coaching &amp; Staff</p>
               <h2 className="mygym__title">My Gym</h2>
-              <p className="mygym__philosophy">
-                Locker holders train daily under the gym’s{' '}
-                <strong>{philosophy}</strong> philosophy.
-              </p>
-            </div>
-            <div className="mygym__slots">
-              <span className="mygym__slots-count">
-                {focusedCount} / {focusCapacity}
-              </span>
-              <span className="mygym__slots-label">focused slots</span>
-              <span className="mygym__slots-note">Just you, for now — coaches add slots (Phase 6)</span>
             </div>
           </header>
 
-          {save.roster.length === 0 ? (
-            <p className="mygym__empty">
-              No fighters to train yet. Take someone in from the door and the
-              work begins.
+          {/* Training identity */}
+          <section className="mygym__section">
+            <h3 className="mygym__section-title">Training Identity</h3>
+            <p className="mygym__identity">
+              This gym brings men up under a <strong>{philosophy}</strong> philosophy.
+              Every locker holder develops along it on his own each day; your
+              personal attention — focused training — is set per fighter in the
+              <button className="mygym__link" onClick={() => openRoom('locker')}>
+                Locker Room
+              </button>
+              .
             </p>
-          ) : (
-            <ul className="mygym__list">
-              {ordered.map((entry) => (
-                <TrainingRow
-                  key={entry.fighter.id}
-                  entry={entry}
-                  capacityFull={focusedCount >= focusCapacity}
-                />
-              ))}
-            </ul>
-          )}
+          </section>
+
+          {/* Focused capacity */}
+          <section className="mygym__section">
+            <div className="mygym__capacity">
+              <span className="mygym__cap-count">
+                {focused.length} / {focusCapacity}
+              </span>
+              <span className="mygym__cap-label">focused slots in use</span>
+            </div>
+
+            {focused.length === 0 ? (
+              <p className="mygym__none">
+                No one is in focused training. Pick a fighter or two in the Locker
+                Room to give your personal attention.
+              </p>
+            ) : (
+              <ul className="mygym__focused">
+                {focused.map((e) => (
+                  <li key={e.fighter.id}>
+                    <button className="mygym__focused-row" onClick={() => openProfile(e.fighter.id)}>
+                      <span className="mygym__focused-portrait">
+                        <Portrait appearance={e.fighter.appearance} size={40} />
+                      </span>
+                      <span className="mygym__focused-name">{fighterFullName(e.fighter)}</span>
+                      <span className="mygym__focused-area">{focusLabel(e.focus!)}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          {/* Staff */}
+          <section className="mygym__section">
+            <h3 className="mygym__section-title">Your Staff</h3>
+            <div className="mygym__staff">
+              <div className="mygym__staff-you">
+                <span className="mygym__staff-role">Head Trainer</span>
+                <span className="mygym__staff-name">{save.manager.name || 'You'}</span>
+                <span className="mygym__staff-note">You run every session yourself.</span>
+              </div>
+            </div>
+            <p className="mygym__staff-future">
+              You’re a one-man operation. Hiring coaches in My Office (Phase 6)
+              will expand your focused-training capacity and let you put the right
+              man with the right fighter.
+            </p>
+          </section>
         </div>
       </div>
     </div>
-  );
-}
-
-const FOCUS_OPTIONS: TrainingFocus[] = ['rounded', ...ATTR_KEYS];
-
-function TrainingRow({ entry, capacityFull }: { entry: RosterEntry; capacityFull: boolean }) {
-  const { setFocus, openProfile } = useGame();
-  const [picking, setPicking] = useState(false);
-  const f = entry.fighter;
-  const dev = developmentState(entry);
-  const focused = entry.focus !== null;
-
-  return (
-    <li className={'trow' + (entry.hasLocker ? '' : ' trow--limited')}>
-      <button className="trow__id" onClick={() => openProfile(f.id)} title="Open profile">
-        <span className="trow__portrait">
-          <Portrait appearance={f.appearance} size={46} />
-        </span>
-        <span className="trow__identity">
-          <span className="trow__name">{fighterFullName(f)}</span>
-          <span className="trow__meta">
-            {f.age} yrs · {WEIGHT_CLASSES[f.weightClass].name}
-          </span>
-        </span>
-      </button>
-
-      <span className={`trow__dev trow__dev--${dev.tone}`}>{dev.label}</span>
-
-      <div className="trow__focus">
-        {!entry.hasLocker ? (
-          <span className="trow__limited-tag">Limited — no locker</span>
-        ) : picking ? (
-          <div className="trow__picker">
-            {entry.focus !== null && (
-              <button className="trow__pick trow__pick--stop" onClick={() => { setFocus(f.id, null); setPicking(false); }}>
-                General only
-              </button>
-            )}
-            {FOCUS_OPTIONS.map((opt) => (
-              <button
-                key={opt}
-                className={'trow__pick' + (entry.focus === opt ? ' trow__pick--on' : '')}
-                onClick={() => { setFocus(f.id, opt); setPicking(false); }}
-              >
-                {opt === 'rounded' ? 'Rounded' : ATTR_LABELS[opt]}
-              </button>
-            ))}
-            <button className="trow__pick trow__pick--cancel" onClick={() => setPicking(false)}>
-              ✕
-            </button>
-          </div>
-        ) : focused ? (
-          <span className="trow__focused">
-            <span className="trow__focused-tag">Focused · {focusLabel(entry.focus!)}</span>
-            <button className="trow__focus-btn" onClick={() => setPicking(true)}>change</button>
-            <button className="trow__focus-btn" onClick={() => setFocus(f.id, null)} title="Back to general training">✕</button>
-          </span>
-        ) : (
-          <button
-            className="trow__focus-btn trow__focus-btn--assign"
-            disabled={capacityFull}
-            onClick={() => setPicking(true)}
-            title={capacityFull ? 'No focused slots left' : 'Give him your focused attention'}
-          >
-            {capacityFull ? 'Slots full' : 'Assign focus ▸'}
-          </button>
-        )}
-      </div>
-    </li>
   );
 }

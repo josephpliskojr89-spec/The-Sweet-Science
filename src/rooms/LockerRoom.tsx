@@ -1,11 +1,11 @@
 /*
-  LockerRoom — your full roster and its hierarchy (Phase 4)
+  LockerRoom — your full roster, and now its day-to-day management (Phase 5+)
   --------------------------------------------------------------------------
-  Twenty lockers, and the decisions they force. Each fighter sits in a tier —
-  Must Keep, Watch List, Chopping Block — and either holds a locker or trains
-  without one. Here you assign and pull lockers (the cap bites), move men
-  between tiers, open a full profile, or cut a man loose (and learn how he
-  takes it). Training itself is Phase 5; this is the human bookkeeping.
+  The single place to manage a fighter. Twenty lockers and the decisions they
+  force; the hierarchy (Must Keep / Watch / Chopping); and — folded in here so
+  you never have to leave to set training — focused-training assignment, the
+  development read, and his discovered feel. The gym-wide picture and coaching
+  staff live in My Gym; everything you do to an individual man happens here.
 */
 
 import { useEffect, useState } from 'react';
@@ -14,16 +14,21 @@ import { LOCKER_CAP, NO_LOCKER_CAP } from '../state/persistence';
 import { TIER_META, TIER_ORDER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
+import {
+  developmentState,
+  devFeel,
+  ATTR_KEYS,
+  ATTR_LABELS,
+  type TrainingFocus,
+} from '../game/training';
 import { Portrait } from '../assets/portraits';
 import { TraitChip } from '../components/TraitChip';
 import { MoodChip } from '../components/MoodChip';
 import './LockerRoom.css';
 
 export function LockerRoom() {
-  const { save, closeRoom, profileId, viewerIds } = useGame();
+  const { save, closeRoom, profileId, viewerIds, focusCapacity } = useGame();
 
-  // Esc steps back to the floor — but only when this room is the top layer.
-  // A profile or walk-in viewer above us owns the key while it's open.
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
     if (overlayOpen) return;
@@ -39,6 +44,8 @@ export function LockerRoom() {
   const lockersFull = used >= LOCKER_CAP;
   const noLockerCount = noLockerUsed(save);
   const noLockerFull = noLockerCount >= NO_LOCKER_CAP;
+  const focusedCount = save.roster.filter((e) => e.focus !== null).length;
+  const slotsFull = focusedCount >= focusCapacity;
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="Locker Room">
@@ -55,16 +62,24 @@ export function LockerRoom() {
         <div className="locker">
           <header className="locker__head">
             <h2 className="locker__title">Locker Room</h2>
-            <div className="locker__meter">
-              <span className="locker__meter-track">
-                <span
-                  className="locker__meter-fill"
-                  style={{ width: `${(used / LOCKER_CAP) * 100}%` }}
-                />
-              </span>
-              <span className="locker__meter-label">
-                {used} / {LOCKER_CAP} lockers · {noLockerCount} / {NO_LOCKER_CAP} without
-              </span>
+            <div className="locker__meters">
+              <div className="locker__meter">
+                <span className="locker__meter-track">
+                  <span
+                    className="locker__meter-fill"
+                    style={{ width: `${(used / LOCKER_CAP) * 100}%` }}
+                  />
+                </span>
+                <span className="locker__meter-label">
+                  {used} / {LOCKER_CAP} lockers · {noLockerCount} / {NO_LOCKER_CAP} without
+                </span>
+              </div>
+              <div className="locker__focus-meter">
+                <span className={'locker__focus-count' + (slotsFull ? ' locker__focus-count--full' : '')}>
+                  {focusedCount} / {focusCapacity}
+                </span>
+                <span className="locker__focus-label">focused slots</span>
+              </div>
             </div>
           </header>
 
@@ -80,9 +95,7 @@ export function LockerRoom() {
               return (
                 <section className="locker__tier" key={tier}>
                   <header className="locker__tier-head">
-                    <h3 className={`locker__tier-name locker__tier-name--${tier}`}>
-                      {meta.name}
-                    </h3>
+                    <h3 className={`locker__tier-name locker__tier-name--${tier}`}>{meta.name}</h3>
                     <span className="locker__tier-count">{inTier.length}</span>
                     <span className="locker__tier-blurb">{meta.blurb}</span>
                   </header>
@@ -98,6 +111,7 @@ export function LockerRoom() {
                           dayCount={save.dayCount}
                           lockersFull={lockersFull}
                           noLockerFull={noLockerFull}
+                          slotsFull={slotsFull}
                         />
                       ))}
                     </ul>
@@ -117,26 +131,26 @@ function FighterRow({
   dayCount,
   lockersFull,
   noLockerFull,
+  slotsFull,
 }: {
   entry: RosterEntry;
   dayCount: number;
   lockersFull: boolean;
   noLockerFull: boolean;
+  slotsFull: boolean;
 }) {
-  const { openProfile, setLocker, setTier, cutFighter } = useGame();
+  const { openProfile, setLocker, setTier, setFocus, cutFighter } = useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
   const f = entry.fighter;
   const cls = WEIGHT_CLASSES[f.weightClass];
   const days = dayCount - entry.joinedDayCount;
   const tenure = days <= 0 ? 'joined today' : days === 1 ? 'with you 1 day' : `with you ${days} days`;
+  const dev = developmentState(entry);
+  const feel = f.growthKnown ? devFeel(f.growth) : null;
 
   return (
     <li className="frow">
-      <button
-        className="frow__id"
-        onClick={() => openProfile(f.id)}
-        title="Open profile"
-      >
+      <button className="frow__id" onClick={() => openProfile(f.id)} title="Open profile">
         <span className="frow__portrait">
           <Portrait appearance={f.appearance} size={52} />
         </span>
@@ -155,12 +169,17 @@ function FighterRow({
         </span>
       </button>
 
-      <div className="frow__controls">
+      <div className="frow__chips">
         <MoodChip entry={entry} />
-        <span className={'frow__locker' + (entry.hasLocker ? ' frow__locker--on' : '')}>
-          {entry.hasLocker ? '● Locker' : '○ No locker'}
-        </span>
+        <span className={`frow__dev frow__dev--${dev.tone}`}>{dev.label}</span>
+        {feel && (
+          <span className={`frow__feel frow__feel--${feel.tone}`} title={feel.blurb}>
+            {feel.label}
+          </span>
+        )}
+      </div>
 
+      <div className="frow__controls">
         <div className="frow__tiers" role="group" aria-label="Hierarchy">
           {TIER_ORDER.map((t) => (
             <button
@@ -175,23 +194,49 @@ function FighterRow({
         </div>
 
         {entry.hasLocker ? (
-          <button
-            className="frow__act"
-            disabled={noLockerFull}
-            onClick={() => setLocker(f.id, false)}
-            title={noLockerFull ? 'No room to carry another without a locker' : undefined}
-          >
-            Take Locker
-          </button>
+          <>
+            <select
+              className="frow__focus-select"
+              value={entry.focus ?? ''}
+              onChange={(e) =>
+                setFocus(f.id, e.target.value === '' ? null : (e.target.value as TrainingFocus))
+              }
+              title={
+                slotsFull && entry.focus === null
+                  ? 'No focused slots left'
+                  : 'Training assignment'
+              }
+            >
+              <option value="">General training</option>
+              <option value="rounded">Focus · Well-rounded</option>
+              {ATTR_KEYS.map((k) => (
+                <option key={k} value={k}>
+                  Focus · {ATTR_LABELS[k]}
+                </option>
+              ))}
+            </select>
+
+            <button
+              className="frow__act"
+              disabled={noLockerFull}
+              onClick={() => setLocker(f.id, false)}
+              title={noLockerFull ? 'No room to carry another without a locker' : undefined}
+            >
+              Take Locker
+            </button>
+          </>
         ) : (
-          <button
-            className="frow__act frow__act--give"
-            disabled={lockersFull}
-            onClick={() => setLocker(f.id, true)}
-            title={lockersFull ? 'All 20 lockers are full' : undefined}
-          >
-            Give Locker
-          </button>
+          <>
+            <span className="frow__limited">Limited · no locker</span>
+            <button
+              className="frow__act frow__act--give"
+              disabled={lockersFull}
+              onClick={() => setLocker(f.id, true)}
+              title={lockersFull ? 'All 20 lockers are full' : undefined}
+            >
+              Give Locker
+            </button>
+          </>
         )}
 
         {confirmingCut ? (

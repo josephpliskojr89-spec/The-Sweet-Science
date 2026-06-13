@@ -111,14 +111,16 @@ placeholders, plus day/week time advancement and a real Continue save.
   profile once discovered. (Design: `docs/development-system.md`.)
 - **Focused training** is your scarce personal attention — two slots at first
   (just you; coaches expand it in Phase 6). A focused fighter develops faster
-  and toward a focus area you choose. Assigned in My Gym; clears if he loses
-  his locker.
+  and toward a focus area you choose. Assigned per fighter **in the Locker
+  Room** (the single place you manage a man); clears if he loses his locker.
+  **My Gym** is the gym-wide view: training identity, focused-slot capacity,
+  who's in focused training, and your coaching staff (Phase 6).
 - **Progress is visible** — a development read per fighter (Developing /
-  Coming on / Steady / Plateaued / Declining / Limited); FM-style trend arrows
-  on the profile attributes (recent-form window, green up / red down) with a
-  hover tooltip of the actual movement; and a **Development** tab that charts
-  each attribute's history as a sparkline with its total gain since he walked
-  in. The gym log also notes notable gains.
+  Coming on / Steady / Plateaued / Declining / Limited) on the Locker Room row;
+  FM-style trend arrows on the profile attributes (recent-form window, green up
+  / red down) with a hover tooltip of the actual movement; and a **Development**
+  tab that charts each attribute's history as a sparkline with its total gain
+  since he walked in. The gym log also notes notable gains.
 
 Deferred to upcoming phases: the 3-exchange interview, the rest of My Office
 (Phase 6), the Calendar (Phase 7), the fight engine (Phase 8), and the
@@ -191,7 +193,8 @@ src/
     HomeScreen, SettingsScreen, GymScreen, WalkInViewer, FighterProfile
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
   rooms/             RoomRouter, OfficeRoom (desk/paper/ledger),
-                     LockerRoom (roster + hierarchy), MyGymRoom (training),
+                     LockerRoom (roster + hierarchy + per-fighter training),
+                     MyGymRoom (training identity, capacity & coaching staff),
                      RoomPlaceholder
   styles/            theme.css (design tokens) + global.css
 ```
