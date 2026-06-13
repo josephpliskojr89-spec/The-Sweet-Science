@@ -50,6 +50,13 @@ export interface Fighter {
   attributes: Attributes;
   /** Hidden ceiling — never shown directly. */
   potential: number;
+  /** Hidden development rate — his "feel" for the craft. ~1.0 is ordinary; a
+      high value is a natural (picks it up fast), a low one a slow study who
+      barely improves. Multiplies training speed (game/training.ts), independent
+      of his ceiling. Never shown as a number; the extremes reveal over time. */
+  growth: number;
+  /** Whether the player has discovered his developmental nature (extremes only). */
+  growthKnown: boolean;
   /** Public reputation 0..100 — how known/regarded he is in the sport, separate
       from gym-internal standing. A walk-in prospect is essentially unknown.
       The press system (Phase 9) reads and writes this; fights move it. It sits
@@ -284,6 +291,22 @@ export interface GenerateFighterOptions {
   quality?: number;
 }
 
+/**
+ * Roll a hidden development rate (his "feel"). Mostly ordinary (~1.0) with rare
+ * tails: a small chance of a Natural and a larger minority of Slow Studies, so
+ * a gym's floor stays full of men who never quite arrive. Reputation nudges the
+ * tails (better gyms draw a few more naturals, fewer slow studies) — and since
+ * quality is reputation-driven, it's reputation-ready for Phase 6.
+ */
+export function rollGrowth(quality = 0.2): number {
+  const r = Math.random();
+  const naturalChance = 0.05 + quality * 0.05;
+  const slowChance = 0.24 - quality * 0.1;
+  if (r < naturalChance) return rand(1.5, 2.0);
+  if (r < naturalChance + slowChance) return rand(0.3, 0.6);
+  return clamp(1.0 + gauss() * 0.15, 0.7, 1.35);
+}
+
 function makeId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
@@ -339,6 +362,8 @@ export function generateFighter(opts: GenerateFighterOptions): Fighter {
     appearance,
     attributes,
     potential,
+    growth: rollGrowth(quality),
+    growthKnown: false,
     publicReputation,
     visibleTraits: visible,
     hiddenTraits: hidden,

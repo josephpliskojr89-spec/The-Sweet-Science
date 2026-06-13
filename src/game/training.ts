@@ -173,6 +173,8 @@ export function trainFighter(
     if (af > 0) {
       const headroom = clamp((ceil - attrs[k]) / 35, 0, 1);
       let rate = GENERAL_BASE * (emph ? 1 : OFF_EMPHASIS) * headroom * af * mf * lockerMult * focusGlobal;
+      // His feel for the craft — a natural climbs fast, a slow study barely.
+      rate *= f.growth;
       if (focused) {
         if (entry.focus === 'rounded') rate *= 1.2;
         else if (entry.focus === k) rate *= FOCUS_AREA;
@@ -226,6 +228,39 @@ export function developmentState(entry: RosterEntry): DevState {
 
 export function focusLabel(focus: TrainingFocus): string {
   return focus === 'rounded' ? 'Well-rounded' : ATTR_LABELS[focus];
+}
+
+// --- developmental feel (the discoverable extremes) -------------------------
+
+/** Only the tails are notable enough to read and reveal. Ordinary feel stays
+    unstated — you judge the middle by the development curve, not a label. */
+export const NATURAL_THRESHOLD = 1.45;
+export const SLOW_STUDY_THRESHOLD = 0.62;
+
+export type DevFeelTone = 'good' | 'warn';
+export interface DevFeel {
+  label: string;
+  blurb: string;
+  tone: DevFeelTone;
+}
+
+/** A read on a fighter's feel — only for the extremes worth naming. */
+export function devFeel(growth: number): DevFeel | null {
+  if (growth >= NATURAL_THRESHOLD) {
+    return {
+      label: 'A Natural',
+      blurb: 'Picks the craft up fast — show him once and it’s his.',
+      tone: 'good',
+    };
+  }
+  if (growth <= SLOW_STUDY_THRESHOLD) {
+    return {
+      label: 'Slow Study',
+      blurb: 'The work goes in and barely comes out. Honest, willing, stuck.',
+      tone: 'warn',
+    };
+  }
+  return null;
 }
 
 // --- attribute history & trends (FM-style progression) ----------------------

@@ -14,6 +14,7 @@ import type { Appearance } from '../game/appearance';
 import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 import { initialRelationship } from '../game/relationship';
+import { rollGrowth } from '../game/fighters';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import type { LogLine } from '../game/gymLog';
@@ -21,7 +22,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 9;
+export const SAVE_VERSION = 10;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -111,9 +112,18 @@ export function noLockerUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 0 : 1), 0);
 }
 
-/** Pre-v5 fighters lack publicReputation; backfill the unknown-prospect value. */
-function migrateFighter<T extends { publicReputation?: number }>(f: T): T {
-  return { ...f, publicReputation: f.publicReputation ?? 2 };
+/** Backfill fighter fields added across versions: publicReputation (v5) and
+    the development-feel pair growth/growthKnown (v10). Existing fighters get a
+    feel assigned now, undiscovered. */
+function migrateFighter<
+  T extends { publicReputation?: number; growth?: number; growthKnown?: boolean },
+>(f: T): T {
+  return {
+    ...f,
+    publicReputation: f.publicReputation ?? 2,
+    growth: f.growth ?? rollGrowth(0.2),
+    growthKnown: f.growthKnown ?? false,
+  };
 }
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy

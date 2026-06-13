@@ -18,6 +18,7 @@ import { TRAITS } from '../game/traits';
 import {
   developmentState,
   focusLabel,
+  devFeel,
   attributeTrend,
   attributeSeries,
   ATTR_KEYS,
@@ -63,6 +64,7 @@ export function FighterProfile() {
   const cls = WEIGHT_CLASSES[f.weightClass];
   const home = getCity(f.homeCityId);
   const dev = developmentState(entry);
+  const feel = f.growthKnown ? devFeel(f.growth) : null;
   const lockersFull = lockersUsed(save) >= LOCKER_CAP;
   const noLockerFull = noLockerUsed(save) >= NO_LOCKER_CAP;
   const days = save.dayCount - entry.joinedDayCount;
@@ -173,6 +175,11 @@ export function FighterProfile() {
               <div className="fp__section-head">
                 <h3 className="fp__section-title">Attributes</h3>
                 <div className="fp__dev">
+                  {feel && (
+                    <span className={`fp__feel-tag fp__feel-tag--${feel.tone}`} title={feel.blurb}>
+                      {feel.label}
+                    </span>
+                  )}
                   {entry.focus && (
                     <span className="fp__focus-tag">Focused · {focusLabel(entry.focus)}</span>
                   )}

@@ -20,6 +20,7 @@ import type { RosterEntry } from './roster';
 import type { TraitKey } from './traits';
 import { TRAITS } from './traits';
 import { moodLabel } from './relationship';
+import { devFeel } from './training';
 import type { RegionKey } from './regions';
 
 export interface LogLine {
@@ -79,6 +80,24 @@ const REVEAL_LINES: Record<TraitKey, string[]> = {
   ],
   chip_on_shoulder: [
     'Someone laughed during {name}’s bag work. He trained two extra hours and left without a word. Everything is fuel to this one.',
+  ],
+};
+
+// --- developmental feel reveal ----------------------------------------------
+
+/** Weekly chance to read a fighter's feel (locker holders; halved without).
+    A natural stands out faster; a slow study takes longer — you keep hoping. */
+const DEV_REVEAL_NATURAL = 0.03;
+const DEV_REVEAL_SLOW = 0.018;
+
+const DEV_REVEAL_LINES = {
+  natural: [
+    '{name} picks things up frighteningly fast — show him once and it’s his. You haven’t worked with many like this.',
+    'Whatever the others grind weeks to learn, {name} just seems to have. You’re starting to realize what walked through your door.',
+  ],
+  slow: [
+    '{name} works as hard as anyone in the gym and stands still. You’re beginning to think this is simply who he is.',
+    'Weeks of the same work and {name} hasn’t moved an inch. Some men never get the feel for it.',
   ],
 };
 
@@ -195,26 +214,45 @@ export function observeGym(
   const milestones: string[] = [];
   const weeks = ctx.days / 7;
 
-  // 1. Hidden traits reveal under long observation.
+  // 1. What time in the gym teaches you — hidden traits and developmental feel
+  //    surface under long observation (locker holders are read sooner).
   const next: RosterEntry[] = roster.map((e) => {
-    if (e.fighter.hiddenTraits.length === 0) return e;
-    const weekly = e.hasLocker ? REVEAL_WEEKLY_LOCKER : REVEAL_WEEKLY_NO_LOCKER;
-    if (!chance(weekly * weeks)) return e;
+    let fighter = e.fighter;
 
-    const trait = pick(e.fighter.hiddenTraits);
-    const line = pick(REVEAL_LINES[trait]).replace(/\{name\}/g, shortName(e));
-    lines.push(line);
-    milestones.push(
-      `You learned something about ${shortName(e)} — ${TRAITS[trait].name.toLowerCase()}.`,
-    );
-    return {
-      ...e,
-      fighter: {
-        ...e.fighter,
-        hiddenTraits: e.fighter.hiddenTraits.filter((t) => t !== trait),
-        visibleTraits: [...e.fighter.visibleTraits, trait],
-      },
-    };
+    // Hidden trait reveal.
+    if (fighter.hiddenTraits.length > 0) {
+      const weekly = e.hasLocker ? REVEAL_WEEKLY_LOCKER : REVEAL_WEEKLY_NO_LOCKER;
+      if (chance(weekly * weeks)) {
+        const trait = pick(fighter.hiddenTraits);
+        lines.push(pick(REVEAL_LINES[trait]).replace(/\{name\}/g, shortName(e)));
+        milestones.push(
+          `You learned something about ${shortName(e)} — ${TRAITS[trait].name.toLowerCase()}.`,
+        );
+        fighter = {
+          ...fighter,
+          hiddenTraits: fighter.hiddenTraits.filter((t) => t !== trait),
+          visibleTraits: [...fighter.visibleTraits, trait],
+        };
+      }
+    }
+
+    // Developmental feel reveal — only the notable extremes.
+    if (!fighter.growthKnown) {
+      const feel = devFeel(fighter.growth);
+      if (feel) {
+        const natural = feel.tone === 'good';
+        const weekly = (natural ? DEV_REVEAL_NATURAL : DEV_REVEAL_SLOW) * (e.hasLocker ? 1 : 0.4);
+        if (chance(weekly * weeks)) {
+          lines.push(
+            pick(DEV_REVEAL_LINES[natural ? 'natural' : 'slow']).replace(/\{name\}/g, shortName(e)),
+          );
+          milestones.push(`You took ${shortName(e)}’s measure — ${feel.label.toLowerCase()}.`);
+          fighter = { ...fighter, growthKnown: true };
+        }
+      }
+    }
+
+    return fighter === e.fighter ? e : { ...e, fighter };
   });
 
   // 2. One behavioral flavor moment, weighted toward men with traits to show.

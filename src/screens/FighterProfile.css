@@ -286,6 +286,18 @@
   padding: 3px 9px;
   border-radius: 9px;
 }
+.fp__feel-tag {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 9px;
+  border: 1px solid currentColor;
+  cursor: help;
+}
+.fp__feel-tag--good { color: #7bbf6a; background: rgba(123, 191, 106, 0.12); }
+.fp__feel-tag--warn { color: #c98a4a; background: rgba(201, 138, 74, 0.12); }
 .fp__dev-tag {
   font-family: var(--font-condensed);
   text-transform: uppercase;

@@ -102,6 +102,13 @@ placeholders, plus day/week time advancement and a real Continue save.
   under the gym's style philosophy (your city archetype) — so a gym produces a
   certain kind of fighter. No-locker men train in limited mode; low morale
   drags development; young men grow fast and old men decline (reflexes first).
+- **Development feel** — every fighter carries a hidden growth rate independent
+  of his ceiling. Most are ordinary; a rare **Natural** develops fast, a common
+  **Slow Study** barely at all — so two prospects of equal ceiling can diverge
+  completely, and plenty of men never become more than club fighters. Feel buys
+  speed, not greatness; age is a hard gate it can't override. The extremes
+  reveal over time through the gym log, like hidden traits, and show on the
+  profile once discovered. (Design: `docs/development-system.md`.)
 - **Focused training** is your scarce personal attention — two slots at first
   (just you; coaches expand it in Phase 6). A focused fighter develops faster
   and toward a focus area you choose. Assigned in My Gym; clears if he loses
