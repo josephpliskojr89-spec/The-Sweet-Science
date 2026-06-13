@@ -24,6 +24,7 @@ import {
   ATTR_KEYS,
   ATTR_LABELS,
   type AttrKey,
+  type TrainingFocus,
 } from '../game/training';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
@@ -36,7 +37,7 @@ const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`
 type ProfileTab = 'overview' | 'development';
 
 export function FighterProfile() {
-  const { save, profileId, viewerIds, closeProfile, setLocker, setTier, cutFighter } =
+  const { save, profileId, viewerIds, closeProfile, setLocker, setTier, setFocus, cutFighter } =
     useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
   const [tab, setTab] = useState<ProfileTab>('overview');
@@ -224,7 +225,7 @@ export function FighterProfile() {
             </section>
 
             <section className="fp__section">
-              <h3 className="fp__section-title">Standing</h3>
+              <h3 className="fp__section-title">Standing &amp; Training</h3>
               <div className="fp__actions">
                 <div className="fp__tiers" role="group" aria-label="Hierarchy">
                   {TIER_ORDER.map((t) => (
@@ -238,6 +239,31 @@ export function FighterProfile() {
                     </button>
                   ))}
                 </div>
+
+                {entry.hasLocker ? (
+                  <label className="fp__training">
+                    <span className="fp__training-label">Training</span>
+                    <select
+                      className="fp__focus-select"
+                      value={entry.focus ?? ''}
+                      onChange={(e) =>
+                        setFocus(f.id, e.target.value === '' ? null : (e.target.value as TrainingFocus))
+                      }
+                    >
+                      <option value="">General training</option>
+                      <option value="rounded">Focus · Well-rounded</option>
+                      {ATTR_KEYS.map((k) => (
+                        <option key={k} value={k}>
+                          Focus · {ATTR_LABELS[k]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : (
+                  <p className="fp__training-note">
+                    No locker — limited training. Give him a locker to assign focus.
+                  </p>
+                )}
 
                 <div className="fp__action-row">
                   {entry.hasLocker ? (

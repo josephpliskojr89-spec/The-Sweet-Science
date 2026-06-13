@@ -395,6 +395,42 @@
   font-weight: 600;
 }
 
+.fp__training {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.fp__training-label {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.fp__focus-select {
+  flex: 1;
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text-warm);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--leather-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.fp__focus-select:hover {
+  color: var(--amber-bright);
+  border-color: var(--amber-deep);
+}
+.fp__training-note {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
 .fp__action-row {
   display: flex;
   gap: var(--space-sm);
