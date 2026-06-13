@@ -26,11 +26,9 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
     name: 'My Office',
     tagline: 'The business and administrative side. Less glamorous, most consequential.',
     contents: [
+      'Review incoming walk-in cards',
       'Book fights for your fighters',
       'View and manage finances',
-      'Purchase gym upgrades',
-      'Hire and manage coaches',
-      'Review incoming walk-in cards',
       'Rival Gyms — intelligence on competing operations',
     ],
     arrivesIn: 'Phases 3 & 6',
@@ -53,7 +51,8 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
     contents: [
       'Your gym’s training philosophy',
       'Focused-training capacity (you, plus coaches)',
-      'Hire and assign coaches (Phase 6)',
+      'Hire and assign coaches',
+      'Gym upgrades — lockers, equipment, facilities',
       'Per-fighter training lives in the Locker Room',
     ],
     arrivesIn: 'Phase 6',

@@ -24,8 +24,6 @@ type OfficeTab = 'desk' | 'paper' | 'ledger';
 
 const FUTURE_DESK = [
   'View and manage finances',
-  'Purchase gym upgrades',
-  'Hire and manage coaches',
   'Book fights for your fighters',
   'Rival Gyms — intelligence on competing operations',
 ];

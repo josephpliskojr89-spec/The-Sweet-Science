@@ -112,9 +112,19 @@ export function MyGymRoom() {
               </div>
             </div>
             <p className="mygym__staff-future">
-              You’re a one-man operation. Hiring coaches in My Office (Phase 6)
-              will expand your focused-training capacity and let you put the right
-              man with the right fighter.
+              You’re a one-man operation. In Phase 6 you’ll hire coaches right
+              here to expand your focused-training capacity and put the right man
+              with the right fighter.
+            </p>
+          </section>
+
+          {/* Facilities */}
+          <section className="mygym__section">
+            <h3 className="mygym__section-title">Facilities &amp; Upgrades</h3>
+            <p className="mygym__staff-future">
+              More lockers, better equipment, an expanded floor — the gym’s
+              physical improvements are bought here, against the money you keep
+              in My Office. Comes online in Phase 6.
             </p>
           </section>
         </div>
