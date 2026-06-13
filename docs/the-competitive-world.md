@@ -31,11 +31,12 @@ Three concrete commitments drive it:
    becomes "Kensington signed the kid you sat on" — and you may meet him later,
    in their corner.
 
-And one new category:
+And one new (thin) category:
 
-4. **Top fighters who fight out of no gym.** The apex of the sport isn't owned by
-   gyms. Independents — free agents, managed men, stars who transcend a single
-   room — populate the upper ranks, and the best of them are gym-less.
+4. **A few fighters who answer to no gym.** Rare in 1975 — aging veterans past
+   needing a gym's connections, isolated rural men with no access to one, and a
+   handful of stars who deal straight with a promoter. Not a faction that rivals
+   the gyms; a thin, characterful layer, a few of them genuinely good.
 
 ---
 
@@ -47,12 +48,16 @@ Three affiliations share one world:
 - **Rival gym fighters** — each gym in gyms.json carries a roster sized and
   graded by its reputation tier (an established gym fields more and better men
   than a local one). They are the bulk of the local and regional scene.
-- **Independents** — attached to no gym. Two flavors:
-  - *Journeymen / free agents* — the trial-horse pool, available opponents who
-    make prospects look good or foolish.
-  - *Top independents* — elite contenders and champions who answer to no gym.
-    The summit of the rankings skews here. The path to a title runs partly
-    through men no gym owns.
+- **Independents** — attached to no gym, and deliberately rare in 1975. Three
+  kinds, and not many of each:
+  - *Grizzled veterans* — old pros who no longer need a gym's connections; they
+    train where they like and answer to themselves.
+  - *Rural / isolated fighters* — men without access to a real gym, self-made,
+    who occasionally walk out of nowhere with something real.
+  - *A handful of promoter-managed stars* — a few elite names who deal directly
+    with a promoter rather than a gym.
+  Independents are a thin layer, not a category rivaling the gyms. The top of the
+  sport is mostly gym-affiliated, with a few independent stars among them.
 
 This population is the single source of truth for opponents, rankings, "fighters
 of note" in the Rival Gyms tab, the press's other-gym items, and poaching.
@@ -79,31 +84,43 @@ any corner of it sharpen into focus the moment it matters.
 
 ---
 
-## Active behaviors (the world moves)
+## The rival threat — what the player feels
 
-Each runs on time advancement, cheaply, mostly abstracted:
+Two pressures from the gyms in your city, and you should feel both:
 
-- **Signing & turnover.** Rival gyms periodically sign fighters from the world's
-  generated talent and cut or lose others, sized to their reputation. Rosters
-  breathe.
-- **Stealing your walk-ins.** When a walk-in's patience runs out, he doesn't just
-  vanish — a local rival may sign him (the better the prospect, the likelier a
-  rival pounces). He enters that gym's roster and can resurface later as a fighter
-  of note, an opponent, or a regret. *This is the headline mechanic: indecision
-  has a named winner.*
-- **Developing & aging.** Rival and independent fighters age and develop on a
-  light model (a rating drifting with age and results), so the scene isn't
-  frozen — last year's prospect is this year's contender, or this year's
-  cautionary tale.
-- **Fighting & records.** The world's fighters fight each other (abstractly
-  simulated when the Phase 8 engine exists; lightly approximated before then),
-  building records and feeding rankings and the press's other-gym clippings.
-- **Reputation drift.** A gym whose fighter wins a regional title rises; a gym
-  bleeding talent fades. The pecking order you entered is not the one you'll
-  leave.
+- **Competition for walk-ins.** Sit too long on a man at your door and a local
+  rival signs him. The better the prospect, the faster they move. He enters their
+  roster and can return as their contender, your opponent, or your regret.
+  Indecision has a named winner.
+- **Poaching your talent.** The sharp one. A genuinely talented fighter who is
+  unhappy with you — low morale, broken trust — becomes a flight risk, and the
+  rival gyms are the destination. *"There are other gyms in this town."* The
+  chance scales with his talent (they want the good ones), his unhappiness (the
+  relationship layer drives it), and how competitive your city is. It runs
+  through the *"leaves for a better opportunity"* departure we already have — now
+  with a named rival's door, and a reason that is on you.
 
-The player feels all of this primarily through the **press** (the world section
-we already built) and the **Rival Gyms tab** — the world reports itself.
+**City competitiveness.** How real these threats feel scales with the local
+scene, drawn from gyms.json: New York and Philadelphia are dense with strong
+gyms and the pressure is constant; Memphis or Cincinnati have two or three and
+it's quieter — present, but not breathing down your neck. The city you chose
+shapes how hard you fight to keep what you build.
+
+**Awareness — you should see it coming.** The threat must be legible, never a
+random theft. A talented, unhappy fighter shows as a flight risk on his profile;
+the gym log and press drop warnings (*"a trainer from a rival gym was seen
+talking to your kid after hours"*); the mood read already tells you he's
+unsettled. Losing him should feel like a consequence you could have prevented —
+not a dice roll.
+
+## The world moves on its own
+
+Beneath the threats, the scene lives: rivals sign and cut, fighters age and
+develop on a light model, they fight each other and build records, gyms rise and
+fade with results. The player feels this through the press and the Rival Gyms
+tab — the world reports itself. The full dynamism (results → rankings →
+reputation) matures with the Phase 8 fight engine; before then it is lightly
+approximated.
 
 ---
 
@@ -116,8 +133,9 @@ we already built) and the **Rival Gyms tab** — the world reports itself.
   gym showing its real fighters of note (champions, ranked contenders) with
   weight class and record — drawn live from the population, not static text.
 - **Rankings (Phase 8).** The official top 15 per division is computed across the
-  whole population — your fighters, rival fighters, and independents together.
-  Independents hold much of the summit.
+  whole population — your fighters, rival fighters, and the thin independent
+  layer together. The elite is mostly gym-affiliated, with a few independent
+  stars among them.
 - **Poaching (later).** Rivals with money and momentum come for your developed
   fighters and coaches — the population gives that pressure a source.
 - **The press.** other_gym_results, prospect, rumor, and rankings clippings now
@@ -125,35 +143,33 @@ we already built) and the **Rival Gyms tab** — the world reports itself.
 
 ---
 
-## Sequencing
+## Phase 6 structure
 
-This is the substrate for the rest of Phase 6's competitive systems, so it slots
-in before them:
+Phase 6 is large; it breaks into sub-phases. The competitive world is the big
+one and stands on its own.
 
-1. *(Gym-internal, independent of this — can go first)* Gym upgrades, coaches.
-2. **The world population** — generate rival rosters + independents at world
-   creation, sized by reputation; the fidelity-by-relevance model.
-3. **Walk-in competition** — reroute walk-in expiry into rival signings; the
-   "Kensington signed your kid" mechanic.
-4. **Rival Gyms tab** — reads the live population (fighters of note).
-5. **Fight booking + opponent provision** — matchmaking against the population.
-6. *(Phase 8)* Rivals fight, records and rankings move, reputation drifts —
-   becomes fully dynamic once the fight engine can generate believable results.
+- **6A — Gym Upgrades** (My Gym · Facilities). Spend money on more lockers,
+  equipment, capacity. Small, self-contained, rides the economy.
+- **6B — Coaches** (My Gym). Procedural coaches: hiring, salaries (into the
+  books), expanded focused-training capacity and assignment, chemistry.
+- **6C — The Competitive World** (the big sub-phase). The fighter population
+  (rival rosters + the thin independent layer), city competitiveness, walk-in
+  competition, the poaching threat and its awareness surfacing, and the Rival
+  Gyms tab reading it all live.
+- **6D — Fight Booking** (My Office). Opponent provision from the population;
+  matchmaking and scheduling. Fights resolve once the Phase 8 engine lands.
 
-So Phase 6 builds the population, the competition for walk-ins, the rival tab,
-and opponent provision; the full dynamism (results → rankings → reputation)
-matures with the Phase 8 engine.
+6A and 6B are gym-internal and independent; 6C is the substrate for 6D. The full
+result → ranking → reputation dynamism completes in Phase 8.
 
 ---
 
-## Open questions (for tuning / direction)
+## Tuning (starting points)
 
-- **How dominant are independents at the top?** Is the world champion usually a
-  gym-less independent, or a mix of gym stars and independents? (Affects how the
-  title path reads.)
-- **Roster sizes by tier** — how many fighters does a local vs established gym
-  field? (Tunable; affects scene density and save size.)
-- **How aggressively do rivals poach your walk-ins?** Always a risk past
-  patience, or only for promising prospects, or scaled by your reputation vs
-  theirs? (The bible: gym reputation relative to rivals determines who gets the
-  best prospects.)
+- **Independents** — a thin layer: single digits in a city's orbit, a few of
+  them genuinely good. Skewed to veterans, rural men, and the rare promoter star.
+- **Rival roster sizes** scale with reputation tier; local scene density comes
+  from the per-city gym count in gyms.json.
+- **Poaching pressure** = fighter talent × unhappiness × city competitiveness —
+  gated so it only threatens genuinely good, genuinely unsettled men, and always
+  with a warning first.
