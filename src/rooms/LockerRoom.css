@@ -87,6 +87,32 @@
   color: var(--text-muted);
 }
 
+.locker__view {
+  display: flex;
+  border: 1px solid var(--leather-light);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-left: var(--space-md);
+}
+.locker__view-btn {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 7px 13px;
+  background: rgba(0, 0, 0, 0.35);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.locker__view-btn:hover {
+  color: var(--amber-bright);
+}
+.locker__view-btn--on {
+  color: var(--ink-black);
+  background: var(--amber);
+  font-weight: 600;
+}
+
 .locker__empty {
   font-family: var(--font-slab);
   font-style: italic;

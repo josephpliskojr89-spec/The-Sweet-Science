@@ -24,10 +24,14 @@ import {
 import { Portrait } from '../assets/portraits';
 import { TraitChip } from '../components/TraitChip';
 import { MoodChip } from '../components/MoodChip';
+import { LockerWall } from '../components/Locker/LockerWall';
 import './LockerRoom.css';
+
+type LockerView = 'wall' | 'list';
 
 export function LockerRoom() {
   const { save, closeRoom, profileId, viewerIds, focusCapacity } = useGame();
+  const [view, setView] = useState<LockerView>('wall');
 
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
@@ -80,10 +84,26 @@ export function LockerRoom() {
                 </span>
                 <span className="locker__focus-label">focused slots</span>
               </div>
+              <div className="locker__view" role="group" aria-label="View">
+                <button
+                  className={'locker__view-btn' + (view === 'wall' ? ' locker__view-btn--on' : '')}
+                  onClick={() => setView('wall')}
+                >
+                  Wall
+                </button>
+                <button
+                  className={'locker__view-btn' + (view === 'list' ? ' locker__view-btn--on' : '')}
+                  onClick={() => setView('list')}
+                >
+                  List
+                </button>
+              </div>
             </div>
           </header>
 
-          {save.roster.length === 0 ? (
+          {view === 'wall' ? (
+            <LockerWall />
+          ) : save.roster.length === 0 ? (
             <p className="locker__empty">
               No fighters yet. Accept a walk-in from the door and he’ll take his
               place here.

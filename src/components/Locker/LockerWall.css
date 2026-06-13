@@ -1,0 +1,211 @@
+.wall {
+  width: min(900px, 96vw);
+  margin: 0 auto;
+}
+
+/* The bank of doors */
+.wall__doors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.locker-cell {
+  position: relative;
+  aspect-ratio: 100 / 162;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--ink-black);
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease-warm), filter var(--t-fast);
+  display: block;
+  padding: 0;
+}
+.locker-cell:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.12);
+  z-index: 2;
+}
+.locker-cell:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 0 18px rgba(217, 154, 78, 0.35), inset 0 0 0 1px var(--amber-deep);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.locker-cell--empty {
+  cursor: default;
+}
+.locker-cell--empty:hover {
+  transform: none;
+  filter: none;
+}
+.locker-cell--empty:hover::after {
+  display: none;
+}
+.locker-cell__empty-tag {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-condensed);
+  letter-spacing: 0.3em;
+  font-size: 9px;
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+/* Portrait, sat behind the tape like a photo in the door */
+.locker-cell__portrait {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58%;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  line-height: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+.locker-cell__portrait svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Status glyphs, top-left */
+.locker-cell__glyphs {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  z-index: 2;
+}
+.locker-cell__mood {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+.locker-cell__focus {
+  font-size: 10px;
+  color: var(--amber-bright);
+  text-shadow: 0 1px 2px #000;
+  line-height: 1;
+}
+.locker-cell__dev {
+  font-size: 8px;
+  line-height: 1;
+  text-shadow: 0 1px 2px #000;
+}
+.locker-cell__dev--up {
+  color: #7bbf6a;
+}
+.locker-cell__dev--down {
+  color: var(--rust);
+}
+
+/* Name tape — masking tape strip with marker */
+.locker-cell__tape {
+  position: absolute;
+  bottom: 14%;
+  left: 8%;
+  right: 8%;
+  padding: 3px 2px;
+  text-align: center;
+  background: linear-gradient(180deg, #e8dcc0, #d4c39c);
+  color: #2a2118;
+  font-family: var(--font-typewriter);
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: rotate(-1.2deg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  opacity: 0.94;
+}
+
+/* The bench */
+.bench {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 2px solid var(--leather-light);
+}
+.bench__label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.bench__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--parchment-dark);
+}
+.bench__sub {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+.bench__empty {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.bench__men {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+.bench__man {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 60px;
+}
+.bench__portrait {
+  width: 44px;
+  height: 44px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--leather-light);
+  background: var(--ink-black);
+  line-height: 0;
+  transition: border-color var(--t-fast), transform var(--t-fast);
+}
+.bench__man:hover .bench__portrait {
+  border-color: var(--amber-deep);
+  transform: translateY(-2px);
+}
+.bench__portrait svg {
+  width: 44px;
+  height: auto;
+  transform: translateY(2px) scale(1.15);
+  transform-origin: top center;
+}
+.bench__name {
+  font-family: var(--font-condensed);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60px;
+}

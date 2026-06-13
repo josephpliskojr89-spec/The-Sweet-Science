@@ -66,6 +66,11 @@ placeholders, plus day/week time advancement and a real Continue save.
   cap** (6) limits hangers-on, so you can't stockpile fighters in limbo just to
   scout their attributes.
 - **Hierarchy** — Must Keep / Watch List / Chopping Block, set per fighter.
+- **The wall** — the Locker Room's standard view is a scrollable wall of the
+  twenty lockers (empty doors = free capacity, made physical) plus the bench of
+  no-locker men; each door shows name tape, portrait, and glanceable status
+  glyphs, and opens his profile. A **List** toggle switches to the dense
+  management table. Doors come from a locker-art registry so real art drops in.
 - **Departures** — fighters quit when neglected (no locker, on the block);
   genuine talent left lockerless may leave for a better opportunity; cutting a
   man plays out two ways — some vanish, some stay to earn it back. The
@@ -186,9 +191,10 @@ src/
   assets/
     backgrounds.tsx  Background REGISTRY — asset-replacement seam
     portraits.tsx    Portrait REGISTRY — asset-replacement seam
+    lockers.tsx      Locker-door REGISTRY — asset-replacement seam
   components/        Button, TimeControls, RegionalGymBackground, Portrait,
                      WalkInCard, ArrivalNotice, Toast, AttributeBar, TraitChip,
-                     MoodChip, GymLogBoard, Sparkline
+                     MoodChip, GymLogBoard, Sparkline, Locker/LockerWall
   screens/
     HomeScreen, SettingsScreen, GymScreen, WalkInViewer, FighterProfile
     newgame/         NewGameScreen + steps (gym, manager, city) + OpeningScene
