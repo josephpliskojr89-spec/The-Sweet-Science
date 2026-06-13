@@ -1,24 +1,26 @@
 .wall {
-  width: min(900px, 96vw);
-  margin: 0 auto;
+  width: 100%;
 }
 
-/* The bank of doors */
+/* The bank of doors — fixed-width cells, centered, so they wrap 7 / 7 / 6 with
+   the short last row centered beneath the full rows. */
 .wall__doors {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
 }
 
 .locker-cell {
   position: relative;
+  flex: 0 0 140px;
+  width: 140px;
   aspect-ratio: 100 / 162;
   border-radius: 4px;
   overflow: hidden;
   background: var(--ink-black);
   cursor: pointer;
   transition: transform var(--t-fast) var(--ease-warm), filter var(--t-fast);
-  display: block;
   padding: 0;
 }
 .locker-cell:hover {

@@ -3,7 +3,7 @@
 }
 
 .locker {
-  width: min(900px, 96vw);
+  width: min(1140px, 97vw);
   margin: 0 auto;
   padding: var(--space-xl);
   border-radius: var(--radius-lg);
