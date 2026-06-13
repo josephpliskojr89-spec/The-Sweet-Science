@@ -18,12 +18,18 @@ import { rollGrowth, rollBaseDues } from '../game/fighters';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
+import {
+  DEFAULT_UPGRADES,
+  lockerCapacityFor,
+  noLockerCapacityFor,
+  type Upgrades,
+} from '../game/upgrades';
 import type { LogLine } from '../game/gymLog';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 11;
+export const SAVE_VERSION = 12;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -32,11 +38,6 @@ export interface LedgerEntry {
 }
 
 export const MANAGER_START_AGE = 25;
-/** The gym starts with twenty lockers — its primary resource and constraint. */
-export const LOCKER_CAP = 20;
-/** How many hopefuls you can carry without a locker. Keeps the gym from
-    becoming a free scouting buffer — you can't hold everyone in limbo. */
-export const NO_LOCKER_CAP = 6;
 
 export interface Manager {
   name: string;
@@ -56,6 +57,8 @@ export interface GameSave {
   money: number;
   /** Settled monthly books, newest first (game/economy.ts). */
   finances: FinanceEntry[];
+  /** Purchased gym upgrades (game/upgrades.ts). */
+  upgrades: Upgrades;
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -84,6 +87,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     dayCount: 0,
     money: STARTING_MONEY,
     finances: [],
+    upgrades: DEFAULT_UPGRADES,
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -119,6 +123,16 @@ export function noLockerUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 0 : 1), 0);
 }
 
+/** Total lockers, including upgrades (base 20). */
+export function lockerCapacity(save: GameSave): number {
+  return lockerCapacityFor(save.upgrades);
+}
+
+/** Total bench places for men without a locker, including upgrades (base 6). */
+export function noLockerCapacity(save: GameSave): number {
+  return noLockerCapacityFor(save.upgrades);
+}
+
 /** Backfill fighter fields added across versions: publicReputation (v5) and
     the development-feel pair growth/growthKnown (v10). Existing fighters get a
     feel assigned now, undiscovered. */
@@ -143,7 +157,7 @@ function migrateFighter<
     tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
     v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
-    finances layer. Pre-v2 shell saves can't be resumed — drop them. */
+    finances layer; v12 gym upgrades. Pre-v2 shell saves can't be resumed. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -185,6 +199,7 @@ function migrate(raw: unknown): GameSave | null {
       dayCount: data.dayCount,
       money: typeof data.money === 'number' ? data.money : STARTING_MONEY,
       finances: Array.isArray(data.finances) ? data.finances : [],
+      upgrades: data.upgrades ?? DEFAULT_UPGRADES,
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),

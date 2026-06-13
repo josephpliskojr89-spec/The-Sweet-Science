@@ -79,7 +79,7 @@ export function WalkInViewer() {
               className="wiv__btn wiv__btn--locker"
               disabled={lockersFull}
               onClick={() => decideWalkIn(currentId, 'locker')}
-              title={lockersFull ? 'All 20 lockers are full' : undefined}
+              title={lockersFull ? 'Every locker is full' : undefined}
             >
               <span className="wiv__btn-main">Give him a locker</span>
               <span className="wiv__btn-sub">

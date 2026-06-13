@@ -150,6 +150,8 @@ export function trainFighter(
   entry: RosterEntry,
   gymArchetype: StyleArchetype,
   days: number,
+  /** Equipment multiplier from gym upgrades (1.0 = standard gear). */
+  equipment = 1,
 ): TrainResult {
   const f = entry.fighter;
   const emphasis = new Set(ARCH_EMPHASIS[gymArchetype] ?? []);
@@ -175,6 +177,8 @@ export function trainFighter(
       let rate = GENERAL_BASE * (emph ? 1 : OFF_EMPHASIS) * headroom * af * mf * lockerMult * focusGlobal;
       // His feel for the craft — a natural climbs fast, a slow study barely.
       rate *= f.growth;
+      // Better equipment lifts everyone a little.
+      rate *= equipment;
       if (focused) {
         if (entry.focus === 'rounded') rate *= 1.2;
         else if (entry.focus === k) rate *= FOCUS_AREA;

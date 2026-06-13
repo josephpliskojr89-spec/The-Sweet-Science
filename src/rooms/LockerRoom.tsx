@@ -10,7 +10,6 @@
 
 import { useEffect, useState } from 'react';
 import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
-import { LOCKER_CAP, NO_LOCKER_CAP } from '../state/persistence';
 import { TIER_META, TIER_ORDER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
@@ -30,7 +29,8 @@ import './LockerRoom.css';
 type LockerView = 'wall' | 'list';
 
 export function LockerRoom() {
-  const { save, closeRoom, profileId, viewerIds, focusCapacity } = useGame();
+  const { save, closeRoom, profileId, viewerIds, focusCapacity, lockerCap, noLockerCap } =
+    useGame();
   const [view, setView] = useState<LockerView>('wall');
 
   const overlayOpen = profileId !== null || viewerIds !== null;
@@ -45,9 +45,9 @@ export function LockerRoom() {
 
   if (!save) return null;
   const used = lockersUsed(save);
-  const lockersFull = used >= LOCKER_CAP;
+  const lockersFull = used >= lockerCap;
   const noLockerCount = noLockerUsed(save);
-  const noLockerFull = noLockerCount >= NO_LOCKER_CAP;
+  const noLockerFull = noLockerCount >= noLockerCap;
   const focusedCount = save.roster.filter((e) => e.focus !== null).length;
   const slotsFull = focusedCount >= focusCapacity;
 
@@ -71,11 +71,11 @@ export function LockerRoom() {
                 <span className="locker__meter-track">
                   <span
                     className="locker__meter-fill"
-                    style={{ width: `${(used / LOCKER_CAP) * 100}%` }}
+                    style={{ width: `${(used / lockerCap) * 100}%` }}
                   />
                 </span>
                 <span className="locker__meter-label">
-                  {used} / {LOCKER_CAP} lockers · {noLockerCount} / {NO_LOCKER_CAP} without
+                  {used} / {lockerCap} lockers · {noLockerCount} / {noLockerCap} without
                 </span>
               </div>
               <div className="locker__focus-meter">
@@ -252,7 +252,7 @@ function FighterRow({
               className="frow__act frow__act--give"
               disabled={lockersFull}
               onClick={() => setLocker(f.id, true)}
-              title={lockersFull ? 'All 20 lockers are full' : undefined}
+              title={lockersFull ? 'Every locker is full' : undefined}
             >
               Give Locker
             </button>

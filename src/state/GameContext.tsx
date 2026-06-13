@@ -28,7 +28,6 @@ import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
 import { runPressCycle } from '../game/press';
-import { monthlySummary } from '../game/economy';
 import {
   trainFighter,
   snapshotAttrs,
@@ -60,11 +59,19 @@ import {
   clearSave,
   lockersUsed,
   noLockerUsed,
-  LOCKER_CAP,
-  NO_LOCKER_CAP,
+  lockerCapacity,
+  noLockerCapacity,
   type GameSave,
   type NewGameDraft,
 } from './persistence';
+import { monthlySummary, formatMoney } from '../game/economy';
+import {
+  equipmentFactorFor,
+  nextCost,
+  trackName,
+  effectGain,
+  type UpgradeKey,
+} from '../game/upgrades';
 
 export type Screen = 'home' | 'settings' | 'newgame' | 'game';
 export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker';
@@ -122,6 +129,7 @@ interface GameContextValue {
   setTier: (id: string, tier: HierarchyTier) => void;
   setFocus: (id: string, focus: TrainingFocus | null) => void;
   cutFighter: (id: string) => void;
+  purchaseUpgrade: (key: UpgradeKey) => void;
   clearFlash: () => void;
 
   lockerCap: number;
@@ -210,10 +218,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       // the floor gets observed (hidden traits can surface), and the fighters'
       // lives outside intrude — all before we see who's had enough and walked.
       const gymArchetype = getCity(prev.cityId).archetype;
+      const equipment = equipmentFactorFor(prev.upgrades);
       const trainingNotes: string[] = [];
       let roster = prev.roster.map((e) => {
         const settled = recover(e, days);
-        const t = trainFighter(settled, gymArchetype, days);
+        const t = trainFighter(settled, gymArchetype, days, equipment);
         if (t.note) trainingNotes.push(t.note);
         return {
           ...settled,
@@ -346,11 +355,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!target) return;
 
       // Capacity guards (the UI also disables these, but never trust the UI).
-      if (decision === 'locker' && lockersUsed(prev) >= LOCKER_CAP) {
-        setFlash('All twenty lockers are full. Free one before you give another.');
+      if (decision === 'locker' && lockersUsed(prev) >= lockerCapacity(prev)) {
+        setFlash('Every locker is full. Free one before you give another.');
         return;
       }
-      if (decision === 'no_locker' && noLockerUsed(prev) >= NO_LOCKER_CAP) {
+      if (decision === 'no_locker' && noLockerUsed(prev) >= noLockerCapacity(prev)) {
         setFlash('No room to carry another fighter without a locker.');
         return;
       }
@@ -397,6 +406,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const closeProfile = useCallback(() => setProfileId(null), []);
   const clearFlash = useCallback(() => setFlash(null), []);
 
+  const purchaseUpgrade = useCallback(
+    (key: UpgradeKey) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const level = prev.upgrades[key];
+      const year = formatDate(prev.dayCount).year;
+      const cost = nextCost(key, level, year);
+      if (cost === null) {
+        setFlash(`${trackName(key)} is already at the top of the line.`);
+        return;
+      }
+      if (prev.money < cost) {
+        setFlash(`You can’t afford that — it runs ${formatMoney(cost)}.`);
+        return;
+      }
+      const gain = effectGain(key, level) ?? '';
+      const upgrades = { ...prev.upgrades, [key]: level + 1 };
+      const history = [
+        ...prev.history,
+        {
+          dayCount: prev.dayCount,
+          text: `You put ${formatMoney(cost)} into the gym — ${trackName(key).toLowerCase()} (${gain}).`,
+        },
+      ].slice(-250);
+      commit({ ...prev, upgrades, money: prev.money - cost, history });
+      setFlash(`Money well spent. ${trackName(key)}: ${gain}.`);
+    },
+    [commit],
+  );
+
   const setLocker = useCallback(
     (id: string, hasLocker: boolean) => {
       const prev = saveRef.current;
@@ -404,11 +443,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const entry = prev.roster.find((e) => e.fighter.id === id);
       if (!entry || entry.hasLocker === hasLocker) return;
 
-      if (hasLocker && lockersUsed(prev) >= LOCKER_CAP) {
-        setFlash('All twenty lockers are full. Free one before you give another.');
+      if (hasLocker && lockersUsed(prev) >= lockerCapacity(prev)) {
+        setFlash('Every locker is full. Free one before you give another.');
         return;
       }
-      if (!hasLocker && noLockerUsed(prev) >= NO_LOCKER_CAP) {
+      if (!hasLocker && noLockerUsed(prev) >= noLockerCapacity(prev)) {
         setFlash('No room to carry another fighter without a locker. Cut someone first.');
         return;
       }
@@ -531,9 +570,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setTier,
       setFocus,
       cutFighter,
+      purchaseUpgrade,
       clearFlash,
-      lockerCap: LOCKER_CAP,
-      noLockerCap: NO_LOCKER_CAP,
+      lockerCap: save ? lockerCapacity(save) : 0,
+      noLockerCap: save ? noLockerCapacity(save) : 0,
       focusCapacity: FOCUS_SLOTS_BASE,
     }),
     [
@@ -565,6 +605,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setTier,
       setFocus,
       cutFighter,
+      purchaseUpgrade,
       clearFlash,
     ],
   );

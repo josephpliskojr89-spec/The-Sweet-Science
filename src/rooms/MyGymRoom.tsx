@@ -15,11 +15,23 @@ import { useGame } from '../state/GameContext';
 import { getCity } from '../game/cities';
 import { fighterFullName } from '../game/fighters';
 import { focusLabel, gymPhilosophyLabel } from '../game/training';
+import { formatDate } from '../game/time';
+import { formatMoney } from '../game/economy';
+import {
+  UPGRADE_ORDER,
+  trackName,
+  trackBlurb,
+  maxLevel,
+  nextCost,
+  effectAtLevel,
+  effectGain,
+} from '../game/upgrades';
 import { Portrait } from '../assets/portraits';
 import './MyGymRoom.css';
 
 export function MyGymRoom() {
-  const { save, closeRoom, profileId, viewerIds, focusCapacity, openRoom, openProfile } = useGame();
+  const { save, closeRoom, profileId, viewerIds, focusCapacity, openRoom, openProfile, purchaseUpgrade } =
+    useGame();
 
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
@@ -120,12 +132,59 @@ export function MyGymRoom() {
 
           {/* Facilities */}
           <section className="mygym__section">
-            <h3 className="mygym__section-title">Facilities &amp; Upgrades</h3>
-            <p className="mygym__staff-future">
-              More lockers, better equipment, an expanded floor — the gym’s
-              physical improvements are bought here, against the money you keep
-              in My Office. Comes online in Phase 6.
-            </p>
+            <div className="mygym__facilities-head">
+              <h3 className="mygym__section-title">Facilities &amp; Upgrades</h3>
+              <span className="mygym__cash">Cash on hand · {formatMoney(save.money)}</span>
+            </div>
+
+            <ul className="upgrades">
+              {UPGRADE_ORDER.map((key) => {
+                const level = save.upgrades[key];
+                const max = maxLevel(key);
+                const year = formatDate(save.dayCount).year;
+                const cost = nextCost(key, level, year);
+                const gain = effectGain(key, level);
+                const maxed = cost === null;
+                const afford = cost !== null && save.money >= cost;
+                return (
+                  <li className="upgrade" key={key}>
+                    <div className="upgrade__main">
+                      <div className="upgrade__head">
+                        <span className="upgrade__name">{trackName(key)}</span>
+                        <span className="upgrade__level">
+                          {Array.from({ length: max }).map((_, i) => (
+                            <span
+                              key={i}
+                              className={'upgrade__pip' + (i < level ? ' upgrade__pip--on' : '')}
+                            />
+                          ))}
+                        </span>
+                      </div>
+                      <p className="upgrade__blurb">{trackBlurb(key)}</p>
+                      <p className="upgrade__current">Now: {effectAtLevel(key, level)}</p>
+                    </div>
+
+                    <div className="upgrade__buy">
+                      {maxed ? (
+                        <span className="upgrade__maxed">Top of the line</span>
+                      ) : (
+                        <>
+                          <span className="upgrade__gain">{gain}</span>
+                          <button
+                            className="upgrade__btn"
+                            disabled={!afford}
+                            onClick={() => purchaseUpgrade(key)}
+                            title={afford ? undefined : 'Not enough cash'}
+                          >
+                            {formatMoney(cost!)}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </section>
         </div>
       </div>

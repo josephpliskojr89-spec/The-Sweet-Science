@@ -9,7 +9,6 @@
 
 import { useEffect, useState } from 'react';
 import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
-import { LOCKER_CAP, NO_LOCKER_CAP } from '../state/persistence';
 import { TIER_META, TIER_ORDER, type HierarchyTier } from '../game/roster';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../game/weightClasses';
@@ -37,8 +36,18 @@ const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`
 type ProfileTab = 'overview' | 'development';
 
 export function FighterProfile() {
-  const { save, profileId, viewerIds, closeProfile, setLocker, setTier, setFocus, cutFighter } =
-    useGame();
+  const {
+    save,
+    profileId,
+    viewerIds,
+    closeProfile,
+    setLocker,
+    setTier,
+    setFocus,
+    cutFighter,
+    lockerCap,
+    noLockerCap,
+  } = useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
   const [tab, setTab] = useState<ProfileTab>('overview');
 
@@ -66,8 +75,8 @@ export function FighterProfile() {
   const home = getCity(f.homeCityId);
   const dev = developmentState(entry);
   const feel = f.growthKnown ? devFeel(f.growth) : null;
-  const lockersFull = lockersUsed(save) >= LOCKER_CAP;
-  const noLockerFull = noLockerUsed(save) >= NO_LOCKER_CAP;
+  const lockersFull = lockersUsed(save) >= lockerCap;
+  const noLockerFull = noLockerUsed(save) >= noLockerCap;
   const days = save.dayCount - entry.joinedDayCount;
   const weeks = Math.max(0, Math.floor(days / 7));
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
@@ -280,7 +289,7 @@ export function FighterProfile() {
                       className="fp__act fp__act--give"
                       disabled={lockersFull}
                       onClick={() => setLocker(f.id, true)}
-                      title={lockersFull ? 'All 20 lockers are full' : undefined}
+                      title={lockersFull ? 'Every locker is full' : undefined}
                     >
                       Give him a locker
                     </button>

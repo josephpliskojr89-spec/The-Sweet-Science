@@ -12,7 +12,6 @@
 */
 
 import { useGame } from '../../state/GameContext';
-import { LOCKER_CAP, NO_LOCKER_CAP } from '../../state/persistence';
 import { TIER_ORDER, type RosterEntry, type HierarchyTier } from '../../game/roster';
 import { moodLabel, type MoodTone } from '../../game/relationship';
 import { developmentState } from '../../game/training';
@@ -34,7 +33,7 @@ const TONE_COLOR: Record<MoodTone, string> = {
 };
 
 export function LockerWall() {
-  const { save, openProfile } = useGame();
+  const { save, openProfile, lockerCap, noLockerCap } = useGame();
   if (!save) return null;
 
   const tierRank = (t: HierarchyTier) => TIER_ORDER.indexOf(t);
@@ -42,7 +41,7 @@ export function LockerWall() {
     .filter((e) => e.hasLocker)
     .sort((a, b) => tierRank(a.tier) - tierRank(b.tier) || a.fighter.lastName.localeCompare(b.fighter.lastName));
   const bench = save.roster.filter((e) => !e.hasLocker);
-  const emptyCount = Math.max(0, LOCKER_CAP - holders.length);
+  const emptyCount = Math.max(0, lockerCap - holders.length);
 
   return (
     <div className="wall">
@@ -62,7 +61,7 @@ export function LockerWall() {
         <div className="bench__label">
           <span className="bench__title">The Bench</span>
           <span className="bench__sub">
-            without a locker · {bench.length} / {NO_LOCKER_CAP} · limited training
+            without a locker · {bench.length} / {noLockerCap} · limited training
           </span>
         </div>
         {bench.length === 0 ? (
