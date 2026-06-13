@@ -14,15 +14,16 @@ import type { Appearance } from '../game/appearance';
 import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 import { initialRelationship } from '../game/relationship';
-import { rollGrowth } from '../game/fighters';
+import { rollGrowth, rollBaseDues } from '../game/fighters';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
+import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { LogLine } from '../game/gymLog';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 11;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -51,6 +52,10 @@ export interface GameSave {
   cityId: CityId;
   /** Day-count since the 1975 epoch (see game/time.ts). */
   dayCount: number;
+  /** Cash on hand, in current (inflated) dollars. */
+  money: number;
+  /** Settled monthly books, newest first (game/economy.ts). */
+  finances: FinanceEntry[];
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -77,6 +82,8 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     manager: draft.manager,
     cityId: draft.cityId,
     dayCount: 0,
+    money: STARTING_MONEY,
+    finances: [],
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -116,20 +123,27 @@ export function noLockerUsed(save: GameSave): number {
     the development-feel pair growth/growthKnown (v10). Existing fighters get a
     feel assigned now, undiscovered. */
 function migrateFighter<
-  T extends { publicReputation?: number; growth?: number; growthKnown?: boolean },
+  T extends {
+    publicReputation?: number;
+    growth?: number;
+    growthKnown?: boolean;
+    baseDues?: number;
+  },
 >(f: T): T {
   return {
     ...f,
     publicReputation: f.publicReputation ?? 2,
     growth: f.growth ?? rollGrowth(0.2),
     growthKnown: f.growthKnown ?? false,
+    baseDues: f.baseDues ?? rollBaseDues(),
   };
 }
 
 /** Bring an older save forward. v2 lacked roster/walk-ins; v3 lacked hierarchy
     tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
     v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
-    training fields. Pre-v2 shell saves can't be resumed — drop them. */
+    training fields; v8/v9 the progression history; v10 the dev feel; v11 the
+    finances layer. Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -169,6 +183,8 @@ function migrate(raw: unknown): GameSave | null {
       manager: data.manager,
       cityId: data.cityId as CityId,
       dayCount: data.dayCount,
+      money: typeof data.money === 'number' ? data.money : STARTING_MONEY,
+      finances: Array.isArray(data.finances) ? data.finances : [],
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),

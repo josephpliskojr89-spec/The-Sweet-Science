@@ -127,9 +127,20 @@ placeholders, plus day/week time advancement and a real Continue save.
   tab that charts each attribute's history as a sparkline with its total gain
   since he walked in. The gym log also notes notable gains.
 
-Deferred to upcoming phases: the 3-exchange interview, the rest of My Office
-(Phase 6), the Calendar (Phase 7), the fight engine (Phase 8), and the
-mechanical press (Phase 9).
+**Phase 6 — My Office & My Gym systems** *(in progress)*
+
+- **Finances** ✅ — cash on hand (shown on the gym's top bar), monthly dues
+  income vs rent/utilities, settled on the first of each month into a running
+  ledger, all in 1975 dollars that inflate ~6%/yr through the decades. A small
+  gym runs at a loss on dues alone; filling lockers reaches break-even and fight
+  purses (Phase 8) are the growth. Finances tab in My Office. Some fighters are
+  broke and pay nothing — your call whether to carry them.
+- Still to come this phase: gym upgrades (My Gym), coach hiring & assignment
+  (My Gym), fight booking + opponent generation (My Office), and the Rival Gyms
+  tab from gyms.json (My Office).
+
+Deferred to later phases: the 3-exchange interview, the Calendar (Phase 7), the
+fight engine (Phase 8), and the mechanical press (Phase 9).
 
 ---
 
@@ -178,6 +189,7 @@ src/
     fighters.ts      Fighter generation — the procedural heart
     walkins.ts       Walk-in scheduling, patience, expiry
     roster.ts        Roster entries + the three hierarchy tiers
+    economy.ts       Money: dues, overhead, monthly books, inflation
     relationship.ts  Per-fighter morale + trust; locker-decision fallout
     departures.ts    Quit / leave-for-opportunity / cut logic
     events.ts        Game event bus + trait-response stub (bible v2.8)

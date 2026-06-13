@@ -44,8 +44,35 @@
   color: var(--amber-deep);
 }
 
-.gym__exit {
+.gym__money {
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  padding: 2px 14px;
+  border-right: 1px solid rgba(58, 42, 28, 0.7);
+  margin-right: var(--space-md);
+}
+.gym__money-label {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 9px;
+  color: var(--text-dim);
+}
+.gym__money-amt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: var(--amber-bright);
+}
+.gym__money-amt--low {
+  color: var(--rust);
+}
+
+.gym__exit {
   font-family: var(--font-condensed);
   text-transform: uppercase;
   letter-spacing: 0.14em;

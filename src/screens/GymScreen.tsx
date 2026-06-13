@@ -15,6 +15,7 @@ import { useGame } from '../state/GameContext';
 import { regionOf } from '../state/persistence';
 import { getRegion } from '../game/regions';
 import { getCity } from '../game/cities';
+import { formatMoney } from '../game/economy';
 import { ROOM_ORDER, ROOMS } from '../game/rooms';
 import type { RoomKey } from '../state/GameContext';
 import { GymBackground } from '../assets/backgrounds';
@@ -53,6 +54,13 @@ export function GymScreen() {
           <span className="gym__name">{save.gymName}</span>
           <span className="gym__region">
             {city.name}, {city.state} · Local
+          </span>
+        </div>
+
+        <div className="gym__money" title="Cash on hand">
+          <span className="gym__money-label">Cash</span>
+          <span className={'gym__money-amt' + (save.money < 0 ? ' gym__money-amt--low' : '')}>
+            {formatMoney(save.money)}
           </span>
         </div>
 

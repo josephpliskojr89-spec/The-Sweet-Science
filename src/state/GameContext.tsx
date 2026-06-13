@@ -28,6 +28,7 @@ import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
 import { runPressCycle } from '../game/press';
+import { monthlySummary } from '../game/economy';
 import {
   trainFighter,
   snapshotAttrs,
@@ -268,9 +269,32 @@ export function GameProvider({ children }: { children: ReactNode }) {
           }))
         : dep.staying;
 
+      // Settle the books on the first of the month.
+      let money = prev.money;
+      let finances = prev.finances;
+      if (crossesMonth) {
+        const fd = formatDate(toDay);
+        const sum = monthlySummary(staying, fd.year);
+        money = prev.money + sum.net;
+        finances = [
+          {
+            dayCount: toDay,
+            label: `${fd.month} ${fd.year}`,
+            duesIncome: sum.duesIncome,
+            overhead: sum.overhead,
+            coachSalaries: sum.coachSalaries,
+            net: sum.net,
+            balance: money,
+          },
+          ...prev.finances,
+        ].slice(0, 36);
+      }
+
       commit({
         ...prev,
         dayCount: toDay,
+        money,
+        finances,
         walkIns: [...aged.surviving, ...fresh],
         roster: staying,
         press,

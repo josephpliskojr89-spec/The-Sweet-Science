@@ -57,6 +57,9 @@ export interface Fighter {
   growth: number;
   /** Whether the player has discovered his developmental nature (extremes only). */
   growthKnown: boolean;
+  /** Monthly gym dues he can afford in 1975 dollars; 0 means he's broke and
+      it's your call whether to carry him. Inflated at collection (economy.ts). */
+  baseDues: number;
   /** Public reputation 0..100 — how known/regarded he is in the sport, separate
       from gym-internal standing. A walk-in prospect is essentially unknown.
       The press system (Phase 9) reads and writes this; fights move it. It sits
@@ -307,6 +310,13 @@ export function rollGrowth(quality = 0.2): number {
   return clamp(1.0 + gauss() * 0.15, 0.7, 1.35);
 }
 
+/** What monthly dues (1975 dollars) a fighter can afford. ~15% are broke — a
+    cost you carry on faith, the bible's values-revealing judgment call. */
+export function rollBaseDues(): number {
+  if (Math.random() < 0.15) return 0;
+  return 10 + Math.floor(Math.random() * 13); // $10–$22 / month
+}
+
 function makeId(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
@@ -364,6 +374,7 @@ export function generateFighter(opts: GenerateFighterOptions): Fighter {
     potential,
     growth: rollGrowth(quality),
     growthKnown: false,
+    baseDues: rollBaseDues(),
     publicReputation,
     visibleTraits: visible,
     hiddenTraits: hidden,

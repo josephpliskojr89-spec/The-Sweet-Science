@@ -17,13 +17,13 @@ import { useGame } from '../state/GameContext';
 import { fighterFullName } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
 import { formatDate } from '../game/time';
+import { monthlySummary, formatMoney } from '../game/economy';
 import { Portrait } from '../assets/portraits';
 import './OfficeRoom.css';
 
-type OfficeTab = 'desk' | 'paper' | 'ledger';
+type OfficeTab = 'desk' | 'finances' | 'paper' | 'ledger';
 
 const FUTURE_DESK = [
-  'View and manage finances',
   'Book fights for your fighters',
   'Rival Gyms — intelligence on competing operations',
 ];
@@ -60,6 +60,7 @@ export function OfficeRoom() {
           {(
             [
               ['desk', `Desk${queue.length ? ` (${queue.length})` : ''}`],
+              ['finances', 'Finances'],
               ['paper', 'The Paper'],
               ['ledger', 'Ledger'],
             ] as Array<[OfficeTab, string]>
@@ -77,6 +78,7 @@ export function OfficeRoom() {
 
       <div className="room-screen__body office__body">
         {tab === 'desk' && <DeskTab />}
+        {tab === 'finances' && <FinancesTab />}
         {tab === 'paper' && <PaperTab />}
         {tab === 'ledger' && <LedgerTab />}
       </div>
@@ -145,6 +147,97 @@ export function OfficeRoom() {
           ))}
         </ul>
         <p className="office__future-note">Comes online in Phase 6</p>
+      </div>
+    );
+  }
+
+  function FinancesTab() {
+    if (!save) return null;
+    const date = formatDate(save.dayCount);
+    const summary = monthlySummary(save.roster, date.year);
+    const low = save.money < 0;
+
+    return (
+      <div className="finances">
+        <header className="finances__head">
+          <div>
+            <p className="finances__eyebrow">Cash on hand</p>
+            <p className={'finances__balance' + (low ? ' finances__balance--low' : '')}>
+              {formatMoney(save.money)}
+            </p>
+          </div>
+          <span className="finances__date">As of {date.full}</span>
+        </header>
+
+        {low && (
+          <p className="finances__warning">
+            You’re running on credit. Dues won’t carry the gym forever — fight
+            purses are how a gym stays open.
+          </p>
+        )}
+
+        <section className="finances__section">
+          <h3 className="finances__section-title">This Month, at the Current Roster</h3>
+          <ul className="finances__lines">
+            <li className="finances__line">
+              <span>Gym dues</span>
+              <span className="finances__pos">+{formatMoney(summary.duesIncome)}</span>
+            </li>
+            <li className="finances__line finances__line--sub">
+              <span>
+                {summary.payingCount} paying
+                {summary.brokeCount > 0 && ` · ${summary.brokeCount} you’re carrying`}
+              </span>
+              <span />
+            </li>
+            <li className="finances__line">
+              <span>Rent &amp; utilities</span>
+              <span className="finances__neg">−{formatMoney(summary.overhead)}</span>
+            </li>
+            <li className="finances__line finances__line--muted">
+              <span>Coach salaries</span>
+              <span>{summary.coachSalaries === 0 ? '—' : `−${formatMoney(summary.coachSalaries)}`}</span>
+            </li>
+            <li className="finances__line finances__line--net">
+              <span>Net per month</span>
+              <span className={summary.net >= 0 ? 'finances__pos' : 'finances__neg'}>
+                {summary.net >= 0 ? '+' : '−'}
+                {formatMoney(Math.abs(summary.net))}
+              </span>
+            </li>
+          </ul>
+          <p className="finances__note">
+            Settled on the first of each month. Figures are in {date.year} dollars
+            — they grow with the years.
+          </p>
+        </section>
+
+        <section className="finances__section">
+          <h3 className="finances__section-title">The Books</h3>
+          {save.finances.length === 0 ? (
+            <p className="finances__empty">
+              Nothing settled yet. Advance to the first of a month and the books
+              close.
+            </p>
+          ) : (
+            <ul className="finances__books">
+              {save.finances.map((f, i) => (
+                <li className="bookrow" key={`${f.dayCount}-${i}`}>
+                  <span className="bookrow__month">{f.label}</span>
+                  <span className="bookrow__dues finances__pos">+{formatMoney(f.duesIncome)}</span>
+                  <span className="bookrow__out finances__neg">
+                    −{formatMoney(f.overhead + f.coachSalaries)}
+                  </span>
+                  <span className={'bookrow__net ' + (f.net >= 0 ? 'finances__pos' : 'finances__neg')}>
+                    {f.net >= 0 ? '+' : '−'}
+                    {formatMoney(Math.abs(f.net))}
+                  </span>
+                  <span className="bookrow__bal">{formatMoney(f.balance)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     );
   }
