@@ -64,6 +64,9 @@ export function MyGymRoom() {
   const philosophy = gymPhilosophyLabel(getCity(save.cityId).archetype);
   const focused = save.roster.filter((e) => e.focus !== null);
   const year = formatDate(save.dayCount).year;
+  const managerUsed = save.roster.filter((e) => e.focus !== null && e.coachId === null).length;
+  const coachUsed = (id: string) =>
+    save.roster.filter((e) => e.focus !== null && e.coachId === id).length;
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="My Gym">
@@ -144,12 +147,14 @@ export function MyGymRoom() {
               <li className="coach coach--you">
                 <div className="coach__main">
                   <span className="coach__name">{save.manager.name || 'You'}</span>
-                  <span className="coach__line">Head Trainer · 2 slots · no salary</span>
+                  <span className="coach__line">
+                    Head Trainer · {managerUsed}/2 in use · no salary
+                  </span>
                 </div>
               </li>
               {save.coaches.map((c) => (
                 <li className="coach" key={c.id}>
-                  <CoachInfo coach={c} />
+                  <CoachInfo coach={c} used={coachUsed(c.id)} />
                   <button className="coach__fire" onClick={() => fireCoach(c.id)} title="Let him go">
                     Let go
                   </button>
@@ -249,13 +254,15 @@ export function MyGymRoom() {
   );
 }
 
-function CoachInfo({ coach }: { coach: Coach }) {
+function CoachInfo({ coach, used }: { coach: Coach; used?: number }) {
   return (
     <div className="coach__main">
       <span className="coach__name">{coach.name}</span>
       <span className="coach__line">
-        {tierName(coach.tier)} · {specialtyName(coach.specialty)} · {coach.slots}{' '}
-        {coach.slots === 1 ? 'slot' : 'slots'}
+        {tierName(coach.tier)} · {specialtyName(coach.specialty)} ·{' '}
+        {used === undefined
+          ? `${coach.slots} ${coach.slots === 1 ? 'slot' : 'slots'}`
+          : `${used}/${coach.slots} in use`}
       </span>
       <span className="coach__sub">
         {personalityName(coach.personality)} — {specialtyBlurb(coach.specialty)}

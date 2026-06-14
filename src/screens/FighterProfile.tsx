@@ -22,9 +22,11 @@ import {
   attributeSeries,
   ATTR_KEYS,
   ATTR_LABELS,
+  FOCUS_SLOTS_BASE,
   type AttrKey,
   type TrainingFocus,
 } from '../game/training';
+import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
 import { Sparkline } from '../components/Sparkline';
@@ -44,6 +46,7 @@ export function FighterProfile() {
     setLocker,
     setTier,
     setFocus,
+    setTrainer,
     cutFighter,
     lockerCap,
     noLockerCap,
@@ -250,24 +253,69 @@ export function FighterProfile() {
                 </div>
 
                 {entry.hasLocker ? (
-                  <label className="fp__training">
-                    <span className="fp__training-label">Training</span>
-                    <select
-                      className="fp__focus-select"
-                      value={entry.focus ?? ''}
-                      onChange={(e) =>
-                        setFocus(f.id, e.target.value === '' ? null : (e.target.value as TrainingFocus))
-                      }
-                    >
-                      <option value="">General training</option>
-                      <option value="rounded">Focus · Well-rounded</option>
-                      {ATTR_KEYS.map((k) => (
-                        <option key={k} value={k}>
-                          Focus · {ATTR_LABELS[k]}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <div className="fp__training-block">
+                    <label className="fp__training">
+                      <span className="fp__training-label">Training</span>
+                      <select
+                        className="fp__focus-select"
+                        value={entry.focus ?? ''}
+                        onChange={(e) =>
+                          setFocus(f.id, e.target.value === '' ? null : (e.target.value as TrainingFocus))
+                        }
+                      >
+                        <option value="">General training</option>
+                        <option value="rounded">Focus · Well-rounded</option>
+                        {ATTR_KEYS.map((k) => (
+                          <option key={k} value={k}>
+                            Focus · {ATTR_LABELS[k]}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    {entry.focus !== null && (() => {
+                      const usedMgr = save.roster.filter((e) => e.focus !== null && e.coachId === null).length;
+                      const mgrFree = FOCUS_SLOTS_BASE - usedMgr + (entry.coachId === null ? 1 : 0);
+                      const assigned = entry.coachId
+                        ? save.coaches.find((c) => c.id === entry.coachId)
+                        : null;
+                      const chem = assigned
+                        ? chemistryRead(
+                            coachChemistry(assigned, [...f.visibleTraits, ...f.hiddenTraits], f.age),
+                          )
+                        : null;
+                      return (
+                        <>
+                          <label className="fp__training">
+                            <span className="fp__training-label">Trainer</span>
+                            <select
+                              className="fp__focus-select"
+                              value={entry.coachId ?? ''}
+                              onChange={(e) => setTrainer(f.id, e.target.value === '' ? null : e.target.value)}
+                            >
+                              <option value="">You · {Math.max(0, mgrFree)} free</option>
+                              {save.coaches.map((c) => {
+                                const used = save.roster.filter(
+                                  (x) => x.focus !== null && x.coachId === c.id,
+                                ).length;
+                                const free = c.slots - used + (entry.coachId === c.id ? 1 : 0);
+                                return (
+                                  <option key={c.id} value={c.id}>
+                                    {c.name} ({specialtyName(c.specialty)}) · {Math.max(0, free)} free
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </label>
+                          {chem && (
+                            <p className={`fp__chem fp__chem--${chem.tone}`}>
+                              {assigned!.name}: <strong>{chem.label}</strong>
+                            </p>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
                 ) : (
                   <p className="fp__training-note">
                     No locker — limited training. Give him a locker to assign focus.

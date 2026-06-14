@@ -141,12 +141,17 @@ placeholders, plus day/week time advancement and a real Continue save.
   places). Leveled tracks with escalating, inflation-scaled costs AND monthly upkeep
   (a bigger gym costs more to run); locker and
   bench caps are now derived from upgrades.
-- **Coaches (6B-1)** ✅ — procedurally generated coaches (specialty, personality,
+- **Coaches (6B)** ✅ — procedurally generated coaches (specialty, personality,
   tier, salary, slots), a hiring **market** in My Gym that turns over with time,
-  and hire/fire. Coaches add focused-training **slots** and your best coach
-  **lifts** how well focused fighters develop; their **salaries** flow into the
-  monthly books — a real recurring commitment. A new gym mostly sees cheap local
-  trainers. *(6B-2 next: deliberate per-coach assignment + specialty matching.)*
+  hire/fire, and **salaries** in the monthly books (a real recurring cost). A new
+  gym mostly sees cheap local trainers.
+  - **Who trains whom matters (6B-2):** each focused fighter is assigned a
+    trainer — you or a coach — with **per-trainer capacity** (you have 2 slots;
+    each coach his own). A **specialist** accelerates his focus area (a Power
+    coach on a power-focused kid), coach **skill** sets overall effectiveness,
+    and **chemistry** (personality × the fighter's traits) lifts or drags
+    development — surfaced on the profile as a soft read (Clicking / Friction).
+    Assigned per fighter on his profile; firing a coach falls his men back to you.
 - Still to come this phase: the competitive world (6C — rival rosters, walk-in
   competition, poaching, Rival Gyms tab) and fight booking (6D, My Office).
   See docs/the-competitive-world.md.

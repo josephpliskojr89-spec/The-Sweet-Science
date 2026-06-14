@@ -23,6 +23,7 @@
 import type { Attributes } from './fighters';
 import type { StyleArchetype } from './cities';
 import type { RosterEntry } from './roster';
+import { coachBoostsAttr, coachChemistry, type Coach } from './coaches';
 
 export type AttrKey = keyof Attributes;
 export type TrainingFocus = AttrKey | 'rounded';
@@ -152,18 +153,26 @@ export function trainFighter(
   days: number,
   /** Equipment multiplier from gym upgrades (1.0 = standard gear). */
   equipment = 1,
-  /** Coaching lift applied to focused training (1.0 = just the manager). */
-  coachBonus = 1,
+  /** The coach training this man when focused, or null for the manager. */
+  coach: Coach | null = null,
 ): TrainResult {
   const f = entry.fighter;
   const emphasis = new Set(ARCH_EMPHASIS[gymArchetype] ?? []);
   const focused = entry.focus !== null;
   const weeks = days / 7;
+
+  // How effective the focused sessions are: the manager is the baseline (1.0);
+  // a coach brings his skill and his chemistry with this particular fighter.
+  const coachMult =
+    focused && coach
+      ? (0.9 + coach.skill * 0.45) *
+        coachChemistry(coach, [...f.visibleTraits, ...f.hiddenTraits], f.age)
+      : 1;
   const af = ageFactor(f.age);
   const mf = moraleFactor(entry.morale);
   const lockerMult = entry.hasLocker ? 1 : 0.25;
-  // A focused fighter gets the manager's attention, lifted by coaching staff.
-  const focusGlobal = focused ? FOCUS_GLOBAL * coachBonus : 1;
+  // A focused fighter gets the manager's attention, scaled by who's running it.
+  const focusGlobal = focused ? FOCUS_GLOBAL * coachMult : 1;
 
   const attrs: Attributes = { ...f.attributes };
   const lastDelta: Partial<Record<AttrKey, number>> = {};
@@ -184,7 +193,10 @@ export function trainFighter(
       rate *= equipment;
       if (focused) {
         if (entry.focus === 'rounded') rate *= 1.2;
-        else if (entry.focus === k) rate *= FOCUS_AREA;
+        else if (entry.focus === k) {
+          // A specialist accelerates his own area further.
+          rate *= coach && coachBoostsAttr(coach, k) ? FOCUS_AREA * 1.3 : FOCUS_AREA;
+        }
       }
       delta += rate * weeks;
     }

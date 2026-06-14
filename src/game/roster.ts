@@ -32,6 +32,8 @@ export interface RosterEntry {
   lockerLossCount: number;
   /** Focused-training assignment, or null for general training only. */
   focus: TrainingFocus | null;
+  /** Who trains him when focused: a coach id, or null for the manager. */
+  coachId: string | null;
   /** Per-attribute change from the most recent advance (for trend display). */
   lastDelta: Partial<Record<AttrKey, number>>;
   /** Dated attribute snapshots for the progression view (oldest first). */

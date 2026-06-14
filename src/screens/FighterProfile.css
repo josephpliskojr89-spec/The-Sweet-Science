@@ -395,11 +395,25 @@
   font-weight: 600;
 }
 
+.fp__training-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
 .fp__training {
   display: flex;
   align-items: center;
   gap: var(--space-md);
 }
+.fp__chem {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  margin-left: 92px;
+}
+.fp__chem--good { color: #7bbf6a; }
+.fp__chem--ok { color: var(--text-muted); }
+.fp__chem--warn { color: #c98a4a; }
 .fp__training-label {
   font-family: var(--font-condensed);
   text-transform: uppercase;

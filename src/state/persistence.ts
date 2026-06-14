@@ -30,7 +30,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 13;
+export const SAVE_VERSION = 14;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -164,8 +164,8 @@ function migrateFighter<
     tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
     v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
-    finances layer; v12 gym upgrades; v13 coaches. Pre-v2 shell saves can't be
-    resumed — drop them. */
+    finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment. Pre-v2
+    shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -189,6 +189,7 @@ function migrate(raw: unknown): GameSave | null {
             trust: e.trust ?? rel.trust,
             lockerLossCount: e.lockerLossCount ?? 0,
             focus: e.focus ?? null,
+            coachId: e.coachId ?? null,
             lastDelta: e.lastDelta ?? {},
             // Begin tracking progression from now for pre-v9 fighters.
             history: e.history ?? [snapshotAttrs(fighter.attributes, data.dayCount!)],

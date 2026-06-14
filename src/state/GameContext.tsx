@@ -39,6 +39,14 @@ import {
 const MAX_HISTORY = 120;
 /** A small gym can only carry so much staff. */
 const MAX_COACHES = 4;
+
+/** Focused fighters a given trainer is currently running. */
+const usedByManager = (roster: { focus: unknown; coachId: string | null }[]) =>
+  roster.filter((e) => e.focus !== null && e.coachId === null).length;
+const usedByCoach = (
+  roster: { focus: unknown; coachId: string | null }[],
+  coachId: string,
+) => roster.filter((e) => e.focus !== null && e.coachId === coachId).length;
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
@@ -130,6 +138,7 @@ interface GameContextValue {
   setLocker: (id: string, hasLocker: boolean) => void;
   setTier: (id: string, tier: HierarchyTier) => void;
   setFocus: (id: string, focus: TrainingFocus | null) => void;
+  setTrainer: (id: string, coachId: string | null) => void;
   cutFighter: (id: string) => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
   hireCoach: (id: string) => void;
@@ -223,13 +232,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
       // lives outside intrude — all before we see who's had enough and walked.
       const gymArchetype = getCity(prev.cityId).archetype;
       const equipment = equipmentFactorFor(prev.upgrades);
-      // Your best coach lifts how well focused fighters develop.
-      const bestSkill = prev.coaches.reduce((m, c) => Math.max(m, c.skill), 0);
-      const coachBonus = 1 + bestSkill * 0.4;
+      // Each focused fighter develops under his assigned trainer (a coach or
+      // the manager) — skill, specialty, and chemistry all in play.
+      const coachById = new Map(prev.coaches.map((c) => [c.id, c]));
       const trainingNotes: string[] = [];
       let roster = prev.roster.map((e) => {
         const settled = recover(e, days);
-        const t = trainFighter(settled, gymArchetype, days, equipment, coachBonus);
+        const coach = e.focus !== null && e.coachId ? coachById.get(e.coachId) ?? null : null;
+        const t = trainFighter(settled, gymArchetype, days, equipment, coach);
         if (t.note) trainingNotes.push(t.note);
         return {
           ...settled,
@@ -391,6 +401,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           joinedDayCount: prev.dayCount,
           ...initialRelationship(hasLocker),
           focus: null,
+          coachId: null,
           lastDelta: {},
           history: [snapshotAttrs(target.fighter.attributes, prev.dayCount)],
         };
@@ -484,11 +495,23 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const coach = prev.coaches.find((c) => c.id === id);
       if (!coach) return;
       const coaches = prev.coaches.filter((c) => c.id !== id);
+
+      // His fighters fall to the manager if there's room, else back to general.
+      let managerUsed = usedByManager(prev.roster);
+      const roster = prev.roster.map((e) => {
+        if (e.focus === null || e.coachId !== id) return e;
+        if (managerUsed < FOCUS_SLOTS_BASE) {
+          managerUsed += 1;
+          return { ...e, coachId: null };
+        }
+        return { ...e, focus: null, coachId: null };
+      });
+
       const history = [
         ...prev.history,
         { dayCount: prev.dayCount, text: `You let ${coach.name} go.` },
       ].slice(-250);
-      commit({ ...prev, coaches, history });
+      commit({ ...prev, coaches, roster, history });
       setFlash(`You let ${coach.name} go.`);
     },
     [commit],
@@ -515,7 +538,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         // never fully undoes the memory. Repeats compound (see relationship.ts).
         // A man who loses his locker also loses his focused-training slot.
         const rel = hasLocker ? applyLockerGranted(e) : applyLockerTaken(e);
-        return { ...e, hasLocker, focus: hasLocker ? e.focus : null, ...rel };
+        return {
+          ...e,
+          hasLocker,
+          focus: hasLocker ? e.focus : null,
+          coachId: hasLocker ? e.coachId : null,
+          ...rel,
+        };
       });
       commit({ ...prev, roster });
       emitGameEvent({ type: hasLocker ? 'locker_granted' : 'locker_taken', fighterId: id });
@@ -542,21 +571,70 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const entry = prev.roster.find((e) => e.fighter.id === id);
       if (!entry) return;
 
-      if (focus !== null) {
-        if (!entry.hasLocker) {
-          setFlash('Only locker holders get your focused attention.');
+      const apply = (patch: Partial<typeof entry>) =>
+        commit({
+          ...prev,
+          roster: prev.roster.map((e) => (e.fighter.id === id ? { ...e, ...patch } : e)),
+        });
+
+      // Clear focus.
+      if (focus === null) {
+        if (entry.focus === null) return;
+        apply({ focus: null, coachId: null });
+        return;
+      }
+      if (!entry.hasLocker) {
+        setFlash('Only locker holders get your focused attention.');
+        return;
+      }
+      // Already focused — just change the area, keep his trainer.
+      if (entry.focus !== null) {
+        apply({ focus });
+        return;
+      }
+      // Newly focusing — find a trainer with a free slot, the manager first.
+      let coachId: string | null;
+      if (usedByManager(prev.roster) < FOCUS_SLOTS_BASE) {
+        coachId = null;
+      } else {
+        const free = prev.coaches.find((c) => usedByCoach(prev.roster, c.id) < c.slots);
+        if (!free) {
+          setFlash('No training slots free — hire a coach or free one up.');
           return;
         }
-        const focusedCount = prev.roster.filter((e) => e.focus !== null).length;
-        if (entry.focus === null && focusedCount >= FOCUS_SLOTS_BASE) {
-          setFlash('No focused slots left — you can only give so much personal attention.');
+        coachId = free.id;
+      }
+      apply({ focus, coachId });
+    },
+    [commit],
+  );
+
+  const setTrainer = useCallback(
+    (id: string, coachId: string | null) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry || entry.focus === null || entry.coachId === coachId) return;
+
+      if (coachId === null) {
+        const used = usedByManager(prev.roster) - (entry.coachId === null ? 1 : 0);
+        if (used >= FOCUS_SLOTS_BASE) {
+          setFlash('You can only run so many fighters yourself.');
+          return;
+        }
+      } else {
+        const coach = prev.coaches.find((c) => c.id === coachId);
+        if (!coach) return;
+        const used = usedByCoach(prev.roster, coachId) - (entry.coachId === coachId ? 1 : 0);
+        if (used >= coach.slots) {
+          setFlash(`${coach.name} has no free slots.`);
           return;
         }
       }
-      const roster = prev.roster.map((e) =>
-        e.fighter.id === id ? { ...e, focus } : e,
-      );
-      commit({ ...prev, roster });
+      commit({
+        ...prev,
+        roster: prev.roster.map((e) => (e.fighter.id === id ? { ...e, coachId } : e)),
+      });
     },
     [commit],
   );
@@ -587,7 +665,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
       } else {
         const roster = prev.roster.map((e) =>
           e.fighter.id === id
-            ? { ...e, hasLocker: false, tier: 'chopping' as HierarchyTier, focus: null, ...applyCutStayed(e) }
+            ? {
+                ...e,
+                hasLocker: false,
+                tier: 'chopping' as HierarchyTier,
+                focus: null,
+                coachId: null,
+                ...applyCutStayed(e),
+              }
             : e,
         );
         commit({ ...prev, roster, history });
@@ -627,6 +712,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setLocker,
       setTier,
       setFocus,
+      setTrainer,
       cutFighter,
       purchaseUpgrade,
       hireCoach,
@@ -665,6 +751,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setLocker,
       setTier,
       setFocus,
+      setTrainer,
       cutFighter,
       purchaseUpgrade,
       hireCoach,

@@ -14,6 +14,8 @@
 
 import { generateName } from './names';
 import type { CityId } from './cities';
+import type { TraitKey } from './traits';
+import type { AttrKey } from './training';
 
 export type CoachSpecialty =
   | 'trainer'
@@ -197,4 +199,79 @@ export function generateCoach(cityId: CityId, reputation = 0): Coach {
 /** The pool of coaches available to hire. Small and modest for a new gym. */
 export function generateCoachMarket(cityId: CityId, reputation = 0, n = 3): Coach[] {
   return Array.from({ length: n }, () => generateCoach(cityId, reputation));
+}
+
+// --- assignment effects (6B-2) ---------------------------------------------
+
+/** The attributes a specialist accelerates when his fighter focuses on them.
+    A Trainer is a generalist — no specific match, value is in effectiveness. */
+const SPECIALTY_ATTRS: Partial<Record<CoachSpecialty, AttrKey[]>> = {
+  conditioner: ['stamina'],
+  defense: ['defense', 'ringIq', 'footwork'],
+  power: ['power'],
+  mental: ['ringIq'],
+  cutman: ['chin'],
+  corner_strategist: ['ringIq'],
+};
+
+/** Whether this coach's specialty accelerates a given focus attribute. */
+export function coachBoostsAttr(coach: Coach, attr: AttrKey): boolean {
+  return (SPECIALTY_ATTRS[coach.specialty] ?? []).includes(attr);
+}
+
+const clampN = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+
+/**
+ * Coach-fighter chemistry — a development multiplier from how a personality
+ * meets a man (bible: Coach-Fighter Chemistry). Uses all of his traits, since
+ * chemistry is real whether or not the player has read it yet.
+ */
+export function coachChemistry(coach: Coach, traits: TraitKey[], age: number): number {
+  const has = (t: TraitKey) => traits.includes(t);
+  let f = 1;
+  switch (coach.personality) {
+    case 'hardass':
+      if (has('chip_on_shoulder')) f *= 1.1;
+      if (has('comfort_seeker')) f *= 1.06;
+      if (has('glory_hunter')) f *= 1.04;
+      if (has('insecure')) f *= 0.82;
+      if (has('unfocused')) f *= 0.92;
+      break;
+    case 'teacher':
+      if (age <= 23) f *= 1.08;
+      if (has('insecure')) f *= 1.06;
+      if (has('hot_tempered')) f *= 0.9;
+      if (has('glory_hunter')) f *= 0.94;
+      break;
+    case 'motivator':
+      if (has('insecure')) f *= 1.12;
+      if (has('chip_on_shoulder')) f *= 1.06;
+      if (has('glory_hunter')) f *= 1.05;
+      if (has('comfort_seeker')) f *= 0.9;
+      if (has('reckless_brave')) f *= 0.94;
+      break;
+    case 'technician':
+      if (has('hot_tempered')) f *= 0.88;
+      break;
+    case 'loyalist':
+      if (has('family_man')) f *= 1.08;
+      if (has('insecure')) f *= 1.05;
+      break;
+    case 'old_lion':
+      if (has('lionheart')) f *= 1.08;
+      if (age <= 21) f *= 1.05;
+      break;
+    case 'mercenary':
+    default:
+      break;
+  }
+  return clampN(f, 0.78, 1.18);
+}
+
+export type ChemistryTone = 'good' | 'ok' | 'warn';
+/** A soft read on chemistry for the UI — the manager's sense, not a number. */
+export function chemistryRead(factor: number): { label: string; tone: ChemistryTone } {
+  if (factor >= 1.05) return { label: 'Clicking', tone: 'good' };
+  if (factor <= 0.93) return { label: 'Friction', tone: 'warn' };
+  return { label: 'Settling in', tone: 'ok' };
 }
