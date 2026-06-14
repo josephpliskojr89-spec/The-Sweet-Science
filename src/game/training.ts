@@ -152,6 +152,8 @@ export function trainFighter(
   days: number,
   /** Equipment multiplier from gym upgrades (1.0 = standard gear). */
   equipment = 1,
+  /** Coaching lift applied to focused training (1.0 = just the manager). */
+  coachBonus = 1,
 ): TrainResult {
   const f = entry.fighter;
   const emphasis = new Set(ARCH_EMPHASIS[gymArchetype] ?? []);
@@ -160,7 +162,8 @@ export function trainFighter(
   const af = ageFactor(f.age);
   const mf = moraleFactor(entry.morale);
   const lockerMult = entry.hasLocker ? 1 : 0.25;
-  const focusGlobal = focused ? FOCUS_GLOBAL : 1;
+  // A focused fighter gets the manager's attention, lifted by coaching staff.
+  const focusGlobal = focused ? FOCUS_GLOBAL * coachBonus : 1;
 
   const attrs: Attributes = { ...f.attributes };
   const lastDelta: Partial<Record<AttrKey, number>> = {};

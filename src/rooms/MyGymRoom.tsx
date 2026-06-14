@@ -16,7 +16,14 @@ import { getCity } from '../game/cities';
 import { fighterFullName } from '../game/fighters';
 import { focusLabel, gymPhilosophyLabel } from '../game/training';
 import { formatDate } from '../game/time';
-import { formatMoney, upgradeCost, upgradeNextUpkeep } from '../game/economy';
+import { formatMoney, upgradeCost, upgradeNextUpkeep, coachMonthlySalary } from '../game/economy';
+import {
+  specialtyName,
+  specialtyBlurb,
+  personalityName,
+  tierName,
+  type Coach,
+} from '../game/coaches';
 import {
   UPGRADE_ORDER,
   trackName,
@@ -29,8 +36,18 @@ import { Portrait } from '../assets/portraits';
 import './MyGymRoom.css';
 
 export function MyGymRoom() {
-  const { save, closeRoom, profileId, viewerIds, focusCapacity, openRoom, openProfile, purchaseUpgrade } =
-    useGame();
+  const {
+    save,
+    closeRoom,
+    profileId,
+    viewerIds,
+    focusCapacity,
+    openRoom,
+    openProfile,
+    purchaseUpgrade,
+    hireCoach,
+    fireCoach,
+  } = useGame();
 
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
@@ -46,6 +63,7 @@ export function MyGymRoom() {
 
   const philosophy = gymPhilosophyLabel(getCity(save.cityId).archetype);
   const focused = save.roster.filter((e) => e.focus !== null);
+  const year = formatDate(save.dayCount).year;
 
   return (
     <div className="room-screen worn" role="dialog" aria-label="My Gym">
@@ -114,19 +132,58 @@ export function MyGymRoom() {
 
           {/* Staff */}
           <section className="mygym__section">
-            <h3 className="mygym__section-title">Your Staff</h3>
-            <div className="mygym__staff">
-              <div className="mygym__staff-you">
-                <span className="mygym__staff-role">Head Trainer</span>
-                <span className="mygym__staff-name">{save.manager.name || 'You'}</span>
-                <span className="mygym__staff-note">You run every session yourself.</span>
-              </div>
+            <div className="mygym__facilities-head">
+              <h3 className="mygym__section-title">Your Staff</h3>
+              <span className="mygym__cash">
+                You + {save.coaches.length} {save.coaches.length === 1 ? 'coach' : 'coaches'} ·{' '}
+                {focusCapacity} focused slots
+              </span>
             </div>
-            <p className="mygym__staff-future">
-              You’re a one-man operation. In Phase 6 you’ll hire coaches right
-              here to expand your focused-training capacity and put the right man
-              with the right fighter.
-            </p>
+
+            <ul className="coaches">
+              <li className="coach coach--you">
+                <div className="coach__main">
+                  <span className="coach__name">{save.manager.name || 'You'}</span>
+                  <span className="coach__line">Head Trainer · 2 slots · no salary</span>
+                </div>
+              </li>
+              {save.coaches.map((c) => (
+                <li className="coach" key={c.id}>
+                  <CoachInfo coach={c} />
+                  <button className="coach__fire" onClick={() => fireCoach(c.id)} title="Let him go">
+                    Let go
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* Market */}
+          <section className="mygym__section">
+            <h3 className="mygym__section-title">Available to Hire</h3>
+            {save.coachMarket.length === 0 ? (
+              <p className="mygym__none">No one’s looking for work right now. Check back later.</p>
+            ) : (
+              <ul className="coaches">
+                {save.coachMarket.map((c) => {
+                  const salary = coachMonthlySalary(c, year);
+                  const staffFull = save.coaches.length >= 4;
+                  return (
+                    <li className="coach" key={c.id}>
+                      <CoachInfo coach={c} />
+                      <button
+                        className="coach__hire"
+                        disabled={staffFull}
+                        onClick={() => hireCoach(c.id)}
+                        title={staffFull ? 'Your staff is full' : `${formatMoney(salary)}/mo`}
+                      >
+                        Hire · {formatMoney(salary)}/mo
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </section>
 
           {/* Facilities */}
@@ -140,7 +197,6 @@ export function MyGymRoom() {
               {UPGRADE_ORDER.map((key) => {
                 const level = save.upgrades[key];
                 const max = maxLevel(key);
-                const year = formatDate(save.dayCount).year;
                 const cost = upgradeCost(key, level, year);
                 const upkeep = upgradeNextUpkeep(key, year);
                 const gain = effectGain(key, level);
@@ -189,6 +245,21 @@ export function MyGymRoom() {
           </section>
         </div>
       </div>
+    </div>
+  );
+}
+
+function CoachInfo({ coach }: { coach: Coach }) {
+  return (
+    <div className="coach__main">
+      <span className="coach__name">{coach.name}</span>
+      <span className="coach__line">
+        {tierName(coach.tier)} · {specialtyName(coach.specialty)} · {coach.slots}{' '}
+        {coach.slots === 1 ? 'slot' : 'slots'}
+      </span>
+      <span className="coach__sub">
+        {personalityName(coach.personality)} — {specialtyBlurb(coach.specialty)}
+      </span>
     </div>
   );
 }

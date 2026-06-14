@@ -37,6 +37,8 @@ import {
 
 /** Keep ~10 years of monthly progression snapshots per fighter. */
 const MAX_HISTORY = 120;
+/** A small gym can only carry so much staff. */
+const MAX_COACHES = 4;
 import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
@@ -65,6 +67,7 @@ import {
   type NewGameDraft,
 } from './persistence';
 import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
+import { generateCoach } from '../game/coaches';
 import {
   equipmentFactorFor,
   trackName,
@@ -129,11 +132,13 @@ interface GameContextValue {
   setFocus: (id: string, focus: TrainingFocus | null) => void;
   cutFighter: (id: string) => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
+  hireCoach: (id: string) => void;
+  fireCoach: (id: string) => void;
   clearFlash: () => void;
 
   lockerCap: number;
   noLockerCap: number;
-  /** Focused-training slots available (manager only for now). */
+  /** Focused-training slots available — the manager plus coaches. */
   focusCapacity: number;
 }
 
@@ -218,10 +223,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
       // lives outside intrude — all before we see who's had enough and walked.
       const gymArchetype = getCity(prev.cityId).archetype;
       const equipment = equipmentFactorFor(prev.upgrades);
+      // Your best coach lifts how well focused fighters develop.
+      const bestSkill = prev.coaches.reduce((m, c) => Math.max(m, c.skill), 0);
+      const coachBonus = 1 + bestSkill * 0.4;
       const trainingNotes: string[] = [];
       let roster = prev.roster.map((e) => {
         const settled = recover(e, days);
-        const t = trainFighter(settled, gymArchetype, days, equipment);
+        const t = trainFighter(settled, gymArchetype, days, equipment, coachBonus);
         if (t.note) trainingNotes.push(t.note);
         return {
           ...settled,
@@ -240,6 +248,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
       const life = runLifeEvents(roster, days);
       roster = life.roster;
       const dep = evaluateDepartures(roster, days);
+
+      // The coach market turns over slowly — a man takes a job elsewhere, a
+      // new face comes available.
+      let coachMarket = prev.coachMarket;
+      if (coachMarket.length && Math.random() < 0.12 * (days / 7)) {
+        coachMarket = [...coachMarket.slice(1), generateCoach(prev.cityId, reputationFor(prev))];
+      }
 
       // The paper runs on its own week, whether or not you read it.
       let press = prev.press;
@@ -282,7 +297,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       let finances = prev.finances;
       if (crossesMonth) {
         const fd = formatDate(toDay);
-        const sum = monthlySummary(staying, prev.upgrades, fd.year);
+        const sum = monthlySummary(staying, prev.upgrades, prev.coaches, fd.year);
         money = prev.money + sum.net;
         finances = [
           {
@@ -303,6 +318,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         dayCount: toDay,
         money,
         finances,
+        coachMarket,
         walkIns: [...aged.surviving, ...fresh],
         roster: staying,
         press,
@@ -431,6 +447,49 @@ export function GameProvider({ children }: { children: ReactNode }) {
       ].slice(-250);
       commit({ ...prev, upgrades, money: prev.money - cost, history });
       setFlash(`Money well spent. ${trackName(key)}: ${gain}.`);
+    },
+    [commit],
+  );
+
+  const hireCoach = useCallback(
+    (id: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      if (prev.coaches.length >= MAX_COACHES) {
+        setFlash('Your staff is full. Let someone go before you take on another.');
+        return;
+      }
+      const coach = prev.coachMarket.find((c) => c.id === id);
+      if (!coach) return;
+      const coaches = [...prev.coaches, coach];
+      // Backfill the market so it doesn't run dry.
+      const coachMarket = [
+        ...prev.coachMarket.filter((c) => c.id !== id),
+        generateCoach(prev.cityId, reputationFor(prev)),
+      ];
+      const history = [
+        ...prev.history,
+        { dayCount: prev.dayCount, text: `You brought ${coach.name} onto the staff.` },
+      ].slice(-250);
+      commit({ ...prev, coaches, coachMarket, history });
+      setFlash(`${coach.name} is on the staff.`);
+    },
+    [commit],
+  );
+
+  const fireCoach = useCallback(
+    (id: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const coach = prev.coaches.find((c) => c.id === id);
+      if (!coach) return;
+      const coaches = prev.coaches.filter((c) => c.id !== id);
+      const history = [
+        ...prev.history,
+        { dayCount: prev.dayCount, text: `You let ${coach.name} go.` },
+      ].slice(-250);
+      commit({ ...prev, coaches, history });
+      setFlash(`You let ${coach.name} go.`);
     },
     [commit],
   );
@@ -570,10 +629,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setFocus,
       cutFighter,
       purchaseUpgrade,
+      hireCoach,
+      fireCoach,
       clearFlash,
       lockerCap: save ? lockerCapacity(save) : 0,
       noLockerCap: save ? noLockerCapacity(save) : 0,
-      focusCapacity: FOCUS_SLOTS_BASE,
+      focusCapacity:
+        FOCUS_SLOTS_BASE + (save ? save.coaches.reduce((s, c) => s + c.slots, 0) : 0),
     }),
     [
       screen,
@@ -605,6 +667,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setFocus,
       cutFighter,
       purchaseUpgrade,
+      hireCoach,
+      fireCoach,
       clearFlash,
     ],
   );

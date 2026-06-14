@@ -15,6 +15,7 @@
 */
 
 import type { RosterEntry } from './roster';
+import { coachMonthlySalaryBase, type Coach } from './coaches';
 import {
   nextCostBase,
   levelUpkeepBase,
@@ -46,6 +47,11 @@ export function upgradeNextUpkeep(key: UpgradeKey, year: number): number {
   return Math.round(levelUpkeepBase(key) * inflationFactor(year));
 }
 
+/** A coach's monthly salary in `year` dollars. */
+export function coachMonthlySalary(coach: Coach, year: number): number {
+  return Math.round(coachMonthlySalaryBase(coach) * inflationFactor(year));
+}
+
 export interface MonthlySummary {
   duesIncome: number;
   /** Base rent + utilities. */
@@ -64,6 +70,7 @@ export interface MonthlySummary {
 export function monthlySummary(
   roster: RosterEntry[],
   upgrades: Upgrades,
+  coaches: Coach[],
   year: number,
 ): MonthlySummary {
   const inf = inflationFactor(year);
@@ -86,7 +93,9 @@ export function monthlySummary(
   const overheadBase = Math.round((BASE_RENT + BASE_UTILITIES) * inf);
   const facilitiesUpkeep = Math.round(totalUpkeepBase(upgrades) * inf);
   const overhead = overheadBase + facilitiesUpkeep;
-  const coachSalaries = 0; // joins the books when coaches are hired
+  const coachSalaries = Math.round(
+    coaches.reduce((s, c) => s + coachMonthlySalaryBase(c), 0) * inf,
+  );
 
   return {
     duesIncome,

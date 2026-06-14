@@ -141,9 +141,15 @@ placeholders, plus day/week time advancement and a real Continue save.
   places). Leveled tracks with escalating, inflation-scaled costs AND monthly upkeep
   (a bigger gym costs more to run); locker and
   bench caps are now derived from upgrades.
-- Still to come this phase: coaches (6B, My Gym), the competitive world (6C —
-  rival rosters, walk-in competition, poaching, Rival Gyms tab), and fight
-  booking (6D, My Office). See docs/the-competitive-world.md.
+- **Coaches (6B-1)** ✅ — procedurally generated coaches (specialty, personality,
+  tier, salary, slots), a hiring **market** in My Gym that turns over with time,
+  and hire/fire. Coaches add focused-training **slots** and your best coach
+  **lifts** how well focused fighters develop; their **salaries** flow into the
+  monthly books — a real recurring commitment. A new gym mostly sees cheap local
+  trainers. *(6B-2 next: deliberate per-coach assignment + specialty matching.)*
+- Still to come this phase: the competitive world (6C — rival rosters, walk-in
+  competition, poaching, Rival Gyms tab) and fight booking (6D, My Office).
+  See docs/the-competitive-world.md.
 
 Deferred to later phases: the 3-exchange interview, the Calendar (Phase 7), the
 fight engine (Phase 8), and the mechanical press (Phase 9).
@@ -195,8 +201,9 @@ src/
     fighters.ts      Fighter generation — the procedural heart
     walkins.ts       Walk-in scheduling, patience, expiry
     roster.ts        Roster entries + the three hierarchy tiers
-    economy.ts       Money: dues, overhead, monthly books, inflation
+    economy.ts       Money: dues, overhead, salaries, monthly books, inflation
     upgrades.ts      Gym upgrade tracks: lockers, equipment, floor
+    coaches.ts       Coach generation, market, specialties & personalities
     relationship.ts  Per-fighter morale + trust; locker-decision fallout
     departures.ts    Quit / leave-for-opportunity / cut logic
     events.ts        Game event bus + trait-response stub (bible v2.8)

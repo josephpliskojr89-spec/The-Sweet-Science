@@ -154,7 +154,7 @@ export function OfficeRoom() {
   function FinancesTab() {
     if (!save) return null;
     const date = formatDate(save.dayCount);
-    const summary = monthlySummary(save.roster, save.upgrades, date.year);
+    const summary = monthlySummary(save.roster, save.upgrades, save.coaches, date.year);
     const low = save.money < 0;
 
     return (

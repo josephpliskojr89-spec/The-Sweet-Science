@@ -189,6 +189,98 @@
   margin-top: var(--space-md);
 }
 
+/* Coaches — staff & market */
+.coaches {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.coach {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.28);
+}
+.coach--you {
+  border-color: var(--amber-ember);
+  background: rgba(217, 154, 78, 0.06);
+}
+.coach__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.coach__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  color: var(--parchment);
+}
+.coach__line {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--amber-deep);
+}
+.coach__sub {
+  font-family: var(--font-slab);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.coach__hire,
+.coach__fire {
+  flex: 0 0 auto;
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  transition: color var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.coach__hire {
+  font-weight: 600;
+  color: var(--ink-black);
+  background: linear-gradient(180deg, var(--amber-bright), var(--amber-deep));
+  border: 1px solid #5c3c14;
+  box-shadow: inset 0 1px 0 rgba(255, 240, 210, 0.4);
+}
+.coach__hire:hover:not(:disabled) {
+  box-shadow: inset 0 1px 0 rgba(255, 240, 210, 0.5), 0 0 14px rgba(217, 154, 78, 0.35);
+}
+.coach__hire:disabled {
+  cursor: not-allowed;
+  color: var(--text-dim);
+  background: var(--leather-dark);
+  border-color: #0c0907;
+  box-shadow: none;
+}
+.coach__fire {
+  color: var(--text-muted);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.3);
+}
+.coach__fire:hover {
+  color: var(--rust);
+  border-color: var(--oxblood);
+}
+
+@media (max-width: 560px) {
+  .coach {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 /* Facilities & Upgrades */
 .mygym__facilities-head {
   display: flex;
