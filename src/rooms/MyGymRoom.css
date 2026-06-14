@@ -282,6 +282,11 @@
   font-size: 11px;
   color: #7bbf6a;
 }
+.upgrade__upkeep {
+  font-family: var(--font-typewriter);
+  font-size: 10px;
+  color: var(--rust);
+}
 .upgrade__btn {
   font-family: var(--font-condensed);
   font-weight: 600;

@@ -138,7 +138,8 @@ placeholders, plus day/week time advancement and a real Continue save.
 - **Gym upgrades (6A)** ✅ — bought in My Gym's Facilities section against the
   money in My Office: more **lockers** (the wall literally grows), better
   **equipment** (everyone develops faster), and **floor space** (more bench
-  places). Leveled tracks with escalating, inflation-scaled costs; locker and
+  places). Leveled tracks with escalating, inflation-scaled costs AND monthly upkeep
+  (a bigger gym costs more to run); locker and
   bench caps are now derived from upgrades.
 - Still to come this phase: coaches (6B, My Gym), the competitive world (6C —
   rival rosters, walk-in competition, poaching, Rival Gyms tab), and fight

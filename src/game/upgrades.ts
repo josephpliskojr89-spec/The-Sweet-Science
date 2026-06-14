@@ -9,11 +9,11 @@
     Equipment — a small boost to how fast everyone develops (training.ts).
     Floor     — more bench places for fighters without a locker.
 
-  Costs are 1975 base dollars, inflated at purchase by year (economy.ts), so
-  expanding later costs era-appropriately more.
+  A bigger gym is not just a one-time cost: every level adds monthly UPKEEP
+  (more rent, more utilities, more to maintain), so expanding is a lasting
+  commitment, not a free splurge. economy.ts owns inflation; this module holds
+  raw 1975 figures only.
 */
-
-import { inflationFactor } from './economy';
 
 export interface Upgrades {
   lockers: number;
@@ -37,23 +37,28 @@ interface TrackDef {
   blurb: string;
   /** 1975 base cost to buy each next level (length = max level). */
   costs: number[];
+  /** 1975 base monthly upkeep each level adds. */
+  upkeep: number;
 }
 
 const TRACKS: Record<UpgradeKey, TrackDef> = {
   lockers: {
     name: 'Locker Bank',
     blurb: 'Room for more fighters to call your gym home.',
-    costs: [320, 480, 700, 1000],
+    costs: [340, 520, 760, 1100],
+    upkeep: 22,
   },
   equipment: {
     name: 'Equipment',
     blurb: 'Better bags, ropes, and weights — everyone develops a little faster.',
-    costs: [260, 400, 600, 850],
+    costs: [300, 460, 680, 950],
+    upkeep: 10,
   },
   floor: {
     name: 'Floor Space',
     blurb: 'A bigger floor carries more men without a locker.',
-    costs: [380, 560, 820],
+    costs: [420, 620, 900],
+    upkeep: 18,
   },
 };
 
@@ -69,7 +74,7 @@ export function equipmentFactorFor(u: Upgrades): number {
   return 1 + EQUIP_PER_LEVEL * u.equipment;
 }
 
-// --- catalog ---------------------------------------------------------------
+// --- catalog (raw 1975 numbers) --------------------------------------------
 
 export function trackName(key: UpgradeKey): string {
   return TRACKS[key].name;
@@ -81,11 +86,21 @@ export function maxLevel(key: UpgradeKey): number {
   return TRACKS[key].costs.length;
 }
 
-/** 1975-base cost to buy the next level, inflated to `year`. Null when maxed. */
-export function nextCost(key: UpgradeKey, level: number, year: number): number | null {
+/** 1975-base cost to buy the next level. Null when maxed. */
+export function nextCostBase(key: UpgradeKey, level: number): number | null {
   const costs = TRACKS[key].costs;
   if (level >= costs.length) return null;
-  return Math.round(costs[level] * inflationFactor(year));
+  return costs[level];
+}
+
+/** 1975-base monthly upkeep each level of this track adds. */
+export function levelUpkeepBase(key: UpgradeKey): number {
+  return TRACKS[key].upkeep;
+}
+
+/** 1975-base total monthly upkeep from all current upgrades. */
+export function totalUpkeepBase(u: Upgrades): number {
+  return UPGRADE_ORDER.reduce((sum, key) => sum + u[key] * TRACKS[key].upkeep, 0);
 }
 
 /** What the track does at a given level (human text). */
@@ -102,3 +117,4 @@ export function effectGain(key: UpgradeKey, level: number): string | null {
   if (key === 'floor') return `+${FLOOR_PER_LEVEL} bench places`;
   return `+${Math.round(EQUIP_PER_LEVEL * 100)}% development`;
 }
+

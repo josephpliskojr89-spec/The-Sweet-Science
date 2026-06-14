@@ -64,10 +64,9 @@ import {
   type GameSave,
   type NewGameDraft,
 } from './persistence';
-import { monthlySummary, formatMoney } from '../game/economy';
+import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
 import {
   equipmentFactorFor,
-  nextCost,
   trackName,
   effectGain,
   type UpgradeKey,
@@ -283,7 +282,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       let finances = prev.finances;
       if (crossesMonth) {
         const fd = formatDate(toDay);
-        const sum = monthlySummary(staying, fd.year);
+        const sum = monthlySummary(staying, prev.upgrades, fd.year);
         money = prev.money + sum.net;
         finances = [
           {
@@ -412,7 +411,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!prev) return;
       const level = prev.upgrades[key];
       const year = formatDate(prev.dayCount).year;
-      const cost = nextCost(key, level, year);
+      const cost = upgradeCost(key, level, year);
       if (cost === null) {
         setFlash(`${trackName(key)} is already at the top of the line.`);
         return;

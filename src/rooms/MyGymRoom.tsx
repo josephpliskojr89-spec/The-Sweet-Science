@@ -16,13 +16,12 @@ import { getCity } from '../game/cities';
 import { fighterFullName } from '../game/fighters';
 import { focusLabel, gymPhilosophyLabel } from '../game/training';
 import { formatDate } from '../game/time';
-import { formatMoney } from '../game/economy';
+import { formatMoney, upgradeCost, upgradeNextUpkeep } from '../game/economy';
 import {
   UPGRADE_ORDER,
   trackName,
   trackBlurb,
   maxLevel,
-  nextCost,
   effectAtLevel,
   effectGain,
 } from '../game/upgrades';
@@ -142,7 +141,8 @@ export function MyGymRoom() {
                 const level = save.upgrades[key];
                 const max = maxLevel(key);
                 const year = formatDate(save.dayCount).year;
-                const cost = nextCost(key, level, year);
+                const cost = upgradeCost(key, level, year);
+                const upkeep = upgradeNextUpkeep(key, year);
                 const gain = effectGain(key, level);
                 const maxed = cost === null;
                 const afford = cost !== null && save.money >= cost;
@@ -170,6 +170,7 @@ export function MyGymRoom() {
                       ) : (
                         <>
                           <span className="upgrade__gain">{gain}</span>
+                          <span className="upgrade__upkeep">+{formatMoney(upkeep)}/mo upkeep</span>
                           <button
                             className="upgrade__btn"
                             disabled={!afford}

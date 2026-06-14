@@ -154,7 +154,7 @@ export function OfficeRoom() {
   function FinancesTab() {
     if (!save) return null;
     const date = formatDate(save.dayCount);
-    const summary = monthlySummary(save.roster, date.year);
+    const summary = monthlySummary(save.roster, save.upgrades, date.year);
     const low = save.money < 0;
 
     return (
@@ -192,8 +192,14 @@ export function OfficeRoom() {
             </li>
             <li className="finances__line">
               <span>Rent &amp; utilities</span>
-              <span className="finances__neg">−{formatMoney(summary.overhead)}</span>
+              <span className="finances__neg">−{formatMoney(summary.overheadBase)}</span>
             </li>
+            {summary.facilitiesUpkeep > 0 && (
+              <li className="finances__line">
+                <span>Facilities upkeep</span>
+                <span className="finances__neg">−{formatMoney(summary.facilitiesUpkeep)}</span>
+              </li>
+            )}
             <li className="finances__line finances__line--muted">
               <span>Coach salaries</span>
               <span>{summary.coachSalaries === 0 ? '—' : `−${formatMoney(summary.coachSalaries)}`}</span>

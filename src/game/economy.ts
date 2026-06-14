@@ -15,9 +15,16 @@
 */
 
 import type { RosterEntry } from './roster';
+import {
+  nextCostBase,
+  levelUpkeepBase,
+  totalUpkeepBase,
+  type Upgrades,
+  type UpgradeKey,
+} from './upgrades';
 
 /** A man opening a gym in 1975 with some savings behind him. Tight, not poor. */
-export const STARTING_MONEY = 3000;
+export const STARTING_MONEY = 2200;
 
 const BASE_RENT = 120; // monthly, 1975 dollars
 const BASE_UTILITIES = 40;
@@ -28,8 +35,24 @@ export function inflationFactor(year: number): number {
   return Math.pow(INFLATION_RATE, Math.max(0, year - 1975));
 }
 
+/** Inflated cost to buy a track's next level in `year`. Null when maxed. */
+export function upgradeCost(key: UpgradeKey, level: number, year: number): number | null {
+  const base = nextCostBase(key, level);
+  return base === null ? null : Math.round(base * inflationFactor(year));
+}
+
+/** Inflated monthly upkeep the next level of a track adds, in `year`. */
+export function upgradeNextUpkeep(key: UpgradeKey, year: number): number {
+  return Math.round(levelUpkeepBase(key) * inflationFactor(year));
+}
+
 export interface MonthlySummary {
   duesIncome: number;
+  /** Base rent + utilities. */
+  overheadBase: number;
+  /** Added monthly cost of expanded facilities (upgrades). */
+  facilitiesUpkeep: number;
+  /** Total overhead (base + facilities). */
   overhead: number;
   coachSalaries: number;
   net: number;
@@ -37,8 +60,12 @@ export interface MonthlySummary {
   brokeCount: number;
 }
 
-/** The month's books for the current roster, in that year's dollars. */
-export function monthlySummary(roster: RosterEntry[], year: number): MonthlySummary {
+/** The month's books for the current roster + gym, in that year's dollars. */
+export function monthlySummary(
+  roster: RosterEntry[],
+  upgrades: Upgrades,
+  year: number,
+): MonthlySummary {
   const inf = inflationFactor(year);
 
   let dues = 0;
@@ -56,11 +83,15 @@ export function monthlySummary(roster: RosterEntry[], year: number): MonthlySumm
   }
 
   const duesIncome = Math.round(dues * inf);
-  const overhead = Math.round((BASE_RENT + BASE_UTILITIES) * inf);
+  const overheadBase = Math.round((BASE_RENT + BASE_UTILITIES) * inf);
+  const facilitiesUpkeep = Math.round(totalUpkeepBase(upgrades) * inf);
+  const overhead = overheadBase + facilitiesUpkeep;
   const coachSalaries = 0; // joins the books when coaches are hired
 
   return {
     duesIncome,
+    overheadBase,
+    facilitiesUpkeep,
     overhead,
     coachSalaries,
     net: duesIncome - overhead - coachSalaries,
