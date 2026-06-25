@@ -189,6 +189,51 @@
   margin-top: var(--space-md);
 }
 
+/* Hiring — posting & applicants */
+.posting__lead {
+  font-family: var(--font-slab);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: var(--space-md);
+}
+.posting__form {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.posting__form .frow__focus-select {
+  flex: 1;
+  min-width: 180px;
+  font-size: 13px;
+  padding: 9px 12px;
+}
+.posting__searching {
+  font-family: var(--font-slab);
+  font-size: 14px;
+  color: var(--text-warm);
+  margin-bottom: var(--space-md);
+}
+.posting__searching strong {
+  color: var(--amber);
+}
+.posting__cancel {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.posting__cancel:hover {
+  color: var(--rust);
+}
+.coach__decide {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
 /* Coaches — staff & market */
 .coaches {
   list-style: none;

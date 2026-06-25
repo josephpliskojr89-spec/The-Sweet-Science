@@ -18,7 +18,7 @@ import { rollGrowth, rollBaseDues } from '../game/fighters';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
-import { generateCoachMarket, type Coach } from '../game/coaches';
+import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
 import {
   DEFAULT_UPGRADES,
   lockerCapacityFor,
@@ -30,7 +30,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 14;
+export const SAVE_VERSION = 15;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -62,8 +62,10 @@ export interface GameSave {
   upgrades: Upgrades;
   /** Coaches on staff (game/coaches.ts). */
   coaches: Coach[];
-  /** Coaches available to hire — the market, turns over with time. */
-  coachMarket: Coach[];
+  /** The open coaching job, or null when you're not hiring. */
+  coachPosting: CoachPosting | null;
+  /** Coaches who've answered the posting, awaiting your decision. */
+  coachApplicants: CoachApplicant[];
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -94,7 +96,8 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     finances: [],
     upgrades: DEFAULT_UPGRADES,
     coaches: [],
-    coachMarket: generateCoachMarket(draft.cityId, 0),
+    coachPosting: null,
+    coachApplicants: [],
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -164,8 +167,8 @@ function migrateFighter<
     tiers; v4 lacked fighter publicReputation; v5 lacked the relationship layer;
     v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
-    finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment. Pre-v2
-    shell saves can't be resumed — drop them. */
+    finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment; v15
+    coach job postings. Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -210,9 +213,8 @@ function migrate(raw: unknown): GameSave | null {
       finances: Array.isArray(data.finances) ? data.finances : [],
       upgrades: data.upgrades ?? DEFAULT_UPGRADES,
       coaches: Array.isArray(data.coaches) ? data.coaches : [],
-      coachMarket: Array.isArray(data.coachMarket)
-        ? data.coachMarket
-        : generateCoachMarket(data.cityId as CityId, 0),
+      coachPosting: data.coachPosting ?? null,
+      coachApplicants: Array.isArray(data.coachApplicants) ? data.coachApplicants : [],
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),

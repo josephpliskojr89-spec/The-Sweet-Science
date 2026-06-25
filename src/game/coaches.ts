@@ -158,11 +158,20 @@ function rollTier(reputation: number): CoachTier {
   return 'local';
 }
 
-export function generateCoach(cityId: CityId, reputation = 0): Coach {
+export function generateCoach(
+  cityId: CityId,
+  reputation = 0,
+  /** Bias the specialty toward a posted opening (someone off-spec may still answer). */
+  preferred?: CoachSpecialty,
+): Coach {
   const tier = rollTier(reputation);
   // Local floors skew to general Trainers; specialists are rarer down here.
-  const specialty =
-    tier === 'local' && Math.random() < 0.4 ? 'trainer' : pick(SPECIALTIES);
+  let specialty: CoachSpecialty;
+  if (preferred) {
+    specialty = Math.random() < 0.78 ? preferred : pick(SPECIALTIES);
+  } else {
+    specialty = tier === 'local' && Math.random() < 0.4 ? 'trainer' : pick(SPECIALTIES);
+  }
   const personality = Math.random() < 0.1 ? 'old_lion' : pick(PERSONALITIES);
   const oldLion = personality === 'old_lion';
 
@@ -199,6 +208,65 @@ export function generateCoach(cityId: CityId, reputation = 0): Coach {
 /** The pool of coaches available to hire. Small and modest for a new gym. */
 export function generateCoachMarket(cityId: CityId, reputation = 0, n = 3): Coach[] {
   return Array.from({ length: n }, () => generateCoach(cityId, reputation));
+}
+
+// --- the job posting & applicants -------------------------------------------
+// Coaches don't walk in off the street like fighters (bible). You put out word
+// for the kind of help you want, then wait to see who answers. The better
+// known your gym, the more — and better — coaches respond.
+
+export const SPECIALTY_ORDER: CoachSpecialty[] = SPECIALTIES;
+
+/** What you're hiring for: a specialty, or anyone qualified. */
+export type CoachPosting = CoachSpecialty | 'any';
+
+export interface CoachApplicant {
+  coach: Coach;
+  /** Days before he takes other work. */
+  patience: number;
+}
+
+/** Daily chance a coach answers an open posting — a trickle for a new gym. */
+function dailyApplyChance(reputation: number): number {
+  return 0.05 + reputation * 0.18;
+}
+
+/** Simulate `days` of an open search and return who reached out. */
+export function rollCoachApplicants(
+  days: number,
+  cityId: CityId,
+  reputation: number,
+  posting: CoachPosting,
+): CoachApplicant[] {
+  const out: CoachApplicant[] = [];
+  const chance = dailyApplyChance(reputation);
+  const preferred = posting === 'any' ? undefined : posting;
+  for (let i = 0; i < days; i++) {
+    if (Math.random() < chance) {
+      out.push({
+        coach: generateCoach(cityId, reputation, preferred),
+        patience: randInt(21, 70),
+      });
+    }
+  }
+  return out.slice(0, 2); // never a flood from one advance
+}
+
+export interface ApplicantAgeResult {
+  staying: CoachApplicant[];
+  left: CoachApplicant[];
+}
+
+/** Age the pending applicants; the ones out of patience took other work. */
+export function ageApplicants(applicants: CoachApplicant[], days: number): ApplicantAgeResult {
+  const staying: CoachApplicant[] = [];
+  const left: CoachApplicant[] = [];
+  for (const a of applicants) {
+    const patience = a.patience - days;
+    if (patience <= 0) left.push(a);
+    else staying.push({ ...a, patience });
+  }
+  return { staying, left };
 }
 
 // --- assignment effects (6B-2) ---------------------------------------------

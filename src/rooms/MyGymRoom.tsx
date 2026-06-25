@@ -10,7 +10,7 @@
   section is the placeholder for it.
 */
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGame } from '../state/GameContext';
 import { getCity } from '../game/cities';
 import { fighterFullName } from '../game/fighters';
@@ -22,7 +22,9 @@ import {
   specialtyBlurb,
   personalityName,
   tierName,
+  SPECIALTY_ORDER,
   type Coach,
+  type CoachPosting,
 } from '../game/coaches';
 import {
   UPGRADE_ORDER,
@@ -45,9 +47,13 @@ export function MyGymRoom() {
     openRoom,
     openProfile,
     purchaseUpgrade,
-    hireCoach,
+    postCoachJob,
+    cancelCoachJob,
+    hireApplicant,
+    passApplicant,
     fireCoach,
   } = useGame();
+  const [postingChoice, setPostingChoice] = useState<CoachPosting>('any');
 
   const overlayOpen = profileId !== null || viewerIds !== null;
   useEffect(() => {
@@ -163,31 +169,83 @@ export function MyGymRoom() {
             </ul>
           </section>
 
-          {/* Market */}
+          {/* Hiring — post a job and wait for applicants */}
           <section className="mygym__section">
-            <h3 className="mygym__section-title">Available to Hire</h3>
-            {save.coachMarket.length === 0 ? (
-              <p className="mygym__none">No one’s looking for work right now. Check back later.</p>
+            <div className="mygym__facilities-head">
+              <h3 className="mygym__section-title">Hiring</h3>
+              {save.coachPosting && (
+                <button className="posting__cancel" onClick={cancelCoachJob}>
+                  Cancel search
+                </button>
+              )}
+            </div>
+
+            {!save.coachPosting ? (
+              <div className="posting">
+                <p className="posting__lead">
+                  Coaches don’t walk in off the street. Put out the word for the
+                  kind of help you want, then wait to see who answers.
+                </p>
+                <div className="posting__form">
+                  <select
+                    className="frow__focus-select"
+                    value={postingChoice}
+                    onChange={(e) => setPostingChoice(e.target.value as CoachPosting)}
+                  >
+                    <option value="any">Any qualified coach</option>
+                    {SPECIALTY_ORDER.map((s) => (
+                      <option key={s} value={s}>
+                        {specialtyName(s)}
+                      </option>
+                    ))}
+                  </select>
+                  <button className="coach__hire" onClick={() => postCoachJob(postingChoice)}>
+                    Put out the word
+                  </button>
+                </div>
+              </div>
             ) : (
-              <ul className="coaches">
-                {save.coachMarket.map((c) => {
-                  const salary = coachMonthlySalary(c, year);
-                  const staffFull = save.coaches.length >= 4;
-                  return (
-                    <li className="coach" key={c.id}>
-                      <CoachInfo coach={c} />
-                      <button
-                        className="coach__hire"
-                        disabled={staffFull}
-                        onClick={() => hireCoach(c.id)}
-                        title={staffFull ? 'Your staff is full' : `${formatMoney(salary)}/mo`}
-                      >
-                        Hire · {formatMoney(salary)}/mo
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+              <>
+                <p className="posting__searching">
+                  Searching for:{' '}
+                  <strong>
+                    {save.coachPosting === 'any'
+                      ? 'any qualified coach'
+                      : specialtyName(save.coachPosting)}
+                  </strong>
+                </p>
+                {save.coachApplicants.length === 0 ? (
+                  <p className="mygym__none">
+                    No one’s answered yet. Word takes time to travel — advance the
+                    calendar and keep an eye out.
+                  </p>
+                ) : (
+                  <ul className="coaches">
+                    {save.coachApplicants.map(({ coach: c }) => {
+                      const salary = coachMonthlySalary(c, year);
+                      const staffFull = save.coaches.length >= 4;
+                      return (
+                        <li className="coach" key={c.id}>
+                          <CoachInfo coach={c} />
+                          <div className="coach__decide">
+                            <button
+                              className="coach__hire"
+                              disabled={staffFull}
+                              onClick={() => hireApplicant(c.id)}
+                              title={staffFull ? 'Your staff is full' : `${formatMoney(salary)}/mo`}
+                            >
+                              Hire · {formatMoney(salary)}/mo
+                            </button>
+                            <button className="coach__fire" onClick={() => passApplicant(c.id)}>
+                              Pass
+                            </button>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </>
             )}
           </section>
 

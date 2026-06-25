@@ -39,6 +39,7 @@ export function GymScreen() {
   // Live counts for the door badges.
   const badge = (key: RoomKey): number => {
     if (key === 'office') return save.walkIns.length;
+    if (key === 'gym') return save.coachApplicants.length;
     if (key === 'locker') return save.roster.length;
     return 0;
   };
@@ -84,12 +85,14 @@ export function GymScreen() {
                   <span
                     className={
                       'room-door__badge' +
-                      (key === 'office' ? ' room-door__badge--alert' : '')
+                      (key === 'office' || key === 'gym' ? ' room-door__badge--alert' : '')
                     }
                     title={
                       key === 'office'
                         ? `${count} walk-in${count === 1 ? '' : 's'} waiting`
-                        : `${count} fighter${count === 1 ? '' : 's'}`
+                        : key === 'gym'
+                          ? `${count} coach applicant${count === 1 ? '' : 's'}`
+                          : `${count} fighter${count === 1 ? '' : 's'}`
                     }
                   >
                     {count}

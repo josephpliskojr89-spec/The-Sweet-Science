@@ -39,6 +39,8 @@ import {
 const MAX_HISTORY = 120;
 /** A small gym can only carry so much staff. */
 const MAX_COACHES = 4;
+/** Pending coach applicants we'll hold at once. */
+const MAX_APPLICANTS = 4;
 
 /** Focused fighters a given trainer is currently running. */
 const usedByManager = (roster: { focus: unknown; coachId: string | null }[]) =>
@@ -75,7 +77,12 @@ import {
   type NewGameDraft,
 } from './persistence';
 import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
-import { generateCoach } from '../game/coaches';
+import {
+  rollCoachApplicants,
+  ageApplicants,
+  specialtyName,
+  type CoachPosting,
+} from '../game/coaches';
 import {
   equipmentFactorFor,
   trackName,
@@ -141,7 +148,10 @@ interface GameContextValue {
   setTrainer: (id: string, coachId: string | null) => void;
   cutFighter: (id: string) => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
-  hireCoach: (id: string) => void;
+  postCoachJob: (posting: CoachPosting) => void;
+  cancelCoachJob: () => void;
+  hireApplicant: (id: string) => void;
+  passApplicant: (id: string) => void;
   fireCoach: (id: string) => void;
   clearFlash: () => void;
 
@@ -259,11 +269,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
       roster = life.roster;
       const dep = evaluateDepartures(roster, days);
 
-      // The coach market turns over slowly — a man takes a job elsewhere, a
-      // new face comes available.
-      let coachMarket = prev.coachMarket;
-      if (coachMarket.length && Math.random() < 0.12 * (days / 7)) {
-        coachMarket = [...coachMarket.slice(1), generateCoach(prev.cityId, reputationFor(prev))];
+      // If you've got a posting out, coaches answer it over time (and the ones
+      // who waited too long take other work).
+      let coachApplicants = prev.coachApplicants;
+      const coachNotes: string[] = [];
+      if (prev.coachPosting) {
+        const aged = ageApplicants(prev.coachApplicants, days);
+        const fresh = rollCoachApplicants(days, prev.cityId, reputationFor(prev), prev.coachPosting);
+        coachApplicants = [...aged.staying, ...fresh].slice(0, MAX_APPLICANTS);
+        for (const a of fresh) {
+          coachNotes.push(
+            `A coach answered your ad — ${a.coach.name}, ${specialtyName(a.coach.specialty)}.`,
+          );
+        }
+        for (const a of aged.left) {
+          coachNotes.push(`${a.coach.name} got tired of waiting and took another job.`);
+        }
       }
 
       // The paper runs on its own week, whether or not you read it.
@@ -274,6 +295,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       }
 
       const newLines: LogLine[] = [
+        ...coachNotes.slice(0, 2),
         ...trainingNotes.slice(0, 1),
         ...obs.lines,
         ...life.lines,
@@ -328,7 +350,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         dayCount: toDay,
         money,
         finances,
-        coachMarket,
+        coachApplicants,
         walkIns: [...aged.surviving, ...fresh],
         roster: staying,
         press,
@@ -462,7 +484,37 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
-  const hireCoach = useCallback(
+  const postCoachJob = useCallback(
+    (posting: CoachPosting) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      // A fresh posting starts a fresh search.
+      commit({ ...prev, coachPosting: posting, coachApplicants: [] });
+      setFlash(
+        posting === 'any'
+          ? 'Word is out: you’re looking for a coach.'
+          : `Word is out: you’re looking for a ${specialtyName(posting).toLowerCase()}.`,
+      );
+    },
+    [commit],
+  );
+
+  const cancelCoachJob = useCallback(() => {
+    const prev = saveRef.current;
+    if (!prev) return;
+    commit({ ...prev, coachPosting: null, coachApplicants: [] });
+  }, [commit]);
+
+  const passApplicant = useCallback(
+    (id: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      commit({ ...prev, coachApplicants: prev.coachApplicants.filter((a) => a.coach.id !== id) });
+    },
+    [commit],
+  );
+
+  const hireApplicant = useCallback(
     (id: string) => {
       const prev = saveRef.current;
       if (!prev) return;
@@ -470,20 +522,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setFlash('Your staff is full. Let someone go before you take on another.');
         return;
       }
-      const coach = prev.coachMarket.find((c) => c.id === id);
-      if (!coach) return;
-      const coaches = [...prev.coaches, coach];
-      // Backfill the market so it doesn't run dry.
-      const coachMarket = [
-        ...prev.coachMarket.filter((c) => c.id !== id),
-        generateCoach(prev.cityId, reputationFor(prev)),
-      ];
+      const applicant = prev.coachApplicants.find((a) => a.coach.id === id);
+      if (!applicant) return;
       const history = [
         ...prev.history,
-        { dayCount: prev.dayCount, text: `You brought ${coach.name} onto the staff.` },
+        { dayCount: prev.dayCount, text: `You brought ${applicant.coach.name} onto the staff.` },
       ].slice(-250);
-      commit({ ...prev, coaches, coachMarket, history });
-      setFlash(`${coach.name} is on the staff.`);
+      // Hiring fills the role and closes the search.
+      commit({
+        ...prev,
+        coaches: [...prev.coaches, applicant.coach],
+        coachPosting: null,
+        coachApplicants: [],
+        history,
+      });
+      setFlash(`${applicant.coach.name} is on the staff.`);
     },
     [commit],
   );
@@ -715,7 +768,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setTrainer,
       cutFighter,
       purchaseUpgrade,
-      hireCoach,
+      postCoachJob,
+      cancelCoachJob,
+      hireApplicant,
+      passApplicant,
       fireCoach,
       clearFlash,
       lockerCap: save ? lockerCapacity(save) : 0,
@@ -754,7 +810,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setTrainer,
       cutFighter,
       purchaseUpgrade,
-      hireCoach,
+      postCoachJob,
+      cancelCoachJob,
+      hireApplicant,
+      passApplicant,
       fireCoach,
       clearFlash,
     ],

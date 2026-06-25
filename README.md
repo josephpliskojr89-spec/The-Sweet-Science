@@ -142,9 +142,12 @@ placeholders, plus day/week time advancement and a real Continue save.
   (a bigger gym costs more to run); locker and
   bench caps are now derived from upgrades.
 - **Coaches (6B)** ✅ — procedurally generated coaches (specialty, personality,
-  tier, salary, slots), a hiring **market** in My Gym that turns over with time,
-  hire/fire, and **salaries** in the monthly books (a real recurring cost). A new
-  gym mostly sees cheap local trainers.
+  tier, salary, slots). Hiring is an **applicant system**, not a store: you
+  **post a job** in My Gym for a specialty (or "any qualified coach") and wait
+  for coaches to answer over time (a My Gym door badge + gym-log line signal a
+  new applicant; each has patience). Review and **hire or pass**; salaries hit
+  the monthly books. A new gym draws a slow trickle of mostly local coaches —
+  better and faster as reputation grows. fire/let-go reassigns his fighters.
   - **Who trains whom matters (6B-2):** each focused fighter is assigned a
     trainer — you or a coach — with **per-trainer capacity** (you have 2 slots;
     each coach his own). A **specialist** accelerates his focus area (a Power
