@@ -159,14 +159,14 @@ function FighterRow({
   noLockerFull: boolean;
   slotsFull: boolean;
 }) {
-  const { openProfile, setLocker, setTier, setFocus, cutFighter } = useGame();
+  const { openProfile, setLocker, setTier, setFocus, cutFighter, stopConsidering } = useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
   const f = entry.fighter;
   const cls = WEIGHT_CLASSES[f.weightClass];
   const days = dayCount - entry.joinedDayCount;
   const tenure = days <= 0 ? 'joined today' : days === 1 ? 'with you 1 day' : `with you ${days} days`;
   const dev = developmentState(entry);
-  const feel = f.growthKnown ? devFeel(f.growth) : null;
+  const feel = entry.hasLocker && f.growthKnown ? devFeel(f.growth) : null;
 
   return (
     <li className="frow">
@@ -261,7 +261,14 @@ function FighterRow({
 
         {confirmingCut ? (
           <span className="frow__confirm">
-            <button className="frow__cut-yes" onClick={() => cutFighter(f.id)}>
+            <button
+              className="frow__cut-yes"
+              onClick={() => {
+                if (entry.hasLocker) cutFighter(f.id);
+                else stopConsidering(f.id);
+                setConfirmingCut(false);
+              }}
+            >
               Confirm
             </button>
             <button className="frow__cut-no" onClick={() => setConfirmingCut(false)}>
@@ -269,8 +276,12 @@ function FighterRow({
             </button>
           </span>
         ) : (
-          <button className="frow__act frow__act--cut" onClick={() => setConfirmingCut(true)}>
-            Cut
+          <button
+            className="frow__act frow__act--cut"
+            onClick={() => setConfirmingCut(true)}
+            title={entry.hasLocker ? 'Cut from the gym' : 'Stop considering this trialist'}
+          >
+            {entry.hasLocker ? 'Cut' : 'Stop'}
           </button>
         )}
       </div>

@@ -34,6 +34,11 @@ export interface RosterEntry {
   focus: TrainingFocus | null;
   /** Who trains him when focused: a coach id, or null for the manager. */
   coachId: string | null;
+  /** Hidden trialist patience (days) — only meaningful while lockerless. A man
+      without a locker leaves when this runs out (game/departures.ts). */
+  trialPatience: number;
+  /** Whether a lockerless trialist has asked you for a locker (one-time event). */
+  lockerRequested: boolean;
   /** Per-attribute change from the most recent advance (for trend display). */
   lastDelta: Partial<Record<AttrKey, number>>;
   /** Dated attribute snapshots for the progression view (oldest first). */

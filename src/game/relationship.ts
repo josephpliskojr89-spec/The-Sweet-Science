@@ -127,6 +127,21 @@ export function applyCutStayed(entry: RosterEntry): Relationship {
   };
 }
 
+/** A cut sends a ripple through the gym. How a man takes seeing a stablemate
+    let go depends on who he is: a Family Man or a man of heart feels it, the
+    insecure fear they're next, the ruthless count one fewer rival. Returns the
+    morale delta for one witness. (Light version — friendship-specific reactions
+    wait for inter-fighter relationships; bible: Lockerless Fighters #7.) */
+export function cutMoraleRipple(witness: RosterEntry): number {
+  const traits = allTraits(witness);
+  let delta = -3;
+  if (traits.includes('family_man')) delta -= 3;
+  if (traits.includes('lionheart')) delta -= 2;
+  if (traits.includes('insecure')) delta -= 2;
+  if (traits.includes('glory_hunter') || traits.includes('chip_on_shoulder')) delta += 1;
+  return delta;
+}
+
 const MORALE_RATE = 0.45; // per day, toward baseline
 const TRUST_HEAL_RATE = 0.09; // per day, only while settled
 const TRUST_HEAL_CAP = 65; // management alone won't fully rebuild trust

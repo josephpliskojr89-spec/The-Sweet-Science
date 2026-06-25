@@ -6,6 +6,34 @@
   gap: var(--space-md);
 }
 
+/* Band mode — a lockerless trialist. Wider read column for the words, and a
+   hedged, desaturated gauge so it never looks like a measured number. */
+.attr--band {
+  grid-template-columns: 92px 1fr 110px;
+}
+.attr__fill--band {
+  background: linear-gradient(90deg, var(--leather-light), var(--amber-ember));
+  box-shadow: none;
+  opacity: 0.75;
+}
+.attr__band-read {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  color: var(--amber-deep);
+  text-align: right;
+}
+.attr--unknown .attr__band-read {
+  color: var(--text-dim);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.attr--unknown .attr__track {
+  opacity: 0.5;
+}
+
 /* Hover detail — the real movement behind the arrow */
 .attr__tip {
   position: absolute;

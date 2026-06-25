@@ -41,6 +41,14 @@ const MAX_HISTORY = 120;
 const MAX_COACHES = 4;
 /** Pending coach applicants we'll hold at once. */
 const MAX_APPLICANTS = 4;
+/** Days a lockerless trialist must stick around before he'll force the locker
+    question himself. Months in, not weeks — the request should feel earned. */
+const LOCKER_REQUEST_DAYS = 84;
+
+const randInt = (lo: number, hi: number) => lo + Math.floor(Math.random() * (hi - lo + 1));
+/** A fresh trialist's starting patience (days). Generous — a valued man can
+    wait a few months before he stops waiting for a gym that wants him. */
+const freshPatience = () => randInt(80, 150);
 
 /** Focused fighters a given trainer is currently running. */
 const usedByManager = (roster: { focus: unknown; coachId: string | null }[]) =>
@@ -56,6 +64,7 @@ import {
   applyLockerTaken,
   applyLockerGranted,
   applyCutStayed,
+  cutMoraleRipple,
   recover,
 } from '../game/relationship';
 import {
@@ -147,6 +156,11 @@ interface GameContextValue {
   setFocus: (id: string, focus: TrainingFocus | null) => void;
   setTrainer: (id: string, coachId: string | null) => void;
   cutFighter: (id: string) => void;
+  /** Signal a lockerless trialist you won't be offering a spot — collapses his
+      patience so he moves on, without ejecting him outright. */
+  stopConsidering: (id: string) => void;
+  /** Answer a lockerless man who's asked you for a locker. */
+  respondLockerRequest: (id: string, choice: 'grant' | 'wait' | 'honest') => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
   postCoachJob: (posting: CoachPosting) => void;
   cancelCoachJob: () => void;
@@ -269,6 +283,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
       roster = life.roster;
       const dep = evaluateDepartures(roster, days);
 
+      // A lockerless trialist who's stuck it out for months forces the question
+      // himself — fires rarely, once per man, and surfaces as a request on his
+      // profile (answered via respondLockerRequest).
+      const requestChance = 1 - Math.pow(1 - 0.02, days);
+      const requestNotes: string[] = [];
+      const afterRequests = dep.staying.map((e) => {
+        if (e.hasLocker || e.lockerRequested) return e;
+        if (toDay - e.joinedDayCount < LOCKER_REQUEST_DAYS) return e;
+        if (Math.random() >= requestChance) return e;
+        requestNotes.push(
+          `${fighterFullName(e.fighter)} stopped you on the floor — he wants to know if he has a future here.`,
+        );
+        return { ...e, lockerRequested: true };
+      });
+
       // If you've got a posting out, coaches answer it over time (and the ones
       // who waited too long take other work).
       let coachApplicants = prev.coachApplicants;
@@ -299,17 +328,21 @@ export function GameProvider({ children }: { children: ReactNode }) {
         ...trainingNotes.slice(0, 1),
         ...obs.lines,
         ...life.lines,
+        ...requestNotes,
       ].map((text) => ({
         dayCount: toDay,
         text,
       }));
-      const departureMemories = dep.departed.map((d) => ({
-        dayCount: toDay,
-        text:
-          d.reason === 'left_for_opportunity'
-            ? `${fighterFullName(d.entry.fighter)} left for a bigger operation. Someone noticed what you built in him.`
-            : `${fighterFullName(d.entry.fighter)} quit. He felt forgotten — and maybe he was.`,
-      }));
+      const departureMemories = dep.departed.map((d) => {
+        const name = fighterFullName(d.entry.fighter);
+        let text: string;
+        if (d.reason === 'left_for_opportunity')
+          text = `${name} left for a bigger operation. Someone noticed what you built in him.`;
+        else if (d.reason === 'moved_on')
+          text = `${name} stopped waiting for a gym that wanted him and moved on.`;
+        else text = `${name} quit. He felt forgotten — and maybe he was.`;
+        return { dayCount: toDay, text };
+      });
       const history = [
         ...prev.history,
         ...[...obs.milestones, ...life.milestones].map((text) => ({ dayCount: toDay, text })),
@@ -318,11 +351,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       // Take a monthly progression snapshot of each fighter's attributes.
       const staying = crossesMonth
-        ? dep.staying.map((e) => ({
+        ? afterRequests.map((e) => ({
             ...e,
             history: [...e.history, snapshotAttrs(e.fighter.attributes, toDay)].slice(-MAX_HISTORY),
           }))
-        : dep.staying;
+        : afterRequests;
 
       // Settle the books on the first of the month.
       let money = prev.money;
@@ -424,6 +457,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ...initialRelationship(hasLocker),
           focus: null,
           coachId: null,
+          trialPatience: freshPatience(),
+          lockerRequested: false,
           lastDelta: {},
           history: [snapshotAttrs(target.fighter.attributes, prev.dayCount)],
         };
@@ -596,6 +631,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
           hasLocker,
           focus: hasLocker ? e.focus : null,
           coachId: hasLocker ? e.coachId : null,
+          // Granting answers any pending request; pulling a locker drops him back
+          // to a trialist with a fresh (if shaken) clock.
+          lockerRequested: false,
+          trialPatience: hasLocker ? e.trialPatience : freshPatience(),
           ...rel,
         };
       });
@@ -712,8 +751,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       };
       const history = [...prev.history, memory].slice(-250);
 
+      // The room feels it. A cut sends a small morale ripple through everyone
+      // else — worse for the men who care, shrugged off by the ruthless.
+      const ripple = (e: RosterEntry): RosterEntry =>
+        e.fighter.id === id
+          ? e
+          : { ...e, morale: Math.max(0, Math.min(100, e.morale + cutMoraleRipple(e))) };
+
       if (outcome === 'vanish') {
-        commit({ ...prev, roster: prev.roster.filter((e) => e.fighter.id !== id), history });
+        const roster = prev.roster.filter((e) => e.fighter.id !== id).map(ripple);
+        commit({ ...prev, roster, history });
         setFlash(`${name} cleared out his locker and was gone by morning.`);
       } else {
         const roster = prev.roster.map((e) =>
@@ -724,14 +771,97 @@ export function GameProvider({ children }: { children: ReactNode }) {
                 tier: 'chopping' as HierarchyTier,
                 focus: null,
                 coachId: null,
+                trialPatience: freshPatience(),
+                lockerRequested: false,
                 ...applyCutStayed(e),
               }
-            : e,
+            : ripple(e),
         );
         commit({ ...prev, roster, history });
         setFlash(`${name} asked to stay and earn his spot back — no locker.`);
       }
       setProfileId((cur) => (cur === id && outcome === 'vanish' ? null : cur));
+    },
+    [commit],
+  );
+
+  const stopConsidering = useCallback(
+    (id: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry || entry.hasLocker) return;
+      const name = fighterFullName(entry.fighter);
+      // You don't eject him — you let him know there's no spot coming. His
+      // patience collapses; he'll drift off on his own within a couple of weeks.
+      const roster = prev.roster.map((e) =>
+        e.fighter.id === id
+          ? {
+              ...e,
+              trialPatience: randInt(7, 16),
+              lockerRequested: false,
+              morale: Math.max(0, e.morale - 8),
+            }
+          : e,
+      );
+      const history = [
+        ...prev.history,
+        { dayCount: prev.dayCount, text: `You let ${name} know you weren’t planning to offer him a spot.` },
+      ].slice(-250);
+      commit({ ...prev, roster, history });
+      setFlash(`You told ${name} where things stood. He won’t hang around long.`);
+    },
+    [commit],
+  );
+
+  const respondLockerRequest = useCallback(
+    (id: string, choice: 'grant' | 'wait' | 'honest') => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const entry = prev.roster.find((e) => e.fighter.id === id);
+      if (!entry || entry.hasLocker || !entry.lockerRequested) return;
+      const name = fighterFullName(entry.fighter);
+
+      if (choice === 'grant') {
+        if (lockersUsed(prev) >= lockerCapacity(prev)) {
+          setFlash('Every locker is full. Free one before you give another.');
+          return;
+        }
+        const roster = prev.roster.map((e) =>
+          e.fighter.id === id
+            ? { ...e, hasLocker: true, lockerRequested: false, ...applyLockerGranted(e) }
+            : e,
+        );
+        const history = [
+          ...prev.history,
+          { dayCount: prev.dayCount, text: `${name} asked for a future here, and you gave him a locker.` },
+        ].slice(-250);
+        commit({ ...prev, roster, history });
+        emitGameEvent({ type: 'locker_granted', fighterId: id });
+        setFlash(`${name} has a locker. Now you’ll see who he really is.`);
+        return;
+      }
+
+      // Wait — he keeps working on faith, but it costs him; Honest — you tell him
+      // straight there's no room, and he respects it even as he starts to move on.
+      const patch =
+        choice === 'wait'
+          ? { trialPatience: Math.max(8, entry.trialPatience - 25), morale: Math.max(0, entry.morale - 10) }
+          : { trialPatience: randInt(10, 20), morale: Math.max(0, entry.morale - 4) };
+      const roster = prev.roster.map((e) =>
+        e.fighter.id === id ? { ...e, ...patch, lockerRequested: false } : e,
+      );
+      const text =
+        choice === 'wait'
+          ? `${name} asked about his future. You asked him to keep waiting.`
+          : `${name} asked about his future. You told him straight there was no room.`;
+      const history = [...prev.history, { dayCount: prev.dayCount, text }].slice(-250);
+      commit({ ...prev, roster, history });
+      setFlash(
+        choice === 'wait'
+          ? `You asked ${name} to be patient. He’ll give it a while longer.`
+          : `You were honest with ${name}. He respected it — but he’ll likely move on.`,
+      );
     },
     [commit],
   );
@@ -767,6 +897,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setFocus,
       setTrainer,
       cutFighter,
+      stopConsidering,
+      respondLockerRequest,
       purchaseUpgrade,
       postCoachJob,
       cancelCoachJob,
@@ -809,6 +941,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setFocus,
       setTrainer,
       cutFighter,
+      stopConsidering,
+      respondLockerRequest,
       purchaseUpgrade,
       postCoachJob,
       cancelCoachJob,

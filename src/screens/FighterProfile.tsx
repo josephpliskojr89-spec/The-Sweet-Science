@@ -27,6 +27,7 @@ import {
   type TrainingFocus,
 } from '../game/training';
 import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
+import { scoutingBand, patienceFlavor } from '../game/scouting';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
 import { Sparkline } from '../components/Sparkline';
@@ -48,6 +49,8 @@ export function FighterProfile() {
     setFocus,
     setTrainer,
     cutFighter,
+    stopConsidering,
+    respondLockerRequest,
     lockerCap,
     noLockerCap,
   } = useGame();
@@ -77,12 +80,16 @@ export function FighterProfile() {
   const cls = WEIGHT_CLASSES[f.weightClass];
   const home = getCity(f.homeCityId);
   const dev = developmentState(entry);
-  const feel = f.growthKnown ? devFeel(f.growth) : null;
+  // A trialist you haven't committed to is read in fog: no precise dev feel, no
+  // progression charting — those come with a locker.
+  const feel = entry.hasLocker && f.growthKnown ? devFeel(f.growth) : null;
   const lockersFull = lockersUsed(save) >= lockerCap;
   const noLockerFull = noLockerUsed(save) >= noLockerCap;
   const days = save.dayCount - entry.joinedDayCount;
   const weeks = Math.max(0, Math.floor(days / 7));
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
+  // The Development tab is for committed men only; a trialist can't be charted.
+  const shownTab: ProfileTab = !entry.hasLocker ? 'overview' : tab;
 
   return (
     <div className="fp worn" role="dialog" aria-label={fighterFullName(f)}>
@@ -126,27 +133,62 @@ export function FighterProfile() {
                 <MoodChip entry={entry} />
               </span>
               <span className="fp__tenure">{tenure}</span>
+              {!entry.hasLocker && (
+                <span className="fp__patience">{patienceFlavor(entry.trialPatience)}</span>
+              )}
             </div>
           </div>
 
           {/* Right column — tabbed: Overview / Development */}
           <div className="fp__right">
+            {!entry.hasLocker && entry.lockerRequested && (
+              <div className="fp__request" role="group" aria-label="He's asking about a locker">
+                <p className="fp__request-quote">
+                  “Coach, I’ve been here every night for months. Do you see a future for me
+                  here, or am I wasting my time?”
+                </p>
+                <div className="fp__request-actions">
+                  <button
+                    className="fp__request-btn fp__request-btn--give"
+                    disabled={lockersFull}
+                    onClick={() => respondLockerRequest(f.id, 'grant')}
+                    title={lockersFull ? 'Every locker is full' : undefined}
+                  >
+                    Give him a locker
+                  </button>
+                  <button
+                    className="fp__request-btn"
+                    onClick={() => respondLockerRequest(f.id, 'wait')}
+                  >
+                    Ask him to keep waiting
+                  </button>
+                  <button
+                    className="fp__request-btn"
+                    onClick={() => respondLockerRequest(f.id, 'honest')}
+                  >
+                    Be honest — no room
+                  </button>
+                </div>
+              </div>
+            )}
             <nav className="fp__tabs" aria-label="Profile sections">
               <button
-                className={'fp__tab' + (tab === 'overview' ? ' fp__tab--on' : '')}
+                className={'fp__tab' + (shownTab === 'overview' ? ' fp__tab--on' : '')}
                 onClick={() => setTab('overview')}
               >
                 Overview
               </button>
               <button
-                className={'fp__tab' + (tab === 'development' ? ' fp__tab--on' : '')}
+                className={'fp__tab' + (shownTab === 'development' ? ' fp__tab--on' : '')}
                 onClick={() => setTab('development')}
+                disabled={!entry.hasLocker}
+                title={entry.hasLocker ? undefined : 'Give him a locker to chart his development'}
               >
                 Development
               </button>
             </nav>
 
-            {tab === 'development' ? (
+            {shownTab === 'development' ? (
               <section className="fp__section">
                 <div className="fp__section-head">
                   <h3 className="fp__section-title">Development</h3>
@@ -200,19 +242,34 @@ export function FighterProfile() {
                 </div>
               </div>
               <div className="fp__attrs">
-                {ATTR_KEYS.map((key: AttrKey) => {
-                  const tr = attributeTrend(entry, key, save.dayCount);
-                  return (
-                    <AttributeBar
-                      key={key}
-                      label={ATTR_LABELS[key]}
-                      value={f.attributes[key]}
-                      trend={tr.dir}
-                      tooltip={`${signed(tr.windowChange)} recent · ${signed(tr.totalChange)} since he arrived`}
-                    />
-                  );
-                })}
+                {entry.hasLocker
+                  ? ATTR_KEYS.map((key: AttrKey) => {
+                      const tr = attributeTrend(entry, key, save.dayCount);
+                      return (
+                        <AttributeBar
+                          key={key}
+                          label={ATTR_LABELS[key]}
+                          value={f.attributes[key]}
+                          trend={tr.dir}
+                          tooltip={`${signed(tr.windowChange)} recent · ${signed(tr.totalChange)} since he arrived`}
+                        />
+                      );
+                    })
+                  : ATTR_KEYS.map((key: AttrKey) => (
+                      <AttributeBar
+                        key={key}
+                        label={ATTR_LABELS[key]}
+                        value={f.attributes[key]}
+                        band={scoutingBand(f.attributes[key], days)}
+                      />
+                    ))}
               </div>
+              {!entry.hasLocker && (
+                <p className="fp__fog-note">
+                  You haven’t committed to him — this is a coach’s eye, not a measurement.
+                  Give him a locker and you’ll see exactly what he is.
+                </p>
+              )}
             </section>
 
             <section className="fp__section">
@@ -345,11 +402,14 @@ export function FighterProfile() {
 
                   {confirmingCut ? (
                     <span className="fp__confirm">
-                      <span className="fp__confirm-q">Cut him loose?</span>
+                      <span className="fp__confirm-q">
+                        {entry.hasLocker ? 'Cut him loose?' : 'Stop considering him?'}
+                      </span>
                       <button
                         className="fp__cut-yes"
                         onClick={() => {
-                          cutFighter(f.id);
+                          if (entry.hasLocker) cutFighter(f.id);
+                          else stopConsidering(f.id);
                           setConfirmingCut(false);
                         }}
                       >
@@ -361,7 +421,7 @@ export function FighterProfile() {
                     </span>
                   ) : (
                     <button className="fp__act fp__act--cut" onClick={() => setConfirmingCut(true)}>
-                      Cut from the gym
+                      {entry.hasLocker ? 'Cut from the gym' : 'Stop considering'}
                     </button>
                   )}
                 </div>

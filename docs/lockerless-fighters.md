@@ -6,6 +6,17 @@ fighter — he shouldn't be fully controllable, perfectly legible, or freely
 exploitable. The goal is not to prevent scouting, but to prevent **risk-free**
 scouting.*
 
+> **Status (save v16): the core fix + the light morale ripple are built.**
+> Lockerless men now read as scouting bands (#1, `game/scouting.ts`), the
+> Development tab and dev-feel are locked for them, "Stop Considering" replaces
+> Cut (#2), a hidden trialist's-patience clock drives departures (#3,
+> `game/departures.ts` — a content man waits ~5 months, a "stop considering"
+> signal clears him out in ~2 weeks), the locker-request event fires after ~3
+> months (#4), and cutting a fighter sends a small morale ripple through the
+> room — worse for a Family Man, shrugged off by the ruthless (the light slice
+> of #7). Still deferred: reputation hit for ruthless cuts (#6) and the
+> friendship/sparring-specific reactions (the rest of #7).
+
 ---
 
 ## Where the code already stands
