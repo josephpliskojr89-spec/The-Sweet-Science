@@ -17,6 +17,7 @@ import { initialRelationship } from '../game/relationship';
 import { rollGrowth, rollBaseDues } from '../game/fighters';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
+import { generateWorld, type WorldState } from '../game/world/population';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
 import {
@@ -30,7 +31,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 16;
+export const SAVE_VERSION = 17;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -66,6 +67,8 @@ export interface GameSave {
   coachPosting: CoachPosting | null;
   /** Coaches who've answered the posting, awaiting your decision. */
   coachApplicants: CoachApplicant[];
+  /** The competitive world — rival rosters and independents (game/world). */
+  world: WorldState;
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -98,6 +101,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     coaches: [],
     coachPosting: null,
     coachApplicants: [],
+    world: generateWorld(draft.cityId, 0),
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -168,8 +172,8 @@ function migrateFighter<
     v6 lacked the living-world layer (press, ledger, gym log); v7 lacked the
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
     finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment; v15
-    coach job postings; v16 the lockerless trialist patience pair. Pre-v2 shell
-    saves can't be resumed — drop them. */
+    coach job postings; v16 the lockerless trialist patience pair; v17 the
+    competitive world. Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -220,6 +224,9 @@ function migrate(raw: unknown): GameSave | null {
       coaches: Array.isArray(data.coaches) ? data.coaches : [],
       coachPosting: data.coachPosting ?? null,
       coachApplicants: Array.isArray(data.coachApplicants) ? data.coachApplicants : [],
+      // v17 — the competitive world. Older saves get one generated around their
+      // city now; it persists on the next commit.
+      world: data.world ?? generateWorld(data.cityId as CityId, data.dayCount),
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),
@@ -255,6 +262,17 @@ export function writeSave(save: GameSave): void {
 
 export function hasSave(): boolean {
   return loadSave() !== null;
+}
+
+/** Cheap "is there a save?" check — reads the key without running migration (and
+    so without generating a world). Use this for the Continue button / canContinue
+    state, where the full save isn't needed. */
+export function savedGameExists(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
 }
 
 export function clearSave(): void {

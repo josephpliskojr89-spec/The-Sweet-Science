@@ -78,6 +78,7 @@ import {
   loadSave,
   writeSave,
   clearSave,
+  savedGameExists,
   lockersUsed,
   noLockerUsed,
   lockerCapacity,
@@ -85,6 +86,8 @@ import {
   type GameSave,
   type NewGameDraft,
 } from './persistence';
+import { gymReputation } from '../game/reputation';
+import { advanceWorld } from '../game/world/worldSim';
 import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
 import {
   rollCoachApplicants,
@@ -103,14 +106,16 @@ export type Screen = 'home' | 'settings' | 'newgame' | 'game';
 export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
-/** Reputation-driven quality of the walk-in pool. New gym = low; rises later. */
-function qualityFor(_save: GameSave): number {
-  return 0.2;
+/** Gym reputation 0..1 — how known/regarded your gym is (game/reputation.ts).
+    Drives the walk-in draw; ≈0 for a new gym, earned as your men make names. */
+function reputationFor(save: GameSave): number {
+  return gymReputation(save.roster);
 }
 
-/** Gym reputation 0..1. Wired into walk-in frequency; real value lands Phase 6. */
-function reputationFor(_save: GameSave): number {
-  return 0;
+/** Reputation-driven quality of the walk-in pool. A respected gym draws better
+    men; a new gym draws raw ones (floor near the old constant 0.2). */
+function qualityFor(save: GameSave): number {
+  return Math.max(0.18, Math.min(0.8, 0.18 + reputationFor(save) * 0.5));
 }
 
 export interface AdvanceNotice {
@@ -181,7 +186,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>('home');
   const [activeRoom, setActiveRoom] = useState<RoomKey | null>(null);
   const [save, setSave] = useState<GameSave | null>(null);
-  const [canContinue, setCanContinue] = useState<boolean>(() => loadSave() !== null);
+  const [canContinue, setCanContinue] = useState<boolean>(() => savedGameExists());
 
   const [arrival, setArrival] = useState<AdvanceNotice | null>(null);
   const [viewerIds, setViewerIds] = useState<string[] | null>(null);
@@ -206,7 +211,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setProfileId(null);
     setFlash(null);
     setScreen('home');
-    setCanContinue(loadSave() !== null);
+    setCanContinue(savedGameExists());
   }, []);
 
   const openSettings = useCallback(() => setScreen('settings'), []);
@@ -224,6 +229,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const continueGame = useCallback(() => {
     const loaded = loadSave();
     if (!loaded) return;
+    // Persist any migration done on load (e.g. a v17 world generated for an
+    // older save) so it's stable from here on.
+    writeSave(loaded);
     saveRef.current = loaded;
     setSave(loaded);
     setActiveRoom(null);
@@ -323,6 +331,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
         press = runPressCycle(press, prev.cityId, toDay).state;
       }
 
+      // The competitive world moves on its own — ages, fights, signs, retires.
+      // (Its notes feed the press/Rival Gyms tab in 6C-2; unsurfaced for now.)
+      const world = advanceWorld(prev.world, { days, toDay }).world;
+
       const newLines: LogLine[] = [
         ...coachNotes.slice(0, 2),
         ...trainingNotes.slice(0, 1),
@@ -384,6 +396,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         money,
         finances,
         coachApplicants,
+        world,
         walkIns: [...aged.surviving, ...fresh],
         roster: staying,
         press,
