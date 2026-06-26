@@ -64,7 +64,7 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
     contents: [
       'View all fighters and their current status',
       'Review profiles, attributes, and known traits',
-      'Manage locker assignments (20 lockers)',
+      'Manage locker assignments',
       'Set gym hierarchy — must keep, watch list, chopping block',
     ],
     arrivesIn: 'Phase 4',

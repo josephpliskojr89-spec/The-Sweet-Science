@@ -1,9 +1,9 @@
 /*
   LockerWall — the standard Locker Room view
   --------------------------------------------------------------------------
-  A wall of the gym's twenty lockers, plus the bench for men without one. The
-  cap is physical: empty doors are free lockers you can see, the bench only
-  seats six. Each occupied door shows just enough at a glance — name tape,
+  A wall of the gym's lockers, plus the bench for men without one. The cap is
+  physical: empty doors are free lockers you can see, the bench only seats a
+  few. Each occupied door shows just enough at a glance — name tape,
   portrait, a mood dot, a focus mark, a development arrow. Click a door to open
   the man's profile, where you actually manage him.
 

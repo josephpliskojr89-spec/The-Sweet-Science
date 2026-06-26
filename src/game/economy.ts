@@ -27,8 +27,8 @@ import {
 /** A man opening a gym in 1975 with some savings behind him. Tight, not poor. */
 export const STARTING_MONEY = 2200;
 
-const BASE_RENT = 120; // monthly, 1975 dollars
-const BASE_UTILITIES = 40;
+const BASE_RENT = 80; // monthly, 1975 dollars — a small local gym's storefront
+const BASE_UTILITIES = 30;
 const INFLATION_RATE = 1.06; // ~6%/yr compounding — era-appropriate
 
 /** Dollar multiplier for a given year (1975 = 1.0). */

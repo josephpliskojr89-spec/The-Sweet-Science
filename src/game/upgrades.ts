@@ -26,9 +26,13 @@ export const DEFAULT_UPGRADES: Upgrades = { lockers: 0, equipment: 0, floor: 0 }
 export type UpgradeKey = keyof Upgrades;
 export const UPGRADE_ORDER: UpgradeKey[] = ['lockers', 'equipment', 'floor'];
 
-export const LOCKER_BASE = 20;
-export const LOCKER_PER_LEVEL = 5;
-export const NO_LOCKER_BASE = 6;
+// A new gym opens as a small local operation — eight lockers — and builds up
+// to an established-house stable (20) through upgrades, mirroring the rival
+// tier plateaus (game/world). Capacity is the spine of climbing from nobody to
+// a real gym, not a roster handed to you on day one.
+export const LOCKER_BASE = 8;
+export const LOCKER_PER_LEVEL = 3;
+export const NO_LOCKER_BASE = 4;
 export const FLOOR_PER_LEVEL = 2;
 const EQUIP_PER_LEVEL = 0.06; // +6% development per level
 
@@ -57,7 +61,7 @@ const TRACKS: Record<UpgradeKey, TrackDef> = {
   floor: {
     name: 'Floor Space',
     blurb: 'A bigger floor carries more men without a locker.',
-    costs: [420, 620, 900],
+    costs: [420, 620],
     upkeep: 18,
   },
 };

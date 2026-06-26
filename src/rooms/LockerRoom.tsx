@@ -1,8 +1,8 @@
 /*
   LockerRoom — your full roster, and now its day-to-day management (Phase 5+)
   --------------------------------------------------------------------------
-  The single place to manage a fighter. Twenty lockers and the decisions they
-  force; the hierarchy (Must Keep / Watch / Chopping); and — folded in here so
+  The single place to manage a fighter. A scarce bank of lockers and the
+  decisions they force; the hierarchy (Must Keep / Watch / Chopping); and — folded in here so
   you never have to leave to set training — focused-training assignment, the
   development read, and his discovered feel. The gym-wide picture and coaching
   staff live in My Gym; everything you do to an individual man happens here.

@@ -61,13 +61,17 @@ placeholders, plus day/week time advancement and a real Continue save.
 - **Fighter profiles** — portrait, vitals, attribute gauges, and the traits
   you've learned. Hidden traits stay hidden; the profile only hints there's
   more to a man than you've seen.
-- **Locker allocation** — the 20-locker cap bites: give and pull lockers, and
-  you can't exceed twenty without freeing one first. A separate **no-locker
-  cap** (6) limits hangers-on, so you can't stockpile fighters in limbo just to
-  scout their attributes.
+- **Locker allocation** — the locker cap bites: give and pull lockers, and you
+  can't exceed it without freeing one first. A new gym opens as a small local
+  operation with **8 lockers** and builds toward an established-house stable of
+  **20** through upgrades — capacity is the spine of climbing from nobody to a
+  real gym, not a roster handed to you on day one (it mirrors the rival tier
+  plateaus: local 5–8, regional 10–14, established 16–22). A separate **no-locker
+  cap** (4, upgradable to 8) limits hangers-on, so you can't stockpile fighters
+  in limbo just to scout their attributes.
 - **Hierarchy** — Must Keep / Watch List / Chopping Block, set per fighter.
-- **The wall** — the Locker Room's standard view is a scrollable wall of the
-  twenty lockers (empty doors = free capacity, made physical) plus the bench of
+- **The wall** — the Locker Room's standard view is a scrollable wall of your
+  lockers (empty doors = free capacity, made physical) plus the bench of
   no-locker men; each door shows name tape, portrait, and glanceable status
   glyphs, and opens his profile. A **List** toggle switches to the dense
   management table. Doors come from a locker-art registry so real art drops in.
