@@ -28,6 +28,9 @@ import {
 } from '../game/training';
 import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
 import { scoutingBand, patienceFlavor } from '../game/scouting';
+import { fighterBiography, careerTimeline, yearsWithGymLabel } from '../game/biography';
+import type { RosterEntry } from '../game/roster';
+import type { GameSave } from '../state/persistence';
 import { Portrait } from '../assets/portraits';
 import { AttributeBar } from '../components/AttributeBar';
 import { Sparkline } from '../components/Sparkline';
@@ -36,7 +39,15 @@ import './FighterProfile.css';
 
 const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
 
-type ProfileTab = 'overview' | 'development';
+type ProfileTab = 'overview' | 'record' | 'biography' | 'career' | 'development';
+
+const TABS: { key: ProfileTab; label: string; lockerOnly?: boolean }[] = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'record', label: 'Record' },
+  { key: 'biography', label: 'Biography' },
+  { key: 'career', label: 'Career' },
+  { key: 'development', label: 'Development', lockerOnly: true },
+];
 
 export function FighterProfile() {
   const {
@@ -89,7 +100,7 @@ export function FighterProfile() {
   const weeks = Math.max(0, Math.floor(days / 7));
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
   // The Development tab is for committed men only; a trialist can't be charted.
-  const shownTab: ProfileTab = !entry.hasLocker ? 'overview' : tab;
+  const shownTab: ProfileTab = tab === 'development' && !entry.hasLocker ? 'overview' : tab;
 
   return (
     <div className="fp worn" role="dialog" aria-label={fighterFullName(f)}>
@@ -172,23 +183,27 @@ export function FighterProfile() {
               </div>
             )}
             <nav className="fp__tabs" aria-label="Profile sections">
-              <button
-                className={'fp__tab' + (shownTab === 'overview' ? ' fp__tab--on' : '')}
-                onClick={() => setTab('overview')}
-              >
-                Overview
-              </button>
-              <button
-                className={'fp__tab' + (shownTab === 'development' ? ' fp__tab--on' : '')}
-                onClick={() => setTab('development')}
-                disabled={!entry.hasLocker}
-                title={entry.hasLocker ? undefined : 'Give him a locker to chart his development'}
-              >
-                Development
-              </button>
+              {TABS.map((t) => {
+                const locked = t.lockerOnly && !entry.hasLocker;
+                return (
+                  <button
+                    key={t.key}
+                    className={'fp__tab' + (shownTab === t.key ? ' fp__tab--on' : '')}
+                    onClick={() => setTab(t.key)}
+                    disabled={locked}
+                    title={locked ? 'Give him a locker to chart his development' : undefined}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
             </nav>
 
-            {shownTab === 'development' ? (
+            {shownTab === 'record' && <RecordPanel entry={entry} save={save} />}
+            {shownTab === 'biography' && <BiographyPanel entry={entry} save={save} />}
+            {shownTab === 'career' && <CareerPanel entry={entry} save={save} />}
+
+            {shownTab === 'development' && (
               <section className="fp__section">
                 <div className="fp__section-head">
                   <h3 className="fp__section-title">Development</h3>
@@ -224,7 +239,9 @@ export function FighterProfile() {
                     : `Arrows show recent form; totals are the change since he walked in ${weeks} weeks ago.`}
                 </p>
               </section>
-            ) : (
+            )}
+
+            {shownTab === 'overview' && (
               <>
             <section className="fp__section">
               <div className="fp__section-head">
@@ -433,5 +450,108 @@ export function FighterProfile() {
         </article>
       </div>
     </div>
+  );
+}
+
+/* ---------- Record ---------- */
+
+function RecordPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  const cells: { label: string; value: string; sub?: string }[] = [
+    { label: 'Professional', value: '0–0–0', sub: 'No pro fights yet' },
+    { label: 'Amateur', value: 'Unrecorded' },
+    { label: 'KO Wins', value: '0' },
+    { label: 'KO Losses', value: '0' },
+    { label: 'Current Streak', value: '—' },
+    { label: 'Titles Held', value: 'None' },
+    { label: 'Ranking', value: 'Unranked' },
+    { label: 'Years With Gym', value: yearsWithGymLabel(entry, save.dayCount) },
+    { label: 'Career Earnings', value: '$0' },
+  ];
+  return (
+    <section className="fp__section">
+      <div className="fp__section-head">
+        <h3 className="fp__section-title">Boxing Record</h3>
+      </div>
+      <div className="fp__rec-grid">
+        {cells.map((c) => (
+          <div className="fp__rec" key={c.label}>
+            <span className="fp__rec-label">{c.label}</span>
+            <span className="fp__rec-value">{c.value}</span>
+            {c.sub && <span className="fp__rec-sub">{c.sub}</span>}
+          </div>
+        ))}
+      </div>
+      <p className="fp__scaffold-note">
+        His professional career hasn’t started. Once you’re booking fights, his
+        record, rankings, titles, and purse history will all live on this page.
+      </p>
+    </section>
+  );
+}
+
+/* ---------- Biography ---------- */
+
+function BiographyPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  const paras = fighterBiography(entry, save.dayCount);
+  return (
+    <section className="fp__section">
+      <div className="fp__section-head">
+        <h3 className="fp__section-title">Biography</h3>
+      </div>
+      <div className="fp__bio">
+        {paras.map((p, i) => {
+          const quote = p.startsWith('In his own words');
+          const impression = p.startsWith('Your first read');
+          const cls =
+            'fp__bio-para' +
+            (quote ? ' fp__bio-quote' : '') +
+            (impression ? ' fp__bio-impression' : '');
+          return (
+            <p className={cls} key={i}>
+              {p}
+            </p>
+          );
+        })}
+      </div>
+      <p className="fp__scaffold-note">
+        This page fills in as you learn who he is — every trait you uncover and
+        every turn of his career adds to the story.
+      </p>
+    </section>
+  );
+}
+
+/* ---------- Career ---------- */
+
+function CareerPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  const moments = careerTimeline(entry, save.dayCount);
+  const years = [...new Set(moments.map((m) => m.year))].sort((a, b) => a - b);
+  return (
+    <section className="fp__section">
+      <div className="fp__section-head">
+        <h3 className="fp__section-title">Career History</h3>
+      </div>
+      <div className="fp__career">
+        {years.map((y) => (
+          <div className="fp__career-year" key={y}>
+            <span className="fp__career-year-label">{y}</span>
+            <ul className="fp__career-events">
+              {moments
+                .filter((m) => m.year === y)
+                .map((m, i) => (
+                  <li className="fp__career-event" key={i}>
+                    {m.text}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p className="fp__scaffold-note">
+        His story is just beginning. Fights, milestones, injuries, title nights,
+        and the moments you find out who he really is — all of it gets written
+        here as it happens.
+      </p>
+    </section>
   );
 }
