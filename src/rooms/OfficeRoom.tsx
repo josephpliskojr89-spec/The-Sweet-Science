@@ -15,22 +15,39 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../state/GameContext';
 import { fighterFullName } from '../game/fighters';
-import { WEIGHT_CLASSES } from '../game/weightClasses';
+import { WEIGHT_CLASSES, type WeightClassKey } from '../game/weightClasses';
 import { formatDate } from '../game/time';
 import { monthlySummary, formatMoney } from '../game/economy';
+import { getCity } from '../game/cities';
+import { REGIONS } from '../game/regions';
+import {
+  gymsInCity,
+  gymsInRegion,
+  cityCompetitiveness,
+  type RivalGym,
+} from '../game/world/rivalGyms';
+import {
+  fightersOfNote,
+  independentsNear,
+  rankedElite,
+  fighterStanding,
+  worldFighterName,
+  campOf,
+  type WorldFighter,
+} from '../game/world/population';
+import { gymReputation, reputationLabel, competitivenessLabel } from '../game/reputation';
 import { Portrait } from '../assets/portraits';
 import './OfficeRoom.css';
 
-type OfficeTab = 'desk' | 'finances' | 'paper' | 'ledger';
+type OfficeTab = 'desk' | 'finances' | 'rivals' | 'paper' | 'ledger';
+type RivalScope = 'local' | 'regional' | 'national';
 
-const FUTURE_DESK = [
-  'Book fights for your fighters',
-  'Rival Gyms — intelligence on competing operations',
-];
+const FUTURE_DESK = ['Book fights for your fighters'];
 
 export function OfficeRoom() {
   const { save, closeRoom, openWalkIns, profileId, viewerIds } = useGame();
   const [tab, setTab] = useState<OfficeTab>('desk');
+  const [rivalScope, setRivalScope] = useState<RivalScope>('local');
 
   // Esc steps back to the floor — but only when this room is the top layer.
   const overlayOpen = profileId !== null || viewerIds !== null;
@@ -61,6 +78,7 @@ export function OfficeRoom() {
             [
               ['desk', `Desk${queue.length ? ` (${queue.length})` : ''}`],
               ['finances', 'Finances'],
+              ['rivals', 'Rivals'],
               ['paper', 'The Paper'],
               ['ledger', 'Ledger'],
             ] as Array<[OfficeTab, string]>
@@ -79,6 +97,7 @@ export function OfficeRoom() {
       <div className="room-screen__body office__body">
         {tab === 'desk' && <DeskTab />}
         {tab === 'finances' && <FinancesTab />}
+        {tab === 'rivals' && <RivalsTab />}
         {tab === 'paper' && <PaperTab />}
         {tab === 'ledger' && <LedgerTab />}
       </div>
@@ -248,6 +267,124 @@ export function OfficeRoom() {
     );
   }
 
+  function RivalsTab() {
+    if (!save) return null;
+    const city = getCity(save.cityId);
+    const region = city.region;
+    const comp = cityCompetitiveness(save.cityId);
+    const rep = gymReputation(save.roster);
+    const world = save.world;
+
+    const scopes: Array<[RivalScope, string]> = [
+      ['local', city.name],
+      ['regional', `${REGIONS[region].name} Region`],
+      ['national', 'National'],
+    ];
+
+    // Local — every gym in your city, strongest houses first, plus independents.
+    const localGyms = [...gymsInCity(save.cityId)].sort(
+      (a, b) => tierRank(b.tier) - tierRank(a.tier),
+    );
+    const localIndies = independentsNear(world, save.cityId);
+
+    // Regional — the rest of your region, grouped by city.
+    const regionalByCity = new Map<string, RivalGym[]>();
+    for (const g of gymsInRegion(region, save.cityId)) {
+      const k = getCity(g.cityId).name;
+      regionalByCity.set(k, [...(regionalByCity.get(k) ?? []), g]);
+    }
+
+    // National — the ranked elite, by division.
+    const elite = rankedElite(world);
+
+    return (
+      <div className="rivals">
+        <header className="rivals__head">
+          <h2 className="office__title">The Competition</h2>
+          <p className="rivals__lede">
+            {city.name} is {competitivenessLabel(comp)}. Your gym is{' '}
+            <strong>{reputationLabel(rep)}</strong>.
+          </p>
+          <nav className="rivals__scope" aria-label="Scope">
+            {scopes.map(([key, label]) => (
+              <button
+                key={key}
+                className={'rivals__scope-btn' + (rivalScope === key ? ' rivals__scope-btn--on' : '')}
+                onClick={() => setRivalScope(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+        </header>
+
+        {rivalScope === 'local' && (
+          <div className="rivals__list">
+            {localGyms.map((g) => (
+              <GymCard key={g.id} gym={g} fighters={fightersOfNote(world, g.id, 3)} />
+            ))}
+            {localIndies.length > 0 && (
+              <section className="gymcard gymcard--indie">
+                <header className="gymcard__head">
+                  <span className="gymcard__name">No Gym — Independents</span>
+                  <span className="gymcard__tier gymcard__tier--indie">Unaffiliated</span>
+                </header>
+                <p className="gymcard__sub">
+                  Men who answer to no gym — old pros, rural fighters, the odd star.
+                </p>
+                <ul className="gymcard__fighters">
+                  {localIndies.map((wf) => (
+                    <FighterLine key={wf.id} wf={wf} />
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        )}
+
+        {rivalScope === 'regional' && (
+          <div className="rivals__list">
+            {[...regionalByCity.keys()].sort().map((cityName) => (
+              <div key={cityName} className="rivals__citygroup">
+                <h3 className="rivals__cityname">{cityName}</h3>
+                {regionalByCity
+                  .get(cityName)!
+                  .sort((a, b) => tierRank(b.tier) - tierRank(a.tier))
+                  .map((g) => (
+                    <GymCard key={g.id} gym={g} fighters={fightersOfNote(world, g.id, 2)} compact />
+                  ))}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {rivalScope === 'national' && (
+          <div className="rivals__national">
+            <p className="rivals__national-note">
+              The names the sport is talking about — the ranked men across every division.
+            </p>
+            {NATIONAL_DIVISIONS.map((wc) => {
+              const inDiv = elite
+                .filter((f) => f.weightClass === wc)
+                .sort((a, b) => (a.nationalRank ?? 99) - (b.nationalRank ?? 99));
+              if (inDiv.length === 0) return null;
+              return (
+                <div key={wc} className="rivals__division">
+                  <h3 className="rivals__divname">{WEIGHT_CLASSES[wc].name}</h3>
+                  <ul className="rankings">
+                    {inDiv.map((wf) => (
+                      <RankRow key={wf.id} wf={wf} />
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   function PaperTab() {
     if (!save) return null;
     const { paperName, clippings } = save.press;
@@ -303,4 +440,92 @@ export function OfficeRoom() {
       </div>
     );
   }
+}
+
+// --- Rival Gyms presentational pieces (module scope: stable, data-only) ------
+
+const TIER_LABEL: Record<string, string> = {
+  established: 'Established',
+  regional: 'Regional',
+  local: 'Local',
+};
+
+/** Divisions top-down, heavyweight first, the way a ranking sheet reads. */
+const NATIONAL_DIVISIONS: WeightClassKey[] = [
+  'heavyweight',
+  'light_heavyweight',
+  'middleweight',
+  'welterweight',
+  'lightweight',
+];
+
+function tierRank(tier: string): number {
+  return tier === 'established' ? 3 : tier === 'regional' ? 2 : 1;
+}
+
+function humanizeStyle(s: string): string {
+  return s
+    .split('_')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function recordStr(wf: WorldFighter): string {
+  const { wins, losses, draws, kos } = wf.record;
+  const base = `${wins}-${losses}-${draws}`;
+  return kos > 0 ? `${base} · ${kos} KO` : base;
+}
+
+function GymCard({
+  gym,
+  fighters,
+  compact,
+}: {
+  gym: RivalGym;
+  fighters: WorldFighter[];
+  compact?: boolean;
+}) {
+  return (
+    <section className={'gymcard' + (compact ? ' gymcard--compact' : '')}>
+      <header className="gymcard__head">
+        <span className="gymcard__name">{gym.name}</span>
+        <span className={`gymcard__tier gymcard__tier--${gym.tier}`}>{TIER_LABEL[gym.tier]}</span>
+      </header>
+      <p className="gymcard__sub">
+        {gym.managerName} · {humanizeStyle(gym.styleTendency)} · est. {gym.foundingYear}
+      </p>
+      {fighters.length === 0 ? (
+        <p className="gymcard__none">No fighters of note.</p>
+      ) : (
+        <ul className="gymcard__fighters">
+          {fighters.map((wf) => (
+            <FighterLine key={wf.id} wf={wf} />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function FighterLine({ wf }: { wf: WorldFighter }) {
+  const standing = fighterStanding(wf);
+  return (
+    <li className="fline">
+      <span className="fline__name">{worldFighterName(wf)}</span>
+      <span className="fline__class">{WEIGHT_CLASSES[wf.weightClass].name}</span>
+      <span className="fline__record">{recordStr(wf)}</span>
+      <span className={`fline__standing fline__standing--${standing.tone}`}>{standing.label}</span>
+    </li>
+  );
+}
+
+function RankRow({ wf }: { wf: WorldFighter }) {
+  return (
+    <li className="rankrow">
+      <span className="rankrow__rank">#{wf.nationalRank}</span>
+      <span className="rankrow__name">{worldFighterName(wf)}</span>
+      <span className="rankrow__camp">{campOf(wf)}</span>
+      <span className="rankrow__record">{recordStr(wf)}</span>
+    </li>
+  );
 }

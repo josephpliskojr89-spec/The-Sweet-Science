@@ -323,6 +323,45 @@ export function promoteToFull(wf: WorldFighter): Fighter {
   };
 }
 
+// --- public reads (what the boxing world can see; never the hidden rating) --
+
+export interface Standing {
+  label: string;
+  tone: 'gold' | 'amber' | 'dim';
+}
+
+/** How the sport regards a man — drawn only from public signals (ranking,
+    record, public reputation, age), not his hidden rating. For the Rival Gyms tab. */
+export function fighterStanding(wf: WorldFighter): Standing {
+  if (wf.nationalRank) return { label: `Ranked #${wf.nationalRank}`, tone: 'gold' };
+  const fights = wf.record.wins + wf.record.losses + wf.record.draws;
+  if (fights <= 4 && wf.age < 24) return { label: 'Prospect', tone: 'amber' };
+  if (wf.publicReputation >= 55) return { label: 'Contender', tone: 'amber' };
+  const lossRatio = fights ? wf.record.losses / fights : 0;
+  if (lossRatio > 0.45) return { label: 'Journeyman', tone: 'dim' };
+  if (wf.age >= 33) return { label: 'Veteran', tone: 'dim' };
+  return { label: 'Pro', tone: 'dim' };
+}
+
+export function worldFighterName(wf: WorldFighter): string {
+  return wf.nickname
+    ? `${wf.firstName} “${wf.nickname}” ${wf.lastName}`
+    : `${wf.firstName} ${wf.lastName}`;
+}
+
+/** The camp a fighter answers to — a gym's name, or "Independent". */
+export function campOf(wf: WorldFighter): string {
+  if (wf.affiliation.kind === 'independent') return 'Independent';
+  return getRivalGym(wf.affiliation.gymId)?.name ?? 'Unknown gym';
+}
+
+/** The ranked national elite, grouped by division (for the National view). */
+export function rankedElite(world: WorldState): WorldFighter[] {
+  return world.fighters
+    .filter((f) => f.nationalRank !== null)
+    .sort((a, b) => (a.nationalRank ?? 99) - (b.nationalRank ?? 99));
+}
+
 // --- reads (consumed by 6C-2/3/4 and 6D) -----------------------------------
 
 export function gymRoster(world: WorldState, gymId: string): WorldFighter[] {

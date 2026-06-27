@@ -541,3 +541,241 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* --- Rivals — the competitive world --- */
+.rivals {
+  width: min(880px, 95vw);
+  margin: 0 auto;
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--leather-light);
+  background: linear-gradient(180deg, rgba(31, 24, 18, 0.78), rgba(10, 7, 5, 0.82));
+  box-shadow: inset 0 1px 0 rgba(232, 181, 102, 0.1), 0 24px 60px rgba(0, 0, 0, 0.6);
+  animation: room-rise var(--t-slow) var(--ease-warm);
+}
+.rivals__head {
+  border-bottom: 1px solid var(--leather-light);
+  padding-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.rivals__lede {
+  font-family: var(--font-slab);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.rivals__lede strong {
+  color: var(--amber);
+  font-style: italic;
+  font-weight: 500;
+}
+.rivals__scope {
+  display: inline-flex;
+  margin-top: var(--space-md);
+  gap: 3px;
+  border: 1px solid var(--leather-light);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.rivals__scope-btn {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 7px 16px;
+  background: rgba(0, 0, 0, 0.35);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.rivals__scope-btn:hover {
+  color: var(--amber-bright);
+}
+.rivals__scope-btn--on {
+  color: var(--ink-black);
+  background: var(--amber);
+  font-weight: 600;
+}
+
+.rivals__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.gymcard {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--leather-light);
+  background: rgba(0, 0, 0, 0.28);
+}
+.gymcard--indie {
+  border-color: var(--amber-ember);
+  background: rgba(217, 154, 78, 0.05);
+}
+.gymcard__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+}
+.gymcard__name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: var(--parchment);
+}
+.gymcard__tier {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 9px;
+  border: 1px solid currentColor;
+}
+.gymcard__tier--established { color: var(--amber-bright); background: rgba(232, 181, 102, 0.1); }
+.gymcard__tier--regional { color: var(--parchment-dark); background: rgba(217, 201, 163, 0.07); }
+.gymcard__tier--local { color: var(--text-muted); background: rgba(0, 0, 0, 0.25); }
+.gymcard__tier--indie { color: var(--amber); background: rgba(217, 154, 78, 0.1); }
+.gymcard__sub {
+  font-family: var(--font-slab);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.gymcard__none {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: var(--space-sm);
+}
+.gymcard__fighters {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-sm);
+}
+
+.fline {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: 6px 0;
+  border-top: 1px solid rgba(58, 42, 28, 0.5);
+}
+.fline__name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-warm);
+}
+.fline__class {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 116px;
+  text-align: right;
+}
+.fline__record {
+  font-family: var(--font-typewriter);
+  font-size: 12px;
+  color: var(--text-dim);
+  width: 96px;
+  text-align: right;
+}
+.fline__standing {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+  width: 92px;
+  text-align: right;
+}
+.fline__standing--gold { color: var(--amber-bright); }
+.fline__standing--amber { color: var(--amber-deep); }
+.fline__standing--dim { color: var(--text-dim); }
+
+.rivals__citygroup {
+  margin-bottom: var(--space-md);
+}
+.rivals__cityname {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 12px;
+  color: var(--amber-deep);
+  margin-bottom: var(--space-sm);
+}
+.rivals__citygroup .gymcard {
+  margin-bottom: var(--space-sm);
+}
+
+.rivals__national-note {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-lg);
+}
+.rivals__division {
+  margin-bottom: var(--space-lg);
+}
+.rivals__divname {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: var(--amber-deep);
+  padding-bottom: 5px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--leather-light);
+}
+.rankings {
+  list-style: none;
+}
+.rankrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: 7px 4px;
+  border-bottom: 1px solid rgba(58, 42, 28, 0.45);
+}
+.rankrow__rank {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--amber-bright);
+  width: 34px;
+}
+.rankrow__name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--parchment);
+}
+.rankrow__camp {
+  font-family: var(--font-slab);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  width: 220px;
+}
+.rankrow__record {
+  font-family: var(--font-typewriter);
+  font-size: 12px;
+  color: var(--text-dim);
+  width: 96px;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  .fline__class, .rankrow__camp { display: none; }
+}
