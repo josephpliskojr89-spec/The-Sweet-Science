@@ -23,8 +23,19 @@ export function ArrivalNotice() {
   const { arrival, viewArrivalsNow, dismissArrival } = useGame();
   if (!arrival) return null;
 
-  const { arrived, expired, departed } = arrival;
+  const { arrived, expired, departed, poached } = arrival;
   const hasArrivals = arrived.length > 0;
+
+  const poachLines =
+    poached.length === 0 ? null : (
+      <ul className="arrival__departures arrival__departures--poach">
+        {poached.map((p) => (
+          <li key={p.fighter.id}>
+            {fighterFullName(p.fighter)} signed with {p.gymName} while you weighed it.
+          </li>
+        ))}
+      </ul>
+    );
 
   const expiredLine =
     expired.length === 0
@@ -53,6 +64,7 @@ export function ArrivalNotice() {
               ))}
             </ul>
           )}
+          {poachLines}
           <div className="arrival__actions">
             <button className="arrival__btn arrival__btn--now" onClick={viewArrivalsNow}>
               View Now
@@ -73,6 +85,7 @@ export function ArrivalNotice() {
               ))}
             </ul>
           )}
+          {poachLines}
           <div className="arrival__actions">
             <button className="arrival__btn" onClick={dismissArrival}>
               Noted

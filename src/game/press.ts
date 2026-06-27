@@ -166,6 +166,24 @@ export interface PressCycleResult {
 
 const MAX_STORED_CLIPPINGS = 40;
 
+let eventSeq = 0;
+
+/**
+ * Print a real event in the paper — a headline the world actually produced
+ * (a signing, a poach, later a result), as opposed to ambient flavor. Carries
+ * a real byline so it reads as authored, and jumps the cooldown machinery since
+ * it's a one-off, not a template. Returns the updated press state.
+ */
+export function pressItem(state: PressState, dayCount: number, text: string): PressState {
+  const clipping: Clipping = {
+    templateId: `event_${dayCount}_${eventSeq++}`,
+    dayCount,
+    byline: state.writers.length ? pick(state.writers) : 'Staff Report',
+    text,
+  };
+  return { ...state, clippings: [clipping, ...state.clippings].slice(0, MAX_STORED_CLIPPINGS) };
+}
+
 /**
  * Run one weekly press cycle. Usually one item, sometimes two, occasionally a
  * quiet week — a paper that always has news feels procedural.

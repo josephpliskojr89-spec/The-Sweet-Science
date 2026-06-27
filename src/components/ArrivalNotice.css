@@ -64,6 +64,10 @@
   font-size: 13px;
   color: var(--rust);
 }
+/* A rival signing the man you sat on — regret, not loss. */
+.arrival__departures--poach li {
+  color: var(--amber-deep);
+}
 
 .arrival__actions {
   display: flex;

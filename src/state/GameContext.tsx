@@ -27,7 +27,7 @@ import { type Fighter, fighterFullName } from '../game/fighters';
 import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
-import { runPressCycle } from '../game/press';
+import { runPressCycle, pressItem } from '../game/press';
 import {
   trainFighter,
   snapshotAttrs,
@@ -57,7 +57,7 @@ const usedByCoach = (
   roster: { focus: unknown; coachId: string | null }[],
   coachId: string,
 ) => roster.filter((e) => e.focus !== null && e.coachId === coachId).length;
-import { rollNewWalkIns, ageWalkIns } from '../game/walkins';
+import { rollNewWalkIns, ageWalkIns, type WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
   initialRelationship,
@@ -88,6 +88,14 @@ import {
 } from './persistence';
 import { gymReputation } from '../game/reputation';
 import { advanceWorld } from '../game/world/worldSim';
+import {
+  walkInPoachChance,
+  worldFighterFromFighter,
+  pickWalkInPoacher,
+  cityCompetitiveness,
+  type WorldFighter,
+} from '../game/world/population';
+import { WEIGHT_CLASSES } from '../game/weightClasses';
 import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
 import {
   rollCoachApplicants,
@@ -118,10 +126,18 @@ function qualityFor(save: GameSave): number {
   return Math.max(0.18, Math.min(0.8, 0.18 + reputationFor(save) * 0.5));
 }
 
+/** A walk-in you didn't sign, taken by a named rival gym. */
+export interface PoachEvent {
+  fighter: Fighter;
+  gymName: string;
+}
+
 export interface AdvanceNotice {
   arrived: Fighter[];
   expired: Fighter[];
   departed: Departure[];
+  /** Prospects a rival signed out from under you while you deliberated (6C-3). */
+  poached: PoachEvent[];
 }
 
 interface GameContextValue {
@@ -259,6 +275,34 @@ export function GameProvider({ children }: { children: ReactNode }) {
         quality: qualityFor(prev),
       });
 
+      // Walk-in competition (6C-3): the men at your door aren't only yours to
+      // sign. Waffle on a real prospect and a named local rival takes him; a man
+      // whose patience finally runs out either gets snapped up (if he's good) or
+      // simply gives up. Either way the winner has a name, and he joins their
+      // stable — to surface later as their contender, your opponent, your regret.
+      const comp = cityCompetitiveness(prev.cityId);
+      const poached: PoachEvent[] = [];
+      const poachedToWorld: WorldFighter[] = [];
+      const stillWaiting: WalkIn[] = [];
+      const gaveUp: WalkIn[] = [];
+      const takeProspect = (w: WalkIn) => {
+        const gym = pickWalkInPoacher(prev.cityId, qualityFor(prev));
+        if (!gym) return false;
+        poached.push({ fighter: w.fighter, gymName: gym.name });
+        poachedToWorld.push(worldFighterFromFighter(w.fighter, gym.id));
+        return true;
+      };
+      for (const w of aged.surviving) {
+        if (Math.random() < walkInPoachChance(w.fighter.potential, comp, days) && takeProspect(w)) {
+          continue;
+        }
+        stillWaiting.push(w);
+      }
+      for (const w of aged.expired) {
+        // A genuine prospect left waiting gets signed by name; the rest move on.
+        if (!(w.fighter.potential >= 60 && takeProspect(w))) gaveUp.push(w);
+      }
+
       // The gym lives: moods recover, fighters develop on the floor (and age),
       // the floor gets observed (hidden traits can surface), and the fighters'
       // lives outside intrude — all before we see who's had enough and walked.
@@ -330,10 +374,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
       for (let i = 0; i < cycles; i++) {
         press = runPressCycle(press, prev.cityId, toDay).state;
       }
+      // Real events make the headlines: a rival signing the prospect you sat on.
+      for (const p of poached) {
+        const cls = WEIGHT_CLASSES[p.fighter.weightClass].name.toLowerCase();
+        press = pressItem(
+          press,
+          toDay,
+          `${p.gymName} has signed ${fighterFullName(p.fighter)}, a ${p.fighter.age}-year-old ${cls}, after weeks of local interest.`,
+        );
+      }
 
-      // The competitive world moves on its own — ages, fights, signs, retires.
-      // (Its notes feed the press/Rival Gyms tab in 6C-2; unsurfaced for now.)
-      const world = advanceWorld(prev.world, { days, toDay }).world;
+      // The competitive world moves on its own — ages, fights, signs, retires —
+      // and absorbs the prospects you let slip (6C-3).
+      let world = advanceWorld(prev.world, { days, toDay }).world;
+      if (poachedToWorld.length) {
+        world = { ...world, fighters: [...world.fighters, ...poachedToWorld] };
+      }
 
       const newLines: LogLine[] = [
         ...coachNotes.slice(0, 2),
@@ -355,10 +411,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
         else text = `${name} quit. He felt forgotten — and maybe he was.`;
         return { dayCount: toDay, text };
       });
+      const poachMemories = poached.map((p) => ({
+        dayCount: toDay,
+        text: `${p.gymName} signed ${fighterFullName(p.fighter)} — the ${WEIGHT_CLASSES[
+          p.fighter.weightClass
+        ].name.toLowerCase()} you’d been weighing. You waited a beat too long.`,
+      }));
       const history = [
         ...prev.history,
         ...[...obs.milestones, ...life.milestones].map((text) => ({ dayCount: toDay, text })),
         ...departureMemories,
+        ...poachMemories,
       ].slice(-250);
 
       // Take a monthly progression snapshot of each fighter's attributes.
@@ -397,7 +460,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         finances,
         coachApplicants,
         world,
-        walkIns: [...aged.surviving, ...fresh],
+        walkIns: [...stillWaiting, ...fresh],
         roster: staying,
         press,
         history,
@@ -411,11 +474,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
         });
       }
 
-      if (fresh.length || aged.expired.length || dep.departed.length) {
+      if (fresh.length || gaveUp.length || dep.departed.length || poached.length) {
         setArrival({
           arrived: fresh.map((w) => w.fighter),
-          expired: aged.expired.map((w) => w.fighter),
+          expired: gaveUp.map((w) => w.fighter),
           departed: dep.departed,
+          poached,
         });
       }
     },

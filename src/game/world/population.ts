@@ -424,6 +424,46 @@ export function pickPoachDestination(cityId: CityId): RivalGym | null {
   return pickGymWeighted(cityId);
 }
 
+// --- walk-in competition (6C-3) --------------------------------------------
+
+/** Probability a prospect at your door gets signed out from under you over
+    `days`, scaling with how good he is and how competitive the city. Only real
+    prospects (potential past ~50) draw outside interest; nobodies just wander off. */
+export function walkInPoachChance(potential: number, competitiveness: number, days: number): number {
+  const prospectFactor = clamp((potential - 50) / 50, 0, 1);
+  if (prospectFactor <= 0) return 0;
+  const perDay = 0.05 * competitiveness * prospectFactor;
+  return 1 - Math.pow(1 - perDay, days);
+}
+
+/**
+ * Turn a walk-in you didn't sign into a rival gym's man. He's a known quantity
+ * now (his full Fighter is cached), with a rating read off his current
+ * attributes — so if you meet him later, in their corner, he's the same fighter.
+ */
+export function worldFighterFromFighter(f: Fighter, gymId: string): WorldFighter {
+  const a = f.attributes;
+  const avg = (a.power + a.speed + a.chin + a.stamina + a.defense + a.ringIq + a.footwork) / 7;
+  const rating = clamp(avg, 14, 90);
+  return {
+    id: `wf_${f.id}`,
+    firstName: f.firstName,
+    lastName: f.lastName,
+    nickname: f.nickname,
+    cityId: f.homeCityId,
+    weightClass: f.weightClass,
+    age: f.age,
+    rating,
+    record: genRecord(rating, f.age),
+    styleTendency: getRivalGym(gymId)?.styleTendency ?? 'workhorse',
+    affiliation: { kind: 'rival', gymId },
+    fidelity: 'local',
+    publicReputation: f.publicReputation,
+    nationalRank: null,
+    full: f,
+  };
+}
+
 // --- churn constructors (consumed by worldSim) -----------------------------
 
 /** A gym signs a green prospect to replace a man who's moved on — young, raw,
