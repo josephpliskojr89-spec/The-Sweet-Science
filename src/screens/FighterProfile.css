@@ -195,6 +195,25 @@
   background: rgba(166, 67, 42, 0.14);
 }
 
+/* The coach's-eye ceiling read under the attributes */
+.fp__scout-note {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-warm);
+  margin-top: var(--space-md);
+}
+.fp__scout-label {
+  font-family: var(--font-condensed);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  color: var(--amber-deep);
+  margin-right: 8px;
+}
+
 /* The fog note under a trialist's scouting bands */
 .fp__fog-note {
   font-family: var(--font-slab);

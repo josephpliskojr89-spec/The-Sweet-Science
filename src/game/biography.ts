@@ -122,6 +122,9 @@ export function fighterBiography(entry: RosterEntry, dayCount: number): string[]
     );
   }
 
+  // The coach's eye on his upside — a hedged first read, set the day he signed.
+  if (f.ceilingRead) paras.push(f.ceilingRead);
+
   // What he's after — and the hint that there's more under the surface.
   let close = aspiration(f.visibleTraits);
   if (f.hiddenTraits.length > 0)

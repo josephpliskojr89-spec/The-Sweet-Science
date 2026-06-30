@@ -15,6 +15,7 @@ import type { WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type RosterEntry } from '../game/roster';
 import { initialRelationship } from '../game/relationship';
 import { rollGrowth, rollBaseDues } from '../game/fighters';
+import { generateCeilingRead } from '../game/potential';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { generateWorld, type WorldState } from '../game/world/population';
@@ -31,7 +32,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 18;
+export const SAVE_VERSION = 19;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -159,6 +160,8 @@ function migrateFighter<
     growth?: number;
     growthKnown?: boolean;
     baseDues?: number;
+    ceilingRead?: string;
+    potential?: number;
   },
 >(f: T): T {
   return {
@@ -167,6 +170,7 @@ function migrateFighter<
     growth: f.growth ?? rollGrowth(0.2),
     growthKnown: f.growthKnown ?? false,
     baseDues: f.baseDues ?? rollBaseDues(),
+    ceilingRead: f.ceilingRead ?? generateCeilingRead(f.potential ?? 50),
   };
 }
 
@@ -176,8 +180,8 @@ function migrateFighter<
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
     finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment; v15
     coach job postings; v16 the lockerless trialist patience pair; v17 the
-    competitive world; v18 talent-poaching (poachInterest + reputationMod).
-    Pre-v2 shell saves can't be resumed — drop them. */
+    competitive world; v18 talent-poaching (poachInterest + reputationMod);
+    v19 the fighter ceiling read. Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;

@@ -292,6 +292,10 @@ export function FighterProfile() {
                       />
                     ))}
               </div>
+              <p className="fp__scout-note">
+                <span className="fp__scout-label">Your read</span>
+                {f.ceilingRead}
+              </p>
               {!entry.hasLocker && (
                 <p className="fp__fog-note">
                   You haven’t committed to him — this is a coach’s eye, not a measurement.

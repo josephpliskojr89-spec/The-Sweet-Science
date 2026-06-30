@@ -25,6 +25,7 @@ import {
 } from './weightClasses';
 import { TRAIT_ORDER, TRAITS, type TraitKey } from './traits';
 import { generateStatement, generateFirstImpression } from './statements';
+import { generateCeilingRead } from './potential';
 
 export interface Attributes {
   power: number;
@@ -72,6 +73,9 @@ export interface Fighter {
   hiddenTraits: TraitKey[];
   statement: string;
   firstImpression: string;
+  /** A coach's hedged, fallible gut read on his ceiling (game/potential.ts).
+      Set once at signing — a first scouting note, not a live gauge. */
+  ceilingRead: string;
 }
 
 // --- small rng helpers -----------------------------------------------------
@@ -380,6 +384,7 @@ export function generateFighter(opts: GenerateFighterOptions): Fighter {
     hiddenTraits: hidden,
     statement: generateStatement([...visible, ...hidden]),
     firstImpression: generateFirstImpression(visible),
+    ceilingRead: generateCeilingRead(potential),
   };
 }
 
