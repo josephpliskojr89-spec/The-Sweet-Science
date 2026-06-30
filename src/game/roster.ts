@@ -39,6 +39,9 @@ export interface RosterEntry {
   trialPatience: number;
   /** Whether a lockerless trialist has asked you for a locker (one-time event). */
   lockerRequested: boolean;
+  /** Hidden rival-interest level (0–100) for a talented, unhappy locker holder.
+      Builds with warnings before he's poached away (game/world, 6C-4). */
+  poachInterest: number;
   /** Per-attribute change from the most recent advance (for trend display). */
   lastDelta: Partial<Record<AttrKey, number>>;
   /** Dated attribute snapshots for the progression view (oldest first). */

@@ -176,6 +176,24 @@
   padding-top: 6px;
   border-top: 1px dashed var(--leather-light);
 }
+.fp__flight {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 9px;
+  border: 1px solid currentColor;
+  cursor: help;
+}
+.fp__flight--warn {
+  color: #c98a4a;
+  background: rgba(201, 138, 74, 0.12);
+}
+.fp__flight--crit {
+  color: var(--rust);
+  background: rgba(166, 67, 42, 0.14);
+}
 
 /* The fog note under a trialist's scouting bands */
 .fp__fog-note {

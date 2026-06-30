@@ -28,6 +28,7 @@ import {
 } from '../game/training';
 import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
 import { scoutingBand, patienceFlavor } from '../game/scouting';
+import { flightRiskRead } from '../game/reputation';
 import { fighterBiography, careerTimeline, yearsWithGymLabel } from '../game/biography';
 import type { RosterEntry } from '../game/roster';
 import type { GameSave } from '../state/persistence';
@@ -101,6 +102,8 @@ export function FighterProfile() {
   const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
   // The Development tab is for committed men only; a trialist can't be charted.
   const shownTab: ProfileTab = tab === 'development' && !entry.hasLocker ? 'overview' : tab;
+  // Rival interest in a man you haven't kept happy — a threat you can see coming.
+  const flight = entry.hasLocker ? flightRiskRead(entry.poachInterest) : null;
 
   return (
     <div className="fp worn" role="dialog" aria-label={fighterFullName(f)}>
@@ -144,6 +147,14 @@ export function FighterProfile() {
                 <MoodChip entry={entry} />
               </span>
               <span className="fp__tenure">{tenure}</span>
+              {flight && (
+                <span
+                  className={`fp__flight fp__flight--${flight.tone}`}
+                  title="Other gyms have noticed he's unhappy. Mend the relationship or you may lose him."
+                >
+                  ⚑ {flight.label}
+                </span>
+              )}
               {!entry.hasLocker && (
                 <span className="fp__patience">{patienceFlavor(entry.trialPatience)}</span>
               )}

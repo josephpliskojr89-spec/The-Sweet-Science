@@ -14,6 +14,7 @@ import './ArrivalNotice.css';
 
 function departureLine(d: Departure): string {
   const name = fighterFullName(d.entry.fighter);
+  if (d.reason === 'left_for_opportunity' && d.toGym) return `${name} was lured away by ${d.toGym}.`;
   if (d.reason === 'left_for_opportunity') return `${name} left for a bigger opportunity.`;
   if (d.reason === 'moved_on') return `${name} stopped waiting for a locker and moved on.`;
   return `${name} lost faith and walked away.`;

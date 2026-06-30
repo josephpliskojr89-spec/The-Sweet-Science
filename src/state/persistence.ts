@@ -31,7 +31,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 17;
+export const SAVE_VERSION = 18;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -57,6 +57,8 @@ export interface GameSave {
   dayCount: number;
   /** Cash on hand, in current (inflated) dollars. */
   money: number;
+  /** Reputation penalty (≤0) from ruthless cuts; decays toward 0 (6C-4). */
+  reputationMod: number;
   /** Settled monthly books, newest first (game/economy.ts). */
   finances: FinanceEntry[];
   /** Purchased gym upgrades (game/upgrades.ts). */
@@ -96,6 +98,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     cityId: draft.cityId,
     dayCount: 0,
     money: STARTING_MONEY,
+    reputationMod: 0,
     finances: [],
     upgrades: DEFAULT_UPGRADES,
     coaches: [],
@@ -173,7 +176,8 @@ function migrateFighter<
     training fields; v8/v9 the progression history; v10 the dev feel; v11 the
     finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment; v15
     coach job postings; v16 the lockerless trialist patience pair; v17 the
-    competitive world. Pre-v2 shell saves can't be resumed — drop them. */
+    competitive world; v18 talent-poaching (poachInterest + reputationMod).
+    Pre-v2 shell saves can't be resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -202,6 +206,7 @@ function migrate(raw: unknown): GameSave | null {
             // generous clock so the migration never evicts anyone unexpectedly.
             trialPatience: e.trialPatience ?? (e.hasLocker ? 100 : 120),
             lockerRequested: e.lockerRequested ?? false,
+            poachInterest: e.poachInterest ?? 0,
             lastDelta: e.lastDelta ?? {},
             // Begin tracking progression from now for pre-v9 fighters.
             history: e.history ?? [snapshotAttrs(fighter.attributes, data.dayCount!)],
@@ -219,6 +224,7 @@ function migrate(raw: unknown): GameSave | null {
       cityId: data.cityId as CityId,
       dayCount: data.dayCount,
       money: typeof data.money === 'number' ? data.money : STARTING_MONEY,
+      reputationMod: typeof data.reputationMod === 'number' ? data.reputationMod : 0,
       finances: Array.isArray(data.finances) ? data.finances : [],
       upgrades: data.upgrades ?? DEFAULT_UPGRADES,
       coaches: Array.isArray(data.coaches) ? data.coaches : [],

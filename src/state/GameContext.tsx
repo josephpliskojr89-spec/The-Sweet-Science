@@ -44,6 +44,14 @@ const MAX_APPLICANTS = 4;
 /** Days a lockerless trialist must stick around before he'll force the locker
     question himself. Months in, not weeks — the request should feel earned. */
 const LOCKER_REQUEST_DAYS = 84;
+/** Rival-interest accrual per week at full flight risk, and how fast it cools
+    when a man is settled again (6C-4). Tuned so sustained unhappiness in a
+    competitive city telegraphs for weeks before anyone walks. */
+const POACH_GAIN = 20;
+const POACH_DECAY = 8;
+/** How fast a cut-ruthlessness reputation penalty heals (per month), and its floor. */
+const REP_RECOVER = 0.02;
+const MAX_REP_PENALTY = -0.3;
 
 const randInt = (lo: number, hi: number) => lo + Math.floor(Math.random() * (hi - lo + 1));
 /** A fresh trialist's starting patience (days). Generous — a valued man can
@@ -86,12 +94,17 @@ import {
   type GameSave,
   type NewGameDraft,
 } from './persistence';
-import { gymReputation } from '../game/reputation';
+import {
+  gymReputation,
+  flightRiskScore,
+  interestBand,
+} from '../game/reputation';
 import { advanceWorld } from '../game/world/worldSim';
 import {
   walkInPoachChance,
   worldFighterFromFighter,
   pickWalkInPoacher,
+  pickPoachDestination,
   cityCompetitiveness,
   type WorldFighter,
 } from '../game/world/population';
@@ -114,10 +127,11 @@ export type Screen = 'home' | 'settings' | 'newgame' | 'game';
 export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
-/** Gym reputation 0..1 — how known/regarded your gym is (game/reputation.ts).
-    Drives the walk-in draw; ≈0 for a new gym, earned as your men make names. */
+/** Gym reputation 0..1 — how known/regarded your gym is (game/reputation.ts),
+    less any penalty from ruthless cuts. Drives the walk-in draw; ≈0 for a new
+    gym, earned as your men make names. */
 function reputationFor(save: GameSave): number {
-  return gymReputation(save.roster);
+  return Math.max(0, Math.min(1, gymReputation(save.roster) + save.reputationMod));
 }
 
 /** Reputation-driven quality of the walk-in pool. A respected gym draws better
@@ -333,7 +347,54 @@ export function GameProvider({ children }: { children: ReactNode }) {
       roster = obs.roster;
       const life = runLifeEvents(roster, days);
       roster = life.roster;
+
+      // Rival interest (6C-4): talented, unhappy locker holders get courted by
+      // other gyms. Interest builds — with escalating warnings — before anyone
+      // leaves, so losing a man here is a consequence you could see coming and
+      // head off. Repair his morale/trust and the interest cools.
+      const interestNotes: string[] = [];
+      const interestHeadlines: string[] = [];
+      const poachDepartures: Departure[] = [];
+      const talentToWorld: WorldFighter[] = [];
+      const afterInterest: RosterEntry[] = [];
+      for (const e of roster) {
+        if (!e.hasLocker) {
+          afterInterest.push(e);
+          continue;
+        }
+        const risk = flightRiskScore(e, comp, prev.reputationMod);
+        const before = e.poachInterest;
+        const next =
+          risk > 0.12
+            ? Math.min(100, before + risk * POACH_GAIN * (days / 7))
+            : Math.max(0, before - POACH_DECAY * (days / 7));
+        const name = fighterFullName(e.fighter);
+        const bandUp = interestBand(next);
+        if (bandUp > interestBand(before)) {
+          if (bandUp === 1) {
+            interestNotes.push(`A man nobody recognized stood ringside, watching ${name} work.`);
+          } else if (bandUp === 2) {
+            const suitor = pickPoachDestination(prev.cityId);
+            const line = `Word around the gym: ${suitor?.name ?? 'another gym'} has been asking about ${name}.`;
+            interestNotes.push(line);
+            interestHeadlines.push(line);
+          } else if (bandUp === 3) {
+            interestNotes.push(`${name} took a call after practice and wouldn’t say from who.`);
+          }
+        }
+        const leaveChance = next >= 80 ? Math.min(1, (next - 80) / 20) * 0.4 * (days / 7) : 0;
+        const gym = leaveChance > 0 && Math.random() < leaveChance ? pickPoachDestination(prev.cityId) : null;
+        if (gym) {
+          poachDepartures.push({ entry: e, reason: 'left_for_opportunity', toGym: gym.name });
+          talentToWorld.push(worldFighterFromFighter(e.fighter, gym.id));
+          continue; // he's gone
+        }
+        afterInterest.push(next === before ? e : { ...e, poachInterest: next });
+      }
+      roster = afterInterest;
+
       const dep = evaluateDepartures(roster, days);
+      const departedAll: Departure[] = [...poachDepartures, ...dep.departed];
 
       // A lockerless trialist who's stuck it out for months forces the question
       // himself — fires rarely, once per man, and surfaces as a request on his
@@ -374,7 +435,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       for (let i = 0; i < cycles; i++) {
         press = runPressCycle(press, prev.cityId, toDay).state;
       }
-      // Real events make the headlines: a rival signing the prospect you sat on.
+      // Real events make the headlines: a rival signing the prospect you sat on
+      // (6C-3), the courtship of one of your men, and his eventual departure (6C-4).
       for (const p of poached) {
         const cls = WEIGHT_CLASSES[p.fighter.weightClass].name.toLowerCase();
         press = pressItem(
@@ -383,12 +445,23 @@ export function GameProvider({ children }: { children: ReactNode }) {
           `${p.gymName} has signed ${fighterFullName(p.fighter)}, a ${p.fighter.age}-year-old ${cls}, after weeks of local interest.`,
         );
       }
+      for (const line of interestHeadlines) press = pressItem(press, toDay, line);
+      for (const d of poachDepartures) {
+        const cls = WEIGHT_CLASSES[d.entry.fighter.weightClass].name.toLowerCase();
+        press = pressItem(
+          press,
+          toDay,
+          `${d.toGym} has lured ${fighterFullName(d.entry.fighter)} away — a ${cls} who'd grown unhappy where he was.`,
+        );
+      }
 
       // The competitive world moves on its own — ages, fights, signs, retires —
-      // and absorbs the prospects you let slip (6C-3).
+      // and absorbs the men you let slip: prospects (6C-3) and your own unhappy
+      // talent (6C-4).
       let world = advanceWorld(prev.world, { days, toDay }).world;
-      if (poachedToWorld.length) {
-        world = { ...world, fighters: [...world.fighters, ...poachedToWorld] };
+      const joiners = [...poachedToWorld, ...talentToWorld];
+      if (joiners.length) {
+        world = { ...world, fighters: [...world.fighters, ...joiners] };
       }
 
       const newLines: LogLine[] = [
@@ -397,14 +470,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
         ...obs.lines,
         ...life.lines,
         ...requestNotes,
+        ...interestNotes,
       ].map((text) => ({
         dayCount: toDay,
         text,
       }));
-      const departureMemories = dep.departed.map((d) => {
+      const departureMemories = departedAll.map((d) => {
         const name = fighterFullName(d.entry.fighter);
         let text: string;
-        if (d.reason === 'left_for_opportunity')
+        if (d.reason === 'left_for_opportunity' && d.toGym)
+          text = `${name} left for ${d.toGym}. He'd stopped believing you'd give him what he was worth.`;
+        else if (d.reason === 'left_for_opportunity')
           text = `${name} left for a bigger operation. Someone noticed what you built in him.`;
         else if (d.reason === 'moved_on')
           text = `${name} stopped waiting for a gym that wanted him and moved on.`;
@@ -432,6 +508,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
           }))
         : afterRequests;
 
+      // A ruthless-cut reputation penalty heals slowly as the gym lives it down.
+      const reputationMod = Math.min(0, prev.reputationMod + REP_RECOVER * (days / 30));
+
       // Settle the books on the first of the month.
       let money = prev.money;
       let finances = prev.finances;
@@ -458,6 +537,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         dayCount: toDay,
         money,
         finances,
+        reputationMod,
         coachApplicants,
         world,
         walkIns: [...stillWaiting, ...fresh],
@@ -467,18 +547,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
         recentLog: [...newLines, ...prev.recentLog].slice(0, 12),
       });
 
-      for (const d of dep.departed) {
+      for (const d of departedAll) {
         emitGameEvent({
           type: d.reason === 'left_for_opportunity' ? 'fighter_left_for_opportunity' : 'fighter_quit',
           fighterId: d.entry.fighter.id,
         });
       }
 
-      if (fresh.length || gaveUp.length || dep.departed.length || poached.length) {
+      if (fresh.length || gaveUp.length || departedAll.length || poached.length) {
         setArrival({
           arrived: fresh.map((w) => w.fighter),
           expired: gaveUp.map((w) => w.fighter),
-          departed: dep.departed,
+          departed: departedAll,
           poached,
         });
       }
@@ -536,6 +616,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           coachId: null,
           trialPatience: freshPatience(),
           lockerRequested: false,
+          poachInterest: 0,
           lastDelta: {},
           history: [snapshotAttrs(target.fighter.attributes, prev.dayCount)],
         };
@@ -712,6 +793,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
           // to a trialist with a fresh (if shaken) clock.
           lockerRequested: false,
           trialPatience: hasLocker ? e.trialPatience : freshPatience(),
+          // A man off the wall is no longer being courted as your fighter.
+          poachInterest: hasLocker ? e.poachInterest : 0,
           ...rel,
         };
       });
@@ -828,6 +911,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
       };
       const history = [...prev.history, memory].slice(-250);
 
+      // Cutting a man dents how the gym is regarded — worse for one you'd
+      // committed to, a loyal man, or a locker holder you're discarding. It
+      // stacks if you churn several before it heals, and lowers your draw and
+      // unsettles your remaining talent until it does (6C-4).
+      let hit = 0.01;
+      if (entry.tier === 'must_keep') hit += 0.03;
+      if (entry.trust >= 55) hit += 0.02;
+      if (entry.hasLocker) hit += 0.02;
+      const reputationMod = Math.max(MAX_REP_PENALTY, prev.reputationMod - hit);
+
       // The room feels it. A cut sends a small morale ripple through everyone
       // else — worse for the men who care, shrugged off by the ruthless.
       const ripple = (e: RosterEntry): RosterEntry =>
@@ -837,7 +930,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       if (outcome === 'vanish') {
         const roster = prev.roster.filter((e) => e.fighter.id !== id).map(ripple);
-        commit({ ...prev, roster, history });
+        commit({ ...prev, roster, history, reputationMod });
         setFlash(`${name} cleared out his locker and was gone by morning.`);
       } else {
         const roster = prev.roster.map((e) =>
@@ -850,11 +943,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
                 coachId: null,
                 trialPatience: freshPatience(),
                 lockerRequested: false,
+                poachInterest: 0,
                 ...applyCutStayed(e),
               }
             : ripple(e),
         );
-        commit({ ...prev, roster, history });
+        commit({ ...prev, roster, history, reputationMod });
         setFlash(`${name} asked to stay and earn his spot back — no locker.`);
       }
       setProfileId((cur) => (cur === id && outcome === 'vanish' ? null : cur));

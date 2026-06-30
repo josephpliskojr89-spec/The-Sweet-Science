@@ -31,6 +31,8 @@ export type DepartureReason = 'quit' | 'left_for_opportunity' | 'moved_on';
 export interface Departure {
   entry: RosterEntry;
   reason: DepartureReason;
+  /** The rival gym that signed him, when he was poached by name (6C-4). */
+  toGym?: string;
 }
 
 /** Structural daily quit chance from his place in the gym. Locker holders only;
