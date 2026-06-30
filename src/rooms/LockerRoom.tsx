@@ -16,8 +16,10 @@ import { WEIGHT_CLASSES } from '../game/weightClasses';
 import {
   developmentState,
   devFeel,
+  attributeTrend,
   ATTR_KEYS,
   ATTR_LABELS,
+  type AttrKey,
   type TrainingFocus,
 } from '../game/training';
 import { Portrait } from '../assets/portraits';
@@ -26,7 +28,18 @@ import { MoodChip } from '../components/MoodChip';
 import { LockerWall } from '../components/Locker/LockerWall';
 import './LockerRoom.css';
 
-type LockerView = 'wall' | 'list';
+type LockerView = 'wall' | 'list' | 'development';
+
+/** Compact column labels for the development table. */
+const ATTR_SHORT: Record<AttrKey, string> = {
+  power: 'PWR',
+  speed: 'SPD',
+  chin: 'CHN',
+  stamina: 'STA',
+  defense: 'DEF',
+  ringIq: 'IQ',
+  footwork: 'FTW',
+};
 
 export function LockerRoom() {
   const { save, closeRoom, profileId, viewerIds, focusCapacity, lockerCap, noLockerCap } =
@@ -97,6 +110,14 @@ export function LockerRoom() {
                 >
                   List
                 </button>
+                <button
+                  className={
+                    'locker__view-btn' + (view === 'development' ? ' locker__view-btn--on' : '')
+                  }
+                  onClick={() => setView('development')}
+                >
+                  Development
+                </button>
               </div>
             </div>
           </header>
@@ -108,6 +129,8 @@ export function LockerRoom() {
               No fighters yet. Accept a walk-in from the door and he’ll take his
               place here.
             </p>
+          ) : view === 'development' ? (
+            <DevelopmentView roster={save.roster} dayCount={save.dayCount} />
           ) : (
             TIER_ORDER.map((tier) => {
               const inTier = save.roster.filter((e) => e.tier === tier);
@@ -142,6 +165,90 @@ export function LockerRoom() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DevelopmentView({ roster, dayCount }: { roster: RosterEntry[]; dayCount: number }) {
+  const { openProfile } = useGame();
+  const sorted = [...roster].sort(
+    (a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier),
+  );
+  return (
+    <div className="devview">
+      <div className="devview__inner">
+        <div className="devview__row devview__head">
+          <span className="devview__h-name">Fighter</span>
+          <span className="devview__h">Trajectory</span>
+          <span className="devview__h">Feel</span>
+          {ATTR_KEYS.map((k) => (
+            <span className="devview__h devview__h-attr" key={k} title={ATTR_LABELS[k]}>
+              {ATTR_SHORT[k]}
+            </span>
+          ))}
+        </div>
+        {sorted.map((entry) => (
+          <DevRow
+            key={entry.fighter.id}
+            entry={entry}
+            dayCount={dayCount}
+            onOpen={() => openProfile(entry.fighter.id)}
+          />
+        ))}
+      </div>
+      <p className="devview__note">
+        Arrows show recent form. Lockerless men train in limited mode — give a man a
+        locker to chart him properly.
+      </p>
+    </div>
+  );
+}
+
+function DevRow({
+  entry,
+  dayCount,
+  onOpen,
+}: {
+  entry: RosterEntry;
+  dayCount: number;
+  onOpen: () => void;
+}) {
+  const f = entry.fighter;
+  const dev = developmentState(entry);
+  const feel = entry.hasLocker && f.growthKnown ? devFeel(f.growth) : null;
+  return (
+    <div className="devview__row">
+      <button className="devrow__id" onClick={onOpen} title="Open profile">
+        <span className="devrow__portrait">
+          <Portrait appearance={f.appearance} size={34} />
+        </span>
+        <span className="devrow__name">{fighterFullName(f)}</span>
+      </button>
+      <span className={`devrow__dev frow__dev frow__dev--${dev.tone}`}>{dev.label}</span>
+      <span className="devrow__feel">
+        {feel ? (
+          <span className={`frow__feel frow__feel--${feel.tone}`} title={feel.blurb}>
+            {feel.label}
+          </span>
+        ) : (
+          <span className="devrow__feel-none">—</span>
+        )}
+      </span>
+      {entry.hasLocker ? (
+        ATTR_KEYS.map((k) => {
+          const tr = attributeTrend(entry, k, dayCount);
+          return (
+            <span className={`devcell devcell--${tr.dir ?? 'flat'}`} key={k}>
+              <span className="devcell__val">{Math.round(f.attributes[k])}</span>
+              {tr.dir && (
+                <span className="devcell__arrow">{tr.dir === 'up' ? '▲' : '▼'}</span>
+              )}
+            </span>
+          );
+        })
+      ) : (
+        <span className="devrow__limited">No locker — limited training</span>
+      )}
     </div>
   );
 }
