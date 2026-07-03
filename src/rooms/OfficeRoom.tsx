@@ -15,7 +15,7 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../state/GameContext';
 import { fighterFullName } from '../game/fighters';
-import { WEIGHT_CLASSES, type WeightClassKey } from '../game/weightClasses';
+import { WEIGHT_CLASSES } from '../game/weightClasses';
 import { formatDate } from '../game/time';
 import { monthlySummary, formatMoney } from '../game/economy';
 import { getCity } from '../game/cities';
@@ -29,18 +29,16 @@ import {
 import {
   fightersOfNote,
   independentsNear,
-  rankedElite,
   fighterStanding,
   worldFighterName,
-  campOf,
   type WorldFighter,
 } from '../game/world/population';
 import { gymReputation, reputationLabel, competitivenessLabel } from '../game/reputation';
 import { Portrait } from '../assets/portraits';
 import './OfficeRoom.css';
 
-type OfficeTab = 'desk' | 'finances' | 'rivals' | 'paper' | 'ledger';
-type RivalScope = 'local' | 'regional' | 'national';
+type OfficeTab = 'desk' | 'finances' | 'rivals' | 'ledger';
+type RivalScope = 'local' | 'regional';
 
 const FUTURE_DESK = ['Book fights for your fighters'];
 
@@ -79,7 +77,6 @@ export function OfficeRoom() {
               ['desk', `Desk${queue.length ? ` (${queue.length})` : ''}`],
               ['finances', 'Finances'],
               ['rivals', 'Rivals'],
-              ['paper', 'The Paper'],
               ['ledger', 'Ledger'],
             ] as Array<[OfficeTab, string]>
           ).map(([key, label]) => (
@@ -98,7 +95,6 @@ export function OfficeRoom() {
         {tab === 'desk' && <DeskTab />}
         {tab === 'finances' && <FinancesTab />}
         {tab === 'rivals' && <RivalsTab />}
-        {tab === 'paper' && <PaperTab />}
         {tab === 'ledger' && <LedgerTab />}
       </div>
     </div>
@@ -278,7 +274,6 @@ export function OfficeRoom() {
     const scopes: Array<[RivalScope, string]> = [
       ['local', city.name],
       ['regional', `${REGIONS[region].name} Region`],
-      ['national', 'National'],
     ];
 
     // Local — every gym in your city, strongest houses first, plus independents.
@@ -294,16 +289,14 @@ export function OfficeRoom() {
       regionalByCity.set(k, [...(regionalByCity.get(k) ?? []), g]);
     }
 
-    // National — the ranked elite, by division.
-    const elite = rankedElite(world);
-
     return (
       <div className="rivals">
         <header className="rivals__head">
           <h2 className="office__title">The Competition</h2>
           <p className="rivals__lede">
             {city.name} is {competitivenessLabel(comp)}. Your gym is{' '}
-            <strong>{reputationLabel(rep)}</strong>.
+            <strong>{reputationLabel(rep)}</strong>. The national rankings run in
+            the magazine over in <em>The Press</em>.
           </p>
           <nav className="rivals__scope" aria-label="Scope">
             {scopes.map(([key, label]) => (
@@ -358,59 +351,6 @@ export function OfficeRoom() {
           </div>
         )}
 
-        {rivalScope === 'national' && (
-          <div className="rivals__national">
-            <p className="rivals__national-note">
-              The names the sport is talking about — the ranked men across every division.
-            </p>
-            {NATIONAL_DIVISIONS.map((wc) => {
-              const inDiv = elite
-                .filter((f) => f.weightClass === wc)
-                .sort((a, b) => (a.nationalRank ?? 99) - (b.nationalRank ?? 99));
-              if (inDiv.length === 0) return null;
-              return (
-                <div key={wc} className="rivals__division">
-                  <h3 className="rivals__divname">{WEIGHT_CLASSES[wc].name}</h3>
-                  <ul className="rankings">
-                    {inDiv.map((wf) => (
-                      <RankRow key={wf.id} wf={wf} />
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  function PaperTab() {
-    if (!save) return null;
-    const { paperName, clippings } = save.press;
-    return (
-      <div className="paper">
-        <header className="paper__masthead">
-          <h2 className="paper__name">{paperName}</h2>
-          <p className="paper__tagline">Sporting Pages · {formatDate(save.dayCount).full}</p>
-        </header>
-
-        {clippings.length === 0 ? (
-          <p className="paper__empty">
-            Nothing on the local fight scene this week. Slow news is still
-            news — check back after some time passes.
-          </p>
-        ) : (
-          <div className="paper__columns">
-            {clippings.map((c, i) => (
-              <article className="clipping" key={`${c.templateId}-${c.dayCount}-${i}`}>
-                <p className="clipping__date">{formatDate(c.dayCount).compact}</p>
-                <p className="clipping__text">{c.text}</p>
-                <p className="clipping__byline">— {c.byline}</p>
-              </article>
-            ))}
-          </div>
-        )}
       </div>
     );
   }
@@ -449,15 +389,6 @@ const TIER_LABEL: Record<string, string> = {
   regional: 'Regional',
   local: 'Local',
 };
-
-/** Divisions top-down, heavyweight first, the way a ranking sheet reads. */
-const NATIONAL_DIVISIONS: WeightClassKey[] = [
-  'heavyweight',
-  'light_heavyweight',
-  'middleweight',
-  'welterweight',
-  'lightweight',
-];
 
 function tierRank(tier: string): number {
   return tier === 'established' ? 3 : tier === 'regional' ? 2 : 1;
@@ -515,17 +446,6 @@ function FighterLine({ wf }: { wf: WorldFighter }) {
       <span className="fline__class">{WEIGHT_CLASSES[wf.weightClass].name}</span>
       <span className="fline__record">{recordStr(wf)}</span>
       <span className={`fline__standing fline__standing--${standing.tone}`}>{standing.label}</span>
-    </li>
-  );
-}
-
-function RankRow({ wf }: { wf: WorldFighter }) {
-  return (
-    <li className="rankrow">
-      <span className="rankrow__rank">#{wf.nationalRank}</span>
-      <span className="rankrow__name">{worldFighterName(wf)}</span>
-      <span className="rankrow__camp">{campOf(wf)}</span>
-      <span className="rankrow__record">{recordStr(wf)}</span>
     </li>
   );
 }

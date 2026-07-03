@@ -124,7 +124,7 @@ import {
 } from '../game/upgrades';
 
 export type Screen = 'home' | 'settings' | 'newgame' | 'game';
-export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker';
+export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker' | 'press';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
 /** Gym reputation 0..1 — how known/regarded your gym is (game/reputation.ts),

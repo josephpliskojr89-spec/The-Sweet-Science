@@ -94,6 +94,11 @@ const TEMPLATE_COOLDOWN_DAYS = 70;
 
 const PAPER_KINDS = ['Courier', 'Dispatch', 'Examiner', 'Ledger', 'Register', 'Record'];
 
+/** The single national boxing magazine — the sport's authority, the home of the
+    official rankings. A fictional analog to 1975's Ring; the same for every save. */
+export const MAGAZINE_NAME = 'The American Boxing Monthly';
+export const MAGAZINE_TAGLINE = 'The word of record on the fight game since 1922';
+
 const VENUE_PLACES = [
   'Riverside', 'Mechanics', 'Union', 'Fairgrounds', 'Eastside', 'Lakeview',
   'St. Adalbert’s', 'Crown', 'Veterans', 'Coliseum Street', 'Old Market',

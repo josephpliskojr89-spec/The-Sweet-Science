@@ -69,7 +69,18 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
     ],
     arrivesIn: 'Phase 4',
   },
+  press: {
+    key: 'press',
+    name: 'The Press',
+    tagline: 'The papers and the magazine — your window on the sport.',
+    contents: [
+      'The local sporting page — results, rumor, your gym in print',
+      'The national magazine — the official rankings, division by division',
+      'Where the world reports itself, week by week',
+    ],
+    arrivesIn: 'Phase 6',
+  },
 };
 
-/** Spatial order on the floor: office | gym | locker | calendar. */
-export const ROOM_ORDER: RoomKey[] = ['office', 'gym', 'locker', 'calendar'];
+/** Spatial order on the floor. */
+export const ROOM_ORDER: RoomKey[] = ['office', 'gym', 'locker', 'press', 'calendar'];

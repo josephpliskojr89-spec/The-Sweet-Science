@@ -66,5 +66,14 @@ export function RoomGlyph({ room, size = 40 }: Props) {
           <path d="M14 24h2M29 24h2" />
         </svg>
       );
+    case 'press': // a folded newspaper
+      return (
+        <svg {...common}>
+          <rect x="9" y="12" width="30" height="24" rx="1.5" />
+          <path d="M24 12v24" />
+          <path d="M13 18h7M13 23h7M13 28h7" />
+          <path d="M28 18h7M28 23h7M28 28h5" />
+        </svg>
+      );
   }
 }

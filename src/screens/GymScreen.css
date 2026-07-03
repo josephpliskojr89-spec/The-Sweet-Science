@@ -102,9 +102,9 @@
 
 .gym__rooms {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-lg);
-  width: min(1100px, 96vw);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-md);
+  width: min(1280px, 97vw);
 }
 
 /* A room door — a lit signboard standing in the dark gym. */
