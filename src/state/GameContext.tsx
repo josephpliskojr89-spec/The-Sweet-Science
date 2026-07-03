@@ -27,7 +27,7 @@ import { type Fighter, fighterFullName } from '../game/fighters';
 import { getCity } from '../game/cities';
 import { observeGym, type LogLine } from '../game/gymLog';
 import { runLifeEvents } from '../game/lifeEvents';
-import { runPressCycle, pressItem } from '../game/press';
+import { runPressCycle, pressItem, type Clipping } from '../game/press';
 import {
   trainFighter,
   snapshotAttrs,
@@ -152,6 +152,12 @@ export interface AdvanceNotice {
   departed: Departure[];
   /** Prospects a rival signed out from under you while you deliberated (6C-3). */
   poached: PoachEvent[];
+  /** Fresh clippings this advance — the week's front page (the Monday landing). */
+  headlines: Clipping[];
+  paperName: string;
+  dateLabel: string;
+  /** A new issue came out this advance (a week boundary was crossed). */
+  newIssue: boolean;
 }
 
 interface GameContextValue {
@@ -554,12 +560,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
         });
       }
 
-      if (fresh.length || gaveUp.length || departedAll.length || poached.length) {
+      const newIssue = cycles >= 1;
+      const headlines = press.clippings.filter((c) => c.dayCount === toDay);
+      if (newIssue || fresh.length || gaveUp.length || departedAll.length || poached.length) {
         setArrival({
           arrived: fresh.map((w) => w.fighter),
           expired: gaveUp.map((w) => w.fighter),
           departed: departedAll,
           poached,
+          headlines,
+          paperName: press.paperName,
+          dateLabel: formatDate(toDay).full,
+          newIssue,
         });
       }
     },
