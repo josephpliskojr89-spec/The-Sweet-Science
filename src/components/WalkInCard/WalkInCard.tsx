@@ -72,6 +72,11 @@ export function WalkInCard({ fighter }: { fighter: Fighter }) {
           <span className="wic__impression-label">First Impression:</span>
           <span className="wic__impression-text">{fighter.firstImpression}</span>
         </div>
+
+        <div className="wic__read">
+          <span className="wic__read-label">Your Read:</span>
+          <span className="wic__read-text">{fighter.ceilingRead}</span>
+        </div>
       </div>
     </div>
   );

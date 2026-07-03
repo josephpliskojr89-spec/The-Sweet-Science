@@ -216,6 +216,27 @@
   color: #6e2415;
 }
 
+.wic__read {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(184, 138, 74, 0.45);
+}
+.wic__read-label {
+  font-family: var(--font-condensed);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 11px;
+  color: #7a6a4a;
+  margin-right: 8px;
+}
+.wic__read-text {
+  font-family: var(--font-slab);
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #c2a878;
+}
+
 @media (max-width: 420px) {
   .wic__top {
     grid-template-columns: 110px 1fr;
