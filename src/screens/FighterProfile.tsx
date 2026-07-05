@@ -1,10 +1,18 @@
 /*
-  FighterProfile
+  FighterProfile — the manila folder
   --------------------------------------------------------------------------
-  The full read on a fighter you've taken in: portrait, vitals, attributes, and
-  the traits you've learned so far. Hidden traits stay hidden — if a man has
-  more beneath the surface, the profile only hints that there's more to learn.
-  The same management actions as the Locker Room live here too.
+  OBJECT SHOT, office desk: the player has pulled this man's folder from the
+  filing cabinet and dropped it open on the blotter. Left flap: photograph
+  paper-clipped to the FIGHTER REGISTRATION card, status stamps, pencil
+  patience line. Right flap: the sheet stack under die-cut dividers —
+  assessment, fight-record form, biography, career continuation sheet, the
+  progress chart. Decisions are stamps; the standing list is a printed
+  checklist with one pencil check; the training slip lifts CARD 7-A.
+
+  The filing-drawer sliver top-left is the way back (Esc files the folder).
+  His locker-request note deals in on top but ONE CLICK slides it to the
+  margin where it stays visibly pending (DESIGN-BIBLE A4) — reading is never
+  blocked. Trait chips, meters, tab strips, and native selects are gone.
 */
 
 import { useEffect, useState } from 'react';
@@ -26,6 +34,7 @@ import {
   type AttrKey,
   type TrainingFocus,
 } from '../game/training';
+import { moodLabel } from '../game/relationship';
 import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
 import { scoutingBand, patienceFlavor } from '../game/scouting';
 import { flightRiskRead } from '../game/reputation';
@@ -33,9 +42,10 @@ import { fighterBiography, careerTimeline, yearsWithGymLabel } from '../game/bio
 import type { RosterEntry } from '../game/roster';
 import type { GameSave } from '../state/persistence';
 import { Portrait } from '../assets/portraits';
-import { AttributeBar } from '../components/AttributeBar';
-import { Sparkline } from '../components/Sparkline';
-import { MoodChip } from '../components/MoodChip';
+import { Stamp } from '../kit/Stamp';
+import { PencilCheck } from '../kit/PencilCheck';
+import { OrdersCard } from '../kit/OrdersCard';
+import { paperTilt, seedRange } from '../kit/seed';
 import './FighterProfile.css';
 
 const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`;
@@ -43,11 +53,11 @@ const signed = (n: number) => `${n >= 0 ? '+' : '−'}${Math.abs(n).toFixed(1)}`
 type ProfileTab = 'overview' | 'record' | 'biography' | 'career' | 'development';
 
 const TABS: { key: ProfileTab; label: string; lockerOnly?: boolean }[] = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'record', label: 'Record' },
-  { key: 'biography', label: 'Biography' },
-  { key: 'career', label: 'Career' },
-  { key: 'development', label: 'Development', lockerOnly: true },
+  { key: 'overview', label: 'ASSESSMENT' },
+  { key: 'record', label: 'RECORD' },
+  { key: 'biography', label: 'BIOGRAPHY' },
+  { key: 'career', label: 'CAREER' },
+  { key: 'development', label: 'PROGRESS', lockerOnly: true },
 ];
 
 export function FighterProfile() {
@@ -68,21 +78,28 @@ export function FighterProfile() {
   } = useGame();
   const [confirmingCut, setConfirmingCut] = useState(false);
   const [tab, setTab] = useState<ProfileTab>('overview');
+  const [ordersOpen, setOrdersOpen] = useState(false);
+  const [noteAside, setNoteAside] = useState(false);
 
   useEffect(() => {
     setConfirmingCut(false);
     setTab('overview');
+    setOrdersOpen(false);
+    setNoteAside(false);
   }, [profileId]);
 
-  // Esc closes the profile — unless the walk-in viewer is layered above us.
+  // Esc: file the orders card, then the folder — unless the walk-in viewer
+  // is layered above us.
   useEffect(() => {
     if (!profileId || viewerIds !== null) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeProfile();
+      if (e.key !== 'Escape') return;
+      if (ordersOpen) setOrdersOpen(false);
+      else closeProfile();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [profileId, viewerIds, closeProfile]);
+  }, [profileId, viewerIds, closeProfile, ordersOpen]);
 
   if (!save || !profileId) return null;
   const entry = save.roster.find((e) => e.fighter.id === profileId);
@@ -92,469 +109,608 @@ export function FighterProfile() {
   const cls = WEIGHT_CLASSES[f.weightClass];
   const home = getCity(f.homeCityId);
   const dev = developmentState(entry);
-  // A trialist you haven't committed to is read in fog: no precise dev feel, no
-  // progression charting — those come with a locker.
   const feel = entry.hasLocker && f.growthKnown ? devFeel(f.growth) : null;
   const lockersFull = lockersUsed(save) >= lockerCap;
   const noLockerFull = noLockerUsed(save) >= noLockerCap;
   const days = save.dayCount - entry.joinedDayCount;
   const weeks = Math.max(0, Math.floor(days / 7));
-  const tenure = days <= 0 ? 'Joined today' : days === 1 ? 'With you 1 day' : `With you ${days} days`;
-  // The Development tab is for committed men only; a trialist can't be charted.
   const shownTab: ProfileTab = tab === 'development' && !entry.hasLocker ? 'overview' : tab;
-  // Rival interest in a man you haven't kept happy — a threat you can see coming.
   const flight = entry.hasLocker ? flightRiskRead(entry.poachInterest) : null;
+  const tabName = `${f.lastName.toUpperCase()}, ${f.firstName.charAt(0).toUpperCase()}.`;
 
   return (
-    <div className="fp worn" role="dialog" aria-label={fighterFullName(f)}>
-      <div className="fp__backdrop" aria-hidden="true" />
+    <div className="fshot" role="dialog" aria-label={fighterFullName(f)}>
+      {/* the way back: the open drawer this folder came from */}
+      <button className="fshot__drawer" onClick={closeProfile} aria-label="File the folder — back to the Locker Room (Esc)">
+        <span className="fshot__drawer-face" aria-hidden="true">
+          <span className="fshot__drawer-label">ROSTER — ACTIVE</span>
+          <span className="fshot__drawer-gap" />
+        </span>
+      </button>
 
-      <header className="fp__chrome">
-        <button className="fp__back" onClick={closeProfile} title="Back (Esc)">
-          ← Back
-        </button>
-        <span className="fp__breadcrumb">Locker Room · Fighter</span>
-      </header>
+      <article className="ffolder" style={paperTilt(f.id, 0.8, 3)}>
+        {/* the folder's edge tab */}
+        <span className="ffolder__nametab" aria-hidden="true">
+          {tabName}
+        </span>
 
-      <div className="fp__body">
-        <article className="fp__card">
-          {/* Left column — portrait + vitals + status */}
-          <div className="fp__left">
-            <div className="fp__portrait">
-              <Portrait appearance={f.appearance} size={200} />
+        {/* die-cut dividers along the top edge */}
+        <nav className="ffolder__tabs" aria-label="Folder sections">
+          {TABS.map((t, i) => {
+            const locked = t.lockerOnly && !entry.hasLocker;
+            return (
+              <button
+                key={t.key}
+                className={
+                  'ffolder__tab' +
+                  (shownTab === t.key ? ' ffolder__tab--held' : '') +
+                  (locked ? ' ffolder__tab--dusty' : '') +
+                  (i === 2 ? ' ffolder__tab--dogear' : '')
+                }
+                onClick={() => setTab(t.key)}
+                disabled={locked}
+                title={locked ? 'Give him a locker to chart his development' : undefined}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* pink flight-risk memo breaking the silhouette */}
+        {flight && (
+          <div
+            className="ffolder__memo"
+            style={paperTilt(f.id + 'memo', 2, 2)}
+            title="Other gyms have noticed he's unhappy. Mend the relationship or you may lose him."
+          >
+            <span className="ffolder__memo-head" aria-hidden="true">
+              WHILE YOU WERE OUT
+            </span>
+            <span className="ffolder__memo-line">{flight.label.toUpperCase()}</span>
+            <span className="ffolder__memo-line ffolder__memo-line--fine">
+              other gyms have noticed — mend it or lose him
+            </span>
+            <Stamp word="FLIGHT RISK" category="trajectory" seedId={f.id + 'fl'} size="sm" />
+          </div>
+        )}
+
+        {/* left flap: the registration card */}
+        <div className="ffolder__left">
+          <div className="regcard on-paper">
+            <span className="regcard__formno" aria-hidden="true">
+              FIGHTER REGISTRATION — FORM 3-A REV. 6/73
+            </span>
+            <div className="regcard__photo" style={paperTilt(f.id + 'ph', 2, 1)}>
+              <Portrait appearance={f.appearance} size={148} />
+              <span className="regcard__clip" aria-hidden="true" />
             </div>
-
-            <h2 className="fp__name">
-              {f.firstName}{' '}
-              {f.nickname && <span className="fp__nick">“{f.nickname}”</span>}{' '}
-              {f.lastName}
+            <h2 className="regcard__name">
+              {f.lastName.toUpperCase()}, {f.firstName.toUpperCase()}
+              {f.nickname && <span className="regcard__nick"> — “{f.nickname}”</span>}
             </h2>
-
-            <dl className="fp__vitals">
-              <div><dt>Age</dt><dd>{fighterAge(f)}</dd></div>
-              <div><dt>Height</dt><dd>{formatHeight(f.heightInches)}</dd></div>
-              <div><dt>Weight</dt><dd>{f.weightLbs} lbs</dd></div>
-              <div><dt>Class</dt><dd>{cls.name}</dd></div>
-              <div><dt>From</dt><dd>{home.name}</dd></div>
+            <dl className="regcard__fields">
+              <div>
+                <dt>AGE</dt>
+                <dd>{fighterAge(f)}</dd>
+              </div>
+              <div>
+                <dt>HT.</dt>
+                <dd>{formatHeight(f.heightInches)}</dd>
+              </div>
+              <div>
+                <dt>WT.</dt>
+                <dd>{f.weightLbs} LBS</dd>
+              </div>
+              <div>
+                <dt>CLASS</dt>
+                <dd>{cls.name.toUpperCase()}</dd>
+              </div>
+              <div>
+                <dt>HOME</dt>
+                <dd>{home.name.toUpperCase()}</dd>
+              </div>
             </dl>
 
-            <div className="fp__status">
-              <span className={'fp__locker' + (entry.hasLocker ? ' fp__locker--on' : '')}>
-                {entry.hasLocker ? '● Has a locker' : '○ No locker — limited training'}
-              </span>
-              <span className="fp__mood-row">
-                <span className="fp__mood-label">Mood</span>
-                <MoodChip entry={entry} />
-              </span>
-              <span className="fp__tenure">{tenure}</span>
-              {flight && (
-                <span
-                  className={`fp__flight fp__flight--${flight.tone}`}
-                  title="Other gyms have noticed he's unhappy. Mend the relationship or you may lose him."
-                >
-                  ⚑ {flight.label}
-                </span>
+            <div className="regcard__status">
+              {entry.hasLocker ? (
+                <Stamp word="LOCKER" category="scouting" seedId={f.id + 'lk'} size="md" />
+              ) : (
+                <Stamp word="TRIAL — NO LOCKER" category="trajectory" seedId={f.id + 'tr'} size="md" />
               )}
+              <Stamp
+                word={moodLabel(entry).label.toUpperCase()}
+                category="mood"
+                seedId={f.id + 'md'}
+                size="sm"
+              />
+              <span className="regcard__tenure">
+                {days <= 0 ? 'JOINED TODAY' : `IN GYM ${days} ${days === 1 ? 'DAY' : 'DAYS'}`}
+              </span>
               {!entry.hasLocker && (
-                <span className="fp__patience">{patienceFlavor(entry.trialPatience)}</span>
+                <span className="regcard__patience">{patienceFlavor(entry.trialPatience)}</span>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Right column — tabbed: Overview / Development */}
-          <div className="fp__right">
-            {!entry.hasLocker && entry.lockerRequested && (
-              <div className="fp__request" role="group" aria-label="He's asking about a locker">
-                <p className="fp__request-quote">
-                  “Coach, I’ve been here every night for months. Do you see a future for me
-                  here, or am I wasting my time?”
-                </p>
-                <div className="fp__request-actions">
-                  <button
-                    className="fp__request-btn fp__request-btn--give"
-                    disabled={lockersFull}
-                    onClick={() => respondLockerRequest(f.id, 'grant')}
-                    title={lockersFull ? 'Every locker is full' : undefined}
-                  >
-                    Give him a locker
-                  </button>
-                  <button
-                    className="fp__request-btn"
-                    onClick={() => respondLockerRequest(f.id, 'wait')}
-                  >
-                    Ask him to keep waiting
-                  </button>
-                  <button
-                    className="fp__request-btn"
-                    onClick={() => respondLockerRequest(f.id, 'honest')}
-                  >
-                    Be honest — no room
-                  </button>
-                </div>
-              </div>
-            )}
-            <nav className="fp__tabs" aria-label="Profile sections">
-              {TABS.map((t) => {
-                const locked = t.lockerOnly && !entry.hasLocker;
-                return (
-                  <button
-                    key={t.key}
-                    className={'fp__tab' + (shownTab === t.key ? ' fp__tab--on' : '')}
-                    onClick={() => setTab(t.key)}
-                    disabled={locked}
-                    title={locked ? 'Give him a locker to chart his development' : undefined}
-                  >
-                    {t.label}
-                  </button>
-                );
-              })}
-            </nav>
+        {/* right flap: the active sheet */}
+        <div className="ffolder__right" key={shownTab}>
+          {shownTab === 'overview' && (
+            <AssessmentSheet
+              entry={entry}
+              save={save}
+              feel={feel}
+              dev={dev}
+              lockersFull={lockersFull}
+              noLockerFull={noLockerFull}
+              confirmingCut={confirmingCut}
+              setConfirmingCut={setConfirmingCut}
+              ordersOpen={ordersOpen}
+              setOrdersOpen={setOrdersOpen}
+              onSetTier={(t) => setTier(f.id, t)}
+              onSetFocus={(v) => setFocus(f.id, v)}
+              onSetTrainer={(id) => setTrainer(f.id, id)}
+              onLocker={(give) => setLocker(f.id, give)}
+              onCut={() => (entry.hasLocker ? cutFighter(f.id) : stopConsidering(f.id))}
+            />
+          )}
+          {shownTab === 'record' && <RecordSheet entry={entry} save={save} />}
+          {shownTab === 'biography' && <BiographySheet entry={entry} save={save} />}
+          {shownTab === 'career' && <CareerSheet entry={entry} save={save} />}
+          {shownTab === 'development' && (
+            <ProgressChart entry={entry} save={save} weeks={weeks} />
+          )}
+        </div>
 
-            {shownTab === 'record' && <RecordPanel entry={entry} save={save} />}
-            {shownTab === 'biography' && <BiographyPanel entry={entry} save={save} />}
-            {shownTab === 'career' && <CareerPanel entry={entry} save={save} />}
-
-            {shownTab === 'development' && (
-              <section className="fp__section">
-                <div className="fp__section-head">
-                  <h3 className="fp__section-title">Development</h3>
-                  <div className="fp__dev">
-                    {entry.focus && (
-                      <span className="fp__focus-tag">Focused · {focusLabel(entry.focus)}</span>
-                    )}
-                    <span className={`fp__dev-tag fp__dev-tag--${dev.tone}`}>{dev.label}</span>
-                  </div>
-                </div>
-
-                <div className="fp__track">
-                  {ATTR_KEYS.map((k: AttrKey) => {
-                    const tr = attributeTrend(entry, k, save.dayCount);
-                    const cls2 =
-                      tr.totalChange >= 0.05 ? 'up' : tr.totalChange <= -0.05 ? 'down' : 'flat';
-                    return (
-                      <div className="fp__track-row" key={k}>
-                        <span className="fp__track-label">{ATTR_LABELS[k]}</span>
-                        <Sparkline values={attributeSeries(entry, k)} trend={tr.dir} />
-                        <span className="fp__track-now">{Math.round(f.attributes[k])}</span>
-                        <span className={`fp__track-change fp__track-change--${cls2}`}>
-                          {signed(tr.totalChange)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <p className="fp__track-note">
-                  {weeks < 2
-                    ? 'Not much to chart yet — give it a few weeks of training.'
-                    : `Arrows show recent form; totals are the change since he walked in ${weeks} weeks ago.`}
-                </p>
-              </section>
-            )}
-
-            {shownTab === 'overview' && (
-              <>
-            <section className="fp__section">
-              <div className="fp__section-head">
-                <h3 className="fp__section-title">Attributes</h3>
-                <div className="fp__dev">
-                  {feel && (
-                    <span className={`fp__feel-tag fp__feel-tag--${feel.tone}`} title={feel.blurb}>
-                      {feel.label}
-                    </span>
-                  )}
-                  {entry.focus && (
-                    <span className="fp__focus-tag">Focused · {focusLabel(entry.focus)}</span>
-                  )}
-                  <span className={`fp__dev-tag fp__dev-tag--${dev.tone}`}>{dev.label}</span>
-                </div>
-              </div>
-              <div className="fp__attrs">
-                {entry.hasLocker
-                  ? ATTR_KEYS.map((key: AttrKey) => {
-                      const tr = attributeTrend(entry, key, save.dayCount);
-                      return (
-                        <AttributeBar
-                          key={key}
-                          label={ATTR_LABELS[key]}
-                          value={f.attributes[key]}
-                          trend={tr.dir}
-                          tooltip={`${signed(tr.windowChange)} recent · ${signed(tr.totalChange)} since he arrived`}
-                        />
-                      );
-                    })
-                  : ATTR_KEYS.map((key: AttrKey) => (
-                      <AttributeBar
-                        key={key}
-                        label={ATTR_LABELS[key]}
-                        value={f.attributes[key]}
-                        band={scoutingBand(f.attributes[key], days)}
-                      />
-                    ))}
-              </div>
-              <p className="fp__scout-note">
-                <span className="fp__scout-label">Your read</span>
-                {f.ceilingRead}
-              </p>
-              {!entry.hasLocker && (
-                <p className="fp__fog-note">
-                  You haven’t committed to him — this is a coach’s eye, not a measurement.
-                  Give him a locker and you’ll see exactly what he is.
-                </p>
-              )}
-            </section>
-
-            <section className="fp__section">
-              <h3 className="fp__section-title">What You Know</h3>
-              {f.visibleTraits.length === 0 ? (
-                <p className="fp__notrait">
-                  Nothing obvious yet. Time in the gym will tell you who he is.
-                </p>
-              ) : (
-                <ul className="fp__traits">
-                  {f.visibleTraits.map((t) => (
-                    <li key={t} className="fp__trait">
-                      <span className="fp__trait-name">{TRAITS[t].name}</span>
-                      <span className="fp__trait-blurb">{TRAITS[t].blurb}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {f.hiddenTraits.length > 0 && (
-                <p className="fp__more">There’s more to this man than you’ve seen yet.</p>
-              )}
-            </section>
-
-            <section className="fp__section">
-              <h3 className="fp__section-title">Standing &amp; Training</h3>
-              <div className="fp__actions">
-                <div className="fp__tiers" role="group" aria-label="Hierarchy">
-                  {TIER_ORDER.map((t) => (
-                    <button
-                      key={t}
-                      className={'fp__tier' + (entry.tier === t ? ' fp__tier--on' : '')}
-                      onClick={() => setTier(f.id, t as HierarchyTier)}
-                      title={TIER_META[t].blurb}
-                    >
-                      {TIER_META[t].name}
-                    </button>
-                  ))}
-                </div>
-
-                {entry.hasLocker ? (
-                  <div className="fp__training-block">
-                    <label className="fp__training">
-                      <span className="fp__training-label">Training</span>
-                      <select
-                        className="fp__focus-select"
-                        value={entry.focus ?? ''}
-                        onChange={(e) =>
-                          setFocus(f.id, e.target.value === '' ? null : (e.target.value as TrainingFocus))
-                        }
-                      >
-                        <option value="">General training</option>
-                        <option value="rounded">Focus · Well-rounded</option>
-                        {ATTR_KEYS.map((k) => (
-                          <option key={k} value={k}>
-                            Focus · {ATTR_LABELS[k]}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-
-                    {entry.focus !== null && (() => {
-                      const usedMgr = save.roster.filter((e) => e.focus !== null && e.coachId === null).length;
-                      const mgrFree = FOCUS_SLOTS_BASE - usedMgr + (entry.coachId === null ? 1 : 0);
-                      const assigned = entry.coachId
-                        ? save.coaches.find((c) => c.id === entry.coachId)
-                        : null;
-                      const chem = assigned
-                        ? chemistryRead(
-                            coachChemistry(assigned, [...f.visibleTraits, ...f.hiddenTraits], f.age),
-                          )
-                        : null;
-                      return (
-                        <>
-                          <label className="fp__training">
-                            <span className="fp__training-label">Trainer</span>
-                            <select
-                              className="fp__focus-select"
-                              value={entry.coachId ?? ''}
-                              onChange={(e) => setTrainer(f.id, e.target.value === '' ? null : e.target.value)}
-                            >
-                              <option value="">You · {Math.max(0, mgrFree)} free</option>
-                              {save.coaches.map((c) => {
-                                const used = save.roster.filter(
-                                  (x) => x.focus !== null && x.coachId === c.id,
-                                ).length;
-                                const free = c.slots - used + (entry.coachId === c.id ? 1 : 0);
-                                return (
-                                  <option key={c.id} value={c.id}>
-                                    {c.name} ({specialtyName(c.specialty)}) · {Math.max(0, free)} free
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </label>
-                          {chem && (
-                            <p className={`fp__chem fp__chem--${chem.tone}`}>
-                              {assigned!.name}: <strong>{chem.label}</strong>
-                            </p>
-                          )}
-                        </>
-                      );
-                    })()}
-                  </div>
-                ) : (
-                  <p className="fp__training-note">
-                    No locker — limited training. Give him a locker to assign focus.
-                  </p>
-                )}
-
-                <div className="fp__action-row">
-                  {entry.hasLocker ? (
-                    <button
-                      className="fp__act"
-                      disabled={noLockerFull}
-                      onClick={() => setLocker(f.id, false)}
-                      title={noLockerFull ? 'No room to carry another without a locker' : undefined}
-                    >
-                      Take his locker
-                    </button>
-                  ) : (
-                    <button
-                      className="fp__act fp__act--give"
-                      disabled={lockersFull}
-                      onClick={() => setLocker(f.id, true)}
-                      title={lockersFull ? 'Every locker is full' : undefined}
-                    >
-                      Give him a locker
-                    </button>
-                  )}
-
-                  {confirmingCut ? (
-                    <span className="fp__confirm">
-                      <span className="fp__confirm-q">
-                        {entry.hasLocker ? 'Cut him loose?' : 'Stop considering him?'}
-                      </span>
-                      <button
-                        className="fp__cut-yes"
-                        onClick={() => {
-                          if (entry.hasLocker) cutFighter(f.id);
-                          else stopConsidering(f.id);
-                          setConfirmingCut(false);
-                        }}
-                      >
-                        Confirm
-                      </button>
-                      <button className="fp__cut-no" onClick={() => setConfirmingCut(false)}>
-                        Cancel
-                      </button>
-                    </span>
-                  ) : (
-                    <button className="fp__act fp__act--cut" onClick={() => setConfirmingCut(true)}>
-                      {entry.hasLocker ? 'Cut from the gym' : 'Stop considering'}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </section>
-              </>
+        {/* his note, lying on the folder — one click sets it aside (A4) */}
+        {!entry.hasLocker && entry.lockerRequested && (
+          <div
+            className={'reqnote' + (noteAside ? ' reqnote--aside' : '')}
+            role="group"
+            aria-label="He's asking about a locker"
+          >
+            <p className="reqnote__quote">
+              “Coach, I’ve been here every night for months. Do you see a future for me here,
+              or am I wasting my time?”
+            </p>
+            <div className="reqnote__slip on-paper">
+              <span className="reqnote__slip-head" aria-hidden="true">
+                RESPONSE — STAMP ONE
+              </span>
+              <button
+                className="reqnote__stamp reqnote__stamp--give"
+                disabled={lockersFull}
+                onClick={() => respondLockerRequest(f.id, 'grant')}
+              >
+                LOCKER
+                {lockersFull && <span className="reqnote__reason">EVERY LOCKER FULL</span>}
+              </button>
+              <button className="reqnote__stamp" onClick={() => respondLockerRequest(f.id, 'wait')}>
+                KEEP WAITING
+              </button>
+              <button
+                className="reqnote__stamp reqnote__stamp--no"
+                onClick={() => respondLockerRequest(f.id, 'honest')}
+              >
+                NO ROOM
+              </button>
+            </div>
+            {!noteAside && (
+              <button className="reqnote__aside" onClick={() => setNoteAside(true)}>
+                SET IT ASIDE FOR NOW
+              </button>
             )}
           </div>
-        </article>
-      </div>
+        )}
+      </article>
     </div>
   );
 }
 
-/* ---------- Record ---------- */
+/* ------------------------------------------------------------------ */
+/* ASSESSMENT SHEET — attributes, observations, standing, training     */
+/* ------------------------------------------------------------------ */
 
-function RecordPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
-  const cells: { label: string; value: string; sub?: string }[] = [
-    { label: 'Professional', value: '0–0–0', sub: 'No pro fights yet' },
-    { label: 'Amateur', value: 'Unrecorded' },
-    { label: 'KO Wins', value: '0' },
-    { label: 'KO Losses', value: '0' },
-    { label: 'Current Streak', value: '—' },
-    { label: 'Titles Held', value: 'None' },
-    { label: 'Ranking', value: 'Unranked' },
-    { label: 'Years With Gym', value: yearsWithGymLabel(entry, save.dayCount) },
-    { label: 'Career Earnings', value: '$0' },
-  ];
+function AssessmentSheet({
+  entry,
+  save,
+  feel,
+  dev,
+  lockersFull,
+  noLockerFull,
+  confirmingCut,
+  setConfirmingCut,
+  ordersOpen,
+  setOrdersOpen,
+  onSetTier,
+  onSetFocus,
+  onSetTrainer,
+  onLocker,
+  onCut,
+}: {
+  entry: RosterEntry;
+  save: GameSave;
+  feel: { label: string; tone: string; blurb: string } | null;
+  dev: { label: string; tone: string };
+  lockersFull: boolean;
+  noLockerFull: boolean;
+  confirmingCut: boolean;
+  setConfirmingCut: (b: boolean) => void;
+  ordersOpen: boolean;
+  setOrdersOpen: (b: boolean) => void;
+  onSetTier: (t: HierarchyTier) => void;
+  onSetFocus: (v: TrainingFocus | null) => void;
+  onSetTrainer: (id: string | null) => void;
+  onLocker: (give: boolean) => void;
+  onCut: () => void;
+}) {
+  const f = entry.fighter;
+  const days = save.dayCount - entry.joinedDayCount;
+  const slotsFull =
+    save.roster.filter((e) => e.focus !== null).length >=
+    FOCUS_SLOTS_BASE + save.coaches.reduce((n, c) => n + c.slots, 0);
+
   return (
-    <section className="fp__section">
-      <div className="fp__section-head">
-        <h3 className="fp__section-title">Boxing Record</h3>
+    <div className="sheet on-paper">
+      <header className="sheet__head">
+        <span className="sheet__title">{entry.hasLocker ? 'ASSESSMENT' : 'TRIAL ASSESSMENT'}</span>
+        <span className="sheet__stamps">
+          {!entry.hasLocker && <Stamp word="LIMITED" category="trajectory" seedId={f.id + 'lim'} size="sm" />}
+          {feel && (
+            <span title={feel.blurb}>
+              <Stamp word={feel.label.toUpperCase()} category="scouting" seedId={f.id + 'fe'} size="sm" />
+            </span>
+          )}
+          <Stamp word={dev.label.toUpperCase()} category="trajectory" seedId={f.id + 'dv'} size="sm" />
+        </span>
+      </header>
+
+      {/* the printed scales */}
+      <div className="scales">
+        {ATTR_KEYS.map((k: AttrKey) => {
+          const val = f.attributes[k];
+          if (entry.hasLocker) {
+            const tr = attributeTrend(entry, k, save.dayCount);
+            const word =
+              tr.totalChange >= 0.05 ? 'coming on' : tr.totalChange <= -0.05 ? 'slipping' : '';
+            return (
+              <div
+                className="scale"
+                key={k}
+                title={`${signed(tr.windowChange)} recent · ${signed(tr.totalChange)} since he arrived`}
+              >
+                <span className="scale__label">{ATTR_LABELS[k].toUpperCase()}</span>
+                <span className="scale__num">{Math.round(val)}</span>
+                <span className="scale__rule">
+                  <PencilStroke widthPct={val} seedId={f.id + k} />
+                </span>
+                <span className="scale__word">{word}</span>
+              </div>
+            );
+          }
+          const band = scoutingBand(val, days);
+          return (
+            <div className="scale" key={k}>
+              <span className="scale__label">{ATTR_LABELS[k].toUpperCase()}</span>
+              <span className="scale__num scale__num--band">
+                {band.label ? band.label.toUpperCase() : '?'}
+              </span>
+              <span className="scale__rule">
+                {band.label && (
+                  <span
+                    className="scale__hatch"
+                    style={{ width: `${Math.round(band.fill * 100)}%` }}
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
+              <span className="scale__word" />
+            </div>
+          );
+        })}
       </div>
-      <div className="fp__rec-grid">
-        {cells.map((c) => (
-          <div className="fp__rec" key={c.label}>
-            <span className="fp__rec-label">{c.label}</span>
-            <span className="fp__rec-value">{c.value}</span>
-            {c.sub && <span className="fp__rec-sub">{c.sub}</span>}
-          </div>
-        ))}
-      </div>
-      <p className="fp__scaffold-note">
-        His professional career hasn’t started. Once you’re booking fights, his
-        record, rankings, titles, and purse history will all live on this page.
-      </p>
-    </section>
+      <p className="sheet__pencil">“{f.ceilingRead}”</p>
+      {!entry.hasLocker && (
+        <p className="sheet__fineprint">
+          COACH'S EYE ONLY — NOT A MEASUREMENT. ASSIGN LOCKER FOR FULL ASSESSMENT.
+        </p>
+      )}
+
+      {/* OBSERVATIONS */}
+      <section className="obs">
+        <h3 className="sheet__subhead">OBSERVATIONS</h3>
+        {f.visibleTraits.length === 0 ? (
+          <p className="obs__pencil">nothing obvious yet — time will tell</p>
+        ) : (
+          <ul className="obs__list">
+            {f.visibleTraits.map((t, i) => (
+              <li className="obs__entry" key={t} style={{ opacity: 0.9 + ((i * 7) % 10) / 100 }}>
+                <span className="obs__trait">{TRAITS[t].name.toUpperCase()}</span>
+                <span className="obs__blurb">{TRAITS[t].blurb}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {f.hiddenTraits.length > 0 && (
+          <p className="obs__pencil">more to this man than he's shown</p>
+        )}
+      </section>
+
+      {/* STANDING checklist */}
+      <section className="standing">
+        <h3 className="sheet__subhead">STANDING</h3>
+        <div className="standing__list" role="radiogroup" aria-label="Hierarchy">
+          {TIER_ORDER.map((t) => (
+            <button
+              key={t}
+              role="radio"
+              aria-checked={entry.tier === t}
+              className="standing__line"
+              title={TIER_META[t].blurb}
+              onClick={() => onSetTier(t as HierarchyTier)}
+            >
+              <span className="standing__box" aria-hidden="true">
+                {entry.tier === t && <PencilCheck seedId={f.id + t} />}
+              </span>
+              {TIER_META[t].name.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* TRAINING ASSIGNMENT slip */}
+      <section className="tslip">
+        <h3 className="sheet__subhead">TRAINING ASSIGNMENT</h3>
+        {entry.hasLocker ? (
+          <>
+            <span className="tslip__orders">
+              <span className="tslip__printed">FOCUS:</span>
+              <button
+                className="tslip__line"
+                onClick={() => setOrdersOpen(!ordersOpen)}
+                aria-expanded={ordersOpen}
+              >
+                {entry.focus === null ? 'GEN. TRAINING' : focusLabel(entry.focus).toUpperCase()}
+              </button>
+              {ordersOpen && (
+                <OrdersCard
+                  entry={entry}
+                  slotsFull={slotsFull}
+                  onPick={(v) => {
+                    onSetFocus(v);
+                    setOrdersOpen(false);
+                  }}
+                  onClose={() => setOrdersOpen(false)}
+                />
+              )}
+            </span>
+
+            {entry.focus !== null && (
+              <TrainerChecklist entry={entry} save={save} onSetTrainer={onSetTrainer} />
+            )}
+          </>
+        ) : (
+          <p className="tslip__struck">NO LOCKER — LIMITED TRAINING</p>
+        )}
+
+        {/* the action line: stamps */}
+        <div className="tslip__actions">
+          {entry.hasLocker ? (
+            <button className="tslip__stamp tslip__stamp--violet" disabled={noLockerFull} onClick={() => onLocker(false)}>
+              PULL LOCKER
+              {noLockerFull && <span className="tslip__reason">NO ROOM OFF THE WALL</span>}
+            </button>
+          ) : (
+            <button className="tslip__stamp tslip__stamp--violet" disabled={lockersFull} onClick={() => onLocker(true)}>
+              ASSIGN LOCKER
+              {lockersFull && <span className="tslip__reason">EVERY LOCKER FULL</span>}
+            </button>
+          )}
+
+          {confirmingCut ? (
+            <span className="tslip__confirm">
+              <span className="tslip__confirm-q">STRIKE FROM ROSTER? —</span>
+              <button className="tslip__stamp tslip__stamp--red" onClick={onCut}>
+                {entry.hasLocker ? 'RELEASED' : 'PASSED ON'}
+              </button>
+              <button className="tslip__stamp" onClick={() => setConfirmingCut(false)}>
+                CANCEL
+              </button>
+            </span>
+          ) : (
+            <button className="tslip__stamp tslip__stamp--red tslip__stamp--faint" onClick={() => setConfirmingCut(true)}>
+              {entry.hasLocker ? 'RELEASED' : 'PASSED ON'}
+            </button>
+          )}
+        </div>
+      </section>
+    </div>
   );
 }
 
-/* ---------- Biography ---------- */
+/** the inline printed trainer checklist (≤7 options → checklist, A13) */
+function TrainerChecklist({
+  entry,
+  save,
+  onSetTrainer,
+}: {
+  entry: RosterEntry;
+  save: GameSave;
+  onSetTrainer: (id: string | null) => void;
+}) {
+  const f = entry.fighter;
+  const usedMgr = save.roster.filter((e) => e.focus !== null && e.coachId === null).length;
+  const mgrFree = Math.max(0, FOCUS_SLOTS_BASE - usedMgr + (entry.coachId === null ? 1 : 0));
+  const assigned = entry.coachId ? save.coaches.find((c) => c.id === entry.coachId) : null;
+  const chem = assigned
+    ? chemistryRead(coachChemistry(assigned, [...f.visibleTraits, ...f.hiddenTraits], f.age))
+    : null;
 
-function BiographyPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  return (
+    <div className="trainers" role="radiogroup" aria-label="Trainer">
+      <span className="tslip__printed">TRAINER:</span>
+      <button
+        role="radio"
+        aria-checked={entry.coachId === null}
+        className={'trainers__line' + (mgrFree === 0 && entry.coachId !== null ? ' trainers__line--dusty' : '')}
+        disabled={mgrFree === 0 && entry.coachId !== null}
+        onClick={() => onSetTrainer(null)}
+      >
+        <span className="orders__box" aria-hidden="true">
+          {entry.coachId === null && <PencilCheck seedId={f.id + 'you'} />}
+        </span>
+        YOU — {mgrFree} FREE
+      </button>
+      {save.coaches.map((c) => {
+        const used = save.roster.filter((x) => x.focus !== null && x.coachId === c.id).length;
+        const free = Math.max(0, c.slots - used + (entry.coachId === c.id ? 1 : 0));
+        const dusty = free === 0 && entry.coachId !== c.id;
+        return (
+          <button
+            key={c.id}
+            role="radio"
+            aria-checked={entry.coachId === c.id}
+            className={'trainers__line' + (dusty ? ' trainers__line--dusty' : '')}
+            disabled={dusty}
+            onClick={() => onSetTrainer(c.id)}
+          >
+            <span className="orders__box" aria-hidden="true">
+              {entry.coachId === c.id && <PencilCheck seedId={f.id + c.id} />}
+            </span>
+            {c.name.toUpperCase()} ({specialtyName(c.specialty).toUpperCase()}) —{' '}
+            {dusty ? 'FULL' : `${free} FREE`}
+          </button>
+        );
+      })}
+      {chem && assigned && (
+        <p className="trainers__chem">
+          <strong>{chem.label.toUpperCase()}</strong>{' '}
+          <span className="trainers__chem-pencil">— he and {assigned.name.split(' ')[0]}, we'll see</span>
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** flat-ended grease-pencil stroke, exactly proportional */
+function PencilStroke({ widthPct, seedId }: { widthPct: number; seedId: string }) {
+  const j = seedRange(seedId, -0.6, 0.6, 2);
+  return (
+    <svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true">
+      <line
+        x1="1"
+        y1={4 + j}
+        x2={Math.max(2, widthPct)}
+        y2={4 - j}
+        stroke="var(--ink-graphite)"
+        strokeWidth="4"
+        filter="url(#pencil-wobble)"
+      />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* RECORD — FORM 7-B                                                   */
+/* ------------------------------------------------------------------ */
+
+function RecordSheet({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  const cells: { label: string; value: string }[] = [
+    { label: 'PROFESSIONAL', value: '0–0–0' },
+    { label: 'AMATEUR', value: 'UNRECORDED' },
+    { label: 'KO WINS', value: '0' },
+    { label: 'KO LOSSES', value: '0' },
+    { label: 'CURRENT STREAK', value: '—' },
+    { label: 'TITLES HELD', value: 'NONE' },
+    { label: 'RANKING', value: 'UNRANKED' },
+    { label: 'WITH GYM', value: yearsWithGymLabel(entry, save.dayCount).toUpperCase() },
+    { label: 'CAREER EARNINGS', value: '$0.00' },
+  ];
+  return (
+    <div className="sheet on-paper">
+      <header className="sheet__head">
+        <span className="sheet__title">FIGHT RECORD</span>
+        <span className="sheet__formno">FORM 7-B REV. 3/71</span>
+      </header>
+      <div className="recform">
+        {cells.map((c) => (
+          <div className="recform__box" key={c.label}>
+            <span className="recform__caption">{c.label}</span>
+            <span className="recform__value">{c.value}</span>
+          </div>
+        ))}
+      </div>
+      <div className="boutledger">
+        <div className="boutledger__head">
+          <span>DATE</span>
+          <span>OPPONENT</span>
+          <span>RESULT</span>
+          <span>PURSE</span>
+        </div>
+        {Array.from({ length: 7 }, (_, i) => (
+          <div className="boutledger__rule" key={i} />
+        ))}
+      </div>
+      <p className="sheet__fineprint">
+        RECORD ALL BOUTS AS FOUGHT. RANKINGS, TITLES, AND PURSES ENTERED ON SETTLEMENT.
+      </p>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* BIOGRAPHY / CAREER / PROGRESS                                       */
+/* ------------------------------------------------------------------ */
+
+function BiographySheet({ entry, save }: { entry: RosterEntry; save: GameSave }) {
   const paras = fighterBiography(entry, save.dayCount);
   return (
-    <section className="fp__section">
-      <div className="fp__section-head">
-        <h3 className="fp__section-title">Biography</h3>
-      </div>
-      <div className="fp__bio">
+    <div className="sheet on-paper">
+      <header className="sheet__head">
+        <span className="sheet__title">BIOGRAPHY</span>
+      </header>
+      <div className="bio">
         {paras.map((p, i) => {
           const quote = p.startsWith('In his own words');
           const impression = p.startsWith('Your first read');
-          const cls =
-            'fp__bio-para' +
-            (quote ? ' fp__bio-quote' : '') +
-            (impression ? ' fp__bio-impression' : '');
+          if (impression) {
+            return (
+              <p className="bio__pencil" key={i}>
+                {p}
+              </p>
+            );
+          }
           return (
-            <p className={cls} key={i}>
+            <p className={'bio__para' + (quote ? ' bio__quote' : '')} key={i}>
               {p}
             </p>
           );
         })}
       </div>
-      <p className="fp__scaffold-note">
-        This page fills in as you learn who he is — every trait you uncover and
-        every turn of his career adds to the story.
-      </p>
-    </section>
+    </div>
   );
 }
 
-/* ---------- Career ---------- */
-
-function CareerPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+function CareerSheet({ entry, save }: { entry: RosterEntry; save: GameSave }) {
   const moments = careerTimeline(entry, save.dayCount);
   const years = [...new Set(moments.map((m) => m.year))].sort((a, b) => a - b);
   return (
-    <section className="fp__section">
-      <div className="fp__section-head">
-        <h3 className="fp__section-title">Career History</h3>
-      </div>
-      <div className="fp__career">
+    <div className="sheet on-paper">
+      <header className="sheet__head">
+        <span className="sheet__title">CAREER — CONTINUATION SHEET</span>
+      </header>
+      <div className="careersheet">
         {years.map((y) => (
-          <div className="fp__career-year" key={y}>
-            <span className="fp__career-year-label">{y}</span>
-            <ul className="fp__career-events">
+          <div className="careersheet__year" key={y}>
+            <span className="careersheet__stamp">
+              <Stamp word={String(y)} category="scouting" seedId={entry.fighter.id + y} size="sm" />
+            </span>
+            <ul className="careersheet__entries">
               {moments
                 .filter((m) => m.year === y)
                 .map((m, i) => (
-                  <li className="fp__career-event" key={i}>
+                  <li className="careersheet__entry" key={i}>
                     {m.text}
                   </li>
                 ))}
@@ -562,11 +718,79 @@ function CareerPanel({ entry, save }: { entry: RosterEntry; save: GameSave }) {
           </div>
         ))}
       </div>
-      <p className="fp__scaffold-note">
-        His story is just beginning. Fights, milestones, injuries, title nights,
-        and the moments you find out who he really is — all of it gets written
-        here as it happens.
+      <p className="sheet__fineprint">
+        ENTER EACH MOMENT AS IT HAPPENS. CLIPPINGS TO BE TAPED BELOW THE LINE.
       </p>
-    </section>
+    </div>
+  );
+}
+
+function ProgressChart({ entry, save, weeks }: { entry: RosterEntry; save: GameSave; weeks: number }) {
+  const f = entry.fighter;
+  return (
+    <div className="sheet sheet--chart on-paper">
+      <header className="sheet__head">
+        <span className="sheet__title">PROGRESS CHART</span>
+        {entry.focus && (
+          <span className="tslip__printed">FOCUS: {focusLabel(entry.focus).toUpperCase()}</span>
+        )}
+      </header>
+      <div className="chart">
+        {ATTR_KEYS.map((k: AttrKey) => {
+          const series = attributeSeries(entry, k);
+          const tr = attributeTrend(entry, k, save.dayCount);
+          const word = tr.totalChange >= 0.05 ? 'coming on' : tr.totalChange <= -0.05 ? 'slipping' : 'holding';
+          return (
+            <div className="chart__row" key={k}>
+              <span className="chart__label">{ATTR_LABELS[k].toUpperCase()}</span>
+              <span className="chart__grid">
+                <PencilTrace series={series} seedId={f.id + k} />
+              </span>
+              <span className="chart__now">{Math.round(f.attributes[k])}</span>
+              <span className="chart__change">{signed(tr.totalChange)}</span>
+              <span className="chart__word">{word}</span>
+            </div>
+          );
+        })}
+      </div>
+      <p className="sheet__pencil">
+        {weeks < 2
+          ? 'not much to chart yet — give it a few weeks'
+          : `traces run since he walked in ${weeks} weeks ago`}
+      </p>
+    </div>
+  );
+}
+
+/** a grease-pencil trace across the printed grid */
+function PencilTrace({ series, seedId }: { series: number[]; seedId: string }) {
+  if (series.length < 2) {
+    return (
+      <svg viewBox="0 0 100 26" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="2" y1="13" x2="10" y2="13" stroke="var(--ink-graphite)" strokeWidth="2" />
+      </svg>
+    );
+  }
+  const min = Math.min(...series);
+  const max = Math.max(...series);
+  const span = Math.max(1, max - min);
+  const pts = series
+    .map((v, i) => {
+      const x = 2 + (i / (series.length - 1)) * 96;
+      const y = 22 - ((v - min) / span) * 18 + seedRange(seedId + i, -0.7, 0.7, 3);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  return (
+    <svg viewBox="0 0 100 26" preserveAspectRatio="none" aria-hidden="true">
+      <polyline
+        points={pts}
+        fill="none"
+        stroke="var(--ink-graphite)"
+        strokeWidth="2"
+        strokeLinejoin="round"
+        filter="url(#pencil-wobble)"
+      />
+    </svg>
   );
 }

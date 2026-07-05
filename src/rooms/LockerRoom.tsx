@@ -30,12 +30,13 @@ import {
   ATTR_KEYS,
   ATTR_LABELS,
   type AttrKey,
-  type TrainingFocus,
 } from '../game/training';
 import { TRAITS } from '../game/traits';
 import { Portrait } from '../assets/portraits';
 import { LockerDoorArt } from '../assets/lockers';
 import { Stamp } from '../kit/Stamp';
+import { PencilCheck } from '../kit/PencilCheck';
+import { OrdersCard } from '../kit/OrdersCard';
 import { paperTilt, seedRange } from '../kit/seed';
 import './LockerRoom.css';
 
@@ -557,76 +558,6 @@ function RosterLine({
         </span>
       </div>
     </li>
-  );
-}
-
-/** graphite check, seeded wobble */
-function PencilCheck({ seedId }: { seedId: string }) {
-  const j = seedRange(seedId, -1.5, 1.5, 5);
-  return (
-    <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
-      <path
-        d={`M 2.5 ${8.5 + j} L 6.5 ${12.5 + j / 2} L 13.5 ${2.5 - j / 2}`}
-        stroke="var(--ink-graphite)"
-        strokeWidth="2.4"
-        fill="none"
-        strokeLinecap="round"
-        filter="url(#pencil-wobble)"
-      />
-    </svg>
-  );
-}
-
-/* TRAINING ORDERS, CARD 7-A — the >7-option checklist card */
-function OrdersCard({
-  entry,
-  slotsFull,
-  onPick,
-  onClose,
-}: {
-  entry: RosterEntry;
-  slotsFull: boolean;
-  onPick: (v: TrainingFocus | null) => void;
-  onClose: () => void;
-}) {
-  const focusDisabled = slotsFull && entry.focus === null;
-  const options: Array<{ v: TrainingFocus | null; label: string; isFocus: boolean }> = [
-    { v: null, label: 'GENERAL TRAINING', isFocus: false },
-    { v: 'rounded' as TrainingFocus, label: 'FOCUS — WELL-ROUNDED', isFocus: true },
-    ...ATTR_KEYS.map((k) => ({
-      v: k as TrainingFocus,
-      label: `FOCUS — ${ATTR_LABELS[k].toUpperCase()}`,
-      isFocus: true,
-    })),
-  ];
-  return (
-    <span className="orders on-paper" role="radiogroup" aria-label="Training orders">
-      <span className="orders__formno" aria-hidden="true">
-        TRAINING ORDERS — CARD 7-A REV. 6/73
-      </span>
-      {options.map((o) => {
-        const active = (entry.focus ?? null) === o.v;
-        const dusty = o.isFocus && focusDisabled && !active;
-        return (
-          <button
-            key={String(o.v)}
-            role="radio"
-            aria-checked={active}
-            className={'orders__line' + (dusty ? ' orders__line--dusty' : '')}
-            disabled={dusty}
-            onClick={() => onPick(o.v)}
-          >
-            <span className="orders__box" aria-hidden="true">
-              {active && <PencilCheck seedId={entry.fighter.id + String(o.v)} />}
-            </span>
-            {dusty ? 'ALL SLOTS FILLED — SEE HOOK BOARD' : o.label}
-          </button>
-        );
-      })}
-      <button className="orders__file" onClick={onClose}>
-        FILE IT AWAY
-      </button>
-    </span>
   );
 }
 
