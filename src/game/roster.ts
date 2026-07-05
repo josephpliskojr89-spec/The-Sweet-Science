@@ -12,6 +12,8 @@
 */
 
 import type { Fighter } from './fighters';
+import type { WorldRecord } from './world/population';
+import type { BoutRecord } from './fights';
 import type { TrainingFocus, AttrKey, AttrSnapshot } from './training';
 
 export type HierarchyTier = 'must_keep' | 'watch' | 'chopping';
@@ -42,6 +44,14 @@ export interface RosterEntry {
   /** Hidden rival-interest level (0–100) for a talented, unhappy locker holder.
       Builds with warnings before he's poached away (game/world, 6C-4). */
   poachInterest: number;
+  /** His professional record under your banner (game/fights.ts). */
+  record: WorldRecord;
+  /** Every bout he's had with you, oldest first — the bout ledger. */
+  bouts: BoutRecord[];
+  /** Day-count he's healed and bookable again after a fight (0 = ready). */
+  restUntil: number;
+  /** Total purses earned under your banner, current dollars. */
+  careerEarnings: number;
   /** Per-attribute change from the most recent advance (for trend display). */
   lastDelta: Partial<Record<AttrKey, number>>;
   /** Dated attribute snapshots for the progression view (oldest first). */

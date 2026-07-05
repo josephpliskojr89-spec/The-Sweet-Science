@@ -101,6 +101,13 @@ import {
 } from '../game/reputation';
 import { advanceWorld } from '../game/world/worldSim';
 import {
+  rollFightOffers,
+  ageOffers,
+  resolveFight,
+  bookFromOffer,
+  fightEligible,
+} from '../game/fights';
+import {
   walkInPoachChance,
   worldFighterFromFighter,
   pickWalkInPoacher,
@@ -203,6 +210,10 @@ interface GameContextValue {
   /** Answer a lockerless man who's asked you for a locker. */
   respondLockerRequest: (id: string, choice: 'grant' | 'wait' | 'honest') => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
+  /** Take a promoter's offer — the bout goes on the calendar (game/fights.ts). */
+  bookFight: (offerId: string) => void;
+  /** Pass on an offer; the promoter looks elsewhere. */
+  declineFightOffer: (offerId: string) => void;
   postCoachJob: (posting: CoachPosting) => void;
   cancelCoachJob: () => void;
   hireApplicant: (id: string) => void;
@@ -519,7 +530,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           p.fighter.weightClass
         ].name.toLowerCase()} you’d been weighing. You waited a beat too long.`,
       }));
-      const history = [
+      let history = [
         ...prev.history,
         ...[...obs.milestones, ...life.milestones].map((text) => ({ dayCount: toDay, text })),
         ...departureMemories,
@@ -558,6 +569,82 @@ export function GameProvider({ children }: { children: ReactNode }) {
         ].slice(0, 36);
       }
 
+      // --- fight night (6D/8): offers age and arrive; booked bouts resolve ---
+      let fightOffers = prev.fightOffers;
+      let bookedFights = prev.bookedFights;
+      let recentFights = prev.recentFights;
+      let rosterAfterFights = staying;
+      const fightNotes: string[] = [];
+      {
+        const agedOffers = ageOffers(fightOffers, rosterAfterFights, bookedFights, toDay);
+        fightOffers = agedOffers.keep;
+        for (const o of agedOffers.expired) {
+          const man = prev.roster.find((e) => e.fighter.id === o.fighterId);
+          if (man)
+            fightNotes.push(
+              `The offer for ${fighterFullName(man.fighter)} came off the table — the promoter filled his card.`,
+            );
+        }
+
+        // bouts on the calendar come due
+        const due = bookedFights.filter((b) => b.onDay <= toDay);
+        if (due.length) {
+          bookedFights = bookedFights.filter((b) => b.onDay > toDay);
+          for (const bout of due) {
+            const idx = rosterAfterFights.findIndex((e) => e.fighter.id === bout.fighterId);
+            const opp = world.fighters.find((f) => f.id === bout.opponentId);
+            if (idx < 0 || !opp) {
+              fightNotes.push('A booked bout fell through — the other corner came apart.');
+              continue;
+            }
+            const entry = rosterAfterFights[idx];
+            const coach = entry.coachId
+              ? prev.coaches.find((c) => c.id === entry.coachId) ?? null
+              : null;
+            const resolved = resolveFight({
+              booked: bout,
+              entry,
+              opponent: opp,
+              coach,
+              dayCount: toDay,
+            });
+            rosterAfterFights = rosterAfterFights.map((e, i) =>
+              i === idx ? resolved.entry : e,
+            );
+            world = {
+              ...world,
+              fighters: world.fighters.map((f) => (f.id === opp.id ? resolved.opponent : f)),
+            };
+            money += resolved.purse;
+            press = pressItem(press, toDay, resolved.headline);
+            fightNotes.push(resolved.logLine);
+            history = [...history, { dayCount: toDay, text: resolved.memory }].slice(-250);
+            recentFights = [resolved.report, ...recentFights].slice(0, 10);
+          }
+        }
+
+        // and the phone rings with new work
+        const freshOffers = rollFightOffers({
+          roster: rosterAfterFights,
+          world,
+          booked: bookedFights,
+          existing: fightOffers,
+          venues: press.venues,
+          dayCount: toDay,
+          days,
+          year: formatDate(toDay).year,
+          quality: qualityFor(prev),
+        });
+        for (const o of freshOffers) {
+          const man = rosterAfterFights.find((e) => e.fighter.id === o.fighterId);
+          if (man)
+            fightNotes.push(
+              `The phone rang — a promoter wants ${fighterFullName(man.fighter)} at the ${o.venue}.`,
+            );
+        }
+        fightOffers = [...fightOffers, ...freshOffers];
+      }
+
       commit({
         ...prev,
         dayCount: toDay,
@@ -567,10 +654,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
         coachApplicants,
         world,
         walkIns: [...stillWaiting, ...fresh],
-        roster: staying,
+        roster: rosterAfterFights,
+        fightOffers,
+        bookedFights,
+        recentFights,
         press,
         history,
-        recentLog: [...newLines, ...prev.recentLog].slice(0, 12),
+        recentLog: [
+          ...fightNotes.map((text) => ({ dayCount: toDay, text })),
+          ...newLines,
+          ...prev.recentLog,
+        ].slice(0, 12),
       });
 
       for (const d of departedAll) {
@@ -649,6 +743,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
           trialPatience: freshPatience(),
           lockerRequested: false,
           poachInterest: 0,
+          record: { wins: 0, losses: 0, draws: 0, kos: 0 },
+          bouts: [],
+          restUntil: 0,
+          careerEarnings: 0,
           lastDelta: {},
           history: [snapshotAttrs(target.fighter.attributes, prev.dayCount)],
         };
@@ -678,6 +776,53 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const openProfile = useCallback((id: string) => setProfileId(id), []);
   const closeProfile = useCallback(() => setProfileId(null), []);
   const clearFlash = useCallback(() => setFlash(null), []);
+
+  const bookFight = useCallback(
+    (offerId: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const offer = prev.fightOffers.find((o) => o.id === offerId);
+      if (!offer) return;
+      const entry = prev.roster.find((e) => e.fighter.id === offer.fighterId);
+      if (!entry || !fightEligible(entry, prev.dayCount, prev.bookedFights)) {
+        setFlash('He can’t take that fight right now.');
+        return;
+      }
+      const booked = bookFromOffer(offer);
+      const fd = formatDate(booked.onDay);
+      const history = [
+        ...prev.history,
+        {
+          dayCount: prev.dayCount,
+          text: `You booked ${fighterFullName(entry.fighter)} — ${booked.rounds} rounds at the ${booked.venue}, ${fd.month} ${fd.day}. Purse ${formatMoney(booked.purse)}.`,
+        },
+      ].slice(-250);
+      commit({
+        ...prev,
+        fightOffers: prev.fightOffers.filter((o) => o.id !== offerId),
+        bookedFights: [...prev.bookedFights, booked],
+        history,
+        recentLog: [
+          {
+            dayCount: prev.dayCount,
+            text: `${entry.fighter.lastName} fights ${fd.month} ${fd.day} at the ${booked.venue}. Tell the floor.`,
+          },
+          ...prev.recentLog,
+        ].slice(0, 12),
+      });
+    },
+    [commit],
+  );
+
+  const declineFightOffer = useCallback(
+    (offerId: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      if (!prev.fightOffers.some((o) => o.id === offerId)) return;
+      commit({ ...prev, fightOffers: prev.fightOffers.filter((o) => o.id !== offerId) });
+    },
+    [commit],
+  );
 
   const purchaseUpgrade = useCallback(
     (key: UpgradeKey) => {
@@ -1107,6 +1252,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       stopConsidering,
       respondLockerRequest,
       purchaseUpgrade,
+      bookFight,
+      declineFightOffer,
       postCoachJob,
       cancelCoachJob,
       hireApplicant,
@@ -1151,6 +1298,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       stopConsidering,
       respondLockerRequest,
       purchaseUpgrade,
+      bookFight,
+      declineFightOffer,
       postCoachJob,
       cancelCoachJob,
       hireApplicant,

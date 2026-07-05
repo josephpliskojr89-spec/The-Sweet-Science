@@ -38,6 +38,7 @@ import { moodLabel } from '../game/relationship';
 import { coachChemistry, chemistryRead, specialtyName } from '../game/coaches';
 import { scoutingBand, patienceFlavor } from '../game/scouting';
 import { flightRiskRead } from '../game/reputation';
+import { formatDate } from '../game/time';
 import { fighterBiography, careerTimeline, yearsWithGymLabel } from '../game/biography';
 import type { RosterEntry } from '../game/roster';
 import type { GameSave } from '../state/persistence';
@@ -616,16 +617,34 @@ function PencilStroke({ widthPct, seedId }: { widthPct: number; seedId: string }
 /* ------------------------------------------------------------------ */
 
 function RecordSheet({ entry, save }: { entry: RosterEntry; save: GameSave }) {
+  const r = entry.record;
+  const koLosses = entry.bouts.filter(
+    (b) => b.outcome === 'L' && (b.method === 'KO' || b.method === 'TKO'),
+  ).length;
+  let streak = 0;
+  for (let i = entry.bouts.length - 1; i >= 0; i--) {
+    const o = entry.bouts[i].outcome;
+    if (o === 'D') break;
+    if (streak === 0) streak = o === 'W' ? 1 : -1;
+    else if ((streak > 0 && o === 'W') || (streak < 0 && o === 'L')) streak += Math.sign(streak);
+    else break;
+  }
   const cells: { label: string; value: string }[] = [
-    { label: 'PROFESSIONAL', value: '0–0–0' },
+    { label: 'PROFESSIONAL', value: `${r.wins}–${r.losses}–${r.draws}` },
     { label: 'AMATEUR', value: 'UNRECORDED' },
-    { label: 'KO WINS', value: '0' },
-    { label: 'KO LOSSES', value: '0' },
-    { label: 'CURRENT STREAK', value: '—' },
+    { label: 'KO WINS', value: String(r.kos) },
+    { label: 'KO LOSSES', value: String(koLosses) },
+    {
+      label: 'CURRENT STREAK',
+      value: streak === 0 ? '—' : streak > 0 ? `W${streak}` : `L${-streak}`,
+    },
     { label: 'TITLES HELD', value: 'NONE' },
     { label: 'RANKING', value: 'UNRANKED' },
     { label: 'WITH GYM', value: yearsWithGymLabel(entry, save.dayCount).toUpperCase() },
-    { label: 'CAREER EARNINGS', value: '$0.00' },
+    {
+      label: 'CAREER EARNINGS',
+      value: `$${Math.round(entry.careerEarnings ?? 0).toLocaleString('en-US')}.00`,
+    },
   ];
   return (
     <div className="sheet on-paper">
@@ -648,8 +667,27 @@ function RecordSheet({ entry, save }: { entry: RosterEntry; save: GameSave }) {
           <span>RESULT</span>
           <span>PURSE</span>
         </div>
-        {Array.from({ length: 7 }, (_, i) => (
-          <div className="boutledger__rule" key={i} />
+        {entry.bouts.map((b, i) => {
+          const d = formatDate(b.dayCount);
+          const how =
+            b.method === 'KO' || b.method === 'TKO'
+              ? `${b.outcome} ${b.method} ${b.endRound}`
+              : b.method === 'DRAW'
+                ? 'DRAW'
+                : `${b.outcome} ${b.method}`;
+          return (
+            <div className="boutledger__row" key={i}>
+              <span>
+                {d.month.slice(0, 3)} {d.day} ’{String(d.year).slice(2)}
+              </span>
+              <span>{b.opponentName.toUpperCase()}</span>
+              <span>{how}</span>
+              <span>${Math.round(b.purse).toLocaleString('en-US')}</span>
+            </div>
+          );
+        })}
+        {Array.from({ length: Math.max(0, 7 - entry.bouts.length) }, (_, i) => (
+          <div className="boutledger__rule" key={`r${i}`} />
         ))}
       </div>
       <p className="sheet__fineprint">

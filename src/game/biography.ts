@@ -157,5 +157,17 @@ export function careerTimeline(entry: RosterEntry, _dayCount: number): CareerMom
       ? 'Given a locker — taken on as part of the stable.'
       : 'Started training on provisional terms.',
   });
+  // Every bout writes itself in as it happens (game/fights.ts).
+  for (const b of entry.bouts) {
+    const y = formatDate(b.dayCount).year;
+    const how =
+      b.method === 'KO' || b.method === 'TKO'
+        ? `${b.method} ${b.endRound}`
+        : b.method === 'DRAW'
+          ? 'draw'
+          : `${b.method}, ${b.scheduledRounds} rounds`;
+    const verb = b.outcome === 'W' ? 'Beat' : b.outcome === 'L' ? 'Lost to' : 'Drew with';
+    moments.push({ year: y, text: `${verb} ${b.opponentName} at the ${b.venue} (${how}).` });
+  }
   return moments;
 }

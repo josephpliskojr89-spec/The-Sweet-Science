@@ -19,6 +19,7 @@ import { generateCeilingRead } from '../game/potential';
 import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { generateWorld, type WorldState } from '../game/world/population';
+import type { FightOffer, BookedFight, FightReport } from '../game/fights';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
 import {
@@ -32,7 +33,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 20;
+export const SAVE_VERSION = 21;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -72,6 +73,12 @@ export interface GameSave {
   coachApplicants: CoachApplicant[];
   /** The competitive world — rival rosters and independents (game/world). */
   world: WorldState;
+  /** Open promoter offers awaiting an answer (game/fights.ts). */
+  fightOffers: FightOffer[];
+  /** Bouts on the calendar, resolved on their day by advanceTime. */
+  bookedFights: BookedFight[];
+  /** Full reports for recent bouts (for the fight-night screen), newest first. */
+  recentFights: FightReport[];
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -106,6 +113,9 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     coachPosting: null,
     coachApplicants: [],
     world: generateWorld(draft.cityId, 0),
+    fightOffers: [],
+    bookedFights: [],
+    recentFights: [],
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -213,6 +223,11 @@ function migrate(raw: unknown): GameSave | null {
             trialPatience: e.trialPatience ?? (e.hasLocker ? 100 : 120),
             lockerRequested: e.lockerRequested ?? false,
             poachInterest: e.poachInterest ?? 0,
+            // v21 — the fight layer: every man keeps a record and a bout ledger.
+            record: e.record ?? { wins: 0, losses: 0, draws: 0, kos: 0 },
+            bouts: e.bouts ?? [],
+            restUntil: e.restUntil ?? 0,
+            careerEarnings: e.careerEarnings ?? 0,
             lastDelta: e.lastDelta ?? {},
             // Begin tracking progression from now for pre-v9 fighters.
             history: e.history ?? [snapshotAttrs(fighter.attributes, data.dayCount!)],
@@ -255,6 +270,9 @@ function migrate(raw: unknown): GameSave | null {
             })),
           }
         : generateWorld(data.cityId as CityId, data.dayCount),
+      fightOffers: Array.isArray(data.fightOffers) ? data.fightOffers : [],
+      bookedFights: Array.isArray(data.bookedFights) ? data.bookedFights : [],
+      recentFights: Array.isArray(data.recentFights) ? data.recentFights : [],
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),
