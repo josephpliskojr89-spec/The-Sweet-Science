@@ -1,0 +1,1011 @@
+{
+ "vision": "The living world exists so a twenty-year save reads, in memory, like a shoebox of clippings \u2014 proof the sport went on around you, moved its money where you couldn't follow, killed its own farm system one obituary at a time, and once stood on your gym floor doing tricks for the flyweights. It is not content; it is weather with a ledger. Every event must clear four bars at once: it arrives only as the period allows (clipping, letter, invoice, phone call, note on cork \u2014 never an announcement); it is grounded in numbers the game already keeps (traits, trust, morale, record, rank, publicReputation, purse, age, year, city); it leaves a mark a system can show later (a ledger line, a missing venue, a changed offer sheet, a framed clipping); and it keeps the paper's manners \u2014 understatement, no system-speak, the dry sentence that lets the reader feel what the writer wouldn't say. The test applied to all 149: would the player tell somebody about it a week later in the event's own words, and does the save still remember it in 1992.",
+ "hillRulings": [
+  {
+   "seat": "Boxing Historian",
+   "hill": "The club-circuit death must be mechanical, not decorative \u2014 venues leave the offer pool, club purse bases stop tracking inflation after ~1979.",
+   "ruling": "UPHELD",
+   "reason": "This is the timeline's economic spine and the reason every new money tier matters; the ledger squeeze is the story, and fights-on-tuesday is already the designed escape rung, so no softening is needed."
+  },
+  {
+   "seat": "Boxing Historian",
+   "hill": "Reputation is rented; the wrecking ball and every era star run on the same fighter model with traits seeded at generation, never special-case script.",
+   "ruling": "UPHELD-WITH-CONDITIONS",
+   "reason": "Upheld \u2014 trait-as-destiny is the procedural-first commitment made visible; condition: landmark outcomes (the upset month, the implosion window) are pre-seeded at save creation so the era composes, but every beat must be expressible as his generated traits playing out through the normal reputation and fight systems."
+  },
+  {
+   "seat": "Boxing Historian",
+   "hill": "The timeline arrives only through paper and phone, with per-save variance windows and generated names.",
+   "ruling": "UPHELD-WITH-CONDITIONS",
+   "reason": "Upheld as the voice law; condition: real-calendar anchors (Olympic summers) stay fixed because the calendar is scenery, while every authored beat's date, cast, and name rolls per save."
+  },
+  {
+   "seat": "Retired boxing journalist",
+   "hill": "The beat writer is a character, not a string \u2014 per-byline memory (clippings-per-fighter, warmth, adoption) attached to the existing persistent bylines.",
+   "ruling": "UPHELD",
+   "reason": "One counter and two flags convert the press from wallpaper into the game's best recurring NPC, and a dozen kept events (adoption, cold-shoulder, farewell column) are load-bearing on it."
+  },
+  {
+   "seat": "Retired boxing journalist",
+   "hill": "Reputation moves through ink \u2014 a press-context multiplier scales resolveFight's rep swing (adopted writer, televised date, skeptical year, frozen-out desk).",
+   "ruling": "UPHELD",
+   "reason": "One multiplier field on the existing repSwing makes every press event mechanical instead of decorative, and it is the truest sentence in the submissions: fighters get famous for being written about winning."
+  },
+  {
+   "seat": "Retired boxing journalist",
+   "hill": "The ring-death beat ships in every save, unsoftened, and breaks the sports-page frame once.",
+   "ruling": "UPHELD-WITH-CONDITIONS",
+   "reason": "Non-negotiable \u2014 a 1975-1990 save without the sport on trial has the hardest page torn out; condition: the frame-break is reserved for the one scripted death, and the historian's rare decade-scale recurrences stay inside the sports page at smaller type."
+  },
+  {
+   "seat": "Retired fighter",
+   "hill": "Trust must have events that raise its ceiling \u2014 the engraved watch lifts TRUST_HEAL_CAP from 65 to 80 for one fighter, once, earned.",
+   "ruling": "UPHELD",
+   "reason": "The exception is what makes the cap mean something the other 99% of the time; once-per-fighter, never purchasable, exactly as submitted."
+  },
+  {
+   "seat": "Retired fighter",
+   "hill": "The dementia arc (the-fog, the-doctor-said-stop, benefit-night) ships uncut, 'say nothing' stays selectable, and it can happen to YOUR man.",
+   "ruling": "UPHELD",
+   "reason": "The punch-drunk old man is the central moral fact of managing fighters in this era, and a game that only lets it happen to world fighters is lying; the ledger remembering that you looked away is the design."
+  },
+  {
+   "seat": "Retired fighter",
+   "hill": "Joyful events (washing machine, watercolors, cigars, the watch) fire with no choices and no optimization angle.",
+   "ruling": "UPHELD",
+   "reason": "Witnessed-not-played is what keeps a fifteen-year save from curdling into a spreadsheet; no rewards or decisions may be bolted on in implementation, ever."
+  },
+  {
+   "seat": "Retired Promoter",
+   "hill": "Money always costs control \u2014 buyouts, option contracts, retainers, and B-side offers ship as one connected strings system with real, quiet refusal costs.",
+   "ruling": "UPHELD-WITH-CONDITIONS",
+   "reason": "Upheld as a system \u2014 freeze-outs, option taxes, and arranged opponents are the era's true texture; condition: casino-b-side survives merged inside opponent-for-hire, so the lattice ships whole even though one of its four doors changed frames."
+  },
+  {
+   "seat": "Retired Promoter",
+   "hill": "The accommodation (the fixer's dive offer) stays in with teeth both ways \u2014 arrives when broke, traits decide if the fighter will even do it, consequence is a years-later fuse.",
+   "ruling": "UPHELD",
+   "reason": "The genre's defining values choice, correctly designed: no morality meter, no warning text, a lionheart who walks out on you, and a fuse the ledger holds \u2014 sand this down and we lose the one event players will tell each other about."
+  },
+  {
+   "seat": "Retired Promoter",
+   "hill": "The venue economy must die and be reborn under the player's feet \u2014 club collapse, casino rise, and cable revival as one physical arc.",
+   "ruling": "UPHELD",
+   "reason": "Same spine as the historian's first hill, merged into club-circuit-withers/desert-city-ascendant/fights-on-tuesday; the venue list, offer frequencies, and purse tiers must actually change or the decades are 1975 with 6% bigger numbers."
+  }
+ ],
+ "verdicts": [
+  {
+   "id": "poet-kings-last-reign",
+   "verdict": "KEEP",
+   "reason": "The save's opening myth and the heavyweight economy's first cause; absorbs all three duplicate king arcs.",
+   "reshape": "Adopt the promoter's annual superfight-week offer bump from fading-king-farewell; era multiplier stays at the historian's x1.2, not x1.6."
+  },
+  {
+   "id": "poet-king-upset-and-redemption",
+   "verdict": "KEEP",
+   "reason": "Reputation-is-rented demonstrated at world scale in the save's third year, exactly when the player can read it."
+  },
+  {
+   "id": "poet-king-sad-ending",
+   "verdict": "KEEP",
+   "reason": "The saddest fights ever sold, told at the paper's flattest register, arming comeback-itch and the aging-fighter dread for the rest of the save.",
+   "reshape": "Absorb poet-kings-long-goodbye's rider: retirement-pressure events fire at 2x weight for 18 months for any roster fighter age 33+."
+  },
+  {
+   "id": "heir-in-the-shadow",
+   "verdict": "KEEP",
+   "reason": "Sustains a coherent heavyweight lineage between the two superstar eras and gives the rankings page its long constancy."
+  },
+  {
+   "id": "bicentennial-olympic-class",
+   "verdict": "KEEP",
+   "reason": "Reputation decoupling from record, minted on television \u2014 and it establishes the recurring Olympic machinery.",
+   "reshape": "Absorb the journalist's press-oxygen tax (club wins earn ~25% less ink for 18 months) and the fighter's post-Games walk-in inspiration wave."
+  },
+  {
+   "id": "network-tournament-scandal",
+   "verdict": "KEEP",
+   "reason": "Boom-and-bust the player's books feel, plus the precedent that records can lie.",
+   "reshape": "Absorb the journalist's skeptical-press year (rep from wins over losing records halved, honest-record sidebar) and the promoter's permanently-marked crooked promoter NPC who later feeds bounced-check."
+  },
+  {
+   "id": "boardwalk-city-opens",
+   "verdict": "KEEP",
+   "reason": "The page-nine referendum that matters two years later is the game's whole theory of history in one beat."
+  },
+  {
+   "id": "network-boxing-boom",
+   "verdict": "KEEP",
+   "reason": "The reputation machine of the era and the mid-ladder the later beats will saw off; covers both seats' network-fight-nights.",
+   "reshape": "Absorb the promoter's matchmaker call that states the clean-record condition out loud and the journalist's accelerated world reputation churn."
+  },
+  {
+   "id": "club-circuit-withers",
+   "verdict": "KEEP",
+   "reason": "The central economic pressure of the whole timeline \u2014 venues really leave, club purse bases really freeze after 1979.",
+   "reshape": "Absorb club-show-collapse's travel expense line and novice-offer thinning; seed 5-6 venues per city at world-gen so the cadence works and at least one hall always survives."
+  },
+  {
+   "id": "four-kings-era",
+   "verdict": "KEEP",
+   "reason": "The glamour moves down the scale for a decade, and the player's top-10 middleweight gets the undercard call instead of the shot \u2014 honest gatekeeping as drama.",
+   "reshape": "Absorb golden-middles' double-reputation swing for beating a king's camp fighter and its walk-in skew."
+  },
+  {
+   "id": "the-surrender",
+   "verdict": "KEEP",
+   "reason": "The reputation system's full range in one night, and 'quit' enters the world's permanent vocabulary as a measuring stick for the player's own men."
+  },
+  {
+   "id": "desert-city-ascendant",
+   "verdict": "KEEP",
+   "reason": "Purses detach from gates and the ladder physically runs through one city; covers both seats' desert-money and casino-decade.",
+   "reshape": "Absorb the promoter's A-side/B-side skew: below rep ~40 casino offers arrive as reach (you're the opponent), above ~55 as soft (you're the attraction)."
+  },
+  {
+   "id": "ring-death-fifteen-rounds",
+   "verdict": "KEEP",
+   "reason": "The hinge of the era, mandatory in every save \u2014 the one front page that breaks the sports-page frame.",
+   "reshape": "Absorb the journalist's six-month pall (KO rep bonus suspended, brutal-KO hostile column), the fighter's commission-physical gate and forced-retirement wave, and the promoter's typed medical-and-license fee line on every settlement after."
+  },
+  {
+   "id": "alphabet-fracture-one",
+   "verdict": "KEEP",
+   "reason": "Two crowns, sanctioning fees, and mandatory-defense letters \u2014 glory gets an invoice.",
+   "reshape": "Absorb alphabet-belts' dues-invoice-as-office-mail texture and its titles-easier-worth-less purse curve."
+  },
+  {
+   "id": "alphabet-soup-complete",
+   "verdict": "KEEP",
+   "reason": "The fringe belt becomes reachable exactly as it becomes discounted, and the magazine's lineal column becomes the save's conscience.",
+   "reshape": "Absorb belt-inflation's per-body rankings (a fighter holds 1-4 rankings, each invoiced separately) and unification's double-swing prestige."
+  },
+  {
+   "id": "premium-cable-arrives",
+   "verdict": "KEEP",
+   "reason": "The top tier that squeezes the theatres and starts compounding reputation at the top; absorbs cable-money's prestige tier and cable-buys-the-top.",
+   "reshape": "Take cable-buys-the-top's detail of the magazine printing purse figures beside the rankings; multi-fight approved-opponent contracts carry as written."
+  },
+  {
+   "id": "olympic-class-84",
+   "verdict": "KEEP",
+   "reason": "The stolen class of 1980 is the best opponent-pool idea in the packet, and the home-soil harvest feeds the lighter-weight endgame; it owns the 1980 boycott counter-beat."
+  },
+  {
+   "id": "teen-wrecking-ball-rise",
+   "verdict": "KEEP",
+   "reason": "The division's pulse returns via a monthly-schedule undercard economy, with the implosion honestly seeded in his generated traits.",
+   "reshape": "Absorb young-destroyer's sparring-partner contract offer (camp work for a player heavyweight with a chin) and its walk-in surge of big kids throwing the right hand first."
+  },
+  {
+   "id": "teen-unification",
+   "verdict": "KEEP",
+   "reason": "Undisputed demonstrates its market value once, briefly, so its shattering means something.",
+   "reshape": "Strip the electric-hair identifier \u2014 the predatory promoter is an archetype (honeyed, litigious, everywhere) with a per-save generated name and look."
+  },
+  {
+   "id": "ppv-in-the-home",
+   "verdict": "KEEP",
+   "reason": "The income curve bends visibly into winner-take-all and an income stream the player may have lived on dies on schedule; absorbs ppv-arrives.",
+   "reshape": "Take ppv-arrives' two-column contract (GUARANTEE / UPSIDE) as the surfacing for percentage offers."
+  },
+  {
+   "id": "networks-abandon-ship",
+   "verdict": "KEEP",
+   "reason": "Design-by-absence \u2014 the listings item just stops running, and nobody gets famous by accident anymore."
+  },
+  {
+   "id": "fights-on-tuesday",
+   "verdict": "KEEP",
+   "reason": "The designed answer to the club circuit's death and the workhorse of a mid-tier gym for a decade; its late-90s cancellation should genuinely frighten.",
+   "reshape": "Absorb cable-money's weeknight-series loss-tolerance (a great losing effort can gain rep) and unify its matchmaker with the grown-up matchmakers-apprentice NPC."
+  },
+  {
+   "id": "teen-implosion",
+   "verdict": "KEEP",
+   "reason": "The save's most stunning clipping, and the biggest proof that the trait system is destiny.",
+   "reshape": "Do not script the conviction's nature or the scandal specifics \u2014 the unraveling is composed from generated clippings; only the arc shape (upset, collapse, prison, countdown) is seeded."
+  },
+  {
+   "id": "olympic-class-92-golden-boy",
+   "verdict": "KEEP",
+   "reason": "The economic center of gravity formally moves down in weight, and the endgame decade gets its richest orbit.",
+   "reshape": "Generate his human hook per save (the promise, the face, the hometown) rather than scripting the dead-mother biography."
+  },
+  {
+   "id": "old-lion-miracle",
+   "verdict": "KEEP",
+   "reason": "The retirement wall breached once, sentimentally, precisely so comeback-itch has an irresistible precedent.",
+   "reshape": "Generate the elder's civilian second life per save (preacher, publican, pitchman) instead of fixing the biography; keep the one-time reversed-decline modeling era-flagged."
+  },
+  {
+   "id": "nineties-heavyweight-circus",
+   "verdict": "KEEP",
+   "reason": "Spectacle economy fully detached from merit, the lionheart rival vindicated at world scale, and commission discipline enters the game.",
+   "reshape": "The grotesque disgrace foul is generated per save (never scripted as an ear); the license-revocation mechanism and era hangover stay as written."
+  },
+  {
+   "id": "lighter-weights-inherit",
+   "verdict": "KEEP",
+   "reason": "The mirror image of 1975's hierarchy closes the timeline, and the pound-for-pound column gives great small fighters their overdue market."
+  },
+  {
+   "id": "games-class-gold-rush",
+   "verdict": "MERGE",
+   "mergeInto": "bicentennial-olympic-class",
+   "reason": "Same 1976 class from the press desk \u2014 its oxygen-tax and cover-story beats fold into the surviving event."
+  },
+  {
+   "id": "network-fight-nights",
+   "verdict": "MERGE",
+   "mergeInto": "network-boxing-boom",
+   "reason": "Both seats' submissions of this id are the same boom \u2014 the journalist's churn math and the promoter's spoken clean-record condition carry into the survivor."
+  },
+  {
+   "id": "ratings-scandal",
+   "verdict": "MERGE",
+   "mergeInto": "network-tournament-scandal",
+   "reason": "Same scandal; its skeptical-press year, expos\u00e9 byline, and honest-record dividend are adopted into the survivor."
+  },
+  {
+   "id": "fading-king",
+   "verdict": "MERGE",
+   "mergeInto": "poet-kings-last-reign",
+   "reason": "The same king told from the press box \u2014 the tribute edition, the split columnists, and the who-inherits-the-language feature distribute across the kept three-beat arc."
+  },
+  {
+   "id": "casino-decade",
+   "verdict": "MERGE",
+   "mergeInto": "desert-city-ascendant",
+   "reason": "Same migration west; its area-code-702 rumor item and family_man travel morale cost carry over."
+  },
+  {
+   "id": "ring-death-reckoning",
+   "verdict": "MERGE",
+   "mergeInto": "ring-death-fifteen-rounds",
+   "reason": "The four seats wrote one event; the journalist's month of dueling columns and the six-month pall are adopted wholesale."
+  },
+  {
+   "id": "voice-quits-the-sport",
+   "verdict": "KEEP",
+   "reason": "The broadcaster renouncing the sport on air is the ring death's echo in the culture, and print briefly matters more again.",
+   "reshape": "Its televised-offer halving lasts the pall (~12-18 months) and recovers into the cable era; permanent removal of the network tier belongs to networks-abandon-ship alone."
+  },
+  {
+   "id": "death-of-the-afternoon-paper",
+   "verdict": "KEEP",
+   "reason": "The save's authored voice changes mid-decade \u2014 a byline retires, names your fighter in his farewell, and the Monday paper is thinner forever."
+  },
+  {
+   "id": "cable-buys-the-top",
+   "verdict": "MERGE",
+   "mergeInto": "premium-cable-arrives",
+   "reason": "Same era from the same direction; its farewell-card offer moves under club-circuit-withers/last-card-at-the-old-hall and its rankings-with-purse-figures detail survives."
+  },
+  {
+   "id": "tabloid-turn",
+   "verdict": "KEEP",
+   "reason": "The personality replaces the fight \u2014 trait-driven exposure doubles, notoriety literally pays, and the decent man becomes a niche worth ink."
+  },
+  {
+   "id": "poet-kings-long-goodbye",
+   "verdict": "MERGE",
+   "mergeInto": "poet-kings-last-reign",
+   "reason": "Same arc from ringside; its stool-stoppage corkboard note and the age-33+ retirement-pressure rider distribute across the kept king beats."
+  },
+  {
+   "id": "boy-with-the-medal",
+   "verdict": "MERGE",
+   "mergeInto": "bicentennial-olympic-class",
+   "reason": "Same class; its walk-in inspiration wave and the medalist-lands-in-your-region grudge seed carry into the survivor."
+  },
+  {
+   "id": "desert-money",
+   "verdict": "MERGE",
+   "mergeInto": "desert-city-ascendant",
+   "reason": "Both seats' submissions of this id are the same casino migration \u2014 the telegram arrival and the promoter's honest B-side pitch line carry over."
+  },
+  {
+   "id": "the-boy-who-died",
+   "verdict": "MERGE",
+   "mergeInto": "ring-death-fifteen-rounds",
+   "reason": "Same tragedy; its commission-physical booking gate, forced-retirement wave, and 2x weighting of the medical events are adopted into the survivor."
+  },
+  {
+   "id": "alphabet-belts",
+   "verdict": "MERGE",
+   "mergeInto": "alphabet-fracture-one",
+   "reason": "Same schism compressed; its dues invoice and dueling-rankings flavor distribute across the two kept alphabet beats."
+  },
+  {
+   "id": "what-the-game-takes",
+   "verdict": "KEEP",
+   "reason": "The punch-drunk reckoning goes public \u2014 neurological screening, the mothers, and world-scale cover for benefit-night and the-fog."
+  },
+  {
+   "id": "fading-king-farewell",
+   "verdict": "MERGE",
+   "mergeInto": "poet-kings-last-reign",
+   "reason": "Same king from the money side; its superfight-week purse bump and post-retirement heavyweight crater (softened to the historian's numbers) carry into the arc."
+  },
+  {
+   "id": "tournament-scandal",
+   "verdict": "MERGE",
+   "mergeInto": "network-tournament-scandal",
+   "reason": "Same scandal; its crooked-promoter NPC and fat-envelope invitation carry, but its network-TV-dies consequence is rejected \u2014 the boom survives to die later."
+  },
+  {
+   "id": "club-show-collapse",
+   "verdict": "MERGE",
+   "mergeInto": "club-circuit-withers",
+   "reason": "Same death of the small hall; its travel-expense line, novice-offer halving, and taped-up-fight-bill gym-log line carry into the survivor."
+  },
+  {
+   "id": "recession-bite",
+   "verdict": "KEEP",
+   "reason": "The world is bigger than boxing \u2014 a purse-inflation freeze, folding rival gyms, and a poaching window the sharp player reads in the ledger first.",
+   "reshape": "The recession freeze supersedes (never stacks with) the club-tier base freeze; rival-gym folds route through the existing worldSim churn with roster-dispersal clippings."
+  },
+  {
+   "id": "golden-middles",
+   "verdict": "MERGE",
+   "mergeInto": "four-kings-era",
+   "reason": "Same four kings; its beat-a-king's-camp-fighter double swing and undercard B-side profile carry into the survivor."
+  },
+  {
+   "id": "ring-tragedy-reform",
+   "verdict": "MERGE",
+   "mergeInto": "ring-death-fifteen-rounds",
+   "reason": "Same reform; its typed medical/licensing deduction line and careful-sparring gym-log note are adopted into the survivor."
+  },
+  {
+   "id": "cable-money",
+   "verdict": "MERGE",
+   "mergeInto": "premium-cable-arrives",
+   "reason": "Its prestige tier merges here and its weeknight series is the same show as fights-on-tuesday; the style-as-economics pitch ('my audience likes guys who come forward') carries."
+  },
+  {
+   "id": "young-destroyer",
+   "verdict": "MERGE",
+   "mergeInto": "teen-wrecking-ball-rise",
+   "reason": "Same teenager; the sparring-partner contract, tripled site fees, and big-kid walk-in surge carry, while the reign-or-upset fork is already owned by teen-implosion."
+  },
+  {
+   "id": "belt-inflation",
+   "verdict": "MERGE",
+   "mergeInto": "alphabet-soup-complete",
+   "reason": "Same proliferation; per-body rankings, fee-escape-valve, and unification prestige carry into the survivor."
+  },
+  {
+   "id": "ppv-arrives",
+   "verdict": "MERGE",
+   "mergeInto": "ppv-in-the-home",
+   "reason": "Same transition; its guarantee-plus-percentage contract structure and middle-class-is-gone framing carry into the survivor."
+  },
+  {
+   "id": "opponent-for-hire",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The opponent business was a living for hundreds of men and the game's most honest money.",
+   "reshape": "Absorb casino-b-side: a prospect-band variant (rep 15-45, record required) with the rematch-clause counter-offer; both variants share the matchmaker-remembers-refusals cost."
+  },
+  {
+   "id": "television-audition",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "'Good does not mean won' is the era's cruelest lesson, priced correctly.",
+   "reshape": "Absorb the-camera-test's man-in-a-blazer scout scene as its arrival texture; drop that event's permanent +15% purse flag \u2014 television pay flows through reputation, not a flag."
+  },
+  {
+   "id": "sanctioning-invoice",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The letterhead indicts itself \u2014 the game's voice doing mechanical work.",
+   "reshape": "Absorb ratings-assessment's haggle branch (pay 60%, ranking slips 1-2 places a year) and its refusal-hates-daylight press escape; fees recur quarterly per body."
+  },
+  {
+   "id": "decorated-amateur-at-the-door",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The walk-in system inflected by history \u2014 a name at the door for the first time, with the resentment traits the money left behind."
+  },
+  {
+   "id": "the-long-count-home",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The ring death arriving at each locker by trait is the timeline made personal, and the trust-gated meeting is real management."
+  },
+  {
+   "id": "last-card-at-the-old-hall",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "Sentiment against February's rent, and the closure elegy runs with or without your gym's name in it."
+  },
+  {
+   "id": "the-great-mans-visit",
+   "verdict": "KEEP",
+   "category": "era",
+   "reason": "Forty minutes the gym retells for years, and the later quiet variant lands the whole arc in one sentence about his hands."
+  },
+  {
+   "id": "week-under-the-lights",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Casinos never stop being casinos \u2014 a trait reveal staged as fight-week management, with the public reveal as the worst case."
+  },
+  {
+   "id": "the-powder-decade",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The era's signature temptation with a trust-gated confrontation \u2014 you can have the fight without the standing to win it."
+  },
+  {
+   "id": "hollow-crown",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The quotation-marks championship \u2014 the gap between the phone pitch and the press coverage IS the design."
+  },
+  {
+   "id": "comeback-itch",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The miracle's precedent in every old fighter's mouth, aimed at YOUR retired names.",
+   "reshape": "Absorb comeback-collect-call: can fire rarely in any era 18+ months after retirement (at 2x weight with the 'HE did it' line post-miracle), and add its corner-work third choice \u2014 the best ending the event has."
+  },
+  {
+   "id": "fight-night-at-the-bijou",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Deliberately era-mortal income so the player feels the closed-circuit extinction in their own ledger."
+  },
+  {
+   "id": "sold-on-the-wrong-angle",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The machinery that sold a hundred fights on everything but the fighting, with trait-true fallout; requires the persistent-promoter NPC registry."
+  },
+  {
+   "id": "fifteenth-round-men",
+   "verdict": "KEEP",
+   "category": "era",
+   "reason": "The same clipping meaning opposite things at two lockers \u2014 the rule change made personal, choiceless, correct.",
+   "reshape": "Gate on existing data only: veteran with stamina>=75 and age>=30; the old coach's typed note fires if any hired coach is old enough to remember fifteen."
+  },
+  {
+   "id": "first-ink",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Four lines of agate and he bought six copies \u2014 the cheapest joy in the packet."
+  },
+  {
+   "id": "the-christening",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The press coins the nickname the game's nickname field was waiting for, and going to bat over something small teaches trust."
+  },
+  {
+   "id": "hometown-hero-front-page",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The local-boy Sunday feature with a walk-in wave from his own block, and the comfort_seeker arrival-is-the-danger drift."
+  },
+  {
+   "id": "the-hit-piece",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Forty percent fair is the cruelest percentage there is, and phoning the writer is a real coin flip with a feud byline on the far side."
+  },
+  {
+   "id": "the-adoption",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The chronicler byline is the press-as-character hill made flesh \u2014 multipliers both ways, and a made man falls harder."
+  },
+  {
+   "id": "called-out-in-print",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The old way \u2014 through a writer, three paragraphs down \u2014 and hot_tempered men answer before you can decide."
+  },
+  {
+   "id": "the-quote",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "A hell of a line, right before it costs something; the grudge-frame flag makes mouth into money."
+  },
+  {
+   "id": "kitchen-table-profile",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The family_man's counter-economy \u2014 he sells tickets to people who don't like boxing, and the tabloid era makes decency scarce and valuable."
+  },
+  {
+   "id": "the-fixed-fight-expose",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The world's own corruption with a clean-hands dividend the player earned without knowing they were earning it."
+  },
+  {
+   "id": "where-are-they-now-made-good",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "'They taught me plenty' \u2014 the game's memory made cruel, cross-referenced to the ledger's own cut entry."
+  },
+  {
+   "id": "where-are-they-now-fell-apart",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "No mechanical penalty, correctly \u2014 this one is for the player, and the 5% doorway return is the season's best line."
+  },
+  {
+   "id": "retirement-tribute",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "How a career ends in your house, witnessed by the whole roster and framed on the office wall per bible principle 8."
+  },
+  {
+   "id": "prospects-to-watch",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The kiss and the curse in one column \u2014 the zero becoming a character that owns insecure men is real fight-game psychology."
+  },
+  {
+   "id": "how-the-zero-dies",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Two first losses, branched on real engine data, with the shield-loss revealing lionheart to player and paper at once."
+  },
+  {
+   "id": "crosstown-feud",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "A writer building a fight without leaving his desk, feedable or starvable, ending in a showdown offer at the biggest local venue."
+  },
+  {
+   "id": "the-camera-test",
+   "verdict": "MERGE",
+   "mergeInto": "television-audition",
+   "reason": "Same TV door \u2014 the blazer-scout scene survives as the audition's arrival texture and the permanent purse flag dies."
+  },
+  {
+   "id": "sleeps-in-the-gym",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Generosity advertising to the men who need it, envelopes under the door \u2014 chain it to fire after graveyard-shift when possible."
+  },
+  {
+   "id": "saturday-night-in-print",
+   "verdict": "MERGE",
+   "mergeInto": "saturday-in-the-tank",
+   "reason": "Same Saturday from two desks \u2014 the rep>=30 press layer, get-ahead-of-it statement, and tabloid-era doubling bolt onto the fighter seat's bail event."
+  },
+  {
+   "id": "the-misprint",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Two letters swapped, both clippings up in the locker, no rep change because nobody important read it either \u2014 pure soul, near-zero cost."
+  },
+  {
+   "id": "enters-the-ratings",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Agate type smaller than a matchbook and nothing in the gym gets done that day.",
+   "reshape": "Requires the ranked elite deepened to ten per division; entry assigns the tail slot through the existing churn machinery."
+  },
+  {
+   "id": "the-ghost-writer",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The tape recorder gets what the corner never did \u2014 a late-career, gated, once-per-fighter full reveal is an earned exception to the secrets budget."
+  },
+  {
+   "id": "locker-room-door",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Grief with a witness or the bolted door \u2014 either answer is characterful and the byline remembers both."
+  },
+  {
+   "id": "hometown-robbery",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The sympathetic loss, rarer than a win and worth almost as much, with a rematch any promoter can smell."
+  },
+  {
+   "id": "face-on-the-bill",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Somebody watched his face when he saw the poster \u2014 trait-forked pressure that the paper mentions later, because writers are like that."
+  },
+  {
+   "id": "week-in-the-gym",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The embedded long piece where every man finds himself in a sentence, with a real risk a low-trust grievance runs verbatim."
+  },
+  {
+   "id": "rumor-column-linkage",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The business asking a question in print, deniably \u2014 and losing rep over a fight that never existed is the purest press mechanic in the packet."
+  },
+  {
+   "id": "somebody-should-tell-him",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The column addressed to you, not him \u2014 and the engine means the column can be wrong, which is what makes obeying it a choice."
+  },
+  {
+   "id": "the-payday-item",
+   "verdict": "MERGE",
+   "mergeInto": "twelve-guys-named-cousin",
+   "reason": "Same first-money moment \u2014 the printed purse becomes the cousin event's arrival vector, and its trait drifts fold into the survivor."
+  },
+  {
+   "id": "old-mans-list",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "Ink that owes you nothing, chained to the afternoon paper's death \u2014 the reward for a decade of being covered."
+  },
+  {
+   "id": "the-cold-shoulder-beat",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The standing consequence of treating the press as furniture, delivered as adjectives leaving \u2014 punishment you can't prove."
+  },
+  {
+   "id": "two-bums-classic",
+   "verdict": "KEEP",
+   "category": "press",
+   "reason": "The war IS the credential, read off real engine data \u2014 the best fight of the year at 8:15 before the crowd sat down.",
+   "reshape": "Expose knockdown counts and round-completion on FightResult so the trigger reads structured data, not narrative strings."
+  },
+  {
+   "id": "the-anniversary-piece",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The writer interviews the broom \u2014 a decade milestone that pays in coach quality and walk-ins because good coaches read the paper too."
+  },
+  {
+   "id": "hairline",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The self-wrapped hand before a booked date \u2014 every choice is a manager's real Tuesday, and the lionheart win reveal is earned."
+  },
+  {
+   "id": "the-scale-dont-lie",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The comfort seeker's whole career in one laughing weigh-in, with move-up-a-class as a real structural answer."
+  },
+  {
+   "id": "twelve-guys-named-cousin",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "First money, new friends, one in a suit \u2014 and the barred-entourage jacket payoff sixty days later is perfect.",
+   "reshape": "Absorb the-payday-item: the printed purse figure in the paper is how the cousins found him; carry its family_man envelope-home line and unfocused missed-days roll."
+  },
+  {
+   "id": "she-asked-me-to-ask-you",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The fight-count clock given to his wife is the strongest promise mechanic in the packet \u2014 honored or broken, the ledger holds it."
+  },
+  {
+   "id": "the-doctor-said-stop",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "'Accumulation' in a hallway \u2014 the medical retirement pressure with the workup that can make refusing a named decision.",
+   "reshape": "Absorb commission-flag: the specialist-clearance cost, the looser-state dodge with its two-strikes column, and the trait-branched retirement endings become this event's post-reform escalation."
+  },
+  {
+   "id": "the-fog",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The central moral fact of the era, with 'say nothing' selectable and remembered \u2014 ships uncut per the upheld hill."
+  },
+  {
+   "id": "the-camel-coat",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Broke fighters and easy money find each other; paying it yourself buys a debt he may never quite look past."
+  },
+  {
+   "id": "county-lockup",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The corner that shows up at the jail is the corner that gets believed on the stool \u2014 the packet's best trust arithmetic."
+  },
+  {
+   "id": "two-a-m",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Holding the bag and saying nothing as a mechanic \u2014 chip_on_shoulder answered in its own language."
+  },
+  {
+   "id": "watercolors",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The sketchbook put back with care telling him everything \u2014 choiceless joy, upheld per the hill, ships exactly as written."
+  },
+  {
+   "id": "comeback-collect-call",
+   "verdict": "MERGE",
+   "mergeInto": "comeback-itch",
+   "reason": "Same returning man from two seats \u2014 its collect-call staging and corner-work ending survive inside the kept event."
+  },
+  {
+   "id": "sawdust-trail",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Faith as a road, not a switch \u2014 period-true, respectful, and the crisis-then-deeper follow-up is real writing."
+  },
+  {
+   "id": "letter-from-home",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The transplant's homesickness with a bus ticket you might lose him to \u2014 'his block reclaimed him' is a departure worth having."
+  },
+  {
+   "id": "somebody-in-this-room",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "Forty dollars and the door isn't safe \u2014 three answers, all costly, and the unanswered version poisons the room correctly."
+  },
+  {
+   "id": "the-hired-jaw",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The sparring partner who boxed the star's ears off \u2014 escalating, and the rival-gym spoiler clipping names your blindness."
+  },
+  {
+   "id": "saturday-in-the-tank",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The precinct call at six Sunday \u2014 bail choices that draw real boundaries.",
+   "reshape": "Absorb saturday-night-in-print as its rep>=30 press layer: blotter item, get-ahead statement option, commission suspension, tabloid-era doubling."
+  },
+  {
+   "id": "big-room-small-voice",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The stairwell on weigh-in morning, with the threshold resetting upward when you walk him through it yourself."
+  },
+  {
+   "id": "cab-drivers",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The glory hunter pricing his own hunger, and the tracked promise that makes 'the deal' cost something later."
+  },
+  {
+   "id": "gone-in-fight-week",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The unfocused trait's masterpiece \u2014 the aunt's porch or the rail at the track, and you now price the vanishing into every booking."
+  },
+  {
+   "id": "washing-machine",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The kind the player rereads in 1988 \u2014 choiceless, joyful, ships untouched per the upheld hill."
+  },
+  {
+   "id": "cigars-on-the-corkboard",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The newborn's photograph over everything else on the corkboard, seeding harder and warmer versions of his later events."
+  },
+  {
+   "id": "old-head",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The professor's corner \u2014 the best coach pipeline the game can offer, grown instead of bought."
+  },
+  {
+   "id": "the-cut-that-never-healed",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Powder it and go \u2014 reckless men secretly keeping score of who protects them is exactly the trait's truth."
+  },
+  {
+   "id": "graveyard-shift",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Week seven of the double life \u2014 the weekly draw is the game's smallest, most characterful contract; chains into sleeps-in-the-gym."
+  },
+  {
+   "id": "wrote-the-name-down",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "'A durable opponent' taped inside the locker door \u2014 the trait feeding on the press system, per byline, with the correction clipping as its sweetest payoff."
+  },
+  {
+   "id": "do-you-believe",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The straight answer that survives Saturday either way \u2014 insecure men keep the receipts, and this event teaches the player that."
+  },
+  {
+   "id": "never-said-a-word",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The canonical lionheart reveal \u2014 seven rounds on a broken hand and the X-ray story the paper always gets."
+  },
+  {
+   "id": "the-hands-go-first",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Rebuild him as a boxer or let him spend what's left \u2014 a real career fork grounded in power, age, and injury history."
+  },
+  {
+   "id": "benefit-night",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The sweet science remembers its own \u2014 the packet's best morale event, costing almost nothing but heart, with the two-dollar envelope."
+  },
+  {
+   "id": "the-engraved-watch",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "The one mechanic that lets a relationship finish healing \u2014 TRUST_HEAL_CAP lifted once, earned, per the upheld hill; no numbers move otherwise and that is correct."
+  },
+  {
+   "id": "taxman",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Nobody told him purses were money the government could see \u2014 period-true, and the accountant becomes a paragraph in his retirement clipping."
+  },
+  {
+   "id": "stablemate-purse",
+   "verdict": "KEEP",
+   "category": "gym",
+   "reason": "The fight nobody in the gym wants at the best purse either has seen \u2014 refusing protects the house at a price, which is the whole job."
+  },
+  {
+   "id": "casino-b-side",
+   "verdict": "MERGE",
+   "mergeInto": "opponent-for-hire",
+   "reason": "Same B-side phone call \u2014 its prospect band, rematch-clause counter, and polite-is-the-tell staging survive inside the kept event."
+  },
+  {
+   "id": "tv-clean-record",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "'Suitable' does the work 'stiff' won't \u2014 and the writer's private protected tally makes record-keeping an ethics system."
+  },
+  {
+   "id": "contract-buyout",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The check for you and the machine for him \u2014 selling a man in front of his stablemates is the roster's hardest mirror."
+  },
+  {
+   "id": "options-for-the-shot",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Page nine of eleven \u2014 the option tax itemized on every defense is the era's true price of a title, per the upheld strings hill."
+  },
+  {
+   "id": "ratings-assessment",
+   "verdict": "MERGE",
+   "mergeInto": "sanctioning-invoice",
+   "reason": "Same ornate letterhead from two seats \u2014 the haggle branch, quarterly recurrence, and daylight escape survive in the kept event."
+  },
+  {
+   "id": "the-accommodation",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The fixer outside the gym when you're weak, traits deciding whether your man will even do it, and a years-later fuse \u2014 ships with teeth per the upheld hill."
+  },
+  {
+   "id": "percentage-or-flat",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Two columns typed side by side \u2014 the game's first income with variance attached, staged as a contract on a desk, not a menu."
+  },
+  {
+   "id": "hometown-ballpark",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Twenty thousand seats and the man in your mirror \u2014 the self-promotion capstone with rain-plus-a-loss as the worst financial night available."
+  },
+  {
+   "id": "matchmakers-apprentice",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Some men in this business you grow with \u2014 a decades-long relationship counter that pays off as the Tuesday series' first call."
+  },
+  {
+   "id": "bounced-check",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Six hard rounds for a piece of paper \u2014 paying the fighter's share yourself is trust arithmetic worth the cash."
+  },
+  {
+   "id": "paper-the-house",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Fifty tickets with a rubber band around them \u2014 how club boxing actually worked, and correctly extinct when the circuit dies."
+  },
+  {
+   "id": "short-notice-call",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Eleven p.m., ten days, double money because everyone else said no \u2014 'the kid who said yes' is a reputation event worth its risk."
+  },
+  {
+   "id": "house-fighter-retainer",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "Well-paid, well-lit furniture \u2014 guaranteed money against arranged opponents, with the unannounced one-in-six betrayal built in."
+  },
+  {
+   "id": "purse-envy",
+   "verdict": "KEEP",
+   "category": "fighter-life",
+   "reason": "Arithmetic on the bus home \u2014 the bonus precedent counter is a real trap, and leveling with him is trust-gated correctly."
+  },
+  {
+   "id": "olympic-kid-auction",
+   "verdict": "KEEP",
+   "category": "business",
+   "reason": "The smallest operation on the list, and the roster as the recruiter \u2014 a ranked man who trusts you is the best pitch you own."
+  },
+  {
+   "id": "commission-flag",
+   "verdict": "MERGE",
+   "mergeInto": "the-doctor-said-stop",
+   "reason": "Same commission doctor from two seats \u2014 its specialist workup, looser-state dodge, and trait-branched retirement endings survive in the kept event."
+  }
+ ],
+ "timelineOrder": [
+  "poet-kings-last-reign",
+  "bicentennial-olympic-class",
+  "boardwalk-city-opens",
+  "network-boxing-boom",
+  "network-tournament-scandal",
+  "club-circuit-withers",
+  "poet-king-upset-and-redemption",
+  "heir-in-the-shadow",
+  "alphabet-fracture-one",
+  "poet-king-sad-ending",
+  "recession-bite",
+  "four-kings-era",
+  "the-surrender",
+  "desert-city-ascendant",
+  "premium-cable-arrives",
+  "death-of-the-afternoon-paper",
+  "ring-death-fifteen-rounds",
+  "voice-quits-the-sport",
+  "fights-on-tuesday",
+  "alphabet-soup-complete",
+  "olympic-class-84",
+  "teen-wrecking-ball-rise",
+  "teen-unification",
+  "tabloid-turn",
+  "what-the-game-takes",
+  "networks-abandon-ship",
+  "ppv-in-the-home",
+  "teen-implosion",
+  "old-lion-miracle",
+  "olympic-class-92-golden-boy",
+  "nineties-heavyweight-circus",
+  "lighter-weights-inherit"
+ ],
+ "integrationNotes": "Era state. Add `era` to the save: `{ seed, schedule, flags, purseMultipliers, titleClaims, venueLifecycle, npcs }`. At new-game, a mulberry32 stream off the save seed rolls every kept scripted beat's dates inside its window, its generated cast (names, divisions, traits \u2014 the wrecking ball's hot_tempered+insecure set at generation, per the upheld hill), and per-save outcomes the beats need (the upset month, which venue dies when). Store as a flat dated list of sub-beats `{ eventId, beatIndex, day, payload }`. The schedule never re-rolls; in-the-moment dice stay Math.random in handlers per house rule; bouts stay on the seeded fightEngine.\n\nEvaluator. In advanceTime, after worldSim and before the press cycle: (1) fire scripted sub-beats whose day has passed \u2014 they mutate world state (multipliers, venue list, titleClaims, WorldFighter injections via makeWorldFighter/makeNationalElite) and emit surfacing payloads; (2) evaluate triggered events against roster/world using the lifeEvents pattern \u2014 at most ONE player-facing choice event per advance gym-wide, and a weekly surfacing budget (~2 world clippings + 1 player item) so a crowded year never floods a Tuesday. Once-per-fighter/save flags persist on roster entries and era.flags. Choice events land as paper in the office \u2014 generalize the offer card into `Correspondence` (phone slip, letter, invoice, contract) with walk-in-style patience/expiry. Never a modal.\n\nSurfacing. Clippings via pressItem/runPressCycle with new template categories in press_clippings.json; the ring death is the single frame-breaking front page, flagged unrepeatable; commission notices, sanctioning invoices, and contracts are typed office mail; corkboard via gymLog; milestones via the ledger. Byline memory: PressState.writers becomes `{ name, warmth, clipsByFighter, adoptedFighterId? }` (migrate from string[]).\n\nEconomy. pursefor gains `eraPurseMultiplier(weightClass, year, era)` and an offer-tier enum {club, tuesday, network, casino, cable, ppv} with gates (publicReputation/nationalRank/record) and itemized expense lines (travel, medical & license, sanctioning %) on the settlement sheet. Club purse BASES freeze nominally after 1979; recession windows freeze the inflation term on all tiers and supersede (never stack with) the club freeze. Multiplier arc per the kept beats: heavyweight 1.2 \u2192 0.9 (post-king) \u2192 1.5\u20132.0 (teen) \u2192 1.1 (implosion) \u2192 bimodal (circus); welter/middle to 1.5 (kings) then lighter divisions 1.6\u20131.8 by the late 90s.\n\nVenues/rankings. Seed 5\u20136 press venues per city so closures every 2\u20134 years leave at least one hall alive in 1990. Deepen the national elite to ten per division (worldSim churn already refills vacancies); era.titleClaims tracks 1\u20134 belts per division with per-belt purse multipliers; the magazine keeps one lineal column as the save's measuring stick.\n\nNPCs. era.npcs registers persistent business characters \u2014 the crooked promoter, the apprentice who becomes the Tuesday matchmaker, the buyout shark, the fixer \u2014 generated once, referenced by every event needing a recurring voice.\n\nTrait reveals. Adoption, ghost-writer, week-in-the-gym, week-under-the-lights, and the rolodex letter all route through the existing reveal pacing (~one secret a year per man); a reveal event consumes that budget, never adds to it.\n\nMigration. Saves without `era` synthesize one on load, seeded from save id; beats already past fire silently (state only, no clipping flood) \u2014 except the ring death, which if past sets the rules without printing the front page. Bump the persistence version.",
+ "namingRules": "Every person, gym, sanctioning body, network, casino, venue, and TV series is generated per save from names.json subpools and small composers. No real names, no near-homophones, no acronym collisions with real bodies (WBC/WBA/IBF/WBO banned as strings). Archetype roles carry code ids (poet_king, heir, brawler_king, teen_hw); display names roll per save \u2014 a veteran of three saves never meets the same name twice. Sanctioning bodies compose as [World/International/National/United] + Boxing + [Council/Federation/Association/Union]. Broadcast stays generic in copy (\"a national network,\" \"the cable people\") or uses generated fictional brands; the magazine remains The American Boxing Monthly. Casinos and halls extend the existing venue composer with a resort table and a ban-list of real casino/arena names. Nicknames come from existing pools via the-christening machinery; famous real nicknames (The Greatest, Iron \u2014, Hands of Stone, Hitman, Marvelous, Sugar, Golden Boy) are banned on analog roles. Signature behavior may echo an archetype, but biographical identifiers \u2014 specific crimes, body parts, religions, dead relatives, exact famous dates \u2014 must be generalized or rolled from per-save variant tables. Foreign fighters roll nationality and name subpool per save.",
+ "gaps": [
+  "No coach seat: the player's own trainers have no life events, poaching, aging, or mortality \u2014 the teen arc scripts a trainer's death for the world while yours are immortal.",
+  "The world model is US-only: foreign champions, the lighter-weight god's home country, and overseas farewell/foreign-ring fights need a thin international layer.",
+  "Five weight classes vs the 147/154/160 texture the four-kings and alphabet math assume \u2014 reconcile divisions or map the band onto welterweight/middleweight explicitly.",
+  "Endgame past ~1999 undefined: the Tuesday series dies, the PPV bimodal economy hardens, and nothing replaces the ladder \u2014 a 2000s pass or a designed sunset is needed.",
+  "The player never ages: 25 in 1975 is 50 in 2000; manager health, succession, and legacy events are missing entirely.",
+  "Rivalry memory: rematch clauses, trilogies, and specific player-vs-world grudges are implied by several kept events but have no system of record.",
+  "Women exist only as wives and mothers; the era-true beat (the first woman in the press box, the credential fights of the late 70s) deserves a deliberate pass.",
+  "Race and neighborhood politics are touched only obliquely (sold-on-the-wrong-angle); decide in one deliberate, sensitivity-reviewed pass how far the game goes rather than by accretion.",
+  "Gym relocation: Vegas is framed as a destination city but no event path ever takes the player there.",
+  "The amateur pipeline (Golden Gloves, the gym's own amateur nights) is unmodeled though the Olympic beats lean on it for texture and walk-ins.",
+  "FightResult needs first-class knockdown counts and round-completion data for two-bums-classic and how-the-zero-dies; expose structured fields, not narrative parsing.",
+  "Pacing rehearsal: build a 1975-2000 dry-run harness that prints the year-by-year clipping/event density before shipping \u2014 32 era beats plus 88 triggered events must be proven quiet enough."
+ ]
+}
