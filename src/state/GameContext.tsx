@@ -264,7 +264,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const continueGame = useCallback(() => {
     const loaded = loadSave();
-    if (!loaded) return;
+    if (!loaded) {
+      // The key exists but the save can't be resumed (pre-v2 or corrupted) —
+      // disable Continue instead of leaving a button that silently does nothing.
+      setCanContinue(false);
+      return;
+    }
     // Persist any migration done on load (e.g. a v17 world generated for an
     // older save) so it's stable from here on.
     writeSave(loaded);
@@ -339,7 +344,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (t.note) trainingNotes.push(t.note);
         return {
           ...settled,
-          fighter: { ...settled.fighter, attributes: t.attributes },
+          fighter: {
+            ...settled.fighter,
+            attributes: t.attributes,
+            // Time passes for your men too — age advances fractionally (like the
+            // rival world's) so the development/decline curves actually engage.
+            age: settled.fighter.age + days / 365,
+          },
           lastDelta: t.lastDelta,
         };
       });
@@ -388,7 +399,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
             interestNotes.push(`${name} took a call after practice and wouldn’t say from who.`);
           }
         }
-        const leaveChance = next >= 80 ? Math.min(1, (next - 80) / 20) * 0.4 * (days / 7) : 0;
+        // Compound the per-day hazard so daily and weekly advancing carry the
+        // same poach risk (0.4/week at full interest, expressed per day).
+        const leavePerDay = next >= 80 ? (Math.min(1, (next - 80) / 20) * 0.4) / 7 : 0;
+        const leaveChance = leavePerDay > 0 ? 1 - Math.pow(1 - leavePerDay, days) : 0;
         const gym = leaveChance > 0 && Math.random() < leaveChance ? pickPoachDestination(prev.cityId) : null;
         if (gym) {
           poachDepartures.push({ entry: e, reason: 'left_for_opportunity', toGym: gym.name });
@@ -425,7 +439,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         const aged = ageApplicants(prev.coachApplicants, days);
         const fresh = rollCoachApplicants(days, prev.cityId, reputationFor(prev), prev.coachPosting);
         coachApplicants = [...aged.staying, ...fresh].slice(0, MAX_APPLICANTS);
-        for (const a of fresh) {
+        // Only announce arrivals that actually made the (capped) list — a note
+        // for a man the slice dropped would name a coach who exists nowhere.
+        for (const a of fresh.filter((a) => coachApplicants.includes(a))) {
           coachNotes.push(
             `A coach answered your ad — ${a.coach.name}, ${specialtyName(a.coach.specialty)}.`,
           );
@@ -448,7 +464,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         press = pressItem(
           press,
           toDay,
-          `${p.gymName} has signed ${fighterFullName(p.fighter)}, a ${p.fighter.age}-year-old ${cls}, after weeks of local interest.`,
+          `${p.gymName} has signed ${fighterFullName(p.fighter)}, a ${Math.floor(p.fighter.age)}-year-old ${cls}, after weeks of local interest.`,
         );
       }
       for (const line of interestHeadlines) press = pressItem(press, toDay, line);
@@ -463,8 +479,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
       // The competitive world moves on its own — ages, fights, signs, retires —
       // and absorbs the men you let slip: prospects (6C-3) and your own unhappy
-      // talent (6C-4).
-      let world = advanceWorld(prev.world, { days, toDay }).world;
+      // talent (6C-4). Its notes (rival signings, new ranked names) make the paper.
+      const worldAdvance = advanceWorld(prev.world, { days, toDay });
+      let world = worldAdvance.world;
+      for (const note of worldAdvance.notes) {
+        press = pressItem(press, toDay, note);
+      }
       const joiners = [...poachedToWorld, ...talentToWorld];
       if (joiners.length) {
         world = { ...world, fighters: [...world.fighters, ...joiners] };
@@ -911,7 +931,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!entry) return;
 
       const name = fighterFullName(entry.fighter);
-      const outcome = resolveCut(entry);
+      // A cut locker holder can only "stay and earn it back" if the bench has
+      // room — with the floor full there's nothing to stay on, so he's gone.
+      // (Keeps the no-locker cap honest; every other path guards it too.)
+      const benchFull = entry.hasLocker && noLockerUsed(prev) >= noLockerCapacity(prev);
+      const outcome = benchFull ? 'vanish' : resolveCut(entry);
       emitGameEvent({ type: 'fighter_cut', fighterId: id, stayed: outcome === 'stay' });
 
       const memory = {

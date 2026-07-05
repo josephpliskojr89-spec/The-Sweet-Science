@@ -9,7 +9,7 @@
   Presentation only — it knows nothing about decisions or the queue.
 */
 
-import type { Fighter } from '../../game/fighters';
+import { fighterAge, type Fighter } from '../../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../../game/weightClasses';
 import { Portrait } from '../../assets/portraits';
 import { GlovesEmblem } from '../GlovesEmblem';
@@ -19,7 +19,7 @@ export function WalkInCard({ fighter }: { fighter: Fighter }) {
   const cls = WEIGHT_CLASSES[fighter.weightClass];
 
   const stats: Array<[string, string]> = [
-    ['Age', String(fighter.age)],
+    ['Age', String(fighterAge(fighter))],
     ['Height', formatHeight(fighter.heightInches)],
     ['Weight', `${fighter.weightLbs} lbs`],
     ['Weight Class', cls.name],

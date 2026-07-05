@@ -6,8 +6,9 @@
   away — made on incomplete information. Walks a sequence (a batch of arrivals,
   or one card from the My Office queue) and closes when it's worked through.
 
-  The locker decision respects the 20-locker cap. Hierarchy management (must
-  keep / watch / chopping block) is Phase 4 — here we just open the door or not.
+  The locker decision respects the current (upgrade-dependent) locker and
+  bench caps. Hierarchy management (must keep / watch / chopping block) is
+  Phase 4 — here we just open the door or not.
 */
 
 import { useEffect } from 'react';
@@ -45,6 +46,17 @@ export function WalkInViewer() {
       openWalkIns(viewerIds, viewerIndex + 1);
     }
   }, [viewerIds, viewerIndex, currentId, walkIn, closeWalkInViewer, openWalkIns]);
+
+  // The viewer is the top overlay, so it owns Escape (everything beneath defers
+  // to it) — Esc is the safe dismiss, same as "Decide later".
+  useEffect(() => {
+    if (done) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeWalkInViewer();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [done, closeWalkInViewer]);
 
   if (!save || done || !currentId || !walkIn) return null;
 

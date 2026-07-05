@@ -129,8 +129,9 @@ function genRecord(rating: number, age: number): WorldRecord {
   if (proYears <= 0) return { wins: 0, losses: 0, draws: 0, kos: 0 };
   const fights = Math.min(72, Math.round(proYears * rand(2.5, 4.5)));
   const winRate = clamp(0.4 + (rating / 100) * 0.5, 0.3, 0.92);
-  const draws = Math.random() < 0.5 ? 0 : randInt(0, 2);
-  const wins = Math.round(fights * winRate);
+  // Draws come out of the fight count first so wins+losses+draws = fights holds.
+  const draws = Math.min(fights, Math.random() < 0.5 ? 0 : randInt(0, 2));
+  const wins = Math.round((fights - draws) * winRate);
   const losses = Math.max(0, fights - wins - draws);
   const koRate = clamp(0.3 + (rating / 100) * 0.35, 0.2, 0.8);
   const kos = Math.round(wins * koRate);
@@ -174,7 +175,8 @@ function makeWorldFighter(o: MakeOpts): WorldFighter {
     fidelity: o.fidelity,
     publicReputation: genPublicRep(o.rating, record, nationalRank),
     nationalRank,
-  } as WorldFighter & { full: Fighter | null };
+    full: null,
+  };
 }
 
 /** A plausible age for a working pro — most in their prime, a few green, a few old. */
@@ -202,8 +204,9 @@ function makeRivalFighter(gym: RivalGym, fidelity: Fidelity, noteworthy = false)
 const ESTABLISHED_GYMS = RIVAL_GYMS.filter((g) => g.tier === 'established');
 
 /** One ranked elite for a division — mostly attached to an established house,
-    occasionally a promoter-managed independent star. */
-function makeNationalElite(weightClass: WeightClassKey, rank: number): WorldFighter {
+    occasionally a promoter-managed independent star. Also used by the world
+    sim to fill a rank vacated by retirement, so the ratings never go dark. */
+export function makeNationalElite(weightClass: WeightClassKey, rank: number): WorldFighter {
   const rating = clamp(90 - (rank - 1) * 3 + gauss() * 2, 78, 97);
   const age = rand(26, 33);
   if (Math.random() < 0.2 || ESTABLISHED_GYMS.length === 0) {
@@ -258,7 +261,10 @@ function makeIndependent(cityId: CityId): WorldFighter {
     rating,
     age,
     styleTendency: INDIE_STYLES[randInt(0, INDIE_STYLES.length - 1)],
-    nationalRank: sort === 'promoter_star' ? randInt(1, 8) : null,
+    // Local promoter stars are big names, not ranked men — handing them a blind
+    // rank collided with the seeded elite (two "Ranked #2"s in one division).
+    // The ranked layer is owned by makeNationalElite and the worldSim churn.
+    nationalRank: null,
   });
 }
 
@@ -454,7 +460,10 @@ export function worldFighterFromFighter(f: Fighter, gymId: string): WorldFighter
     weightClass: f.weightClass,
     age: f.age,
     rating,
-    record: genRecord(rating, f.age),
+    // The player KNOWS this man — a prospect at the door, or one of his own.
+    // He had no pro career (there's no fight engine yet), so he starts 0-0-0;
+    // inventing a back-dated record would contradict the signing headline.
+    record: { wins: 0, losses: 0, draws: 0, kos: 0 },
     styleTendency: getRivalGym(gymId)?.styleTendency ?? 'workhorse',
     affiliation: { kind: 'rival', gymId },
     fidelity: 'local',

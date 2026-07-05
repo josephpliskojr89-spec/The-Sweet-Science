@@ -10,7 +10,7 @@
 import { useEffect, useState } from 'react';
 import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
 import { TIER_META, TIER_ORDER, type HierarchyTier } from '../game/roster';
-import { fighterFullName } from '../game/fighters';
+import { fighterFullName, fighterAge } from '../game/fighters';
 import { WEIGHT_CLASSES, formatHeight } from '../game/weightClasses';
 import { getCity } from '../game/cities';
 import { TRAITS } from '../game/traits';
@@ -131,7 +131,7 @@ export function FighterProfile() {
             </h2>
 
             <dl className="fp__vitals">
-              <div><dt>Age</dt><dd>{f.age}</dd></div>
+              <div><dt>Age</dt><dd>{fighterAge(f)}</dd></div>
               <div><dt>Height</dt><dd>{formatHeight(f.heightInches)}</dd></div>
               <div><dt>Weight</dt><dd>{f.weightLbs} lbs</dd></div>
               <div><dt>Class</dt><dd>{cls.name}</dd></div>

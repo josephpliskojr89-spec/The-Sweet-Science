@@ -14,6 +14,7 @@
 
 import type { RosterEntry } from './roster';
 import type { TraitKey } from './traits';
+import { fighterAge } from './fighters';
 import { getCity } from './cities';
 import { WEIGHT_CLASSES } from './weightClasses';
 import { formatDate } from './time';
@@ -86,9 +87,10 @@ export function fighterBiography(entry: RosterEntry, dayCount: number): string[]
 
   // Origins.
   const days = Math.max(0, dayCount - entry.joinedDayCount);
-  const ageThen = Math.max(15, f.age - Math.floor(days / 365));
+  const ageNow = fighterAge(f);
+  const ageThen = Math.max(15, ageNow - Math.floor(days / 365));
   const when = relativeTenure(days);
-  let origin = `${name} is a ${f.age}-year-old ${cls} out of ${city}. `;
+  let origin = `${name} is a ${ageNow}-year-old ${cls} out of ${city}. `;
   origin +=
     days < 7
       ? `He walked into the gym ${when === 'today' ? 'today' : when}, ${ageThen}, looking for someone to take him seriously. `

@@ -32,7 +32,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 19;
+export const SAVE_VERSION = 20;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -141,12 +141,12 @@ export function noLockerUsed(save: GameSave): number {
   return save.roster.reduce((n, e) => n + (e.hasLocker ? 0 : 1), 0);
 }
 
-/** Total lockers, including upgrades (base 20). */
+/** Total lockers, including upgrades (base 8, max 20 fully upgraded). */
 export function lockerCapacity(save: GameSave): number {
   return lockerCapacityFor(save.upgrades);
 }
 
-/** Total bench places for men without a locker, including upgrades (base 6). */
+/** Total bench places for men without a locker, including upgrades (base 4, max 8). */
 export function noLockerCapacity(save: GameSave): number {
   return noLockerCapacityFor(save.upgrades);
 }
@@ -181,7 +181,9 @@ function migrateFighter<
     finances layer; v12 gym upgrades; v13 coaches; v14 coach assignment; v15
     coach job postings; v16 the lockerless trialist patience pair; v17 the
     competitive world; v18 talent-poaching (poachInterest + reputationMod);
-    v19 the fighter ceiling read. Pre-v2 shell saves can't be resumed — drop them. */
+    v19 the fighter ceiling read; v20 world-fighter normalization (cached full
+    fighters backfilled, local-indie ranks cleared). Pre-v2 shell saves can't be
+    resumed — drop them. */
 function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
@@ -235,8 +237,24 @@ function migrate(raw: unknown): GameSave | null {
       coachPosting: data.coachPosting ?? null,
       coachApplicants: Array.isArray(data.coachApplicants) ? data.coachApplicants : [],
       // v17 — the competitive world. Older saves get one generated around their
-      // city now; it persists on the next commit.
-      world: data.world ?? generateWorld(data.cityId as CityId, data.dayCount),
+      // city now; it persists on the next commit. v20 normalizes its fighters:
+      // any cached full Fighter gets the same backfills as roster fighters
+      // (JSON drops undefined, so `full` may be absent entirely), and local
+      // independents lose the blind national ranks that collided with the
+      // seeded elite.
+      world: data.world
+        ? {
+            ...data.world,
+            fighters: data.world.fighters.map((wf) => ({
+              ...wf,
+              full: wf.full ? migrateFighter(wf.full) : null,
+              nationalRank:
+                wf.affiliation.kind === 'independent' && wf.fidelity === 'local'
+                  ? null
+                  : wf.nationalRank ?? null,
+            })),
+          }
+        : generateWorld(data.cityId as CityId, data.dayCount),
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),
@@ -274,12 +292,23 @@ export function hasSave(): boolean {
   return loadSave() !== null;
 }
 
-/** Cheap "is there a save?" check — reads the key without running migration (and
-    so without generating a world). Use this for the Continue button / canContinue
-    state, where the full save isn't needed. */
+/** Cheap "is there a resumable save?" check — parses the key but skips migration
+    (and so skips world generation). Mirrors migrate()'s acceptance guard so the
+    Continue button never lights up for a save loadSave() would reject. */
 export function savedGameExists(): boolean {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== null;
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw) as Partial<GameSave> | null;
+    return (
+      !!data &&
+      typeof data.version === 'number' &&
+      data.version >= 2 &&
+      typeof data.gymName === 'string' &&
+      !!data.manager &&
+      typeof data.cityId === 'string' &&
+      typeof data.dayCount === 'number'
+    );
   } catch {
     return false;
   }

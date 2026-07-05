@@ -11,7 +11,7 @@
 import { useEffect, useState } from 'react';
 import { useGame, lockersUsed, noLockerUsed } from '../state/GameContext';
 import { TIER_META, TIER_ORDER, type HierarchyTier, type RosterEntry } from '../game/roster';
-import { fighterFullName } from '../game/fighters';
+import { fighterFullName, fighterAge } from '../game/fighters';
 import { WEIGHT_CLASSES } from '../game/weightClasses';
 import {
   developmentState,
@@ -284,7 +284,7 @@ function FighterRow({
         <span className="frow__identity">
           <span className="frow__name">{fighterFullName(f)}</span>
           <span className="frow__meta">
-            {f.age} yrs · {cls.name} · {tenure}
+            {fighterAge(f)} yrs · {cls.name} · {tenure}
           </span>
           <span className="frow__traits">
             {f.visibleTraits.length === 0 ? (

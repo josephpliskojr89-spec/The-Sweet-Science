@@ -11,13 +11,14 @@
 
   Pure but rng-driven (Math.random), so it runs in the advance handler like the
   rest of the simulation, never in a render path. Returns the next world plus a
-  few human notes the press/log can surface (wired in 6C-2).
+  few human notes; GameContext prints them in the paper (pressItem).
 */
 
 import { getCity } from '../cities';
 import {
   signYoungProspect,
   spawnIndependentNear,
+  makeNationalElite,
   getRivalGym,
   type WorldState,
   type WorldFighter,
@@ -91,7 +92,16 @@ export function advanceWorld(
           }
         }
       }
-      // Independents simply move on; rivals are replaced above.
+      // A vacated national rank doesn't stay empty — a new contender steps into
+      // it, so the magazine's ratings page never goes dark over the decades.
+      if (f.nationalRank !== null) {
+        const heir = makeNationalElite(f.weightClass, f.nationalRank);
+        next.push(heir);
+        notes.push(
+          `New blood in the ${f.weightClass.replace('_', ' ')} ratings: ${heir.firstName} ${heir.lastName}.`,
+        );
+      }
+      // Unranked independents simply move on; rivals are replaced above.
       continue;
     }
 

@@ -42,6 +42,8 @@ export interface Fighter {
   firstName: string;
   lastName: string;
   nickname: string | null;
+  /** Advances fractionally with the calendar once he's on a roster
+      (state/GameContext advanceTime). Display whole years via fighterAge(). */
   age: number;
   heightInches: number;
   weightLbs: number;
@@ -393,4 +395,9 @@ export function fighterFullName(f: Fighter): string {
   return f.nickname
     ? `${f.firstName} “${f.nickname}” ${f.lastName}`
     : `${f.firstName} ${f.lastName}`;
+}
+
+/** Display helper: his age in whole years (age advances fractionally). */
+export function fighterAge(f: Fighter): number {
+  return Math.floor(f.age);
 }

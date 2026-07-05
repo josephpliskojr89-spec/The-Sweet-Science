@@ -253,9 +253,6 @@
 }
 
 @media (max-width: 640px) {
-  .paper__columns {
-    column-count: 1;
-  }
   .office__tabs {
     margin-left: 0;
   }
@@ -530,6 +527,16 @@
 .gymcard--indie {
   border-color: var(--amber-ember);
   background: rgba(217, 154, 78, 0.05);
+}
+/* Regional view — many gyms grouped by city, so the cards tighten up. */
+.gymcard--compact {
+  padding: 10px var(--space-md);
+}
+.gymcard--compact .gymcard__name {
+  font-size: 15px;
+}
+.gymcard--compact .gymcard__sub {
+  font-size: 11.5px;
 }
 .gymcard__head {
   display: flex;
