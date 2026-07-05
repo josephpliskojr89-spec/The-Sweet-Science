@@ -28,15 +28,15 @@ interface NameDatabase {
 
 const NAMES = db as unknown as NameDatabase;
 
-function randomPick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
+function randomPick<T>(arr: T[], rand: () => number = Math.random): T {
+  return arr[Math.floor(rand() * arr.length)];
 }
 
 /** Pick a key from a {key: weight} map, proportional to weight. */
-function weightedPick(weights: Weights): string {
+function weightedPick(weights: Weights, rand: () => number = Math.random): string {
   const entries = Object.entries(weights);
   const total = entries.reduce((sum, [, w]) => sum + w, 0);
-  let roll = Math.random() * total;
+  let roll = rand() * total;
   for (const [key, w] of entries) {
     roll -= w;
     if (roll <= 0) return key;
@@ -66,21 +66,21 @@ export interface GeneratedName {
  * (it's a destination, not a pipeline), so callers should pass a real starting
  * city; if an unknown city is given we fall back to a random selectable one.
  */
-export function generateName(city: CityId): GeneratedName {
+export function generateName(city: CityId, rand: () => number = Math.random): GeneratedName {
   let cityKey: string = city;
   if (!NAMES.city_weights[cityKey]) {
-    cityKey = randomPick(SELECTABLE_CITIES).id;
+    cityKey = randomPick(SELECTABLE_CITIES, rand).id;
   }
 
   const region = NAMES.city_to_region[cityKey];
   const weights = NAMES.city_weights[cityKey];
   const regionPools = NAMES.name_pools[region];
 
-  const firstSubpool = weightedPick(weights.first_names);
-  const lastSubpool = weightedPick(weights.last_names);
+  const firstSubpool = weightedPick(weights.first_names, rand);
+  const lastSubpool = weightedPick(weights.last_names, rand);
 
-  const first = randomPick(poolFor(regionPools.first_names, firstSubpool));
-  const last = randomPick(poolFor(regionPools.last_names, lastSubpool));
+  const first = randomPick(poolFor(regionPools.first_names, firstSubpool), rand);
+  const last = randomPick(poolFor(regionPools.last_names, lastSubpool), rand);
 
   return { first, last, full: `${first} ${last}`, firstSubpool, lastSubpool };
 }

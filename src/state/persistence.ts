@@ -20,6 +20,7 @@ import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { generateWorld, type WorldState } from '../game/world/population';
 import type { FightOffer, BookedFight, FightReport } from '../game/fights';
+import { generateEra, type EraState } from '../game/era/eraState';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
 import {
@@ -33,7 +34,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 21;
+export const SAVE_VERSION = 22;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -73,6 +74,9 @@ export interface GameSave {
   coachApplicants: CoachApplicant[];
   /** The competitive world — rival rosters and independents (game/world). */
   world: WorldState;
+  /** The era — the scripted history's seeded schedule, flags, purse weather,
+      cast, and triggered-event memory (game/era, Living World Bible). */
+  era: EraState;
   /** Open promoter offers awaiting an answer (game/fights.ts). */
   fightOffers: FightOffer[];
   /** Bouts on the calendar, resolved on their day by advanceTime. */
@@ -113,6 +117,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     coachPosting: null,
     coachApplicants: [],
     world: generateWorld(draft.cityId, 0),
+    era: generateEra(`${draft.gymName}:${draft.cityId}:${now}`, draft.cityId, 0),
     fightOffers: [],
     bookedFights: [],
     recentFights: [],
@@ -270,6 +275,16 @@ function migrate(raw: unknown): GameSave | null {
             })),
           }
         : generateWorld(data.cityId as CityId, data.dayCount),
+      // v22 — the era. Older saves roll their history now, seeded from stable
+      // identity; beats whose day already passed are marked done silently (no
+      // retroactive year of clippings on load).
+      era:
+        data.era ??
+        generateEra(
+          `${data.gymName}:${data.cityId}:${data.createdAt ?? 0}`,
+          data.cityId as CityId,
+          data.dayCount,
+        ),
       fightOffers: Array.isArray(data.fightOffers) ? data.fightOffers : [],
       bookedFights: Array.isArray(data.bookedFights) ? data.bookedFights : [],
       recentFights: Array.isArray(data.recentFights) ? data.recentFights : [],

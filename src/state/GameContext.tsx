@@ -107,6 +107,7 @@ import {
   bookFromOffer,
   fightEligible,
 } from '../game/fights';
+import { advanceEra } from '../game/era/evaluator';
 import {
   walkInPoachChance,
   worldFighterFromFighter,
@@ -634,6 +635,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
           days,
           year: formatDate(toDay).year,
           quality: qualityFor(prev),
+          purseWeather: prev.era.purseMultipliers,
         });
         for (const o of freshOffers) {
           const man = rosterAfterFights.find((e) => e.fighter.id === o.fighterId);
@@ -643,6 +645,41 @@ export function GameProvider({ children }: { children: ReactNode }) {
             );
         }
         fightOffers = [...fightOffers, ...freshOffers];
+      }
+
+      // --- the era: scripted history fires, the registry breathes (game/era) ---
+      const eraResult = advanceEra({
+        era: prev.era,
+        roster: rosterAfterFights,
+        dayCount: toDay,
+        cityName: getCity(prev.cityId).name,
+      });
+      for (const c of eraResult.clippings) press = pressItem(press, toDay, c);
+      for (const h of eraResult.historyLines) {
+        history = [...history, { dayCount: toDay, text: h }].slice(-250);
+      }
+      if (eraResult.worldInjections.length) {
+        world = { ...world, fighters: [...world.fighters, ...eraResult.worldInjections] };
+      }
+      if (eraResult.rosterPatches.length) {
+        const byId = new Map(eraResult.rosterPatches.map((p) => [p.fighterId, p]));
+        rosterAfterFights = rosterAfterFights.map((e) => {
+          const patch = byId.get(e.fighter.id);
+          if (!patch) return e;
+          return {
+            ...e,
+            morale: Math.max(0, Math.min(100, e.morale + (patch.morale ?? 0))),
+            trust: Math.max(0, Math.min(100, e.trust + (patch.trust ?? 0))),
+            fighter: {
+              ...e.fighter,
+              publicReputation: Math.max(
+                0,
+                Math.min(100, e.fighter.publicReputation + (patch.reputation ?? 0)),
+              ),
+              nickname: patch.nickname ?? e.fighter.nickname,
+            },
+          };
+        });
       }
 
       commit({
@@ -655,12 +692,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
         world,
         walkIns: [...stillWaiting, ...fresh],
         roster: rosterAfterFights,
+        era: eraResult.era,
         fightOffers,
         bookedFights,
         recentFights,
         press,
         history,
         recentLog: [
+          ...eraResult.logLines.map((text) => ({ dayCount: toDay, text })),
           ...fightNotes.map((text) => ({ dayCount: toDay, text })),
           ...newLines,
           ...prev.recentLog,

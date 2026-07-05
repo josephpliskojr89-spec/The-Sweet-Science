@@ -188,6 +188,8 @@ export interface RollOffersArgs {
   year: number;
   /** 0..1 gym reputation quality — better gyms get more calls. */
   quality: number;
+  /** era purse weather by division (1.0 baseline) — game/era. */
+  purseWeather?: Partial<Record<WeightClassKey, number>>;
 }
 
 export const MAX_OPEN_OFFERS = 4;
@@ -228,6 +230,7 @@ export function rollFightOffers(args: RollOffersArgs): FightOffer[] {
   const opp = pick(candidates);
 
   const rounds = roundsFor(e);
+  const weather = args.purseWeather?.[e.fighter.weightClass] ?? 1;
   out.push({
     id: makeOfferId(),
     fighterId: e.fighter.id,
@@ -235,7 +238,7 @@ export function rollFightOffers(args: RollOffersArgs): FightOffer[] {
     weightClass: e.fighter.weightClass,
     rounds,
     venue: venues.length ? pick(venues) : 'the Armory',
-    purse: pursefor(rounds, opp.publicReputation, risk, year),
+    purse: Math.round((pursefor(rounds, opp.publicReputation, risk, year) * weather) / 25) * 25,
     onDay: dayCount + randInt(10, 24),
     expiresDay: dayCount + randInt(5, 9),
     risk,
