@@ -1,0 +1,1352 @@
+[
+ {
+  "role": "Creative Director",
+  "verdict": "The single biggest lie this UI tells: it claims to be a building but it is one reusable component. Every screen \u2014 floor, locker room, office, profile \u2014 is the same centered, rounded, dark panel floating in a vignette void, wearing different data. That is a dark-mode SaaS with a sepia filter, exactly the failure the brief names. Light comes from nowhere: shadows are elevation tokens, glows are emissive pixels, hover states levitate cards. The palette is genuinely good and the writing already lives in 1975, which makes the chrome's betrayal louder \u2014 pill chips, badge counters, segmented controls, native selects, breadcrumbs. Nothing on screen answers \"what object is this?\" There is no wall, no desk, no gravity. The set is built from Figma parts painted brown.",
+  "offenders": [
+   {
+    "where": "GymScreen.css .gym__rooms / floor5.png \u2014 the gym floor navigation",
+    "tell": "Five identical rounded cards in a perfect repeat(5,1fr) CSS grid, each with hover translateY(-4px) lift and amber glow",
+    "why": "Rooms in a real building are not five interchangeable rectangles at identical size and elevation. A card grid that levitates on hover is the signature move of a 2025 dashboard; a place has doors, signs, and things of different sizes at different heights."
+   },
+   {
+    "where": "GymScreen.css .room-door__badge / poach_notice.png \u2014 red '2' counter on the office card",
+    "tell": "Circular red notification badge pinned to a card corner, with a pulse animation",
+    "why": "That is the iOS app-icon badge, invented 2007. In 1975 two waiting fighters are two pink message slips under the office door or two men visible through the glass \u2014 a floating red pill instantly re-frames the whole screen as a phone."
+   },
+   {
+    "where": "FighterProfile.tsx / tab_overview.png \u2014 OVERVIEW/RECORD/BIOGRAPHY tab strip, MUST KEEP/WATCH LIST/CHOPPING BLOCK segmented control, TRAINING/TRAINER native <select> dropdowns",
+    "tell": "Flat rectangular tab bar, iOS-style segmented control, and OS-chromed dropdown arrows inside a rounded floating card",
+    "why": "This is a web form. A fighter in this gym is a manila folder: tabs are folder dividers, status is a rubber stamp, training assignment is a line on a typed sheet. The native select's grey chevron is the most anachronistic pixel in the game."
+   },
+   {
+    "where": "AttributeBar.css .attr__fill / tab_overview.png \u2014 attribute bars with rounded caps and box-shadow: 0 0 8px amber glow, green/red trend arrows",
+    "tell": "Glowing progress meters \u2014 fitness-app stat bars",
+    "why": "A glow means the element emits light, i.e., it is a screen. A trainer in 1975 records POWER 38 with a typewriter and a pencil arrow in the margin. Emissive bars make the numbers feel measured by a computer that does not exist in this world."
+   },
+   {
+    "where": "MoodChip.css / TraitChip.css / devview2.png & tab_overview.png \u2014 'CONTENT', 'COMING ON', 'DEVELOPING', 'A NATURAL' pills",
+    "tell": "Border-radius 9-10px outlined status pills with semantic green/orange strokes",
+    "why": "Status pills are Linear/Notion grammar. Green-stroked 'COMING ON' is a metadata tag; the period-true object is a red rubber stamp, a grease-pencil circle, or a trainer's scrawled note \u2014 and those carry more character per pixel."
+   },
+   {
+    "where": "GymScreen.css .gym__chrome + .fp__breadcrumb \u2014 persistent app bar: CASH $2,200 top-right, '\u23fb HOME' with power glyph, 'YOUR GYM \u00b7 LOCKER ROOM' letterspaced micro-breadcrumb",
+    "tell": "Fixed header HUD with breadcrumbs and an IEC power symbol (standardized ~1973 for electronics, meaningless on a door)",
+    "why": "A HUD floats above the world and admits the world is a rendering. Cash belongs in a ledger or a cashbox on the desk; 'back' belongs to a doorway behind you; the breadcrumb is pure information architecture, not a thing."
+   },
+   {
+    "where": "LockerRoom.css / OfficeRoom.css / MyGymRoom.css (border-radius: var(--radius-lg) shells) + GymLogBoard.css & TimeControls.css (backdrop-filter: blur(2px)) \u2014 every room's container",
+    "tell": "Each 'room' is the same centered max-width rounded panel with a 60px drop shadow floating over a radial-gradient void, with actual glassmorphism blur on the log and time bar",
+    "why": "This is the core lie. A room has walls that meet the edges of your vision; it does not float inside another dark room with 100px margins. backdrop-filter is on the brief's enemies list by name."
+   },
+   {
+    "where": "ArrivalNotice / frontpage.png \u2014 'A KNOCK AT THE DOOR' and the Monday newspaper both rendered as centered modal dialogs with a button row",
+    "tell": "Classic modal overlay pattern: dimmed background, centered card, primary/secondary buttons (VIEW NOW / VIEW LATER)",
+    "why": "The paper is the most physical object in the game and it is presented as a dialog box hovering mid-air, perfectly axis-aligned, with generous editorial whitespace like a Medium post. It should land on a desk, slightly askew, with a fold shadow and a real masthead."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "The wall is the chrome",
+    "detail": "Kill the floating-panel shell (radius-lg + vignette + backdrop-filter). Every screen gets a full-bleed environment: painted cinder block, aged plaster, or steel via 2-3 layered gradients plus one shared SVG feTurbulence noise filter (defined once, referenced everywhere at low opacity). Content mounts ON that wall \u2014 corkboard, clipboard hung on a nail, filing cabinet drawer \u2014 and touches the viewport edges. Shadows become contact shadows cast by a consistent light direction, not elevation halos."
+   },
+   {
+    "idea": "Doors, not cards",
+    "detail": "Rebuild the floor nav as a scene of five DIFFERENT objects: the office is a frosted-glass door with hand-painted arc lettering (SVG textPath, gold paint with chipped edge masks); the locker room a battleship-grey steel door with stenciled letters; the press a stack of newspapers on a bench; the calendar a tear-off wall pad by the light switch. Different widths, heights, baselines; each rotated \u00b10.3-0.8deg. Hover = the room's light comes on (brightness/glow inside the door glass), never translateY lift."
+   },
+   {
+    "idea": "The fighter is a manila folder",
+    "detail": "FighterProfile becomes an open file folder on a desk blotter: kraft-paper texture (gradient + noise), tabs become physical folder tabs cut into the top edge (clip-path trapezoids at staggered heights, the active one pulled forward, one dog-eared), photo attached with a real staple (tiny SVG) and photo-corner shadows, vitals typed on an index card in Special Elite with uneven ink density (subtle per-character opacity via text-shadow tricks or an SVG displacement filter)."
+   },
+   {
+    "idea": "Pencil, not progress bars",
+    "detail": "Attributes become a typed evaluation sheet: typewriter numerals as the primary read, and instead of glowing bars a hand-drawn pencil gauge \u2014 an SVG line with feTurbulence displacement so it wobbles, graphite grey, length still proportional so scannability survives. Trend arrows become pencil ticks; 'FOCUSED \u00b7 FOOTWORK' becomes a red grease-pencil circle around the FOOTWORK row (SVG ellipse, rough stroke)."
+   },
+   {
+    "idea": "Stamps and slips replace pills and badges",
+    "detail": "One reusable .stamp primitive: uppercase condensed type inside a rough border, rotated 1-3deg, red or blue ink, mask-image noise for uneven inking \u2014 replaces MoodChip, TraitChip, DEVELOPING/ESTABLISHED tags, and MUST KEEP/WATCH LIST/CHOPPING BLOCK (which becomes a stamp choice on the folder cover). The notification badge dies: waiting walk-ins are pink 'WHILE YOU WERE OUT' slips fanned under the office door, count = number of visible slips."
+   },
+   {
+    "idea": "One light rig for the whole building",
+    "detail": "A global lighting layer per room, composed of: a warm desk-lamp pool (radial gradient anchored to an actual lamp object), a cool dusty window shaft (angled linear gradient + noise, low opacity), and for the locker room a green-white fluorescent tone with a 0.2s flicker keyframe at long random intervals. All object shadows share one direction per room. Interactivity = light catching brass or paper lifting a few px with a hinged rotateX, never glow tokens."
+   },
+   {
+    "idea": "Type by source, enforced",
+    "detail": "Reassign the existing fonts to physical origins and add two: a period cursive/marker for trainer handwriting and a stencil for painted signage. Big Shoulders = painted posters/signage only; Special Elite = anything the gym typed (rosters, profiles, ledgers); Roboto Slab = newsprint only, inside newspaper objects only; Oswald microtype breadcrumbs are banned. Rule: if you cannot name the object that produced the text (typewriter, sign painter, newspaper press, rubber stamp, pencil), it does not ship."
+   },
+   {
+    "idea": "Time is a punch clock and a tear-off calendar",
+    "detail": "Replace ADVANCE DAY / ADVANCE WEEK buttons with a wall-mounted punch clock (steel case, bakelite lever \u2014 CSS 3D press with a satisfying 2-frame travel) for +1 day, and tearing the top page off the wall calendar pad for +1 week (page rotates and falls via CSS transform, next date revealed beneath). The date itself IS the calendar pad; the SPRING \u00b7 1975 CAREER strip becomes a printed line on the pad's header. Zero information lost, one HUD strip removed."
+   }
+  ],
+  "hills": [
+   "No floating panels, no voids: every screen must have a wall, a floor, and gravity. If an element casts a shadow, a named light source in the room casts it. The room-shell component (centered rounded panel over vignette) is deleted, not restyled.",
+   "Every interactive control must pass the object test \u2014 'what physical thing is this?' \u2014 before it ships. Pills, badges, segmented controls, native selects, and glow effects are banned outright, with a required period replacement (stamp, slip, folder tab, toggle, lever) specified at design time, never 'later'.",
+   "Information density and decision speed are preserved to the number: the typed sheet must scan as fast as the bar chart it replaces (proportional pencil gauges stay), and no physical transition exceeds ~300ms. Atmosphere that taxes the player's time gets cut before it gets shipped."
+  ],
+  "fights": [
+   "Accessibility will object to graphite-pencil gauges, stamped labels, and low-contrast handwritten marginalia replacing high-contrast bars and pills. I will concede ink density and font size, never the object language \u2014 a darker pencil, not a glowing bar.",
+   "Engineering will object to five bespoke door objects, per-room light rigs, and SVG noise/displacement filters versus the current single reusable panel + token system, on cost and maintenance grounds. My position: the reusable-panel abstraction IS the bug; I will accept a shared texture/stamp/paper primitive library, not a shared room shell.",
+   "UX/Systems design will object that folders, punch clocks, and tear-off calendars add clicks and animation time versus tabs and buttons, hurting the fast-decision loop the owner demands. I will cap every physical transition and keep hit targets identical, but I will not restore modern chrome as a 'power user mode' \u2014 there is one world, and it is 1975."
+  ]
+ },
+ {
+  "role": "UX Designer + Human Factors Engineer",
+  "verdict": "This is a competently built modern dashboard in sepia: hierarchy, density, and decision paths are genuinely sound, and near-zero physicality. That's good news \u2014 the interaction skeleton (roster scan, one-screen fighter decisions, two-button time advance) can survive a full surface transplant untouched. Everything visible reads 2025: hover-lifted cards in a perfect 5-column grid, pill chips, glowing rounded progress bars, native selects, an iOS notification badge, centered web modals. But the fix is not to blur, rotate, and darken \u2014 it's to swap the component vocabulary (stamped forms, typed rosters, pinned notes, checklists) while keeping alignment, contrast, and click-costs identical or better. Paper is a human-factors gift: dark ink on parchment out-contrasts amber-on-leather everywhere. The rule that reconciles both masters: jitter the decoration, never the data.",
+  "offenders": [
+   {
+    "where": "src/screens/GymScreen.css \u2014 .gym__rooms / .room-door (floor5.png)",
+    "tell": "Five identical dark cards in a flawless repeat(5, 1fr) CSS grid, hover translateY(-4px) lift, backdrop-filter blur, soft glow \u2014 a SaaS landing page hero row.",
+    "why": "Rooms in a real gym are not five clones; identical shapes also cost recognition speed. The player reads labels instead of recognizing objects, which is both un-1975 and slower."
+   },
+   {
+    "where": "src/screens/GymScreen.css lines 162-189 \u2014 .room-door__badge--alert (poach_notice.png)",
+    "tell": "Red circular count pill pinned to a card corner with a 2.4s pulse animation \u2014 literally the iOS app badge.",
+    "why": "Nothing in 1975 glows and pulses to get attention; a real gym gets your attention with a note wedged under the door. The pulse also fights the calm, lamp-lit fatigue profile a 20-year career needs."
+   },
+   {
+    "where": "src/components/AttributeBar.css \u2014 .attr__track/.attr__fill (tab_overview.png)",
+    "tell": "9px rounded-corner progress bars with an amber glow box-shadow and hover tooltips \u2014 a fitness-app dashboard meter.",
+    "why": "Glowing capsule meters are the single strongest 'modern software' signal on the most-viewed screen. A 1975 trainer records ability on a printed evaluation form, not an LED gauge."
+   },
+   {
+    "where": "src/screens/FighterProfile.tsx lines 348-397 \u2014 native <select> for Training focus and Trainer",
+    "tell": "Browser-default dropdown controls with the OS chevron, straight out of a 2020s form.",
+    "why": "It shatters the diegesis at the exact moment of the game's core weekly decision \u2014 and it hides the option set behind a click, which is worse ergonomics than a printed checklist showing all options at once."
+   },
+   {
+    "where": "FighterProfile tabs + MUST KEEP / WATCH LIST / CHOPPING BLOCK segmented control (tab_overview.png, FighterProfile.css)",
+    "tell": "Butted button-group tabs and a three-way segmented control with an active-fill state \u2014 Material/Linear UI furniture.",
+    "why": "Tabs and segments are software concepts; the 1975 equivalents (file-folder tabs on a manila record, a colored tag clipped to the folder) exist and carry the same one-click semantics without the widget look."
+   },
+   {
+    "where": "src/rooms/LockerRoom header \u2014 capacity meter + '2/2 FOCUSED SLOTS' stat block + WALL/LIST/DEVELOPMENT toggle (wall8.png, devview2.png)",
+    "tell": "A KPI strip with a slim progress bar and a view-switcher \u2014 dashboard chrome above content.",
+    "why": "It frames the locker room as a data view being configured, not a room being stood in. Capacity in a real gym is visible (empty lockers) and written on a chalkboard, not metered."
+   },
+   {
+    "where": "Office \u2192 Rivals 'The Competition' (rivals_local.png)",
+    "tell": "Floating rounded cards with outline pill chips (ESTABLISHED, REGIONAL) and a NEW YORK/NORTHEAST/NATIONAL filter-chip bar \u2014 Notion database cards.",
+    "why": "Intelligence on rival gyms in 1975 is a typed scouting file or newspaper clippings in a folder; status pills and filter chips are pure 2025 vocabulary and add no scan value over a stamped word."
+   },
+   {
+    "where": "'A KNOCK AT THE DOOR' arrival modal + top app chrome with letterspaced breadcrumbs 'YOUR GYM \u00b7 LOCKER ROOM' (poach_notice.png, GymScreen.css .gym__chrome)",
+    "tell": "A centered modal floating over a dimmed backdrop, and a persistent app-shell header bar with breadcrumb microcopy.",
+    "why": "Modals-over-scrim and breadcrumb bars are the skeleton of every web app. A knock at the door should be a thing at the door \u2014 a note, a person's shadow \u2014 not a dialog component announcing itself."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Jitter decoration, never data (the governing rule)",
+    "detail": "Codify a two-layer standard in theme.css: a DECOR layer (paper edges, tape, stains, rotation up to 2deg, SVG feTurbulence grain) and a DATA layer (names, numbers, bars, buttons' labels) that stays orthogonal, aligned, and unfiltered. Rotation applies to the paper object via transform on the container; an inner counter-rotated or unrotated text block holds compared numerals. This single constraint lets the art team go feral on materials without costing one millisecond of scan time."
+   },
+   {
+    "idea": "Attribute bars become a printed evaluation form with grease-pencil fill",
+    "detail": "Replace AttributeBar with a parchment 'FIGHTER EVALUATION' form: printed ruled scale (tick marks every 10, printed via repeating-linear-gradient), attribute names in a government-form face (e.g. a condensed grotesque, all caps, printed ink #2a2118), fill drawn as a flat-ended grease-pencil stroke (SVG path with feTurbulence displacement, no border-radius, no glow), number typed in a fixed right column with tabular figures. Length-encoding is preserved exactly \u2014 same pre-attentive read, higher contrast than amber-on-leather, zero modern tells."
+   },
+   {
+    "idea": "Chips become rubber stamps with a fixed color+angle code",
+    "detail": "TraitChip/MoodChip/trajectory pills become rubber-stamp impressions: uppercase slab/stencil face, uneven ink via SVG filter, each CATEGORY gets one fixed ink color and one fixed angle (e.g. trajectory = red at -2deg, mood = blue-black at 0deg, scouting feel = green at +1.5deg). Consistency is what makes stamps pre-attentively scannable down a roster column; random angles per instance would destroy that. MUST KEEP / WATCH / CHOPPING BLOCK becomes a colored card-stock tag clipped to the folder edge \u2014 three fixed positions, one click, same semantics."
+   },
+   {
+    "idea": "Native selects become printed checklists with pencil checkmarks",
+    "detail": "Training focus: a printed list of all focuses on the form, one pencil checkmark (hand-drawn SVG check) marking the active one; click a line to move the check. Trainer assignment: a small pegboard of trainer name-tags with hooks. This is strictly better ergonomics than a <select> \u2014 all options visible (no hidden state, no extra click to open), larger targets, and it reads as paperwork. Keep keyboard support: the list is a styled radiogroup."
+   },
+   {
+    "idea": "Notices become paper that arrives on a desk blotter",
+    "detail": "Replace the centered modal with a diegetic document: telegram/memo slip that slides onto a desk-blotter layer at the bottom-center with a settle animation (<300ms), one visible fold, paperclip if multi-page. Actions become stamps inked onto the paper ('SEEN', 'LATER') \u2014 big rectangular targets, \u226544px. Keep focus trap, Esc-to-dismiss, and the same two-action structure. Badge counts become a visible stack of slips (2 slips = 2 notices) plus a stamped numeral for exact count."
+   },
+   {
+    "idea": "The floor nav becomes five DIFFERENT objects",
+    "detail": "Office = wooden door with frosted-glass pane and painted gold lettering; Locker Room = open doorway with steel-locker gleam beyond; My Gym = painted wall sign over the ring apron; Press = newspaper rack/stack; Calendar = wall calendar under a bare bulb. Differentiated silhouettes are a recognition upgrade over five identical cards (shape recognition beats label reading). Non-negotiables: same left-to-right order forever, hit areas no smaller than current cards, a lit hover state that brightens the object's own lamp rather than lifting it."
+   },
+   {
+    "idea": "Development table becomes a typewritten roster sheet \u2014 alignment sacred",
+    "detail": "The devview table renders as a typed page (Special Elite or similar) on a clipboard: typewriter is genuinely monospaced, so columns self-align better than the current mixed-face table. Trend arrows become pencil ticks (\u2191 as a small hand-drawn caret in graphite, \u2193 in red pencil) in their own column. Row hover = a fingertip smudge highlight, not a background fill. Column headers rubber-stamped once at top. Density stays identical; scanning improves because every numeral occupies the same advance width."
+   },
+   {
+    "idea": "Environmental lighting with a contrast floor",
+    "detail": "Desk-lamp pools, dusty window shafts, and fluorescent flicker live in a background layer (radial-gradients + one shared SVG grain), but define a 'reading layer' rule: any surface holding decision text is parchment or chalkboard and measures \u22654.5:1 (target 7:1 for numerals) AFTER the lighting layer composites. Vignette may only touch the outer 10% of content panels. This makes the lighting the room's, not the screen's, without ever making a tired player lean in \u2014 these sessions run hundreds of Advance Weeks."
+   }
+  ],
+  "hills": [
+   "Jitter decoration, never data: compared numerals and names sit in strictly aligned columns with tabular figures; any text block used for a decision rotates at most 2 degrees, and numeric columns rotate 0. If a stain or tape ever overlaps a numeral, the design ships broken.",
+   "Contrast floor is diegetic-proof: every piece of decision-critical text meets 4.5:1 (numerals 7:1) under the final composited lighting. Handwriting and pencil are flavor channels only \u2014 never the sole carrier of a stat, price, or deadline.",
+   "Interaction cost never increases: every physical replacement costs the same clicks or fewer than the widget it replaces, targets stay \u226544px, and the two most frequent actions (Advance Day/Week, assign training) remain one visible click from their screens. No drawer-opening, no drag-to-file, no 'realistic' friction on frequent paths."
+  ],
+  "fights": [
+   "Art direction: they will push heavier vignettes, deeper shadow, and per-instance random rotation/stains on paper because it photographs beautifully. I will block any lighting that drops reading surfaces below the contrast floor and any randomness that touches data columns \u2014 the mockup that wins the pitch is the screen that exhausts the player by week 40.",
+   "Narrative/worldbuilding: they will want handwritten trainer scrawl as the primary voice for fighter evaluations and scouting reads ('the trainer's notebook IS the truth'). Handwriting at roster-scan sizes is illegible and unscannable across 8 lockers; I insist typewriter/stamp carries anything read repeatedly, with handwriting reserved for one-line marginalia the player reads once.",
+   "Engineering/performance: they will object to SVG feTurbulence filters and layered gradients on every surface (paint cost, low-end GPUs). I'll concede shared filter defs and pre-baked noise as data-URI tiles, but I will not accept 'flat color with a border' as the fallback \u2014 a flat fallback silently reintroduces the exact modern look this overhaul exists to kill."
+  ]
+ },
+ {
+  "role": "Information Architect \u2014 navigation as wayfinding in a building",
+  "verdict": "The building doesn't exist. There is a floor screen and four \"rooms,\" but every room is the same object: a rounded panel floating over a dimming scrim, reached from a row of five identical feature-cards with marketing taglines, navigated by breadcrumbs, segmented tab controls, and red notification badges. Two of the five rooms (The Press, Calendar) aren't rooms at all \u2014 they're objects that got promoted to routes because the router needed entries. Nothing has a physical address: finances, rivals, and walk-ins all live \"in a centered panel behind a tab,\" so the player builds no spatial memory and the environment communicates nothing with labels removed. The functional skeleton is genuinely good \u2014 shallow depth, one overlay layer, Esc backs out \u2014 which means the IA can keep its bones while every wall gets rebuilt.",
+  "offenders": [
+   {
+    "where": "GymScreen floor nav \u2014 .gym__rooms/.room-door (src/screens/GymScreen.tsx:74-110, GymScreen.css; floor5.png)",
+    "tell": "Five equal-width, equal-height rounded cards in one centered flex row, each with a line icon, a heading, and a product-copy tagline (\"The temporal hub. Your schedule at a glance.\")",
+    "why": "This is a SaaS landing-page feature grid. Doors in a real gym are not identical, not evenly spaced, and do not describe themselves in marketing prose \u2014 the office door, a locker-corridor doorway, and a wall calendar are three different physical things."
+   },
+   {
+    "where": "Room count badges (GymScreen.tsx badge(), .room-door__badge; poach_notice.png, frontpage.png)",
+    "tell": "Red circular numeric badges pinned to card corners",
+    "why": "That is the iOS/Discord notification dot, the single most recognizable piece of 2010s UI. In 1975 you know two men are waiting because you can see them through the frosted glass, or two cards sit in the inbox tray \u2014 not because the door grew a red pip."
+   },
+   {
+    "where": "Office tab bar (src/rooms/OfficeRoom.tsx:73-90; rivals_local.png top chrome: DESK / FINANCES / RIVALS / THE PAPER / LEDGER)",
+    "tell": "Segmented pill control living in the app's top chrome, with a parenthesized count in the label (\"Desk (2)\")",
+    "why": "The office's contents are addressed by an abstract widget floating in a header bar, so \"where finances live\" is nowhere. A desk has a ledger book ON it and a filing cabinet BESIDE it; the tab bar erases the room it's supposed to be."
+   },
+   {
+    "where": "Breadcrumbs \u2014 .room-screen__breadcrumb (\"YOUR GYM \u00b7 MY OFFICE\", \"LOCKER ROOM \u00b7 FIGHTER\"; all room screenshots)",
+    "tell": "Web breadcrumb trail plus a bordered \"\u2190 BACK TO THE FLOOR\" chrome button",
+    "why": "Buildings don't print your path on the wall. Wayfinding in a place is the door plaque naming where you ARE and the open doorway you came through. Breadcrumbs are the strongest possible signal that these are pages, not rooms."
+   },
+   {
+    "where": "FighterProfile (src/screens/FighterProfile.tsx:196-217; tab_overview.png)",
+    "tell": "Boxed tab strip (OVERVIEW/RECORD/BIOGRAPHY/CAREER/DEVELOPMENT), animated attribute progress bars, status chips (COMING ON), two native <select> dropdowns, and a tri-state segmented control (MUST KEEP / WATCH LIST / CHOPPING BLOCK)",
+    "why": "This is an admin-panel detail view. A fighter in 1975 is a manila file pulled from a cabinet \u2014 folder tabs, a stapled photo, typed sheets, a trainer's pencil notes \u2014 not a record with a settings form."
+   },
+   {
+    "where": "LockerRoom header (src/rooms/LockerRoom.tsx; wall8.png, devview2.png)",
+    "tell": "KPI strip: thin progress bar for \"3/8 LOCKERS\", a \"0/2 FOCUSED SLOTS\" counter, and a WALL/LIST/DEVELOPMENT view-toggle; lockers flex-wrap so the eighth locker floats centered alone on a second row",
+    "why": "Progress meters and view switchers are dashboard furniture. Worse, the locker layout betrays CSS: real lockers stand in a fixed row against a wall \u2014 an orphan locker centered in space breaks the set instantly. The 3/8 count should be visible because five doors hang open and empty."
+   },
+   {
+    "where": "ArrivalNotice and newspaper delivery (src/components/ArrivalNotice.tsx; poach_notice.png, frontpage.png)",
+    "tell": "Centered floating dialog over a dim scrim with a button row (VIEW NOW / VIEW LATER; REVIEW AT THE DOOR / READ THE FULL PAPER / TO THE FLOOR)",
+    "why": "The lightbox-modal pattern. \"A knock at the door\" rendered as a glowing rounded toast is the fantasy contradicting itself \u2014 the knock should be a note wedged under the office door or the paper landing on the mat, an object IN the scene at a consistent location."
+   },
+   {
+    "where": "Time controls + Gym Log (src/components/TimeControls.tsx footer \"ADVANCE DAY +1 / ADVANCE WEEK +7\"; GymLogBoard collapsible panel with \"\u2212\" minimize; smoke_after_advance.png)",
+    "tell": "Sticky app footer with CTA buttons carrying programmer notation (+1, +7), and a bottom-left collapsible widget with a minimize glyph \u2014 a chat/console widget",
+    "why": "Time is the most physical thing in this game and it currently lives in app chrome. The date belongs on a wall calendar and a tear-off date pad; the log belongs pinned to the corkboard the code comment already claims it is."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "A floor plan, not a card row",
+    "detail": "Replace the five cards with one asymmetric SVG set viewed from the floor: the office door (frosted glass, hand-painted \"OFFICE\" lettering) at one side; a doorway into the locker corridor (glimpse of steel lockers and a hanging bulb); the ring and bags as ambient center; a wall calendar hanging crooked; the day's newspaper folded on a bench. Each hotspot keeps a large invisible hit area and a focus outline. Doors differ in size, material, and position \u2014 location is learned in one session because the geometry is memorable."
+   },
+   {
+    "idea": "Demote non-rooms to objects",
+    "detail": "The Press and Calendar leave ROOM_ORDER. The Press becomes the newspaper itself \u2014 delivered to the office desk and the floor bench; the magazine arrives monthly in a mail slot. Calendar becomes the wall calendar object (floor and office). Clicking an object zooms to it full-frame. The building becomes architecturally honest: Floor, Office, Locker Room \u2014 everything else is furniture, which is exactly what a struggling gym has."
+   },
+   {
+    "idea": "The office is one desk you look down at",
+    "detail": "Kill the office tab bar. Render a continuous desk scene: blotter center with the walk-in cards stacked in a wire inbox tray; a cloth-bound ledger at the right (opening it IS Finances \u2014 ruled paper, hand-entered figures); a two-drawer filing cabinet at the frame edge labeled with taped index cards (\"RIVALS\", \"LEDGER/HISTORY\"); the folded newspaper at the corner. Every category gets a permanent physical address; the player reaches for the ledger the way they reach for a real one. CSS: one background SVG, absolutely-positioned object hotspots, per-object zoom transitions."
+   },
+   {
+    "idea": "The manila-folder fighter file",
+    "detail": "FighterProfile becomes a folder pulled from the cabinet: die-cut folder tabs along the top edge at staggered offsets (OVERVIEW/RECORD/BIO/CAREER/DEVELOPMENT as typewriter labels on the tabs \u2014 an SVG path per tab, not equal-width buttons), photo paper-clipped top-left, attributes as a typed carbon sheet with rubber-stamped figures, scouting reads in a handwritten hand, and the MUST KEEP/WATCH/CHOPPING BLOCK control replaced by a grease-pencil circle or colored tab clipped to the folder edge. Same data density, different object."
+   },
+   {
+    "idea": "Counts are visible evidence, not badges",
+    "detail": "Delete every numeric badge. Walk-ins waiting = card silhouettes visible in the inbox tray / shapes behind the office door's frosted glass; roster size = which lockers hang open; new mail = envelope sticking out of the door slot; coach applicants = notices pinned to the corkboard. Keep exact counts in title/aria-label so nothing is lost to assistive tech or hover."
+   },
+   {
+    "idea": "Door signage replaces breadcrumbs",
+    "detail": "Remove .room-screen__breadcrumb and the chrome back button. Where you ARE is the room's own signage (painted glass, a brass plaque, stenciled letters on the locker-corridor wall). The way BACK is a sliver of the previous space at the screen edge \u2014 the open door with the floor visible through it \u2014 clickable, with Esc preserved. Wayfinding by looking, not by reading a path string."
+   },
+   {
+    "idea": "Time lives on the wall",
+    "detail": "Advance Day = tearing a page off a desk date pad (CSS transform tear animation on an SVG pad showing FRI / MAY 2); Advance Week = flipping the wall calendar's page. The footer bar dies; the current date is the calendar and pad themselves, readable at a glance from the floor. Season/era context comes from the calendar's printed month artwork."
+   },
+   {
+    "idea": "Rooms are cuts, not modals",
+    "detail": "Remove the room panel's border-radius, max-width, and scrim. Entering a room is a camera cut/pan: the set fills the viewport edge-to-edge with its own environmental light source (desk lamp pool in the office, fluorescent tube glare in the locker corridor). The existing overlay architecture (RoomRouter stacking) can stay under the hood \u2014 only the visual treatment changes from lightbox to film cut, via full-bleed layout and a short transform transition."
+   }
+  ],
+  "hills": [
+   "Location equals meaning: every category of information gets exactly one permanent physical address the player could point to with the labels stripped \u2014 finances are the ledger ON the desk, rivals are IN the filing cabinet, the roster IS the locker wall. No information may live in an abstract floating panel.",
+   "Nothing gets to be a 'room' unless a 1975 gym would have that room. The Press and the Calendar are objects, not architecture \u2014 a route table entry is not a reason to build a fake wall.",
+   "Zero abstract navigation chrome: no breadcrumbs, no notification badges, no segmented controls in a header bar. Wayfinding happens by looking at the set (signage, open doors, visible evidence), with counts and paths preserved invisibly in aria labels."
+  ],
+  "fights": [
+   "Accessibility/UX will object that replacing numeric badges and breadcrumb text with 'visible evidence' (cards in a tray, open lockers, shapes behind frosted glass) hurts scannability and screen-reader flow. I hold the line: the evidence carries the count visually, aria-labels carry it programmatically, and the red dot never comes back.",
+   "Systems/gameplay design will fight the manila-folder profile and desk-scene office as slower than the current tab-and-table layouts (the DEVELOPMENT stat grid is genuinely fast). I claim a typed carbon roster sheet and folder tabs can hold identical density at identical speed \u2014 typewriter columns ARE a table \u2014 and I won't trade the folder back for a segmented control.",
+   "Art direction will want the floor to be cinema: the ring center-frame, dramatic lamp pools, atmosphere first. I need the floor to be a legible map \u2014 doors and objects must read as destinations within one second, which means set dressing may never bury a doorway in shadow. Mood serves wayfinding, not the reverse."
+  ]
+ },
+ {
+  "fights": [
+   "UX/Interaction design: I will replace segmented controls, native <select> dropdowns, and the tab strip with file-folder tabs, carbon-form checkboxes, and clipboard sheets. They will say it costs clicks and hit-target size. I say the folder tab IS the affordance \u2014 it was for fifty years \u2014 and I will not accept a 'skinned segmented control' compromise.",
+   "Accessibility: my pencil marginalia on manila, ink-starved stamps, and faded carbon copies will fail contrast checks. My position: primary values (numbers, names, actions) stay fully legible; annotation flavor is ALLOWED to be dim, because a real trainer's pencil note is dim. I will fight any blanket contrast pass that turns every ink to compliance-gray.",
+   "Engineering/performance: per-element feTurbulence filters and seeded rotations across the roster table and press columns will be flagged as paint cost. I refuse the 'one flat texture PNG tiled everywhere' fallback \u2014 it reads instantly as wallpaper. Counter-offer: a small shared library of baked SVG data-URI grains/edges, seeded per item ID."
+  ],
+  "hills": [
+   "Ban the three loudest 2024 tells outright: pill border-radii (chips, badges, bar tracks), glow box-shadows as hover/state feedback, and letter-spacing above ~0.05em on anything that isn't a brass plaque or poster headline. No exceptions, no 'just this one toggle.'",
+   "Every container must pass the object test: if you cannot name the physical thing it is (folder, index card, clipboard, plaque, memo slip, ledger page), it does not ship. 'Panel' is not an object.",
+   "Imperfection must be deterministic and small: seeded per entity ID, max ~2deg rotation and ~6px drift, identical every render. Random-per-mount jitter reads as a glitch, and large chaos costs usability \u2014 both are worse than perfect grids."
+  ],
+  "offenders": [
+   {
+    "tell": "backdrop-filter: blur(2px), hover translateY(-4px) lift, 0 0 26px amber glow, five identical cards in a perfect repeat(5, 1fr) grid with uniform gap and min-height",
+    "where": "src/screens/GymScreen.css .room-door / floor5.png (gym floor nav)",
+    "why": "This is literal glassmorphism \u2014 frosted translucent cards hovering in space with equal spacing and hover-float. Nothing in a 1975 gym floats, blurs what's behind it, or comes in five identical units. The 'rooms' read as a SaaS landing page's feature cards, not doors and signs in a building."
+   },
+   {
+    "tell": "Even-width segmented tab strip (OVERVIEW/RECORD/BIOGRAPHY...) with an amber active fill, plus a second segmented control (MUST KEEP / WATCH LIST / CHOPPING BLOCK) and two native <select> dropdowns",
+    "where": "src/screens/FighterProfile.tsx/.css tabs + standing/training controls / tab_overview.png",
+    "why": "Segmented controls and OS dropdowns are pure 2020s component-library grammar. A 1975 fighter file would have manila folder tabs, a typed form with checkboxes ticked in pen, and a clipboard \u2014 the current controls could be pasted into any admin panel unchanged."
+   },
+   {
+    "tell": "9px-tall rounded progress tracks (border-radius: 5px) with gradient fills and a 0 0 8px amber glow box-shadow, plus green/red trend arrows (#7bbf6a)",
+    "where": "src/components/AttributeBar.css .attr__track/.attr__fill / tab_overview.png attributes",
+    "why": "Glowing rounded stat bars are fitness-app/RPG-HUD language; red/green delta arrows are a stock ticker. No measuring instrument in a 1975 gym emits light. A trainer graded men on paper scorecards with pencil marks, not luminous pills."
+   },
+   {
+    "tell": "border-radius: 10px pill chips with translucent tint fills and tracked uppercase ('COMING ON', 'CONTENT', 'DEVELOPING', 'ESTABLISHED')",
+    "where": "src/components/TraitChip.css, MoodChip.css, status chips across devview2.png and rivals_local.png",
+    "why": "The tinted rounded tag is Notion/Linear's signature status element. In 1975 a status was a rubber stamp, a grease-pencil note, or a colored file sticker \u2014 flat ink pressed onto paper, never a translucent capsule of light."
+   },
+   {
+    "tell": "Red circular notification badge (border-radius: 13px, pulse keyframe animation) pinned to the card's top-right corner showing '2'",
+    "where": "src/screens/GymScreen.css .room-door__badge / poach_notice.png",
+    "why": "The corner count-badge is iOS 2007 \u2014 one of the most instantly recognizable modern-software glyphs in existence. A gym owner learns there are two men waiting from notes in an in-tray or slips tucked under the door, not from a pulsing red bubble."
+   },
+   {
+    "tell": "Perfectly centered masthead in Big Shoulders Display, dates set in red letter-spaced condensed caps (letter-spacing: 0.2em), the page floating as a rounded, soft-shadowed card in a dark void with symmetrical two-column rules",
+    "where": "src/rooms/PressRoom.css .paper / press_paper.png, frontpage.png",
+    "why": "This is a web-editorial 'vintage' template, not a 1975 newspaper. Real sports pages had headline decks in tight Cheltenham/Century, uneven column breaks, halftone photos, ads, and fold creases \u2014 and the paper would lie ON something (a desk), not levitate. Tracked micro-caps dates are a Squarespace tell, and Big Shoulders (2019) is not a newspaper face."
+   },
+   {
+    "tell": "Uniform 4/8/16/24/40/64 spacing token scale plus 0.12\u20130.3em uppercase Oswald labels applied to every information type; exactly one rotate() in the entire UI layer (LockerWall.css, -1.2deg)",
+    "where": "src/styles/theme.css spacing/type tokens, used across every screen",
+    "why": "The brief demands type collected from different sources over decades and layout that drifts; instead one metronomic rhythm and one label voice unify everything, which is precisely how design systems make software feel like software. A single rotated element in the whole codebase is the measurable proof that the grid was never broken."
+   },
+   {
+    "tell": "Header with a progress-meter bar, a '0 / 2 FOCUSED SLOTS' KPI stat, and a WALL/LIST/DEVELOPMENT segmented view toggle; lockers auto-wrap in a centered grid leaving one orphan locker floating alone below the row",
+    "where": "src/rooms/LockerRoom.tsx/.css header / wall8.png, devview2.png",
+    "why": "Meters, KPI counters, and view-switcher toggles are dashboard furniture. Worse, the wrapping grid breaks the physical fiction outright: lockers are a continuous bank bolted to a wall \u2014 one can never float centered in open space. The development view is a sortable data table with pill chips, i.e. a Bloomberg terminal in sepia."
+   }
+  ],
+  "proposals": [
+   {
+    "detail": "Replace dark floating panels with documents. FighterProfile becomes a manila folder (parchment tokens already exist) holding a typed sheet: deckled/torn edges via SVG clip-path + feTurbulence displacement, a staple SVG at the corner, the portrait as a photo paper-clipped on at 1.5deg, coffee-ring stains as low-opacity radial-gradients seeded per fighter ID. The dark room stays as environment BEHIND the paper \u2014 a desk surface gradient, a lamp pool \u2014 so the document lies on something instead of floating.",
+    "idea": "Paper does the talking"
+   },
+   {
+    "detail": "Every status chip becomes flat ink. Traits/moods/trajectories become rubber stamps: stencil or heavy slab caps, oxblood or stamp-pad green, seeded rotation -3..2deg, ink starvation via an feTurbulence-driven alpha mask so each impression breaks differently. Secondary states (WATCH LIST, PLATEAUED) become grease-pencil marginalia in a handwriting face. Zero border-radius, zero background tint, zero border \u2014 a stamp is ink on the paper beneath it.",
+    "idea": "Kill the pill, stamp the state"
+   },
+   {
+    "detail": "Replace glowing bars with a trainer's scorecard: each attribute is a typed row with ten ruled boxes; the value fills boxes with a grease-pencil swatch (SVG stroke with roughen filter, slightly overshooting box edges), exact number typed at right in Special Elite. Trends become pencil arrows or 'coming on' notes in the margin instead of green/red deltas. Density is identical to today's seven bars; the read is faster because filled-box counting beats comparing bar lengths at 9px.",
+    "idea": "Attributes as pencil scorecard"
+   },
+   {
+    "detail": "The gym-floor nav stops being five equal cards. Each destination is a distinct object at its own scale and anchor: the Office is a wooden door with wired glass and painted lettering; the Locker Room a doorway with a steel sign; the Press a newspaper folded on a bench; the Calendar a wall calendar hanging crooked. Unequal widths, different vertical baselines (signs hang from the top, doors sit on the floor line), 0.5\u20131.5deg seeded rotations, shadows cast by the existing ceiling lights. All buildable as layered SVG + CSS today, each behind the asset registry.",
+    "idea": "The floor is a wall, not a grid"
+   },
+   {
+    "detail": "Assign a typeface per SOURCE, not per hierarchy level, and cap letter-spacing at 0.05em outside poster headlines and brass plaques. Newspaper body/heads: an old-style serif with real news anatomy (Old Standard TT or Newsreader from Google Fonts) with bold condensed decks; forms and rosters: Special Elite exclusively, ALL CAPS via the typewriter itself; handwritten notes: Caveat or Homemade Apple; stamps: Stardos Stencil; wall signs keep Big Shoulders but at 0 tracking and painted (textured fill). Oswald's tracked micro-caps label style is retired entirely.",
+    "idea": "Type by source, tracking ban"
+   },
+   {
+    "detail": "Dialogs and alerts become period paper on the desk. The walk-in/poach modal becomes a 'WHILE YOU WERE OUT' pink memo slip (a real 1970s office staple \u2014 trivially a CSS form) or a telegram, dropped onto the blotter with a hard 2-3px offset shadow, never a centered glow-bordered panel. The corner count-badge dies; pending items are a visible stack of slips in an in-tray or on a bill spike, count communicated by the stack itself plus a small typed tally.",
+    "idea": "Notices are physical mail"
+   },
+   {
+    "detail": "Strip every '0 0 Npx amber' glow from buttons, bars, badges, and hovers (Button.css, AttributeBar.css, room-door). Feedback becomes material: paper lifts 1px and its shadow hardens; brass buttons shift a specular gradient stop as if catching the lamp; stamps darken on press. Glow is reserved exclusively for environmental sources \u2014 lamp pools, window shafts \u2014 living in background layers, so light falls ON objects rather than radiating FROM controls.",
+    "idea": "Ink, not light"
+   },
+   {
+    "detail": "Build one shared imperfection kit: an SVG defs library (paper grain, ink bleed via slight feMorphology, rough-edge displacement, tape strips, pin heads) exported as data-URIs, plus CSS utilities for seeded rotation/drift keyed on entity ID (deterministic hash \u2192 -2..2deg, -6..6px). Apply as a systematic pass so the locker bank sits flush as one continuous unit against a wall texture (fixing the orphan-locker grid wrap), roster rows sit on ruled ledger lines with slightly uneven typewriter baselines, and every pinned item leans the same way forever.",
+    "idea": "Seeded wear-and-misregistration pass"
+   }
+  ],
+  "role": "Visual Designer + Graphic Designer (composition, grid, 1975 print ephemera)",
+  "verdict": "This is a competently art-directed dark-mode web app wearing sepia \u2014 exactly the failure the brief names. The composition gives it away before any component does: every screen centers a single floating rounded card in a void, spaced on a metronomic 8px token scale, five identical nav cards in a perfect repeat(5,1fr) grid, with precisely one rotated element in the entire UI layer. The graphic voice is one voice: tracked-out Oswald micro-caps label every information type, so a newspaper date, a locker count, and a stat name all speak like a 2024 design system. Light radiates from controls (glow hovers, glowing stat bars) instead of falling on objects. The paper surfaces (press, walk-in card) are the closest to the fantasy and prove the team can do it \u2014 but even those float, centered and unworn. Nothing here is an object yet."
+ },
+ {
+  "role": "Art Director / Production Designer \u2014 the cinematic whole: one film, one look, one camera",
+  "verdict": "This is a modern dark-mode product wearing a sepia color grade \u2014 exactly what the owner said he doesn't want. There is no camera. The floor screen is a dashboard of five hover-lifting glass cards; the fighter profile is a settings page with segmented controls, glowing progress bars and native dropdowns; Rivals is a directory feed with status pills; and the genuinely promising paper props (newspaper, walk-in card) float centered in a black void like modals \u2014 no desk under them, no wall behind them. Shot to shot it reads as three different products: a SaaS dashboard, a document viewer, a data table. The palette is right; the physics are wrong. Nothing rests on anything, nothing is lit by anything, and every screen is symmetrical to the pixel. The set was never built.",
+  "offenders": [
+   {
+    "where": "src/screens/GymScreen.css .room-door (floor5.png)",
+    "tell": "Five equal-width floating cards with hover translateY(-4px) lift, backdrop-filter: blur(2px), 26px soft drop shadows, and marketing subtitles ('The temporal hub. Your schedule at a glance.')",
+    "why": "Hover-lift glass cards are the signature move of 2025 SaaS landing pages. Rooms in a building are doors in a wall, not cards on a grid \u2014 and no sign in a 1975 gym says 'temporal hub.'"
+   },
+   {
+    "where": "src/screens/GymScreen.css .room-door__badge (poach_notice.png)",
+    "tell": "Red circular notification badge, border-radius 13px, top-right corner, pulsing glow keyframe",
+    "why": "That is an iOS/Discord unread badge verbatim. In this world it should be a slip of paper tucked under the office door or a note pinned crooked to the board."
+   },
+   {
+    "where": "src/screens/FighterProfile.tsx tabs + MUST KEEP/WATCH LIST/CHOPPING BLOCK strip (tab_overview.png)",
+    "tell": "Equal-width segmented button strips with tracked uppercase Oswald labels; plus two native browser <select> dropdowns for Training/Trainer",
+    "why": "Segmented controls and OS dropdowns are pure software chrome. A fighter in 1975 is a manila file with folder tabs, a stamped standing, and a training assignment written on a clipboard."
+   },
+   {
+    "where": "src/components/AttributeBar.css .attr__fill (tab_overview.png)",
+    "tell": "Rounded-cap progress bars with amber glow (box-shadow: 0 0 8px) and green/red trend triangles",
+    "why": "Glowing gauges are game-HUD/dashboard language. No object in that office emits light except the lamp; a trainer measures a man in pencil marks and typed digits on a card."
+   },
+   {
+    "where": "src/components/TraitChip.css, MoodChip.css ('COMING ON', 'A NATURAL', 'CONTENT')",
+    "tell": "Outlined rounded pill chips with semantic green/amber coloring",
+    "why": "Status pills are GitHub/Linear label grammar. These should be a trainer's handwriting in the margin or a rubber stamp \u2014 information carried by an object, not a token."
+   },
+   {
+    "where": "src/rooms/OfficeRoom rivals tab (rivals_local.png)",
+    "tell": "Vertical card feed with right-aligned 'ESTABLISHED'/'REGIONAL' pill badges and a NEW YORK / NORTHEAST / NATIONAL segmented filter",
+    "why": "It reads as a startup directory listing. Intelligence on rival gyms in 1975 is newspaper clippings, a typed scouting sheet, index cards in a box \u2014 not uniform cards with status chips."
+   },
+   {
+    "where": "src/screens/GymScreen.css .gym__chrome + '\u2190 BACK TO THE FLOOR' bars (every screenshot)",
+    "tell": "Persistent full-width top app bar: title left, cash counter and HOME button right, ghost-button back link floating over every room",
+    "why": "A permanent HUD hovering over the world announces 'this is software' on every single frame. Cash is a drawer or a ledger line; the way back is putting the object down, not a toolbar."
+   },
+   {
+    "where": "press_paper.png, tab_overview.png, wall8.png \u2014 the void",
+    "tell": "Every artifact floats perfectly centered on featureless black with generous symmetric margins and long soft shadows",
+    "why": "Perfect centering + vacuum = modal viewer. The newspaper has no desk, the locker wall has no floor or ceiling line, the profile has no folder or blotter. Nothing rests on anything, so nowhere feels like a place."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Define the two-shot grammar",
+    "detail": "The camera is the owner's own eyes, and there are exactly two shots. ROOM SHOT: wide, standing eye-level, environmental (gym floor, locker wall, office wall). OBJECT SHOT: looking down ~30 degrees at something in your hands or on the desk \u2014 the object fills the frame but the surface it rests on is always visible at the edges (desk wood, blotter, corkboard). Every screen declares its shot in a code comment and inherits the matching backplate component. Transitions are pick-up/put-down: object shots slide up from the bottom third with a slight settle rotation, never fade-in-center like a modal."
+   },
+   {
+    "idea": "Nothing floats \u2014 build the surfaces",
+    "detail": "Three reusable CSS/SVG backplates: DESK (oak grain via layered repeating-linear-gradients + feTurbulence displacement, a leather blotter, lamplight pooling top-left), CORKBOARD (noise-textured umber, pushpin SVGs, tape strips), WALL (painted concrete with a wainscot line). Every document sits on one, rotated 0.3\u20131.2deg (deterministic per-item hash, not random per render), with a tight 2\u20134px contact shadow instead of the current 26px blur floats. Paper edges get feTurbulence displacement so no card has a laser-cut edge."
+   },
+   {
+    "idea": "Doors, not cards, on the floor",
+    "detail": "Rebuild the gym floor as a room elevation: the five destinations are painted signs and physical thresholds at differing heights and widths \u2014 the office is a pebbled-glass door with hand-lettered arc text (SVG textPath with baseline wobble), the locker room a doorway with a hanging painted board, the press a stack on a side table, the calendar a wall calendar you walk up to. Kill hover-lift; hover = a bulb over that door warming up (radial-gradient opacity), which is diegetic light, not UI motion."
+   },
+   {
+    "idea": "One key light per room",
+    "detail": "Declare a light source per room and enforce it with a fixed full-viewport overlay layer: office = tungsten desk lamp, radial warm pool upper-left, everything falls off to umber; locker room = one buzzing fluorescent tube, slightly green-cyan cast (a subtle hue-rotate on that room only), hard top-down falloff; press = grey daylight through a dusty window, cool and flat. All drop shadows within a room agree with that light's direction. Ban decorative glow: only lamps and bulbs may emit."
+   },
+   {
+    "idea": "Type registry by physical source",
+    "detail": "No font without an object that justifies it. Big Shoulders = painted/printed signage only. Special Elite = anything typed by gym staff (forms, index cards, roster sheets). Add a handwriting face (self-hosted, Caveat-class) for trainer margin notes and corrections. Rubber-stamp treatment = SVG text, 1\u20133deg rotation, feTurbulence-masked partial ink, oxblood or bureaucratic blue. Newsprint = the slab, only inside the paper/magazine. The current Oswald tracked-caps 'UI label' voice is deleted; labels become preprinted form fields (typewriter) or stenciled paint."
+   },
+   {
+    "idea": "Status becomes stamps and pencil",
+    "detail": "MUST KEEP / WATCH LIST / CHOPPING BLOCK: the fighter's file gets stamped \u2014 you click a physical stamp on the desk edge and the impression thuds onto the folder (scale 1.06 to 1.0, 80ms). Traits and moods become handwritten margin notes in the trainer's hand. Attribute bars become a preprinted 0\u2013100 scale on the card with a pencil fill (flat graphite gradient, no rounding, no glow) and the typed number beside it; trend arrows become penciled up/down ticks. Dropdowns become a clipboard assignment sheet where you circle the choice."
+   },
+   {
+    "idea": "Diegetic chrome: kill the app bar",
+    "detail": "Remove .gym__chrome entirely. Cash = a taped ledger scrap on the desk/frame corner in typewriter digits, updated with a strike-through-and-rewrite when it changes. Date = a physical desk calendar block; ADVANCE DAY tears the page (CSS clip-path fold + fall), ADVANCE WEEK rips through seven with a flutter. Gym name = painted on the frosted glass or the wall, part of the room shot, not a title bar. Back = the bottom of the frame always shows the desk edge; clicking it (or Esc) puts the paper down."
+   },
+   {
+    "idea": "Grade the whole film in one pass",
+    "detail": "A single global GradeLayer mounted once: SVG feTurbulence film grain tiled at 3\u20134% opacity, corner vignette, and a gentle warm-highlight/cool-shadow split-tone via two mix-blend-mode overlays. Plus shared dust motes in room shots. This is cheap (three fixed divs), immediately makes disparate screens read as one negative, and becomes the contract every future screen inherits \u2014 the fastest possible step from 'three products' to 'one film' while the deeper set-build lands."
+   }
+  ],
+  "hills": [
+   "Every screen declares its shot and its surface. If we cannot answer 'where is the camera and what is this object resting on,' the screen does not ship. No artifact ever renders centered on a void again.",
+   "No persistent app chrome. The header bar, notification badges, segmented controls, and ghost buttons all die \u2014 cash, date, navigation, and alerts must exist as objects in the set or they don't exist.",
+   "One declared light source per room, all shadows obeying it, and nothing glows except an actual lamp or bulb. Decorative glow box-shadows are struck from the codebase."
+  ],
+  "fights": [
+   "UX/Accessibility will object to rotated paper, handwritten margin notes, stamped statuses, and losing the always-visible cash/date header as contrast and wayfinding regressions. I will not pre-soften the set to WCAG-sterile defaults; we make the ink darker and the pencil heavier, we do not put the app bar back.",
+   "Engineering will want to keep the existing card/chip/tab components and reskin them with new tokens because backplates, per-room light layers, and feTurbulence paper edges cost build time and perf. Token-swapping polished components is precisely the 'modern app in vintage colors' failure the owner rejected \u2014 the components themselves are the problem.",
+   "Systems/game design will defend glowing bars, sortable tables, pills, and dropdowns as faster to scan for decision-making. I claim a well-set form card, stamp, and pencil scale carries identical information density \u2014 the development table can stay a table, but it will be a typed roster sheet in a clipboard, on a desk, under a lamp."
+  ]
+ },
+ {
+  "role": "Set Designer / Interior & Prop Designer",
+  "verdict": "This is a dark-mode SaaS product art-directed in sepia. Exactly two real props exist \u2014 the walk-in card and the newspaper \u2014 and even those float, centered and rounded, over a void. Everything else is naked software: a five-card dashboard grid pretending to be a gym floor, segmented-control tabs, glowing pill progress bars, label chips, native OS selects, notification badges with pulse animations, and a persistent app header with breadcrumbs. The lighting is a vignette gradient, not a lamp; the \"room\" has no walls, no floor material, no furniture, nothing to rest anything on. The palette is right and the writing is superb \u2014 the set is simply missing. Nothing here would survive the \"remove the labels\" test; you'd see a generic dark admin panel.",
+  "offenders": [
+   {
+    "where": "GymScreen.css .gym__rooms / .room-door (floor5.png) \u2014 the main navigation",
+    "tell": "Five identical floating cards in a CSS grid with line-icon glyphs, hover translateY(-4px) lift, backdrop-filter: blur(2px), and uniform 1px borders with rounded corners.",
+    "why": "This is the Notion/Linear home layout verbatim. A gym floor is not five matching signboards hovering in fog \u2014 it is doors, doorways, a desk, lockers, a corkboard, each a different object at a different height. Glassmorphic blur is an explicitly named enemy and it is on the flagship screen."
+   },
+   {
+    "where": "FighterProfile.css .fp__card + tab row (tab_overview.png)",
+    "tell": "One centered max-width rounded panel (radius-lg, 0 24px 60px drop shadow) containing a segmented-button tab bar (OVERVIEW/RECORD/BIOGRAPHY...) with an active-fill state.",
+    "why": "This is a modern app's detail modal with pill tabs. In 1975 a fighter's information lives in a manila folder pulled from a filing cabinet \u2014 the tabs should be die-cut folder tabs, and the container should be the folder lying on a desk, not a translucent panel floating in darkness."
+   },
+   {
+    "where": "AttributeBar.css .attr__track/.attr__fill (tab_overview.png)",
+    "tell": "9px rounded-capsule progress bars with an amber gradient fill and a glow (box-shadow: 0 0 8px rgba(217,154,78,.4)).",
+    "why": "Glowing stat meters are pure fitness-app / RPG-dashboard language. No object in a 1975 gym glows. A trainer rates a fighter in pencil on a typed evaluation sheet \u2014 a scale line with a grease-pencil tick, not a luminous capsule."
+   },
+   {
+    "where": "FighterProfile.tsx lines 348\u2013397 \u2014 native <select> for Training and Trainer",
+    "tell": "Two OS-styled dropdown selects with chevrons sitting on the profile (visible in tab_overview.png).",
+    "why": "The single most naked piece of software in the game. Assigning a training focus is a decision written on a clipboard or a chalkboard duty roster; a browser select destroys the fiction instantly and it sits on the most-visited screen."
+   },
+   {
+    "where": "ArrivalNotice (poach_notice.png) + .room-door__badge (GymScreen.css:162\u2013189)",
+    "tell": "Centered floating dialog with 'VIEW NOW / VIEW LATER' CTA buttons, plus a red circular notification-count badge with a pulse keyframe animation pinned to the card corner.",
+    "why": "That red pulsing count is the iOS badge \u2014 the most 2025 element in the entire build. News in this world arrives as a note wedged under the office door, a phone-message slip, or envelopes in a mail slot \u2014 not as an interrupting modal with two buttons."
+   },
+   {
+    "where": "LockerRoom header (wall8.png, devview2.png) \u2014 WALL|LIST|DEVELOPMENT toggle, '3/8 LOCKERS' meter, '2/2 FOCUSED SLOTS'",
+    "tell": "Segmented view-switcher control, a thin progress meter bar, and KPI-style stat readouts in the panel header; the Development view is an analytics data-grid with pill chips (DEVELOPING, PLATEAUED) and green/red delta arrows.",
+    "why": "This is an admin dashboard toolbar over a data table. The locker wall itself is a genuine prop \u2014 then the chrome around it re-frames it as a widget. Capacity should be legible from the wall (empty lockers ARE the meter); the development view should be the trainer's clipboard, not a spreadsheet."
+   },
+   {
+    "where": "Global chrome \u2014 .gym__chrome / .fp__chrome / footer time bar (every screenshot)",
+    "tell": "Persistent top app bar with tracking-spaced breadcrumb ('YOUR GYM \u00b7 LOCKER ROOM'), cash KPI top-right, bordered '\u2190 BACK TO THE FLOOR' button; bottom bar with ADVANCE DAY/ADVANCE WEEK rectangular buttons.",
+    "why": "Header bar + footer bar + breadcrumb is the skeleton of every web application ever built. A physical place doesn't have chrome; the money should live in a cashbox or ledger on the office desk, and moving time should be a physical act (calendar, punch clock), not a global footer control."
+   },
+   {
+    "where": "MoodChip.css / TraitChip \u2014 rounded pills ('CONTENT', 'COMING ON', 'FOCUSED \u00b7 FOOTWORK')",
+    "tell": "border-radius: 9px pill chips, 1px currentColor border, translucent tinted background, uppercase micro-tracking type \u2014 including a green one, a color outside the material palette.",
+    "why": "These are GitHub/Linear label chips. Status in this world is a rubber stamp, a handwritten margin note, or a strip of tape with marker on it. The tinted-translucent-background treatment has no physical analogue at all."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Build the actual room (nav = architecture)",
+    "detail": "Replace the five-card grid with one continuous SVG gym elevation: an office door with a frosted-glass pane and arched gold-leaf lettering (SVG textPath, 'OFFICE' hand-painted style), a cased doorway to the locker room under a stenciled sign, the ring ropes crossing behind, a corkboard for the press, a wall calendar for time. Click targets are the objects themselves; hover = the nearest hanging bulb warms that pool of light (radial-gradient opacity, no translateY lift). Each object is a registry slot so real art drops in later. Brick/plaster wall via layered linear-gradients + one feTurbulence displacement; rubber floor tiles via repeating-linear-gradient with seam lines."
+   },
+   {
+    "idea": "The fighter profile is a manila folder",
+    "detail": "Container becomes a folder (#d9c9a3 stock, darker worn edges via inset gradients, a bent corner via clip-path) opened flat on the desk surface. Tabs are die-cut folder tabs along the top edge \u2014 trapezoid clip-path, staggered widths, typewritten labels, the active tab's sheet sits on top of the stack (1\u20132px rotation offsets between sheets, page-edge shadows). Portrait becomes a photo paper-clipped to the folder (white border, slight rotation, SVG paperclip over the corner). Vitals become a typed government-form grid with ruled lines, not right-aligned flexbox rows."
+   },
+   {
+    "idea": "Attribute bars \u2192 pencil marks on a typed evaluation sheet",
+    "detail": "Kill the glowing capsule. Each attribute is a typewritten row on ruled form paper: label in Special Elite, a printed scale line with tick marks (SVG, uneven ink via feTurbulence stroke roughening), and the rating as a grease-pencil slash at the value position (thick SVG stroke, multiply blend, 0.5deg jitter). Keep the numeral column in typewriter digits for fast reads; trends become a handwritten '+2' in a second hand (a cursive font like Caveat, penciled gray) instead of green/red arrows. The 'coming on' state = the tick circled in red pencil."
+   },
+   {
+    "idea": "Selects \u2192 the clipboard and the chalkboard",
+    "detail": "appearance:none on the training select; render the current value as a typewritten entry on a form line ('FOCUS \u2014 FOOTWORK') with a hand-drawn checkbox. Opening it drops a paper slip list (the options as a typed checklist on carbon paper, current one checked in pencil) anchored to the line \u2014 a custom popover, not the OS menu. Trainer assignment becomes the duty chalkboard: fighter names in painted rows, trainer names in chalk (white text, slight blur + dust speckle via feTurbulence mask), clicking rewrites the chalk."
+   },
+   {
+    "idea": "Notifications \u2192 paper that physically arrives",
+    "detail": "ArrivalNotice becomes a phone-message slip or a folded note slid under the office door: pink/cream carbon form, 'WHILE YOU WERE OUT' header, typed body, slides up from the bottom edge into the lamp light (translate+rotate, no fade-in-place modal). The door badge dies; instead envelopes protrude from a mail slot on the office door (count = number of visible envelopes, urgent = a red-stamped corner showing). 'View later' = the note stays tucked in the door frame."
+   },
+   {
+    "idea": "Time & money become furniture",
+    "detail": "ADVANCE DAY = a page-a-day wall calendar in the gym scene: big letterpress numeral, month in condensed caps; clicking tears the page (CSS 3D rotateX fold + falling scrap). ADVANCE WEEK = flipping to next week's card. Cash leaves the header: a cashbox/ledger stub on the office desk and a small taped notecard near the calendar on the floor ('BANK: $2,200' in marker) for at-a-glance reads. The header bar itself is demolished \u2014 the gym name becomes the painted window sign, mirrored, seen from inside."
+   },
+   {
+    "idea": "Chips \u2192 stamps and tape",
+    "detail": "Mood/status = rubber stamps: double-ring or boxed border SVG, stamp-pad red or blue-black ink, uneven coverage via mask-image noise, each stamped at a seeded -3..3deg rotation ('CONTENT', 'PLATEAUED', 'MUST KEEP' begs to be a stamp). Traits = strips of masking tape (torn ends via clip-path polygon, slight shadow, marker lettering). Trajectory tags on the development clipboard = colored grease-pencil underlines rather than pills. One shared .stamp/.tape utility class each, so the treatment is systemic."
+   },
+   {
+    "idea": "Global material + light pass",
+    "detail": "Extend theme.css with material tokens: --paper-grain, --steel, --concrete, --chalk, plus a single inline-SVG feTurbulence data-URI reused as grain overlay per material class. Every named light source gets a CSS layer: office desk lamp (warm 2700K radial, hard elliptical falloff on the desk), locker room fluorescent (slightly green top-down strip light, subtle 8s flicker on one tube), floor bulbs (visible cords, pools). All paper gets seeded 0.3\u20131.5deg rotation, a dog-ear or tape corner; all metal gets rust blooms at screw positions (radial-gradient spots). Ban backdrop-filter and box-shadow glows repo-wide."
+   }
+  ],
+  "hills": [
+   "Every surface must rest on something. No element may float over void with a drop shadow \u2014 if I cannot answer 'what is this pinned to, lying on, or bolted to?' (wall, desk, clipboard, folder, corkboard, door), it does not ship. The current .fp__card, room-door grid, and every modal all fail this test.",
+   "Every typeface needs a diegetic source. Type is only allowed if I can name the machine or hand that made it: letterpress poster, typewriter, rubber stamp, stencil, ballpoint, grease pencil, newsprint. Generic condensed-caps-with-0.2em-tracking UI labeling (the current chrome, chips, and section headers) is forbidden on props.",
+   "Nothing glows and nothing blurs. Light comes from fixtures \u2014 lamps, tubes, windows \u2014 and falls ON objects; objects never emit. Every box-shadow glow (amber button halos, attr-bar glow, badge pulse) and every backdrop-filter is cut, replaced by placement inside a light pool."
+  ],
+  "fights": [
+   "UX/Accessibility will fight my pencil-tick attribute scales, chalk text, and stamped statuses as lower-contrast and slower to scan than glowing bars and pill chips. I will keep the typewriter numeral column for instant reads, but the luminous bar dies \u2014 I won't restore glow to buy contrast; I'll buy it with paper value and ink weight.",
+   "Engineering will resist replacing native <select> with custom paper popovers (focus management, mobile behavior) and will flag per-element seeded rotations and feTurbulence filters as render cost and code sprawl. I hold: two OS dropdowns on the hero screen are a fiction-breaking bug, not a nice-to-have, and one shared grain asset + CSS custom properties keeps the cost bounded.",
+   "Game/systems design will defend the red count badge and the interrupting VIEW NOW modal as necessary for event visibility and pacing. I say envelopes jammed in a mail slot and a note under the door communicate 'two things happened, one is urgent' diegetically \u2014 if players genuinely miss events, we add a ringing desk phone, not a pulsing red circle."
+  ]
+ },
+ {
+  "role": "Environmental Storytelling Specialist + Museum Exhibit Designer",
+  "verdict": "The simulation remembers everything; the building remembers nothing. The data bones are superb \u2014 save.history, gym-log milestones, trait reveals, founding years, press clippings with bylines \u2014 but every trace of memory renders as a scrolling widget: ledger rows with border-bottoms, a dot timeline, KPI stat tiles, a collapsible drawer that only a code comment calls a corkboard. The environment itself is amnesiac: the floor is five identical nav cards floating in a void, lockers are factory clones that show no trace of past occupants, and the .worn grain-vignette fakes age the museum-replica way \u2014 uniformly, causelessly. A 20-year save and a day-one save are pixel-identical except the numbers. The game already generates a history worth exhibiting; the UI files it in a feed instead of hanging it on the wall.",
+  "offenders": [
+   {
+    "where": "GymScreen.tsx/.css \u2014 the gym floor (floor5.png): .gym__rooms is grid-template-columns: repeat(5, 1fr) of identical dark cards with thin line icons",
+    "tell": "A dashboard home screen of nav cards hovering in empty space, perfectly symmetrical, identical materials",
+    "why": "This is the room the player lives in for 20 years and it can never accumulate anything \u2014 no wall, no floor, no objects, so no place for history to physically land. A gym floor that looks the same on day 7,300 as day 1 kills the entire fantasy."
+   },
+   {
+    "where": "FighterProfile Record tab (tab_record.png): 3x3 grid of stat tiles \u2014 'PROFESSIONAL 0-0-0', 'KO WINS 0', 'CAREER EARNINGS $0'",
+    "tell": "KPI dashboard tiles with eyebrow labels, straight out of an analytics product",
+    "why": "A fighter's record in 1975 is a typed card in a commission file or a line in Ring Record Book \u2014 a document with provenance. Tiles have no source, no author, no age; they're data with nowhere to have come from."
+   },
+   {
+    "where": "FighterProfile Career tab (tab_career.png): vertical timeline with connector line and dots, plus italic empty-state promise text",
+    "tell": "The LinkedIn/Notion activity-timeline widget",
+    "why": "A career is the single richest memory object in the game and it's rendered as the most recognizably modern component in the app. Nobody in 1975 drew dot timelines; they kept fight-by-fight record sheets that got longer, stapled, and annotated."
+   },
+   {
+    "where": "GymLogBoard.tsx (floor5.png bottom-left): rounded dark panel, '\u2014' collapse toggle, '+3' unread counter",
+    "tell": "A notification drawer / activity feed with unread badge",
+    "why": "The code comment says 'the corkboard on the gym floor' but nothing rendered is cork, pinned, or paper. The gym's daily memory \u2014 the most atmospheric writing in the game \u2014 arrives as toast-adjacent chrome instead of notes physically pinned where they'd stay."
+   },
+   {
+    "where": "OfficeRoom.tsx LedgerTab / OfficeRoom.css .ledgerbook: flex column of rows with 1px border-bottoms inside a rounded, box-shadowed panel",
+    "tell": "A data table in a floating card; 'entries' counter in the header like a query result count",
+    "why": "'What happened here, written down. Gyms forget nothing' \u2014 and then it renders as an infinite scroll feed. A ledger is a bound book: ruled pages, ink, handwriting that changes over years. The one object whose whole job is memory has no material memory."
+   },
+   {
+    "where": "GymScreen room doors (frontpage.png, poach_notice.png): red circular numeric badge '2' on the My Office card",
+    "tell": "An iOS app-icon notification badge",
+    "why": "It is the single most anachronistic pixel in the game. In a physical office, pending business is paper visibly waiting on the desk \u2014 envelopes under the door, a stack you can see \u2014 not a floating red dot."
+   },
+   {
+    "where": "LockerWall.css / wall8.png: identical locker clones, hover translateY(-3px) + amber glow ring, letterspaced 'EMPTY' microtype",
+    "tell": "Interactive component states (lift-on-hover, focus glow) applied to what should be 300 lbs of bolted steel",
+    "why": "Steel lockers don't levitate. Worse for my seat: lockers never remember occupants \u2014 a locker a champion used for five years looks identical to one never opened. Empty lockers are factory-new forever; the wall can't age."
+   },
+   {
+    "where": "Locker Room header + Development view (wall8.png, devview2.png): thin rounded progress bar for '3/8 LOCKERS', WALL/LIST/DEVELOPMENT segmented toggle, pill trait chips ('A NATURAL', 'PLATEAUED')",
+    "tell": "Progress bars, segmented controls, and status pills \u2014 the core vocabulary of 2025 SaaS",
+    "why": "Capacity in a real locker room is self-evident: you count the doors with names. The pill chips especially read as software tags; a trainer's read on a fighter belongs in pencil on a clipboard, not in a rounded outline chip."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "The building keeps score",
+    "detail": "Derive a --gym-age custom property (0\u20131) from save.dayCount and drive LOCAL, caused wear with it: radial-gradient hand-smudge darkening around door handles and the calendar, scuff streaks at thresholds, paint loss at corners via layered SVG turbulence masks whose opacity scales with age. Wear concentrates where the player clicks most \u2014 the interface literally polishes and grimes where hands go. All CSS/SVG today; each wear patch is a registry slot real art can replace."
+   },
+   {
+    "idea": "The champions' wall",
+    "detail": "Give the gym floor an actual wall plane (perspective-tilted CSS surface over the existing backdrop). Every save.history milestone of sufficient weight spawns a physical exhibit: framed press clipping (generated from the existing press engine, sepia filter keyed to its age), a cheap bowling-trophy-grade SVG trophy on a plank shelf, a painted plywood board of house records hand-lettered per champion. Deterministic per-item rotation jitter (\u00b12\u00b0, seeded by entry id) so frames hang crooked but stably. Twenty years in, the wall is full \u2014 that IS the save file, visible."
+   },
+   {
+    "idea": "Ledger as a bound book",
+    "detail": "Rebuild LedgerTab as a two-page spread: ruled lines via repeating-linear-gradient, red margin rule, entries in a handwriting-adjacent font (Caveat/Homemade Apple class, with Special Elite for official items), pages turned by year instead of infinite scroll. Ink ages: color interpolates from near-black to faded brown by (today \u2212 entry.dayCount). Coffee-ring SVG and pencil marginalia seeded per page. Older years literally look older \u2014 the book exhibits time instead of listing it."
+   },
+   {
+    "idea": "Career = record card in a manila folder",
+    "detail": "Replace the dot timeline with a commission-style fight record card: typed rows (typewriter font) on yellowed card stock, a rubber-stamped 'PRO DEBUT' / 'TITLE BOUT' (SVG stamp with uneven ink via feTurbulence displacement), paperclip and staple SVGs, and life events added in pen \u2014 the TYPE SOURCE encodes when and by whom a fact was recorded. Empty state: a fresh blank card with only the name typed, which is itself evocative."
+   },
+   {
+    "idea": "Locker archaeology",
+    "detail": "Persist per-slot occupant history in the save. A vacated locker keeps a tape-residue ghost where the name was; a fighter cut on bad terms leaves a dent (SVG dark crease); a champion's old locker gets a small painted star and nobody uses it. Empty lockers vary by seeded slot: one repainted a slightly-off green, one door ajar, rust blooms at hinge screws scaling with slot age. Replace hover-lift with a door-crack: 1\u20132\u00b0 rotateY hinge and interior shadow. The wall becomes a strata dig of everyone who ever trained here."
+   },
+   {
+    "idea": "Time you can tear off",
+    "detail": "Replace ADVANCE DAY/WEEK buttons with physical time objects: a tear-off wall calendar (Advance Day rips a page \u2014 quick CSS transform + falling page; remaining-page thickness visible as stacked edges) and a wall clock or punch-clock for the week. The Gym Log becomes real cork: SVG cork texture, index cards and torn notebook paper overlapping at seeded angles, pushpins with cast shadows; old notes don't vanish \u2014 they slide under new ones and sun-fade, so the board itself has stratigraphy."
+   },
+   {
+    "idea": "Clip the paper",
+    "detail": "Add a 'clip this' scissors affordance to press stories about your gym. Clippings get pinned to the office corkboard / pasted in a scrapbook page; yellowing (sepia + brightness filter) driven by clip age. This turns the excellent-but-ephemeral press system into the player's self-curated museum \u2014 by year 20 the office wall is a biography the player chose. Cap the visible layer, archive the rest in the scrapbook to keep DOM sane."
+   },
+   {
+    "idea": "Repairs as narration",
+    "detail": "Every purchased upgrade or damaging event leaves a permanent, dated repair: a plywood patch over a window, a rectangle of mismatched paint where a leak was fixed, new ring rope conspicuously whiter than the old. Each is an SVG overlay slot in the asset registry with a hover caption in the trainer's voice ('Pipe burst, winter of \\'78. Sal fixed it for beer'). Repairs are the honest way a poor gym shows history \u2014 it never renovates, it patches."
+   }
+  ],
+  "hills": [
+   "A 20-year save must be visually distinguishable from a day-one save at a glance with every label removed. If the environment doesn't accumulate \u2014 wear, trophies, clippings, tape ghosts \u2014 the 'building has memories' brief has failed, whatever the widgets look like.",
+   "No uniform aging shader. The current .worn grain+vignette ages everything equally, which is exactly how museum replicas ring false. Real wear is local, caused, and dated: dark where hands touch, stained where the mug sits, faded where the sun hits. Age must have provenance or it's set dressing.",
+   "Nothing that records the past may render as a feed, timeline, or stat tile. Memory lives in objects \u2014 a book, a clipping, a stamp, residue on steel \u2014 never in a scrolling list with border-bottoms. The ledger, the career tab, and the gym log are the soul of this game and they get object treatment first."
+  ],
+  "fights": [
+   "Engineering/performance will object that persistent per-slot locker history, seeded wear overlays, and 20 years of accumulated clippings bloat the save schema and the DOM. I'll concede virtualization and layer caps, but not deletion: artifacts must persist across the whole save, because pruning history is exactly the amnesia I'm here to prevent.",
+   "Accessibility/readability will fight my faded ink, handwriting fonts, sepia clippings, and crooked pinned notes as contrast and legibility violations. I'll accept a 'lean in to read' focused state that flattens and brightens any document on inspection \u2014 but the at-rest state stays aged; I will not ship uniformly high-contrast paper that looks printed yesterday.",
+   "Design-system/token discipline will resist my core doctrine that nothing matches \u2014 the off-green repainted locker, mismatched paint patches, per-item rotation jitter break palette and component consistency by design. Their consistency instinct is correct for software and fatal for a place assembled over 20 years; variance must be seeded and intentional, but it must exist."
+  ]
+ },
+ {
+  "role": "Typography Specialist",
+  "verdict": "The four-font system is one modern voice wearing four costumes. The app's true typeface is not any of the four \u2014 it is \"Oswald, uppercase, +0.1 to +0.3em tracking,\" used 119 times for section overlines, tabs, buttons, chips, column headers, and datelines; that habit alone is the Linear/Stripe signature and accounts for most of the modern feel. Big Shoulders Display (2019 Chicago-branding face) reads as sports-app branding, not wood type; Roboto Slab is Android-era and, fatally, doubles as newsprint body. Special Elite is the only genuine 1975 source in the stack and it is underused. Nothing is mixed by SOURCE \u2014 newspaper, magazine, form, plaque, and HUD are all set by the same 2025 designer with one spacing system. Missing entirely: blackletter/news serif, government-form print, handwriting, rubber stamps, fat-face poster wood type.",
+  "offenders": [
+   {
+    "where": "Everywhere \u2014 src/styles/theme.css --font-condensed + 151 letter-spacing / 110 uppercase declarations across src/**/*.css (e.g. FighterProfile.css section heads 'ATTRIBUTES', 'WHAT YOU KNOW', 'STANDING & TRAINING')",
+    "tell": "Tracked-out uppercase Oswald overline microlabels (+0.1em to +0.3em) as the universal labeling system",
+    "why": "This exact pattern is the house style of Linear, Stripe, and Notion. No 1975 object \u2014 form, sign, stamp, or typescript \u2014 letterspaces lowercase-sized labels this way; it instantly reads as a design-token system, not a place."
+   },
+   {
+    "where": "index.html font link + theme.css:47 --font-display: 'Big Shoulders Display' (headers like 'Locker Room', 'The New York Register', room card titles)",
+    "tell": "A 2019 digital-branding condensed grotesque used as the period display face",
+    "why": "Big Shoulders was designed for Chicago civic branding; its squarish modern skeleton reads DAZN/ESPN-app, not wood-type fight poster. The game's loudest type is its most anachronistic."
+   },
+   {
+    "where": "src/rooms/PressRoom.css \u2014 The Paper (press_paper.png): masthead, amber 'APR 27 '75' date labels, 'SPORTING PAGES \u00b7 FRIDAY, MAY 2, 1975' dateline",
+    "tell": "Newspaper set in the app's own design system: slab masthead, amber tracked-caps sans datelines, no headlines, ragged-right columns",
+    "why": "A 1975 sports page means blackletter or Caslon masthead, bold condensed gothic headlines per story, justified hyphenated Linotype body, agate datelines in black ink. Amber-colored UI labels printed on newsprint is a physically impossible object \u2014 this screen should be the game's strongest period anchor and it's its weakest."
+   },
+   {
+    "where": "src/rooms/PressRoom.css \u2014 The Magazine (audit_magazine.png)",
+    "tell": "The 'magazine' is a dark-background data table in the same Oswald/slab HUD voice",
+    "why": "Magazines are paper. Ring Magazine 1975 means cream stock, Cooper-Black-era display, Century-style body, agate ratings tables. As rendered it is an analytics dashboard with a masthead."
+   },
+   {
+    "where": "src/screens/FighterProfile.css tab row (OVERVIEW / RECORD / BIOGRAPHY / CAREER / DEVELOPMENT)",
+    "tell": "Equal-width bordered uppercase segmented-control tabs, identical type across states",
+    "why": "This is a browser tab bar. The brief's own answer is folder tabs: die-cut manila dividers with typed or hand-inked labels, staggered heights, the active folder pulled forward \u2014 type should change source, not just background color."
+   },
+   {
+    "where": "src/components/MoodChip, TraitChip, LockerRoom dev table (devview2.png: 'DEVELOPING', 'A NATURAL', 'SLOW STUDY'; tab_overview.png: 'COMING ON', 'CONTENT')",
+    "tell": "Rounded-outline status pills in tracked caps, semantically color-coded green/amber",
+    "why": "These are GitHub labels / Notion tags \u2014 the purest 2020s component in the game. 1975 status marks are rubber stamps, grease-pencil circles, and typed margin notes, not vector pills."
+   },
+   {
+    "where": "src/components/TimeControls.css + dialog CTAs (floor5.png 'ADVANCE DAY +1', poach_notice.png 'VIEW NOW', frontpage.png 'REVIEW AT THE DOOR')",
+    "tell": "Bordered-rectangle buttons with tracked uppercase Oswald and a superscript '+1' modifier",
+    "why": "No physical source: not a plaque, not a stamped sign, not a painted switch label. The '+1/+7' notation is pure software affordance; a wall calendar or a punch clock would carry this action in the fiction."
+   },
+   {
+    "where": "src/components/WalkInCard/WalkInCard.css field labels (walkin_read2.png 'NAME:', 'AGE:', 'WEIGHT CLASS:' vs right-aligned bold slab values)",
+    "tell": "Web-form label/value pairs: tracked caps labels left, bold values right, hairline rules between rows",
+    "why": "The card already has the right idea (Special Elite quote) but the vitals block is an HTML form. A real intake card is a PRE-PRINTED form \u2014 small grotesque print with ruled fill-in lines \u2014 completed on a typewriter, values sitting slightly off the printed baseline."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Kill the overline; label by source",
+    "detail": "Delete the tracked-uppercase label pattern globally (all ~151 letter-spacing decls audited to <=0.05em except engraved plaques). Every label picks one of four printed sources: (1) pre-printed form print \u2014 Libre Franklin 500 at small size, normal tracking, with ruled boxes and form numbers ('CARD 12-B REV. 3/71'); (2) typed header \u2014 Special Elite/Courier Prime with a typed underline of hyphens or ===== ; (3) rubber stamp \u2014 heavy caps, see stamp proposal; (4) engraved brass \u2014 small caps with inset emboss text-shadow, the ONLY place wide tracking survives."
+   },
+   {
+    "idea": "Replace Big Shoulders with a wood-type poster pair",
+    "detail": "Drop Big Shoulders entirely. Poster voice = 'Ultra' or 'Bevan' (fat-face/Egiziano slab \u2014 the fight-bill face) for one-word room names and event bills, plus 'Anton' (an Impact clone; Impact shipped 1965, historically clean) for condensed gothic secondary lines. Use ONLY at poster scale on poster objects; ink texture via 1px blurred text-shadow duplicate + SVG feTurbulence displacement at 0.4 scale so edges bleed like letterpress on cheap stock."
+   },
+   {
+    "idea": "Typeset the newspaper like 1975 Linotype",
+    "detail": "Masthead: bundle 'Chomsky' (free OFL blackletter, NYT-style) or GF 'UnifrakturMaguntia'. Body: 'Noticia Text' (designed for newsprint), justified with hyphens:auto, 2-3 columns via CSS columns. Every story gets a bold condensed gothic headline (Anton, sentence case, tight). Dates/bylines become agate: 7-8pt-equivalent small caps in ink black, never amber. Slight ink-squeeze: font-weight one step heavier than modern taste plus 0.2px blur on body."
+   },
+   {
+    "idea": "Make the magazine paper with a 70s face",
+    "detail": "The Magazine moves to cream stock (reuse --parchment). Display: Cooper Black is THE 1975 magazine face \u2014 no faithful GF clone, so bundle a free Cooper-alike or use 'Ultra' with -0.01em tracking as the stand-in slot behind the asset registry. Body: 'Libre Caslon Text' or 'Lora'. Ratings pages become agate tables: rank, name, gym, record in Courier Prime tabular rows with dot leaders (CSS: repeating-linear-gradient dots or ::after '. . . .' overflow-clipped)."
+   },
+   {
+    "idea": "Two hands, used sparingly",
+    "detail": "Add exactly two handwriting faces: 'Permanent Marker' for marker-on-tape (locker name plates, jar labels, taped-over corrections) and 'Caveat' (or 'Homemade Apple' for a shakier owner) for ballpoint trainer notes \u2014 the gym log, 'YOUR READ' on walk-in cards, margin notes on fighter files. Ballpoint blue-black (#2a3550 aged) on paper, chalk off-white on boards. Rotate each note -1.5deg..1deg via nth-child so no two hang identically."
+   },
+   {
+    "idea": "Rubber-stamp the statuses",
+    "detail": "MoodChip/TraitChip/trajectory pills become stamps: Archivo Black caps, stamp-pad red (#a6432a) or bureaucratic blue, rotated -3deg..2deg, eroded by an SVG feTurbulence mask (baseFrequency 0.25, used as alpha) with a faint double-strike offset copy at 60% opacity. 'MUST KEEP / WATCH LIST / CHOPPING BLOCK' is begging to be three stamps on a folder. Same words, larger x-height \u2014 scannability improves, the pill dies."
+   },
+   {
+    "idea": "Numbers speak their instrument",
+    "detail": "Ban tabular UI sans for game data. Ledger money and fight records: Courier Prime (clean IBM output \u2014 Special Elite stays for worn field paperwork). Attribute scores on scouting sheets: typed numerals with \u00b11px baseline wobble (per-cell translateY) and occasional 85%-opacity strike; recent-form arrows become grease-pencil ticks (Caveat '/' marks), not \u25b2\u25bc glyphs. OCR-A (free, bundleable, released 1966) as a garnish on account numbers and license IDs only."
+   },
+   {
+    "idea": "Typescript discipline for Special Elite",
+    "detail": "Real typescripts have one weight and no italics: wherever --font-typewriter is used, emphasis becomes underline, ALL CAPS, or x-strikethrough (text-decoration: line-through with 'x' overlay), never synthetic bold/italic (the browser is currently free to fake both). Add ribbon variance: word-level spans at 88-100% opacity via a deterministic hash so re-renders don't shimmer. This one rule makes every typed surface read as a machine, not a font."
+   }
+  ],
+  "hills": [
+   "No tracked-out uppercase overline labels, anywhere. Wide-tracked caps survive only where metal was engraved (brass plaques, trophy plates). This single habit is 80% of the app's modern accent; if it stays, no font swap will save the fiction.",
+   "The Paper and The Magazine are typeset as 1975 print artifacts \u2014 blackletter/Caslon masthead, justified hyphenated news body, gothic headlines, black-ink agate, paper stock. They are the game's period anchor; a newspaper in the app's UI voice tells the player the whole world is fake.",
+   "One voice per object, mixed by source not hierarchy: a form never borrows the poster face for its heading; typed values never share a font with pre-printed labels; numbers are typed or penciled, never tabular UI sans. If you can't name the machine or hand that made the glyphs, the glyphs are wrong."
+  ],
+  "fights": [
+   "Accessibility will object to handwriting (Caveat/Permanent Marker) and eroded stamps for meaningful game state, and to ballpoint-blue on parchment contrast. I'll concede size floors (~16px equivalent) and contrast-checked ink values, but I will not concede the sources themselves \u2014 flavor and status text in system-clean type is the whole disease we're treating.",
+   "Engineering/performance will object to growing from 4 families to ~8-9 (Ultra/Bevan, Anton, Noticia Text, Libre Caslon, Courier Prime, Caveat, Permanent Marker, bundled Chomsky + OCR-A) plus SVG filter cost on stamps. Subsetted woff2 makes this ~150KB total; I will trade weights and cut Roboto Slab entirely, but a period world cannot be built from four fonts, and I won't preload less than the newspaper needs.",
+   "UX/layout will object to rotation, baseline wobble, and stamp erosion on interactive, scannable elements (dev-table statuses, folder tabs, buttons) as noise that slows decisions. My line: imperfection lives on the object at rest \u2014 hover/focus states may sharpen and straighten, but I will not ship a straightened, untextured 'interactive mode' that snaps the world back to software."
+  ]
+ },
+ {
+  "role": "Material & Texture Artist / Industrial Designer",
+  "verdict": "This UI is built from exactly one material: dark gradient plastic, tinted warm. Read the CSS and it's the same recipe everywhere \u2014 linear-gradient(180deg, dark, darker), 1px border, inset top highlight, rounded corners, amber hover glow. That is the SaaS component recipe wearing sepia. Nothing has tooth, fiber, grain, or manufacturing evidence; the parchment is a flat hex with two soft radial vignettes \u2014 beige rectangle cosplaying as paper. Only three SVG components (lockers, portraits, gym background) contain any noise at all, and the locker wear is cloned \u2014 eight doors with identical rust ellipses, which reads faker than no rust. A 1975 gym is objects from different makers, different decades, different processes. This UI has one manufacturer: Figma, 2024.",
+  "offenders": [
+   {
+    "where": "src/components/Button.css (all buttons, every screen)",
+    "tell": "One universal rounded-rect gradient plate; hover adds `0 0 16-22px` amber glow",
+    "why": "Omnidirectional glow is light emitted by a screen, not reflected off painted steel or brass. A single button construction for every action means every object was made by the same factory \u2014 the opposite of a gym assembled over 20 years. Glow is THE tell of digital."
+   },
+   {
+    "where": "src/screens/GymScreen.css / floor5.png \u2014 the five room nav cards",
+    "tell": "Five identical floating cards, equal width, equal gap, uniform 1px borders, thin-line amber icons (Feather/Lucide look), hover radial glow",
+    "why": "This is the enemy named in the brief: a modern dashboard card row. Outline glyph icons did not exist as physical objects in 1975 \u2014 rooms had painted doors, wired-glass windows, screwed-on signs. Nothing here is fastened to anything."
+   },
+   {
+    "where": "src/components/MoodChip.css, TraitChip.css, FighterProfile 'COMING ON'/'FOCUSED' pills (tab_overview.png, devview2.png)",
+    "tell": "Fully-rounded outline pill chips with status colors",
+    "why": "Colored tag-pills are Linear/Notion vocabulary. A 1975 trainer marks a card with a rubber stamp, a grease-pencil circle, or a typed annotation \u2014 never a green-outlined capsule."
+   },
+   {
+    "where": "src/components/AttributeBar.css (tab_overview.png attribute rows)",
+    "tell": "Thin rounded progress-bar track + fill, seven perfectly aligned meters",
+    "why": "Progress bars are a fitness-app meter with no 1975 physical analog. The uniform hairline tracks read as data visualization software, not a trainer's assessment of a body."
+   },
+   {
+    "where": "ArrivalNotice.css / PressRoom.css parchment recipe (frontpage.png, press_paper.png)",
+    "tell": "Flat --parchment hex + two radial-gradient vignettes + inset glow; razor-straight edges, uniform radius corners",
+    "why": "Paper with zero fiber tooth, no fold lines, no deckle or cut irregularity is a beige <div>. The newspaper especially \u2014 newsprint is the cheapest, roughest stock there is, and here it's smoother than the screen it's on."
+   },
+   {
+    "where": "FighterProfile.tsx Training/Trainer rows (tab_overview.png)",
+    "tell": "Native browser <select> dropdowns with OS chrome and chevrons",
+    "why": "Browser form widgets are the most literal piece of 2025 software on any screen; they shatter the diegesis instantly. Assignments belong on a clipboard or a pegboard, not in an OS control."
+   },
+   {
+    "where": "src/assets/lockers.tsx (wall8.png)",
+    "tell": "Eight lockers sharing the exact same two rust ellipses, same vents, same handle; grain wash at 7% alpha barely registers; perfect grid",
+    "why": "Cloned wear betrays proceduralism worse than cleanliness \u2014 real corrosion is where water actually ran. This is the one place noise exists and it's both too faint and photocopied."
+   },
+   {
+    "where": "FighterProfile tabs + MUST KEEP/WATCH LIST/CHOPPING BLOCK + WALL/LIST toggle (tab_overview.png, devview2.png)",
+    "tell": "Equal-width boxed segmented controls with an active fill state",
+    "why": "This is an iOS segmented control. The brief hands us the answer: file-folder tab dividers, clipboard clamps, a painted board with a sliding marker \u2014 all trivially CSS-able and none of them symmetric boxes."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "One noise, four materials \u2014 a baked texture kit in theme.css",
+    "detail": "Ship 3-4 static SVG data-URI tiles as custom properties, applied with background-blend-mode \u2014 never live filters. --tex-paper: feTurbulence fractalNoise baseFrequency 0.9, 2 octaves, desaturated, ~4% alpha, blend multiply (paper tooth). --tex-plaster: baseFrequency 0.04, 3 octaves, blend overlay at 6% (walls, concrete). --tex-steel: anisotropic baseFrequency='0.008 0.35' for directional brush grain on lockers/plaques. --tex-canvas: repeating-linear-gradient weave (2 crossed 1px repeats at 3% alpha) over noise. Each tile is decoded once and GPU-cached; a surface becomes `background: var(--tex-paper), <aging gradients>, <stock color>`. Every surface in the game gets exactly one of these \u2014 flatness becomes impossible by construction."
+   },
+   {
+    "idea": "Material identity per control class (industrial design spec)",
+    "detail": "Buttons stop sharing a factory. Primary/destructive = painted steel plaque: 0px radius, stamped bevel via two hard 1px box-shadows (light top-left, dark bottom-right), --tex-steel, and four corner screwheads as 8px pseudo-element radial-gradients each rotated a few degrees differently (slot direction varies). Secondary = manila shipping tag: --tex-paper, punched reinforced hole (radial-gradient ring), typed label, hangs 1deg off level. Nameplates = brass: vertical brushed linear-gradient (6+ stops), engraved text via text-shadow 0 -1px rgba(0,0,0,.6) / 0 1px rgba(255,240,200,.25), oxidation darkening at edges via inset shadow in green-brown."
+   },
+   {
+    "idea": "Kill the glow: one lamp, one shadow direction",
+    "detail": "Delete every `0 0 Npx` omnidirectional glow. Establish a single global light source (desk lamp, upper-left) and encode it as tokens: --shadow-cast: 3px 5px offsets, --bevel-light top/left, --bevel-dark bottom/right, consistent app-wide. Hover states become physical: paper lifts (translateY(-1px) + shadow grows longer and softer in the lamp direction), steel plaques press IN (inset shadow deepens, translateY(1px)), brass catches light (brighten only the top gradient stop). Interactivity reads through material behavior, not emission."
+   },
+   {
+    "idea": "A real paper system: three stocks with edges, folds, and stains",
+    "detail": "Newsprint (gray-cream, heaviest --tex-paper, visible at 6%), manila (warm, medium tooth), index card (pale, faint ruled lines via repeating-linear-gradient). Each sheet gets: an irregular edge on at least one side (clip-path polygon with 8-12 jittered points \u2014 torn; or 0px hard-cut with 0.3deg rotation \u2014 guillotined), a fold line (1px linear-gradient dark/light pair across the sheet), corner-anchored aging (radial-gradient tobacco darkening from one corner, seeded per document), and occasional coffee rings (radial-gradient ring, 8-12% alpha, on ~1 in 4 sheets by id hash). The newspaper additionally gets ink-bleed: text-shadow 0 0 0.4px currentColor and slightly imperfect column rules."
+   },
+   {
+    "idea": "Fasteners: everything on screen is attached to something",
+    "detail": "Reusable .tape and .pin primitives. Tape: pseudo-element, rgba(232,222,190,0.45), 2-3deg skew, torn ends via 6-point clip-path polygon, faint darker occlusion shadow under its edges, subtle specular stripe (linear-gradient) because tape is glossy. Pin: 10px radial-gradient sphere (highlight offset toward the lamp) + 2px cast shadow ellipse offset down-right + the paper dimpling slightly (tiny radial darkening under the pinhead). Notices get tape; roster cards get pins in a corkboard (--tex-plaster tinted cork + darker speckle layer); the ArrivalNotice modal becomes a note taped to the glass, not a floating card."
+   },
+   {
+    "idea": "Seeded imperfection budget (the anti-photocopy rule)",
+    "detail": "A tiny hash(id) \u2192 {rotation -1.4..1.4deg, translate \u00b12px, wear-variant 0-3} utility drives CSS custom properties per instance. Lockers: rust ellipses positioned from the seed (bottom seam, hinge line, under the handle \u2014 where water actually runs), dent count varies, name tapes cut to different lengths at different angles. Lists and grids keep their layout boxes (usability intact) but contents sit off-axis by these amounts. Deterministic, so nothing shimmers on re-render, and it costs one style attribute per element."
+   },
+   {
+    "idea": "Attribute bars \u2192 the trainer's pencil ledger",
+    "detail": "Replace AttributeBar with a typed number (typewriter font, baseline jitter \u00b10.5px via seeded transform) plus a hand-ruled scale: an SVG line run through feDisplacementMap (turbulence scale ~1.5, filter baked into a tiny shared <defs>, static so it renders once) with a grease-pencil fill \u2014 a thick stroke with --tex-paper masking its alpha so it looks dry-dragged. Trajectory arrows become pencil check-marks and minus signs. Same information density, same scan speed (number is primary, mark is secondary), zero progress-bar."
+   },
+   {
+    "idea": "Segmented controls \u2192 folder tabs and painted boards",
+    "detail": "Profile tabs: file-folder dividers \u2014 trapezoid clip-path tops, overlapping via negative margin and z-index, active folder lifted with full --tex-paper and a shadow cast onto the folder behind it, inactive ones darker and tucked. Labels typed on adhesive labels. MUST KEEP/WATCH LIST/CHOPPING BLOCK: one painted wooden board (--tex-plaster over wood-brown, cracked paint via 1px noise-masked lighter layer) with a sliding brass indicator or a chalk circle around the active word. WALL/LIST/DEVELOPMENT: a hook-and-hanging-clipboard metaphor \u2014 the active view's clipboard is 'taken down' (foregrounded)."
+   }
+  ],
+  "hills": [
+   "No unmotivated light. Every highlight, bevel, and shadow obeys one lamp with one direction; the omnidirectional glow (`box-shadow: 0 0 N`) is banned from the codebase. If an element brightens, I must be able to say what in the room lit it.",
+   "No naked surface. Every element larger than a postage stamp carries a material pass (one of the baked noise tiles + an aging gradient). But texture is always static data-URI tiles \u2014 never live feTurbulence filters on elements that animate or scroll. Atmosphere never costs a frame.",
+   "No photocopied wear. Two identical instances of the same object are forbidden \u2014 imperfection must be seeded per-instance (deterministic hash of id) or omitted entirely. Cloned rust is worse than no rust; it reveals the machine behind the set."
+  ],
+  "fights": [
+   "Accessibility will object to noise behind body text, grease-pencil marks, and off-axis rotation as contrast and legibility risks. I'll hold ink-to-paper contrast ratios at readable levels, but I will not sand the tooth off the paper or straighten every sheet \u2014 a 4% multiply grain and a 1-degree tilt do not stop anyone reading a roster, and a flat beige rectangle stops everyone believing it.",
+   "Engineering/performance will try to cap me at one or two background layers and veto SVG filters wholesale. I'll give up live filters voluntarily (they're in my own hills) but I will fight for 4-6 layered backgrounds and per-instance CSS custom properties on static surfaces \u2014 that's composited once and cached; it is not where frames go to die.",
+   "Information architecture will defend the five-card floor nav and segmented controls as faster to scan than doors, folder tabs, and painted boards. I say scan speed is a property of hierarchy and lighting, not of rounded rectangles \u2014 and the brief explicitly trades the dashboard for a room. If the floor stays a card row, my materials are just wallpaper on a SaaS app and we've failed the whole assignment."
+  ]
+ },
+ {
+  "role": "Lighting Artist",
+  "verdict": "The lighting is component-emissive, not environmental. The backdrop paints a lamp pool and window shafts, but not one foreground element receives that light \u2014 every panel carries its own identical linear-gradient fill, an identical sourceless amber rim (`inset 0 1px 0 rgba(232,181,102,.1)`), a straight-down Material-elevation shadow, and a hover glow. Five nav cards sit in front of five window shafts and none is brighter than another; the newspaper is a uniformly luminous sheet floating in a black void like a phone at night. This is OLED-card lighting wearing amber hex codes. There is no per-room source identity, no shadow direction, no light tokens in theme.css at all \u2014 light is hardcoded per component, which is precisely how software glows and rooms don't.",
+  "offenders": [
+   {
+    "where": "GymScreen.css .room-door (floor5.png) \u2014 backdrop-filter: blur(2px), hover box-shadow 0 0 26px amber, hover translateY(-4px)",
+    "tell": "Glassmorphism plus an outer glow that switches on when the cursor arrives \u2014 the object emits light in response to attention, then levitates.",
+    "why": "Real objects under a lamp cannot glow or float; light in a room does not react to where you look. This is touchscreen-button feedback, the owner's named enemy."
+   },
+   {
+    "where": "Every raised panel: .room-door, FighterProfile.css .fp__card, OfficeRoom.css .finances, Toast.css \u2014 the shared `inset 0 1px 0 rgba(232,181,102,0.1)` top rim + self-contained dark gradient fill",
+    "tell": "One identical top rim-light stamped on every surface regardless of where it sits in the room \u2014 a global light that comes from nowhere.",
+    "why": "It says 'these are UI cards with an elevation style,' not 'these objects share one room.' A signboard by the window and a ledger under the desk lamp cannot be lit identically."
+   },
+   {
+    "where": "FighterProfile.css .fp__card / OfficeRoom.css .finances \u2014 `box-shadow: 0 24px 60px rgba(0,0,0,0.6)`",
+    "tell": "Large, soft, perfectly vertical drop shadows \u2014 Material Design elevation, implying diffuse studio light directly overhead.",
+    "why": "The fiction says a desk lamp low to the right and dusty side windows; those cast offset, directional, harder-edged shadows. Vertical ambient shadows read instantly as 2020s app chrome."
+   },
+   {
+    "where": "global.css .worn::after \u2014 radial vignette centered at 50% 38%, identical on every screen",
+    "tell": "A symmetric camera vignette applied as post-processing, same on the office, locker room, and press screens.",
+    "why": "Vignette is a lens artifact, not a room. Environmental darkness should pool where each room's geometry blocks light \u2014 off-center, different per room \u2014 or the 'rooms' are exposed as one screen with a filter."
+   },
+   {
+    "where": "RegionalGymBackground.tsx \u2014 five identical 150px windows at even 290px spacing, each with an identical shaft; lamp pool rect at lower right",
+    "tell": "Perfectly rhythmic light sources (a banned symmetry), and a painted lamp whose light stops at the background layer \u2014 the nav cards floating in front receive zero of it.",
+    "why": "Background and UI live in two separate light worlds, which is the single clearest tell that the gym is wallpaper behind an app rather than the room the interface lives in."
+   },
+   {
+    "where": "PressRoom (press_paper.png) \u2014 full-brightness parchment page, evenly lit edge to edge, in a near-black surround",
+    "tell": "A self-luminous document: maximum paper brightness with no gradient across the sheet and no cast shadow from anything.",
+    "why": "Paper reflects light; it cannot be the brightest thing in a dark room unless a lamp is on it, and a lamp lights one corner hot and lets the far corner fall off. This reads as a modal on a dimmed scrim \u2014 a 2025 pattern."
+   },
+   {
+    "where": "LockerWall.css (wall8.png) \u2014 hover `filter: brightness(1.12)` + `box-shadow: 0 0 18px rgba(217,154,78,.35)`; occupied lockers uniformly lit, empties uniformly dark",
+    "tell": "State communicated by per-element emissive brightness and glow, like selected items in a media library.",
+    "why": "Steel lockers under fluorescent tubes are lit by the tubes \u2014 uniformly-per-bay, with cool spill and specular streaks \u2014 not by their own occupancy status. Also nothing in this locker room is fluorescent; it's all desk-lamp amber."
+   },
+   {
+    "where": "GymScreen.css .room-door__badge--alert \u2014 `door-badge-pulse` animating a glowing box-shadow (poach_notice.png badge)",
+    "tell": "A pulsing notification LED.",
+    "why": "1975 urgency is a red grease-pencil circle, a note nailed over the sign, or the bare bulb over the message board being ON \u2014 never a soft breathing glow, which is pure smartphone."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "One light rig per room, as a scene layer",
+    "detail": "Add light tokens to theme.css (--key-x, --key-y, --key-color, --key-reach, --shadow-dx/--shadow-dy) set per room on the root screen element. Render the light as ONE full-viewport pointer-events:none overlay stack ABOVE content: a `mix-blend-mode: soft-light` radial-gradient key pool at (--key-x,--key-y), skewed linear-gradient window shafts in `screen`, and an off-center `multiply` darkness layer replacing .worn. Panels drop their private gradients and become flat material colors \u2014 the rig lights backdrop and UI in the same pass, so a plaque standing in a shaft is genuinely brighter than one in shadow."
+   },
+   {
+    "idea": "Directional shadows from the named source",
+    "detail": "Replace every `0 24px 60px` elevation shadow with a two-part directional shadow derived from tokens: a tight umbra (`calc(var(--shadow-dx)) calc(var(--shadow-dy)) 6px -2px rgba(0,0,0,.6)`) plus a longer soft penumbra. Office (lamp lower-right): shadows fall up-left and short. Gym floor (high bulbs): short, nearly under the object. Locker room (tubes): almost shadowless, faint and doubled. One token change re-lights a whole room."
+   },
+   {
+    "idea": "Kill emissive feedback; hover = catching the light",
+    "detail": "Ban `0 0 Npx` outer glows on anything that isn't a fixture. Hover/focus states become optical: a static specular streak (::after, a 20deg near-white linear-gradient sliver at low opacity, angle tied to --key-x) that strengthens on hover, brass label glint via a 1px bright edge, and the shadow shortening slightly as if the object leans toward the lamp. Selection = a clip-on work light or grease-pencil ring drawn in SVG, not brightness(1.12)."
+   },
+   {
+    "idea": "Paper is lit, never luminous",
+    "detail": "Every parchment surface (newspaper, magazine, walk-in card, forms) gets a lamp gradient overlay: `linear-gradient(115deg, rgba(255,238,200,.28) 0%, transparent 45%, rgba(43,30,16,.38) 100%)` in multiply, hot corner matching that room's --key position, plus a soft page-edge shadow onto the desk beneath. Cap base parchment at --parchment-dark; only the lamp hot-spot reaches full #e8dcc0. The Press page should feel read under a lamp at a desk, its far column dimmer than its near one."
+   },
+   {
+    "idea": "A source vocabulary per room",
+    "detail": "Office: one incandescent pool, steep falloff (radial with stops at 0/22/55%), 2700K tint #e8b566, everything outside the pool drops to near-black fast. Locker room: fluorescent tubes \u2014 two horizontal cool bands (#c9d4c2 at 8-12% screen blend) with hard cutoffs, one tube flickering via a 4s steps() opacity keyframe on ONE band only (disabled under prefers-reduced-motion). Press: a cold dusty window shaft \u2014 gray-blue linear strip with SVG feTurbulence dust masked inside it. Gym floor: hanging bulbs at irregular x-positions, one visibly dead (dark cone), replacing the five perfect shafts."
+   },
+   {
+    "idea": "Time-of-day and season grade",
+    "detail": "Game state already carries season and day. Drive two root variables \u2014 --daylight-strength and --daylight-color \u2014 from date: winter = low raking cold shafts (steeper skew, #b8c4cc), summer = high warm shafts, evening/after-advance-day = shafts at 0 and the lamp pools carrying the whole room. Implement as inline style on the screen root; the overlay gradients consume the variables, so the same CSS re-lights the gym across the calendar for free. Monday morning paper should look like morning."
+   },
+   {
+    "idea": "Light explains hierarchy \u2014 dock UI in the pools",
+    "detail": "Stop distributing nav plaques on a symmetric grid and place them where light actually falls: the room signboards hang under the bulbs (each inside its cone, slightly uneven spacing, one half-in-shadow), the gym log clipboard sits at the edge of the lamp pool, the timebar sits in warm floor-bounce (a weak bottom-up amber gradient \u2014 wood reflects the lamp). Remove every label and the bright spots alone should still tell you where to look, which is the owner's stated test."
+   },
+   {
+    "idea": "Delete the app chrome scrims and blur",
+    "detail": "Remove all three `backdrop-filter: blur(2px)` (room-door, GymLogBoard, TimeControls) and the video-player top scrim `linear-gradient(180deg, rgba(10,7,5,.94), rgba(10,7,5,.4))` on .gym__chrome/.fp__chrome. The header becomes a painted wall board lit by spill from the nearest window shaft (its brightness varies with --daylight-strength); the cash figure lives on it as a chalk or tag under the same light, not as glowing amber text on a translucent bar."
+   }
+  ],
+  "hills": [
+   "Nothing emits light except actual fixtures. Zero outer glows, zero pulsing shadows, zero brightness-on-hover on any object that is not a lamp, tube, window, or the moon. If an element needs emphasis, move light onto it or draw attention with a physical mark.",
+   "One rig per room, defined once in tokens, lighting background and UI in the same pass. The moment a component ships its own gradient fill and rim light, we are back to cards in a void \u2014 I will reject any panel CSS that self-lights.",
+   "Every shadow has a direction and that direction agrees with the room's named source. A single straight-down elevation shadow anywhere is a bug, not a style choice."
+  ],
+  "fights": [
+   "Accessibility will object to steep lamp falloff and dark corners failing contrast ratios. I will guarantee AA contrast inside the lit content zones \u2014 that is what the light is FOR \u2014 but I refuse to flatten the room to uniform brightness; a gym at night is dark where nothing happens, and darkness outside the reading area is not a defect.",
+   "The art director / asset-replacement pipeline will fight the scene-layer rig: blend-mode overlays above content mean replacement art must be delivered neutral/unlit so the rig can light it, while artists will want to bake lighting into their paintings. Baked light kills time-of-day, per-room re-lighting, and consistency between art and UI \u2014 the rig wins.",
+   "Engineering/performance will push back on full-viewport mix-blend-mode layers, SVG turbulence dust, and a flicker animation as compositing cost, and the interaction designer will mourn the hover glow as lost affordance. The specular-streak hover is subtler by design \u2014 objects in a room don't shout \u2014 and two blend layers is a price a game about atmosphere pays."
+  ]
+ },
+ {
+  "role": "Color Theory Specialist",
+  "verdict": "This is a competently built modern dark theme wearing a sepia filter. The entire palette is a single hue ramp \u2014 background, panels, borders, text, and accent all sit between 25\u00b0 and 40\u00b0 of amber-brown \u2014 which is exactly how a design system generates \"dark mode,\" and exactly how no physical room has ever been colored. A real 1975 gym is chromatically heterogeneous: green-gray steel lockers, institutional mint plaster, concrete, manila folders, cool newsprint, oxidized brass, sun-faded painted red. None of those hues exist in theme.css. Worse, the accent logic is pure SaaS: amber deployed as a brand color on tabs, links, and progress bars, plus a saturated #7bbf6a success green in alpha-tinted pill chips that could ship in GitHub tomorrow. Color currently says \"theme.\" It must say \"material.\"",
+  "offenders": [
+   {
+    "where": "src/styles/theme.css (entire token set) \u2014 visible on every screen",
+    "tell": "Monochromatic value ramp: --ink-black through --amber-bright are one continuous brown gradient; --text-warm (#e8dcc0) is literally the same hex as --parchment",
+    "why": "Single-hue dark ramps are the signature of generated design-system palettes. A room built from oak, steel, concrete, paper, and painted plaster cannot share one hue; when text is the same color as paper, nothing reads as a distinct object \u2014 it all melts into one sepia screen."
+   },
+   {
+    "where": "FighterProfile.css:365/425/436, LockerRoom.css:275, AttributeBar.css:102, OfficeRoom.css:111 \u2014 'A NATURAL', 'COMING ON', up-arrows (tab_overview.png, devview2.png)",
+    "tell": "Saturated semantic success-green #7bbf6a with rgba(123,191,106,0.12) alpha-tinted chip backgrounds",
+    "why": "That green does not exist in 1975 pigments \u2014 it is the exact colorway of a Linear/GitHub status label. Alpha-tint backgrounds are a compositing trick with no physical analogue; nothing in a gym is 12% translucent green."
+   },
+   {
+    "where": "Fighter profile tabs, WALL/LIST toggle, RANKED #1, links, active states (tab_overview.png, wall8.png, rivals_local.png)",
+    "tell": "--amber used as an all-purpose brand accent: active = amber fill, hover = amber glow",
+    "why": "Accent-color logic is SaaS theming. In a physical place amber is lamplight falling ON objects; when a tab turns amber it reads as a highlighted UI control, not a folder pulled forward or a brass plate."
+   },
+   {
+    "where": "PressRoom.css / press_paper.png vs WalkInCard.css / ArrivalNotice.css / frontpage.png",
+    "tell": "Newspaper, magazine, walk-in card, and front-page modal all use the same #e8dcc0 parchment stock",
+    "why": "Newsprint, pulp magazine, manila stock, and index cards are different papers with visibly different color temperatures. One shared paper hex reads as 'light-mode card component,' not different physical documents."
+   },
+   {
+    "where": "AttributeBar (tab_overview.png POWER/SPEED rows)",
+    "tell": "Amber fill on dark rounded track \u2014 the color grammar of a fitness-app progress meter",
+    "why": "The amber-on-charcoal bar is screen-native color coding; a trainer's assessment card would show pencil graphite marks on paper. The bar's colors belong to no material in the room."
+   },
+   {
+    "where": "GymScreen floor nav (floor5.png, poach_notice.png)",
+    "tell": "Five identical translucent charcoal panels with soft top-lit gradients and rounded corners floating over a spotlight background",
+    "why": "Translucent dark-on-dark is glassmorphism's palette. These panels are the color of a screen, not of any object \u2014 no wood, paint, enamel, or paper hue anchors them to the building."
+   },
+   {
+    "where": "rivals_local.png / MoodChip / TraitChip \u2014 'ESTABLISHED', 'REGIONAL', 'CONTENT' pills",
+    "tell": "Outlined rounded pills with color-coded muted text (green/amber/red semantics)",
+    "why": "Hue-coded status badges are a 2020s taxonomy pattern. In 1975 status was a rubber stamp, a grease-pencil circle, or a typed annotation \u2014 colored by its ink, not by a semantic scale."
+   },
+   {
+    "where": "Button.css:68 (gradient #f3c878\u2192amber), theme.css:26 ('hover glow') \u2014 every hover state",
+    "tell": "Elements brighten and emit their own light on hover",
+    "why": "Self-illuminating controls invert the brief's lighting model: the room should light the interface. Emissive hover color is the tell of a screen pretending, poorly, to be a place."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Material-anchored palette (break the single hue)",
+    "detail": "Replace the abstract ramp with tokens named for objects, spanning real hue variety at low chroma: --tobacco #6f5136 (office walls), --oak #7a5c38 / --oak-shadow #4f3a22, --locker-steel #5c635a and --locker-steel-lit #757c70 (green-gray enamel), --gym-green #435243 (painted wainscot/forest green trim), --plaster-mint #98a58e (institutional wall paint), --concrete #8a8578 / --concrete-cold #6d6a62, --brass-oxidized #8a7440 / --brass-polished #c9a55c / --brass-deep #5e4d28, --paint-red-faded #8f4438 (sun-bleached sign red), --charcoal #26241f, --cream-enamel #d8cfb8. Every screen must contain at least two material families so no room reads as one gradient."
+   },
+   {
+    "idea": "Aging triplets and CSS aging math",
+    "detail": "Every material token ships as -fresh/-worn/-old. Codify pigment physics: paper yellows and warms (hue rotates toward 45\u00b0, blue channel drops); paint chalks (desaturate 30-50%, lighten toward --concrete); brass oxidizes toward olive (hue toward 70\u00b0, value down); reds are fugitive and fade fastest (chroma loss \u226b value loss). Implement with color-mix in oklch, e.g. --paint-red-old: color-mix(in oklch, var(--paint-red-faded), var(--plaster-mint) 35%). This gives artists and CSS the same aging rulebook."
+   },
+   {
+    "idea": "Kill #7bbf6a \u2014 replace semantic green with period inks",
+    "detail": "Positive/negative states become marks in real inks: grease-pencil red #8f3b2e (circled = attention), graphite pencil #4a463f (notes, deltas), stamp-pad violet #5c4a63 (official stamps: APPROVED, PLATEAUED), ballpoint blue-black #33404e. If green must exist it is chalk on slate: chalk #dfe0d4 on chalkboard #2f3833, or faded pennant green #6b7d5a as an absolute chroma ceiling. Up/down trajectory arrows become penciled \u2197 marks in graphite, never colored UI glyphs."
+   },
+   {
+    "idea": "Amber is light, not paint",
+    "detail": "Reserve the amber ramp exclusively for illumination: lamp pools, window shafts, glints on brass \u2014 applied as overlay/multiply layers (radial-gradient rgba(217,154,78,0.08-0.15)) on top of material colors. Selected/active states become physical: active tab = manila folder tab pulled forward (lighter --manila + cast shadow), selected fighter = index card with a red grease-pencil circle. No element may change its own hue toward amber to indicate state."
+   },
+   {
+    "idea": "Paper stock system \u2014 five stocks, five temperatures",
+    "detail": "--newsprint #d6d1c2 (coolest, gray-cream, for The Register), --pulp #d4b98a (warm yellowed magazine), --manila #cfae72 (folders, envelopes), --index-card #ece2c8 (fighter cards, faint blue rule lines #9fb0bd), --carbon-flimsy #e8d8b8 with violet carbon text (duplicates, receipts). Each stock pairs with its own ink token and yellowing gradient (edge-in radial multiply of rgba(150,110,50,0.12)). Different documents instantly read as different objects, replacing the universal parchment card."
+   },
+   {
+    "idea": "Two light temperatures per building",
+    "detail": "Give each room an ambient color cast layered over the same material tokens: office/desk = tungsten (multiply overlay rgba(255,178,92,0.07), shadows warm #1a120b); locker room/corridor = fluorescent (overlay rgba(198,214,190,0.06), shadows cooler #141612); press pages = daylight-neutral so newsprint stays cool. Implemented as a per-room --room-light token mixed into surfaces via color-mix. This is how the same steel locker looks different at the desk versus under the tubes \u2014 the room lights the interface."
+   },
+   {
+    "idea": "Patina and stain tokens (reusable dirt)",
+    "detail": "A small library of translucent aging colors applied as ::before/::after layers and SVG feTurbulence fills: --stain-coffee rgba(107,68,35,0.20) (ring ellipses), --nicotine-glaze rgba(180,140,60,0.10) (top-of-panel multiply gradient), --rust-bleed #6e3b23 (radial at screw positions), --tape-shadow rgba(120,100,60,0.25) (masking-tape residue rectangles), --scuff-black rgba(20,16,12,0.30). These are color infrastructure other seats can consume without inventing hexes \u2014 ending the current sprawl of 30+ hardcoded hexes outside theme.css."
+   },
+   {
+    "idea": "Ink-by-source typography coloring",
+    "detail": "Bind every type family to an ink, so information provenance is chromatic: typewriter = ribbon blue-black #33383e (slightly uneven via subtle text-shadow); handwritten trainer notes = graphite #4a463f or ballpoint #2f4468; rubber stamps = dried red #8f3b2e or violet #5c4a63 at 85-92% opacity with mask-image noise for partial impressions; poster headlines = --paint-red-faded or --charcoal on paper; newspaper body = soft black #2e2b26, never #000. Ink never reaches pure black or full saturation \u2014 ribbons dry out, pads run low."
+   }
+  ],
+  "hills": [
+   "A chroma ceiling is law: no color on screen may exceed what 1975 pigments plus decades of UV allow \u2014 roughly OKLCH chroma 0.11 for any large surface, 0.14 for small ink accents. The #7bbf6a green dies, no exceptions, no 'but it tests well.'",
+   "Amber is light, not ink. The accent ramp may only illuminate (overlays, pools, glints); the moment amber becomes a fill color on a control, we are theming a SaaS app again.",
+   "Every color token must name a physical material or ink and carry aging variants. I will reject any abstract token (--accent, --success, --primary) in review \u2014 if you cannot say what object the color came off of, it does not enter theme.css."
+  ],
+  "fights": [
+   "Accessibility: my faded ribbon inks and graphite-on-manila deliberately hover near the 4.5:1 boundary, and violet stamp ink at 88% opacity will fail on some stocks. They will demand brighter text; I will concede size, weight, and letterspacing but not hue brightening \u2014 a jet-black typewriter line is a lie about the machine that typed it.",
+   "UX/Information design: they will want a consistent green-good/red-bad semantic code so players scan state instantly across screens. I say hue-coded semantics are the most anachronistic pattern in the whole app \u2014 state must read through marks (stamps, circles, pencil arrows) in period inks, and I accept that this costs a beat of scanning speed.",
+   "Engineering/asset-registry: my per-room light-temperature casts mean no material has one fixed hex \u2014 every surface color is color-mix(material, room-light), which complicates the token registry and the drop-in art pipeline. They will push for static hexes per component; I will not accept a steel locker that is the same color under a desk lamp and a fluorescent tube."
+  ]
+ },
+ {
+  "role": "Boxing historian + 1975 American cultural historian",
+  "verdict": "This is a handsome 2025 dark-mode app lit with amber \u2014 a Spotify skin for a speakeasy, not a gym. The writing is period-literate (the fictional papers get real 1975 days-of-week right; the walk-in card and ledger tab are genuine artifacts), but almost nothing on screen would survive the test \"could Cus D'Amato's office contain this?\" Progress bars, status pills, segmented controls, native dropdowns, HUD cash tickers, red iOS badges, backdrop-filter blur, and \u2014 worst of all \u2014 PRINT rendered as gold text on black. In 1975 the press was black ink on cheap paper under a light; The Ring analog here looks like a crypto dashboard. The bones (rooms, paper metaphors, warm palette) are right; the material layer is entirely missing.",
+  "offenders": [
+   {
+    "where": "PressRoom magazine view (audit_magazine.png, src/rooms/PressRoom.tsx/.css)",
+    "tell": "The national magazine \u2014 a Ring-of-record analog, 'since 1922' \u2014 is rendered as amber-on-black dark-mode typography with letter-spaced microcap section labels; no champion line above the contenders; header reads 'OFFICIAL RATINGS \u00b7 1976' while the game date is May 1975.",
+    "why": "No 1975 publication was ever light-on-dark. The Ring's annual ratings were black ink on newsprint/coated stock, champion listed separately above ten numbered contenders, records in agate. Rendering the sport's paper of record as a glowing dashboard is the single loudest break in the whole game \u2014 and the 1976 date is a factual anachronism inside a 1975 save."
+   },
+   {
+    "where": "PressRoom newspaper view (press_paper.png)",
+    "tell": "Single wide column of generously-spaced blurbs with amber date chips ('APR 27 \\'75') and em-dash italic attributions ('\u2014 Paul Turner'), centered Helvetica-weight masthead, acres of margin.",
+    "why": "A 1975 metro sports page was a dense 8-column broadsheet: stacked all-caps decks, 'By PAUL TURNER' bylines under headlines, hairline column rules, agate results boxes, halftone photos. The current page reads as an RSS feed printed on cream. The content is period; the typography is Medium.com."
+   },
+   {
+    "where": "GymScreen floor nav (floor5.png, src/screens/GymScreen.tsx/.css)",
+    "tell": "Five identical rounded cards, each with a line icon, a title, and SaaS marketing copy ('The temporal hub. Your schedule at a glance.', 'Your training identity and coaching staff.').",
+    "why": "This is a product landing page's feature grid. Rooms in a gym are doors, doorways, painted signs, a hallway. And no gym owner in 1975 spoke of 'temporal hubs' or 'training identity' \u2014 he'd have a hand-lettered OFFICE sign and a locker-room doorway. The copy itself is an anachronism."
+   },
+   {
+    "where": "FighterProfile overview (tab_overview.png, src/components/AttributeBar, TraitChip, MoodChip)",
+    "tell": "Thin rounded progress bars with right-aligned numbers, plus green/amber outlined status pills ('COMING ON', 'FOCUSED \u00b7 FOOTWORK', 'CONTENT').",
+    "why": "This is a fitness-tracker screen. Trainers in 1975 kept manila index cards and composition books; assessment was pencil marks and words ('good chin', 'coming along'), not 0\u2013100 telemetry with rounded-cap tracks and pill chips \u2014 the pill chip is a 2015 design pattern with zero physical ancestor."
+   },
+   {
+    "where": "FighterProfile controls (tab_overview.png): OVERVIEW/RECORD tab strip, MUST KEEP | WATCH LIST | CHOPPING BLOCK segmented control, native <select> dropdowns for Training/Trainer",
+    "tell": "Browser-default select elements with chevrons, an iOS-style segmented control, and evenly boxed tab buttons.",
+    "why": "The vocabulary is period-perfect ('chopping block' is authentic gym talk) but the widgets are Apple HIG. Assignments in 1975 lived on a clipboard, a chalkboard, or a pegboard of name tags; folder-divider tabs existed, but not as uniform equal-width boxes with an active-state fill."
+   },
+   {
+    "where": "Global chrome: 'CASH $2,200' header ticker (floor5.png), red numeric badge '2' on the office card (poach_notice.png), 'ADVANCE DAY +1 / ADVANCE WEEK +7' buttons, '0/2 FOCUSED SLOTS' counter with rounded meter (wall8.png)",
+    "tell": "Persistent HUD stats, iOS notification badge, videogame time-advance buttons, capacity progress bar.",
+    "why": "These are pure game-HUD/mobile-OS conventions. In 1975 money is in a cash box and a ledger line; unread news is paper physically sitting on the desk; time is a tear-off page-a-day calendar; locker capacity is visible because lockers are visibly empty. Every one of these has an obvious diegetic replacement being ignored."
+   },
+   {
+    "where": "index.html font stack + theme.css --font-* tokens",
+    "tell": "Big Shoulders Display (2019 Google font), Roboto Slab (2013), Oswald as all-purpose condensed \u2014 mixed by CSS hierarchy, not by source.",
+    "why": "The brief says type is 'collected over decades, mixed by SOURCE.' Big Shoulders is a contemporary display face with no 1975 print ancestor, and Roboto Slab is digitally native. Fight posters used 19th-century wood type; newspapers used Century/Franklin Gothic; forms used typewriter faces. Currently every room shares one font system, which is exactly how software \u2014 and never a building \u2014 behaves."
+   },
+   {
+    "where": "TimeControls.css:12, GymLogBoard.css:14, GymScreen.css:128, WalkInViewer.css:15",
+    "tell": "backdrop-filter: blur(2\u20133px) on floating translucent panels.",
+    "why": "Literal glassmorphism \u2014 a named enemy in the brief. Frosted-glass overlays are the signature of 2020s UI; nothing in a 1975 gym is translucent except a dirty window, and a dirty window scatters light, it doesn't gaussian-blur the roster behind it."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Print lives in light: rebuild The Magazine as a real 1975 ratings page",
+    "detail": "Render the magazine as a cream/off-white paper object (like the paper view already attempts): black ink, red two-color masthead (The Ring used red heavily), 'World Champion' line set apart above ten numbered contenders per division, records in small agate with hometown/camp, page number and running head ('THE AMERICAN BOXING MONTHLY \u2014 JULY 1975 \u2014 37'). Texture: SVG feTurbulence paper grain + a subtle halftone dot pattern (SVG <pattern> of dots) behind any photo/portrait, slight ink-gain via 0.2px text-shadow. Fix the ratings year to the save year. CSS-only, one afternoon."
+   },
+   {
+    "idea": "The broadsheet fragment",
+    "detail": "Newspaper becomes a torn quarter-page of an 8-column broadsheet lying at a slight rotate(-0.4deg): stacked all-caps headline decks in a Franklin-Gothic-role face (Oswald is acceptable cast in this single role), 'By PAUL TURNER' bylines, 1px column rules, justified narrow columns with hyphenation (CSS columns + hyphens:auto), an agate 'WEEKEND RESULTS' box score table, ragged torn edge via clip-path polygon, coffee-ring SVG stain in a corner. Kill the amber date chips \u2014 date belongs in the folio line."
+   },
+   {
+    "idea": "The page-a-day calendar replaces time controls",
+    "detail": "Advance Day = a desk tear-off calendar pad (big numeral, month, weekday \u2014 these pads were universal office equipment in 1975); clicking tears the page (CSS rotate/translate animation of the leaf). Advance Week = a wall month-grid calendar (gas-station/sporting-goods giveaway style, faded litho image slot up top as an art-registry slot) where you drag across the row. 'SPRING \u00b7 1975 CAREER' footer dies; the calendar itself carries all temporal state."
+   },
+   {
+    "idea": "Money moves into the cash box and ledger",
+    "detail": "Remove the header ticker. On the floor, no money is visible (authentic: cash is never displayed in a gym). In the office, a green columnar ledger book (they already have the LEDGER tab \u2014 lean in): pale green ruled ledger paper with red vertical rules (pure CSS repeating-linear-gradient), entries in typewriter face, running balance handwritten in the right column. A quick-read affordance: the current balance is the last handwritten line, larger, in pencil-gray."
+   },
+   {
+    "idea": "The scouting card replaces attribute bars",
+    "detail": "Fighter attributes become a mimeographed gym form on manila card stock: labels in faded spirit-duplicator purple-blue (#7b6a9e-ish, washed out), values as grease-pencil marks along a printed ruled scale (a thick, slightly wavering SVG stroke \u2014 not a rounded-cap div), trainer verdicts as typed or handwritten marginal notes replacing every pill ('coming on' underlined twice in pencil instead of a green chip). Preserves exact information density; the number can still print in typewriter digits at the row end."
+   },
+   {
+    "idea": "Paper on the desk replaces notifications",
+    "detail": "Walk-ins: registration cards physically stacked on the desk blotter (the WalkInCard is already 80% right \u2014 keep it, roughen it: preprinted labels + typewriter fill-ins that sit slightly off the baseline, a NYSAC-style license number field, a corner staple). Poach/news alerts: pink 'WHILE YOU WERE OUT' telephone memo slips \u2014 a real, instantly-recognizable 1970s form \u2014 with checkbox rows (\u2611 PLEASE CALL) and handwritten message. The red badge '2' becomes two visible slips tucked under the office door on the floor view."
+   },
+   {
+    "idea": "Type by source, not by hierarchy",
+    "detail": "Replace the font system with role-cast era faces (all on Google Fonts, CSS-feasible today): wood-type playbill face for fight-poster moments (e.g. 'Rye' or 'Bevan'-class slab), Oswald restricted to newspaper headlines only, a typewriter face (keep Special Elite) for anything a person typed \u2014 rosters, forms, walk-in answers, a handwriting face for trainer notes (choose one that reads masculine-pencil, e.g. 'Walter Turncoat'-class, used sparingly), and an engraver's roman for certificates/licenses. Drop Big Shoulders Display and Roboto Slab entirely; nothing in the building can share a superfamily."
+   },
+   {
+    "idea": "Missing artifacts inventory (the set-dressing the era demands)",
+    "detail": "Things a surviving 1975 NYC gym would have that the UI lacks and can host real functions: a chalkboard sparring/booking schedule (calendar room), framed and taped fight posters/window cards on walls (past events = history log), a Rolodex (contacts/rivals), a physician's balance scale in the locker room (weigh-ins), a rotary phone (incoming offers), a corkboard by the door (community events, poach rumors), Everlast-style stenciled equipment labels, and a spike file for paid bills. Each is one CSS/SVG object with a registry slot for real art. Context is free: it's the NYC fiscal-crisis year \u2014 peeling paint and a 'RENT DUE' note are historically load-bearing."
+   }
+  ],
+  "hills": [
+   "Print renders in light. Any newspaper, magazine, form, or card is black-ink-on-paper, illuminated \u2014 never theme-colored text on the app's dark background. A dark-mode Ring magazine is not a compromise I will accept; it un-writes the entire premise.",
+   "No widget the owner couldn't buy, type, paint, or staple in 1975: zero pills, badges, progress bars, segmented controls, native dropdowns, or blur. Every control must name its physical ancestor before it ships.",
+   "Every string of text declares its source. Typewriter means someone typed it; pencil means someone wrote it; poster type means someone printed it. If two unrelated objects share a face, one of them is lying."
+  ],
+  "fights": [
+   "Accessibility will object to newsprint agate, faded mimeograph purple, and pencil-gray ledger entries as low-contrast. I will not brighten ink that was never bright; the correct fix is size, spacing, and lighting (the desk-lamp hotspot), not #FFFFFF text on 'aged' paper.",
+   "Engineering/performance will resist per-surface SVG feTurbulence grain and halftone patterns as filter-cost bloat and push for flat tinted gradients. Flat tint is exactly the 'vintage-colored modern app' the owner is firing us over \u2014 texture is the deliverable, so we budget for it (rasterize filters to data-URI tiles if needed, but they exist).",
+   "Game/UX design will defend numeric bars, chips, and the HUD cash ticker as 'decisions stay fast.' I'll hold that a grease-pencil mark on a printed scale carries identical information at identical speed, and that a 1975 trainer made faster decisions off an index card than any of us do off a dashboard."
+  ]
+ },
+ {
+  "role": "Accessibility Specialist + Environmental Psychologist",
+  "verdict": "This is a modern dark-mode dashboard wearing sepia, and its deepest failure is shared by both halves of my seat: it commits to permanent night, then prints almost everything in 8-11px letterspaced microtype on near-black. Tertiary text (#6f6450 on #14100c) sits around 3.3:1, \"EMPTY\" lockers and dimmed stale stats are near-invisible by design, form trends hang on 8px green/red arrows, and mood is a 9px colored dot. Psychologically the floor is a void \u2014 no walls, no midground, no human traces \u2014 which reads abandoned, not lived-in: the exact stress signature the brief forbids. The saving grace is that 1975 and accessibility agree: paper under a lamp is a high-contrast object. Keep the existing focus-visible ring and reduced-motion handling; everything else about the reading surface must flip.",
+  "offenders": [
+   {
+    "where": "GymScreen.tsx/.css \u2014 five identical translucent rounded nav cards (floor5.png)",
+    "tell": "Evenly-spaced floating card grid with icon + title + caption, semi-transparent fills, uniform corner radius \u2014 the canonical SaaS landing layout.",
+    "why": "Rooms in a real building are not five clones in a row; identical repetition signals a template, not a place. Psychologically the cards float in a black void with no wall behind them \u2014 no boundary, no refuge, so the 'gym' reads as an empty warehouse at 3 a.m., not a home."
+   },
+   {
+    "where": "GymScreen \u2014 red circular numeric badge '2' on the My Office card (poach_notice.png, smoke_after_advance.png)",
+    "tell": "iOS/Discord notification badge: saturated red disc, white numeral, pinned to a card corner.",
+    "why": "Nothing in 1975 counts your unread items in a red bubble. Worse, it is the app's single most saturated element, so the eye learns to scan for smartphone chrome instead of environmental cues (a note taped to the office door would carry the same information physically)."
+   },
+   {
+    "where": "FighterProfile.css \u2014 tab bar OVERVIEW/RECORD/BIOGRAPHY/CAREER/DEVELOPMENT and MUST KEEP/WATCH LIST/CHOPPING BLOCK segmented control (tab_overview.png)",
+    "tell": "Flat equal-width rectangles with an active-state fill \u2014 browser tabs and an iOS segmented control.",
+    "why": "The brief calls for file-folder dividers; these are pure widget. And 'Chopping Block' as a segment button hides a high-stakes state behind a subtle fill change \u2014 physically moving a fighter's card between labeled trays would encode it redundantly by position, label, and container."
+   },
+   {
+    "where": "AttributeBar.css lines 70-106 \u2014 rounded 9px progress bars with glow, 8px trend glyphs colored #7bbf6a/rust",
+    "tell": "Fitness-app skill meters: rounded track, gradient fill, box-shadow glow, color-coded delta arrows at 8px.",
+    "why": "Glowing rounded bars are digitally flat modernity, and the accessibility failure is structural: an 8px glyph whose meaning is carried by red-vs-green hue is illegible to low-vision players and invisible to the ~8% of men with color-vision deficiency \u2014 in a game about men."
+   },
+   {
+    "where": "LockerRoom.css / MoodChip / TraitChip \u2014 status pills 'COMING ON' #7bbf6a, 'A NATURAL', 'DEVELOPING', 'CONTENT' (tab_overview.png, devview2.png)",
+    "tell": "Rounded-outline SaaS status chips using traffic-light hue semantics; the green does not exist anywhere in the material palette.",
+    "why": "Chips are the single most recognizable 2020s pattern, and #7bbf6a is a hue no object in this gym could be \u2014 it announces 'software' instantly. Meaning-by-hue at 10-11px also fails color-independence; a rubber stamp (word + border shape + one of two period ink colors) carries the same data physically."
+   },
+   {
+    "where": "LockerRoom header \u2014 thin rounded capacity meter, '2/2 FOCUSED SLOTS' KPI, WALL|LIST|DEVELOPMENT toggle (wall8.png, devview2.png)",
+    "tell": "Dashboard KPI cluster: progress bar + big stat + view-switcher, right-aligned in a header row.",
+    "why": "This is Linear's header anatomy. Physically, a coach knows capacity by looking at the wall (8 lockers, 3 name-tapes) \u2014 the meter double-reports what the scene already shows, teaching players to read chrome instead of the room. The 'EMPTY' letters on dark lockers are also under ~2:1 contrast \u2014 decor-level legibility on functional state."
+   },
+   {
+    "where": "LockerRoom.css Development view (devview2.png) \u2014 dimmed 'stale' stat values and 9px locker mood dots (LockerWall.css line 91)",
+    "tell": "Information encoded purely by opacity (fresh vs stale numbers) and by the hue of a 9px dot.",
+    "why": "Opacity-as-data means deliberately printing some numbers below readable contrast \u2014 a WCAG violation used as a feature. A trainer would encode staleness physically: pencil vs pen, a dated annotation, a question mark. The dot mood indicator is unreadable at size even with perfect color vision."
+   },
+   {
+    "where": "FighterProfile \u2014 native <select> dropdowns for Training/Trainer; ArrivalNotice \u2014 centered 'VIEW NOW / VIEW LATER' modal with primary/secondary buttons (tab_overview.png, poach_notice.png)",
+    "tell": "OS-chrome form widget with a system caret, and a canonical confirm-dialog overlay with a filled CTA + ghost button.",
+    "why": "The select renders 2025 operating-system chrome inside the fantasy \u2014 the single hardest immersion break on the screen. The modal floats in dead center over a dimmed page, the exact anatomy of every web app since 2015; a note slid onto the desk or pinned to the board would interrupt just as effectively."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Paper is the reading plane",
+    "detail": "Invert the contrast architecture: the room stays dark, but all decision-critical data moves onto lit paper objects \u2014 parchment (#e8dcc0) with ink (#2a2118) is ~12:1, versus today's muted-on-black at 3-6:1. Dev table becomes a typed roster sheet, attributes a scout's evaluation form, the profile a manila folder's contents. The desk lamp 'lighting the page' (a soft radial gradient peaking at full paper luminance over the content zone) makes high contrast diegetic instead of fighting the mood."
+   },
+   {
+    "idea": "Two-plane wear budget",
+    "detail": "Codify environment plane vs document plane. Environment (walls, lockers, desk) takes unlimited grime; the document plane obeys a wear budget: SVG feTurbulence grain at opacity <=0.06 over text, coffee rings/tape residue confined to margins and corners, text-block rotation clamped to +/-2deg, no stain may cross a line of type. Implement as CSS custom properties (--wear-grain, --wear-tilt) so art direction turns wear up without ever touching the text zone."
+   },
+   {
+    "idea": "Stamps replace chips",
+    "detail": "Kill every pill. Statuses become rubber stamps: word set in a condensed grot (Oswald works), inside a rough rectangular or oval border, in one of exactly two period ink colors (red #a6432a, blue-black #2a3548), roughened via an SVG feTurbulence+feDisplacementMap filter, minimum 13px x-height, always angled <=4deg. Meaning is carried by the word and the border shape (oval = temperament, box = trajectory), never by hue \u2014 CVD-safe and 1975-true. The green #7bbf6a is deleted from the codebase."
+   },
+   {
+    "idea": "Position encodes status",
+    "detail": "Must Keep / Watch List / Chopping Block become three physical trays or clipboard clips on the desk; the fighter's index card visibly sits in one, with a stamped label on the tray. Status is then encoded three redundant ways \u2014 spatial position, container label, stamp \u2014 satisfying color-independence while making the highest-stakes decision in the game feel like moving a man's card toward the door. aria-labels carry the same words for screen readers."
+   },
+   {
+    "idea": "Pencil trends at legible size",
+    "detail": "Replace 8px colored arrows with hand-drawn pencil annotations at >=14px: a short drawn arrow plus the word ('up', 'flat', 'fading') in a handwriting face, graphite gray #4a3e2e on paper (>=7:1). Staleness stops being opacity and becomes diegetic notation: fresh reads in pen, old reads as pencil with a written date ('as of Mar') \u2014 different material, same full contrast. Direction is carried by drawn shape + word, never hue."
+   },
+   {
+    "idea": "Legibility floor tokens",
+    "detail": "Add --type-floor-data: 14px and --type-floor-label: 12px to theme.css and purge the fifty-plus 8-11px declarations. Letterspaced all-caps permitted only >=12px and only for genuinely environmental text (a sign, a stamp); anything the player must read to decide gets >=14px. Period authenticity survives \u2014 1975 government forms used 10pt Pica typewriter, which at arm's length subtends more than 14px on screen. Small type was never part of the fantasy; small UI text is a 2015 habit."
+   },
+   {
+    "idea": "De-void the floor",
+    "detail": "The gym floor needs walls: painted concrete wainscot (two-stop gradient + noise), rubber mat flooring, a corkboard, chain-link, radiator \u2014 CSS gradients and SVG filters, all registry-slotted for future art. Environmental psychology: prospect-refuge \u2014 visible boundaries and midground objects are what make a space feel safe and inhabited; a black void with spotlights is the classic 'liminal space' stress image. Raising ambient midground luminance also lifts every contrast ratio for free."
+   },
+   {
+    "idea": "Lamp-lit focus and calm motion",
+    "detail": "Focus/hover = the lamp pulls to the object: a warm radial brighten that raises the focused element to full contrast, layered ON TOP of the retained 2px :focus-visible outline (restyled as a brass glint, never removed). Notifications slide in as paper (<=300ms, single axis) instead of modal pop; the .worn vignette gets a hard rule \u2014 pointer-events:none it already has, but it must also never overlap an interactive text zone at more than 0.15 alpha. Fluorescent flicker, if added, stays under 3 flashes/second and behind prefers-reduced-motion, which the codebase already honors globally \u2014 preserve that block verbatim."
+   }
+  ],
+  "hills": [
+   "The 4.5:1 floor is diegetic law: any text a player needs to make a decision meets 4.5:1 (7:1 below 16px), and no wear effect \u2014 grain, stain, dimming, vignette \u2014 may drop it below that. 'Faded ink' is a look, not an opacity value on live data; if information must read as faded, fade the container, not the contrast of the words.",
+   "Color never carries meaning alone. Every status/trend/mood is redundantly encoded by a word, a drawn shape, or a physical position (which tray, which board, which drawer). The green/red arrow-and-dot system dies, and no hue outside the material palette ever encodes state.",
+   "Imperfection may never be motion or flicker: no permanent ambient animation on the content plane, no fluorescent strobe above 3Hz ever, all environmental movement behind prefers-reduced-motion, and keyboard focus-visible survives every restyle \u2014 a brass glint is fine, but the outline stays."
+  ],
+  "fights": [
+   "Art direction / set dressing: they will want coffee rings across the roster, pencil notes at 30% opacity, and text on crumpled tape at an angle \u2014 I will hold the wear budget (stains in margins only, +/-2deg tilt, 4.5:1 pencil) and they will call the result 'too clean to be 1975.' I'd rather be slightly clean than unreadable; a cared-for gym IS cleaner where hands touch it daily.",
+   "Lighting/cinematography: the current identity is a dark room with amber pools, and my core move \u2014 flipping dense data onto bright lit paper \u2014 will read to them as 'blowing out the mood.' I will not accept muted-cream-on-leather as the default reading surface for tables; the lamp lighting the page is the compromise, and the page gets full luminance.",
+   "Typography: the type specialist will argue authentic 1975 sources are small \u2014 agate box scores, elite typewriter, 6pt form footnotes \u2014 and that my 14px data floor and 12px caps floor flatten period texture. I concede small type for pure set dressing (margins of the newspaper, poster fine print) but every number the player acts on meets the floor, even if the 'real' 1975 document would have been smaller."
+  ]
+ },
+ {
+  "fights": [
+   "Asset architecture / art direction: I need per-gym procedural brand variation \u2014 rival letterheads, sign styles, business-card snips seeded per gym id. They will want one placeholder per component type. I will not accept a world where every gym's paper comes off the same printer.",
+   "UX: I want CASH out of the persistent chrome and into the office (cashbox, ledger page, a bill clip on the desk). UX will insist money must be visible at all times for decisions. A floating KPI is the single loudest dashboard tell in the game; put a small bill-clip object in the office doorframe if they need a glance.",
+   "Accessibility: gold-leaf arc lettering on dark glass, worn stencils, and oxblood rubber stamps will get flagged for contrast. I will accept larger sizes and careful value tuning, but I will not accept flattening the sign into high-contrast sans-serif text \u2014 a legible-but-flat sign is not a sign."
+  ],
+  "hills": [
+   "The gym name must exist as a painted or stamped MARK, never as a typeset UI string. If the name renders in the app's display font inside a flex header, there is no brand \u2014 there is a label.",
+   "Paper provenance: every document the gym issues carries the gym's letterhead; every document received carries someone else's. The player should be able to tell whose paper they're holding with the text removed.",
+   "One house color, chosen at founding, used sparingly. A 1975 neighborhood gym owned one bucket of trim paint \u2014 locker trim, door stencil, stamp ink. A coordinated palette is corporate; one stubborn color is a brand."
+  ],
+  "offenders": [
+   {
+    "where": "src/screens/GymScreen.tsx:53-58 (.gym__chrome / .gym__identity)",
+    "tell": "Gym name rendered as a 22px string in a top app bar with a letter-spaced 'NEW YORK, NEW YORK \u00b7 LOCAL' subline \u2014 a Slack/Notion workspace-switcher lockup.",
+    "why": "The single place the player's brand lives is a piece of chrome. A 1975 gym's name lived on the window in gold leaf, on the door, on the stamp \u2014 never floating in a translucent gradient bar."
+   },
+   {
+    "where": "src/screens/GymScreen.tsx header \u2014 CASH $2,200 (.gym__money)",
+    "tell": "A right-aligned KPI stat with a tiny uppercase label, exactly the header-metric pattern of every SaaS dashboard.",
+    "why": "Money detached from any object breaks the place fantasy; cash in 1975 lived in a drawer, a ledger, a bank book \u2014 and its position next to the gym name pollutes the brand lockup with telemetry."
+   },
+   {
+    "where": "Room headers across screens: 'YOUR GYM \u00b7 LOCKER ROOM', 'LOCKER ROOM \u00b7 FIGHTER' (LockerRoom, FighterProfile, PressRoom)",
+    "tell": "Breadcrumb navigation trails in tracked uppercase \u2014 pure web-app wayfinding.",
+    "why": "Worse for branding: the gym's actual name is replaced by the generic token 'YOUR GYM' precisely where identity should compound. Buildings do wayfinding with painted door signs, not path strings."
+   },
+   {
+    "where": "src/screens/GymScreen.tsx room doors \u2014 'My Office', 'My Gym'",
+    "tell": "First-person app-menu naming ('My Account', 'My Files') with UI-explainer subtitles ('The temporal hub. Your schedule at a glance.').",
+    "why": "No gym owner paints 'My Office' on a door. The label addresses a software user, not a person standing on a gym floor; it kills the environment-communicates-the-world test instantly."
+   },
+   {
+    "where": "src/components/WalkInCard \u2014 '\u2605 WALK-IN CARD \u2605' red banner (walkin_read2.png)",
+    "tell": "A generic UI-kit modal header naming the component type, on anonymous stationery.",
+    "why": "This is the gym's own intake paperwork and it carries zero gym identity \u2014 no letterhead, no address, no received stamp. It's the biggest missed branding surface in the game: the first document every fighter touches."
+   },
+   {
+    "where": "src/screens/newgame/StepGymName.tsx \u2014 text input + '\u27f3 Surprise me' button",
+    "tell": "Founding the brand is a form field with a placeholder and a unicode-refresh microcopy button, straight out of a 2025 onboarding flow.",
+    "why": "Naming the gym is the founding of the entire brand and it happens with no material consequence \u2014 no sign, no preview, no ceremony. The most brand-critical moment in the game is a settings field."
+   },
+   {
+    "where": "src/rooms/OfficeRoom.tsx:428-433 rivals cards (rivals_local.png)",
+    "tell": "Every competitor gym is an identical rounded card with a pill badge ('ESTABLISHED') in the app's own type system.",
+    "why": "Rival gyms with no identity of their own make the player's lack of identity invisible. In 1975 you'd know Bleecker Street's paper from Five Borough's poster at a glance \u2014 uniform templates read as database rows, not a crowded fight town."
+   },
+   {
+    "where": "src/rooms/LockerRoom (wall8.png) \u2014 'WALL | LIST' segmented toggle, '0/2 FOCUSED SLOTS' fraction, progress bar",
+    "tell": "View-switcher widget and dashboard stat floating above a physical room; the room itself has bare dark walls.",
+    "why": "The locker room is where gyms stencil their name and hang their colors \u2014 here the only typography is UI telemetry. The one room that should drip with house identity has none."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "The Window Sign masthead",
+    "detail": "Replace .gym__chrome's name string with an SVG hand-painted window sign: gym name arched on an SVG textPath in gold-leaf fill (linear-gradient gold with a darker keyline via paint-order: stroke), city + 'BOXING \u00b7 TRAINING' on a straight rule beneath, all sitting on dark glass with a faint interior reflection (radial-gradient) and chipped letters (feTurbulence-driven mask eating small bites from strokes). Registry slot: the SVG is one component behind an asset key so painted art can replace it. This one move converts the header from chrome into architecture."
+   },
+   {
+    "idea": "Founding brand kit (procedural)",
+    "detail": "At new game, derive and persist a small brand object from the name + a player pick: (1) monogram \u2014 first letters of the two leading words set in a rope-ring SVG roundel; (2) ONE house color chosen from six 1975 paint chips (forest green, oxblood, buff, steel blue, cream, charcoal) presented as actual paint chips; (3) 'EST. 1975' founding line. Everything downstream (stamp, stencil, letterhead, locker trim) reads from this object. CSS variables scoped from the save."
+   },
+   {
+    "idea": "Gym letterhead component",
+    "detail": "One <GymLetterhead> used on every document the gym issues \u2014 walk-in cards, cut notices, training memos, contracts: gym name in tight condensed caps (Oswald, letterpress-dark ink), a second line with procedural street address + KLondike-5 phone number, a thin double rule, and the monogram roundel at 8% opacity as a watermark behind the body text. The Walk-In Card banner becomes 'FIGHTER REGISTRATION \u2014 [GYM NAME]' on this letterhead with a rubber-stamped RECEIVED date."
+   },
+   {
+    "idea": "The gym rubber stamp",
+    "detail": "An SVG notary-style stamp: gym name curved around the roundel border, monogram center, date across the middle; oxblood ink, rotated \u22122 to \u22124deg, uneven ink coverage via an feTurbulence alpha mask so no two impressions render identically (seed from document id). Use it as the universal 'this gym acted' mark: SIGNED on new fighters, CUT on releases, PAID in the ledger. Replaces pill badges and toast confirmations with a physical act."
+   },
+   {
+    "idea": "Stencil the locker room",
+    "detail": "Spray-stencil the gym name across the painted-concrete wall above the locker row in the house color: stencil letterforms built by masking bridge-gaps into a bold condensed face (SVG mask rects), 25\u201335% worn away with a noise mask, slight overspray blur at edges. Locker door trim stripes pick up the same house color. The '0/2 FOCUSED SLOTS' stat becomes a chalk tally on a small board hung on that wall."
+   },
+   {
+    "idea": "Rivals get their own paper",
+    "detail": "Each competitor gym renders as a collected artifact, not a card: seeded per gym id, rotate 4\u20135 period identities \u2014 engraved business card (serif, centered, hairline border), fight-poster snip (woodtype, two-color), athletic-club crest letterhead, cheap mimeo flyer (typewriter, purple-ink tint). Pinned at slightly different angles on a corkboard in the office. Player instantly reads tier from paper quality \u2014 an 'ESTABLISHED' pill becomes embossed card stock versus a mimeographed flyer."
+   },
+   {
+    "idea": "Doors, not breadcrumbs",
+    "detail": "Kill 'YOUR GYM \u00b7 LOCKER ROOM' trails. Each room screen gets its physical sign as the title object: OFFICE on a frosted-glass door pane (black hand-lettering, viewed straight on), LOCKER ROOM as the wall stencil, PRESS as a wire news rack label. The player's monogram roundel sits small and constant in one corner of every gym-owned screen \u2014 the brand as a maker's mark, replacing the generic breadcrumb prefix."
+   },
+   {
+    "idea": "Commission the sign painter (new-game ceremony)",
+    "detail": "Rework StepGymName: as the player types, the window-sign SVG renders live above the input \u2014 letters appearing as painted strokes (stroke-dashoffset transition). '\u27f3 Surprise me' becomes 'Ask the sign painter,' which flips a paper sketch (rotate + new name). Follow with the paint-chip pick for the house color and the stamp being pressed onto the founding papers. Same three inputs as today; the brand is born as objects instead of strings."
+   }
+  ],
+  "role": "Sports Branding Expert",
+  "verdict": "This gym has no brand \u2014 it has a workspace label. \"Hell's Kitchen Boxing\" exists exactly once as a 22px string in a translucent app bar, beside a cash KPI, above breadcrumbs that literally replace the name with \"YOUR GYM.\" There is no mark, no sign, no letterhead, no stamp, no house color, no EST. date \u2014 while rival gyms in the database get founding years the player's own gym lacks. The gym's paperwork (walk-in cards, notices) is anonymous UI stationery, and competitors render as identical templated cards, so the fight town has no visual politics. Real 1975 gyms were obsessive self-branders on a budget: gold-leaf windows, stenciled walls, one bucket of trim paint, a rubber stamp on everything. Strip the labels today and nothing tells you whose building this is \u2014 the owner's own test fails at the front door."
+ },
+ {
+  "role": "Motion & Interaction Designer",
+  "verdict": "The motion system is disciplined, tokenized, and reduced-motion safe \u2014 good engineering, wrong vocabulary. There is exactly one gesture in the whole game: a polite ease-out fade-rise (--ease-warm, 140/280/600ms) applied identically to steel lockers, paper cards, whole rooms, badges, and tooltips. Rooms materialize with an opacity+scale(1.015) cross-fade like an iOS modal; the walk-in card \u2014 the game's heartbeat \u2014 enters like a Figma dialog and, when you decide a man's fate, leaves with no motion at all; lockers bolted to a wall levitate 3px on hover; news arrives as a glowing toast and a pulsing badge. Nothing has mass, nothing lands, nothing swings, slams, or settles. Everything moves like light; in this gym, only light should move like light.",
+  "offenders": [
+   {
+    "where": "src/styles/theme.css:66-69 \u2014 the entire timing token set",
+    "tell": "One generic ease-out curve (cubic-bezier(0.22,0.61,0.36,1)) and three abstract durations shared by every element in the game",
+    "why": "A single easing means every object has the same weight \u2014 the universal tell of a design-system app. In a physical gym, a steel locker door, a dealt index card, and a rubber stamp cannot share a curve; identical motion is what makes the UI read as DOM, not as things."
+   },
+   {
+    "where": "src/rooms/RoomPlaceholder.css:9-19 + FighterProfile.css:8 \u2014 @keyframes room-enter (opacity + scale 1.015\u21921)",
+    "tell": "Screen-level fade-and-subtle-zoom transition, the stock iOS/Material page entrance",
+    "why": "Rooms materialize out of thin air instead of being walked into. You never open a door, never cross a hallway \u2014 the strongest possible signal that these are 'views', not rooms."
+   },
+   {
+    "where": "src/components/Toast.css \u2014 .toast + toast-in (bottom-center fade-up pill)",
+    "tell": "A literal toast notification: centered floating pill, fade-up 10px, drop shadow, hover highlight",
+    "why": "The single most 2020s-app pattern in the codebase. In 1975 nobody's gym emits floating status pills; a message is a note someone left, and notes are put somewhere, not faded in."
+   },
+   {
+    "where": "src/screens/GymScreen.css:150-160 \u2014 .room-door:hover translateY(-4px) + amber glow box-shadow + slide-in 'enter' microcopy",
+    "tell": "Marketing-site card hover: lift, glow, hover-revealed CTA sliding in from the left",
+    "why": "Painted signboards standing in a dark gym levitate and emit light when pointed at \u2014 pure Stripe/Linear. A physical sign should respond like a thing being touched or lit, not like a hoverable card."
+   },
+   {
+    "where": "src/screens/WalkInViewer.css:16-36 + WalkInViewer.tsx \u2014 wiv-fade scrim + wiv-rise 12px fade-up; card swaps within a sequence have zero motion",
+    "tell": "Modal-dialog entrance (dim scrim, content fades up), and instant React re-render between cards",
+    "why": "This is the game's core ritual \u2014 a stranger hands you his card \u2014 and it animates like a settings dialog. Worse: deciding his fate produces no physical consequence; the card doesn't get filed, stacked, or slid off the desk. The next man's card just... replaces the DOM."
+   },
+   {
+    "where": "src/screens/GymScreen.css:181-189 \u2014 .room-door__badge--alert + door-badge-pulse glowing shadow loop",
+    "tell": "Circular red notification badge with a pulsing glow, straight off an app icon",
+    "why": "A glowing, breathing red pill is an artifact of phones. The 1975 equivalent of 'something is waiting' is a card wedged in a door, an envelope on the desk, a light left on in the office \u2014 not a throbbing counter."
+   },
+   {
+    "where": "src/components/Locker/LockerWall.css:23-27 \u2014 .locker:hover translateY(-3px) + filter brightness",
+    "tell": "Hover-lift on grid items",
+    "why": "Steel lockers are the heaviest objects in the room and they float upward when pointed at. Inverts the entire material logic: the immovable thing moves the most weightlessly."
+   },
+   {
+    "where": "src/rooms/LockerRoom.css:50 \u2014 transition: width var(--t-med) on the locker capacity meter",
+    "tell": "Smoothly animating progress-bar fill",
+    "why": "An eased width tween is dashboard KPI language. Physical tallies change in steps \u2014 a peg moved, a chalk mark added \u2014 they click to the next state; they do not interpolate."
+   }
+  ],
+  "proposals": [
+   {
+    "idea": "Material easing set",
+    "detail": "Replace --ease-warm with a small physics vocabulary in theme.css: --ease-paper (cubic-bezier(.2,.7,.3,1), 180\u2013260ms, always paired with 0.5\u20132deg rotation \u2014 paper never travels straight); --ease-steel (cubic-bezier(.55,0,.35,1), 320\u2013450ms, hard stop \u2014 a clunk, no soft tail); --ease-stamp (cubic-bezier(.7,0,1,.5), 90\u2013120ms accelerating IN \u2014 impacts speed up, they never ease out); --ease-swing (damped keyframes for hinged/pinned things); plus steps(2..4) for anything electrical. Rule: fades/opacity tweens are reserved for LIGHT only (lamps, windows); objects move, light fades."
+   },
+   {
+    "idea": "Deal the walk-in card, file the verdict",
+    "detail": "WalkInCard enters as a card laid on a desk: keyframe from translate(30px,-40px) rotate(4deg) scale(1.05) with a large soft drop-shadow, landing at rotate(-0.8deg) scale(1) shadow tight \u2014 240ms --ease-paper. Each decision gets an exit before unmount (a 350ms 'deciding' state in WalkInViewer.tsx): 'locker' slides the card right and down onto an implied stack; 'turn away' slides it left off the desk edge with shadow growing then gone; 'later' tucks it toward the bottom (the office drawer). The next card deals in overlapping the exit by ~100ms. Kill wiv-rise; keep the scrim but make it the desk lamp dimming the floor (brightness filter), not a gray overlay."
+   },
+   {
+    "idea": "Decisions are rubber stamps",
+    "detail": "MUST KEEP / WATCH LIST / CHOPPING BLOCK, locker assignment, and cut-from-gym resolve with a stamp: the label appears scale(1.6)\u21921 in ~110ms --ease-stamp, opacity snapping to 1 at the moment of contact, resting at a per-instance \u00b11.5deg rotation (seeded from fighter id), ink edge roughened with an SVG feTurbulence displacement mask; the paper beneath does one 60ms 1px translate jitter on impact. This is the sound of a thunk rendered in motion."
+   },
+   {
+    "idea": "Rooms are entered, not faded",
+    "detail": "Replace room-enter/room-rise with a hallway move: outgoing view translateX(-5%) + brightness(0.6), incoming from translateX(6%) with light coming up, 380ms --ease-steel \u2014 you turned your head and walked. For the Office specifically, a door-swing variant: incoming content transform-origin at the left edge, rotateY(-6deg)\u21920 with slight perspective, as the door opens onto the desk. Back-to-the-floor reverses direction. All transform/filter only, fully CSS, snap-to-end under prefers-reduced-motion."
+   },
+   {
+    "idea": "Hover is touch, not antigravity",
+    "detail": "Ban translateY lifts. Lockers: on hover the handle/latch pseudo-element jiggles (rotate keyframe 0\u21923\u2192-2\u21920, 260ms, origin at the latch) and the door cracks 2deg on rotateY with hinge-side transform-origin, a 2px sliver of interior light appearing at the gap. Room signboards: the bulb above snaps on with steps(3) flicker (opacity 0\u21921\u21920.4\u21921 over 180ms) \u2014 incandescent, not eased glow. Paper rows/cards: a corner-curl pseudo-element (small gradient triangle) grows 3px, or the sheet shifts 1px rotate(0.3deg) as if a fingertip pinned it."
+   },
+   {
+    "idea": "Pinned things swing on the pin",
+    "detail": "Gym log entries, notices, and corkboard items animate around their pin: transform-origin at the pin position, damped wobble keyframes rotate 3deg\u2192-1.8\u21920.8\u2192-0.4\u2192final (~500ms), settling at a per-item crooked angle (\u00b11.5deg via nth-child or seeded custom property). Replace ArrivalNotice's centered fade-drop with a note tacked to the doorframe: it enters with this pin-swing at the door's edge, not centered like a system banner. Replace door-badge-pulse with a static wedged card sticking out of the door jamb \u2014 presence, not pulsing, is the signal."
+   },
+   {
+    "idea": "Time passes as light and a calendar flip",
+    "detail": "Advance Day/Week: the desk calendar's date card does a two-frame rotateX flip (top-hinged, steps(2), ~200ms \u2014 flip cards don't interpolate), while the whole floor container dips brightness(0.55) and returns over 400ms, like the room's day turning over. New log lines and newspaper items appear only after the light returns \u2014 the world changed while you blinked. Pure filter + transform; reduced-motion users get an instant date change with a single subtle brightness step."
+   },
+   {
+    "idea": "Tabs are folders pulled forward",
+    "detail": "FighterProfile tabs: the active file-divider physically rises 3px and overlaps its neighbors via z-index (dividers already overlap 4px, offset from perfect alignment); incoming page content enters translateY(6px) rotate(0.3deg)\u21920 with --ease-paper 200ms \u2014 a sheet pulled to the top of the pile; the outgoing page does NOT animate (it's simply behind now \u2014 folders don't fade). Same treatment for WALL/LIST/DEVELOPMENT toggles in the locker room."
+   }
+  ],
+  "hills": [
+   "Every animated element declares a material \u2014 paper, steel, brass, rubber, or light \u2014 and uses that material's easing and duration. Opacity tweens are reserved for light sources only. A generic fade on an object is a bug, not a default.",
+   "No hover levitation, ever. translateY lift + glow shadow is banned across the codebase. Hover must read as touch or light: a latch jiggle, a door crack, a corner curl, a bulb flicker. If the heaviest object in the room moves the most easily, the whole set collapses.",
+   "Consequence motion is non-negotiable: every player decision (stamp, sign, assign, cut, turn away) produces a visible physical result within ~400ms \u2014 the card slides to a stack, the stamp lands, the drawer shuts. State must never 'just update'; a React re-render is not an event in a room."
+  ],
+  "fights": [
+   "Accessibility will object to my stamp-impact jitter (1px paper shake), accelerating ease-in impacts, and damped pin-wobble as vestibular risk and to 350ms decision-exit animations as slowing expert players. I'll honor prefers-reduced-motion with instant snap states, but I will not soften impact frames for everyone \u2014 a stamp that eases out is not a stamp.",
+   "Visual/lighting design will defend the smooth amber hover glow and pulsing badge as 'desk lamp warmth.' I say incandescent light snaps and flickers via steps(); it does not interpolate. We will fight over the room-door hover and every glowing box-shadow loop.",
+   "Engineering will resist replacing the single --ease-warm token with a per-material set, and will especially resist exit-before-unmount choreography in WalkInViewer (React state must hold a 'deciding' phase for ~350ms). They'll call it complexity; I call it the difference between a gym and a component library."
+  ]
+ }
+]

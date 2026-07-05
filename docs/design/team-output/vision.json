@@ -1,0 +1,110 @@
+{
+ "northStar": "INHERITED PREMISES \u2014 every screen is a place in a surviving 1975 gym that was never designed, only acquired: paper under lamplight, steel under fluorescents, and nothing on screen the owner couldn't have bought, typed, painted, stamped, or taped.",
+ "biggestLie": "It claims to be a building but it is one reusable component \u2014 the same centered, rounded, dark panel floating in a vignette void, wearing different data on every screen, casting shadows no light source in the world could cast.",
+ "philosophy": "The gym is the interface. We are not skinning software; we are demolishing the software and building a set. There are two kinds of thing on screen and only two: THE ROOM (walls, steel, concrete, fixtures \u2014 full-bleed, lit by named sources, accumulating twenty years of caused wear) and THE PAPER (everything the player reads and decides on \u2014 forms, folders, ledgers, clippings, slips \u2014 always resting on something, always lit, always legible). The room supplies atmosphere, memory, and wayfinding; the paper supplies data at full contrast. This split resolves the whole project: art direction goes feral on the environment plane, while the document plane obeys iron legibility law. One governing rule binds them \u2014 jitter the decoration, never the data. Light is the second law: nothing emits except fixtures; amber is lamplight falling ON objects, never ink, never a fill, never a hover state. Every element must pass the object test (\"what physical thing is this, and what is it resting on?\") and the source test (\"what machine or hand made these marks?\") before it ships. The player should feel they unlocked a dead man's office and everything is exactly where he left it \u2014 including twenty years of proof that things happened here.",
+ "principles": [
+  "1. Two planes, one law: environment takes unlimited wear; the document plane holds decision data at full contrast. Jitter decoration, never data.",
+  "2. Every container passes the object test \u2014 folder, clipboard, ledger, plaque, slip, tray, door. 'Panel' is not an object; the room-shell component is deleted, not restyled.",
+  "3. Every glyph passes the source test \u2014 typewriter, sign painter, newspaper press, rubber stamp, pencil, marker. If you can't name what made the text, the text is wrong.",
+  "4. Nothing emits light except fixtures. Amber is light, not paint: it may pool, shaft, and glint, but never fill a control or signal a state.",
+  "5. Everything rests on something and shares its room's one shadow direction. If we can't say where the camera is and what the object lies on, the screen doesn't ship.",
+  "6. Counts are visible evidence (slips in a tray, open lockers, envelopes in a slot), backed invisibly by aria-labels \u2014 never badges, meters, or KPI strips.",
+  "7. Imperfection is seeded, small, caused, and permanent: deterministic per entity id, dark where hands go, stained where the mug sits. Cloned wear is worse than no wear.",
+  "8. Memory lives in objects: the ledger is a bound book, the career is a record card, milestones become clippings and trophies on a real wall. Nothing that records the past renders as a feed or timeline.",
+  "9. Decisions have consequence motion: every stamp, cut, and assignment produces a visible physical result within 400ms. A React re-render is not an event in a room.",
+  "10. Interaction cost never rises: same or fewer clicks than the widget replaced, targets \u226544px, the weekly loop stays one visible click. Atmosphere that taxes the player's time gets cut."
+ ],
+ "roomSystem": "Three rooms only \u2014 the Floor, the Office, the Locker Room. The Press and the Calendar are demoted to objects (the paper on a bench and the office desk; a tear-off pad and wall calendar). Two shots, declared per screen in a code comment. ROOM SHOT: standing eye height (~5'8\"), wide, full-bleed \u2014 walls meet the viewport edges; the Floor is an asymmetric elevation of different-sized destinations (pebbled-glass office door with the gym's painted name, locker-corridor doorway with steel gleam beyond, ring ambient center, crooked calendar, folded paper). OBJECT SHOT: looking down ~30\u00b0 at the desk or your hands; the object fills the frame but its surface (blotter, cork, clipboard) always shows at the edges. Movement is a cut or a pick-up: rooms enter with a lateral pan plus light change (380ms); objects slide up from the bottom third and settle. Esc always puts the object down. Never leaves frame: the resting surface, the room's light, the way back (a sliver of the previous space). No header, no breadcrumbs, no footer bar \u2014 signage names where you are.",
+ "objectSystem": "BUTTON \u2014 permanent actions: painted-steel plaque or brass plate, 0 radius, stamped bevel (hard 1px light top-left / dark bottom-right), four seeded screwheads; press travels 1px inward, hover catches the lamp (specular stop brightens). Paper actions: a rubber stamp you apply. Disabled = dusty, never grayed. TAB \u2014 die-cut manila folder tab (clip-path trapezoid), staggered widths, typed label; active tab pulled forward casting shadow on the one behind; one is dog-eared. LIST \u2014 typed roster sheet on a clipboard or ruled ledger page; monospace columns ARE the table; row hover is a fingertip-smudge highlight. DIALOG \u2014 paper landing on the desk blotter, dealt in with settle rotation; actions are stamps inked onto it. NOTIFICATION \u2014 pink 'WHILE YOU WERE OUT' slip or note wedged under a door; pending count = visible stack of slips in the wire in-tray, exact tally typed on the tray card and in aria. CHIP/BADGE \u2014 rubber stamp: fixed ink color and fixed angle per CATEGORY (trajectory red \u22122\u00b0, mood blue-black 0\u00b0, scouting green-gray +1.5\u00b0), seeded \u00b11\u00b0 instance wobble, feTurbulence-eroded edges; meaning carried by word + border shape, never hue. SELECT \u2014 printed checklist, all options visible, one pencil check; click a line to move it (styled radiogroup); trainers hang as pegboard tags. METER \u2014 typed numeral first, plus a flat-ended grease-pencil stroke on a printed ruled scale, length exactly proportional; trends are penciled ticks with a word. Status trays (MUST KEEP / WATCH / CHOPPING BLOCK) encode by position + label + stamp.",
+ "typeSystem": "Type is assigned by SOURCE, never hierarchy. POSTER/PAINTED SIGN: Anton (Impact-lineage, 1965-clean) for gothic headline decks and stencils; Ultra for fat-face fight-bill display \u2014 poster scale only, 0 tracking, letterpress ink-bleed shadow. TYPEWRITER: Special Elite for worn field paperwork (forms, scouting cards, the gym's own sheets); Courier Prime for clean machine output (ledger figures, fight records \u2014 tabular by nature). One weight, no italics: emphasis is underline, CAPS, or x-strike; word-level 88\u2013100% opacity ribbon variance, seeded. FORM PRINT: Libre Franklin 500, 12\u201314px, tracking \u22640.03em, for pre-printed labels, ruled boxes, form numbers ('CARD 12-B REV. 3/71'). HAND: Caveat for pencil/ballpoint marginalia (one-read flavor only, \u226514px); Permanent Marker for tape labels. STAMP: Anton caps, eroded via shared SVG filter. NEWSPRINT: Noticia Text justified/hyphenated body, Anton headline decks, UnifrakturMaguntia subset for the masthead word only, black-ink agate datelines. Big Shoulders Display, Roboto Slab, and Oswald are deleted. Nine subsetted woff2 families, ~160KB budget.",
+ "palette": "Every token names a material or ink; abstract tokens (--accent, --success) are banned. ENVIRONMENT: leather ramp survives (#0c0907\u2192#3a2a1c) plus --locker-steel #5c635a / lit #757c70, --plaster-mint #98a58e, --gym-green #435243, --concrete #8a8578, --oak #7a5c38, --tobacco #6f5136, --brass-oxidized #8a7440 / polished #c9a55c, --paint-red-faded #8f4438. PAPER STOCKS (each with its own temperature): --newsprint #d6d1c2, --pulp #d4b98a, --manila #cfae72, --index-card #ece2c8 (blue rules #9fb0bd), --memo-pink #e3c1b4. INKS: typewriter ribbon #33383e, graphite #4a463f, stamp red #8f3b2e, stamp violet #5c4a63, ballpoint #2f4468, news black #2e2b26 \u2014 ink never reaches pure black. AMBER (#d99a4e ramp) is reserved exclusively for light overlays. Chroma ceiling: OKLCH 0.11 surfaces / 0.14 ink accents. #7bbf6a is deleted from the codebase. Each material ships fresh/worn/old via color-mix aging math.",
+ "lightingModel": "One rig per room, defined once as tokens (--key-x/y/color/reach, --shadow-dx/dy) and rendered as a single pointer-events:none overlay stack ABOVE content \u2014 soft-light radial key pool, screen-blend window shafts, off-center multiply darkness replacing the .worn vignette \u2014 so backdrop and UI are lit in the same pass. Components ship flat material colors: no private gradients, no inset rim-lights, no elevation shadows. OFFICE: tungsten lamp upper-left, steep falloff, shadows 3px 5px down-right. LOCKER ROOM: two cool fluorescent bands, near-shadowless, one tube on a rare steps() flicker (reduced-motion off). FLOOR: hanging bulbs at irregular positions, one dead. Paper is lit, never luminous: a multiply lamp gradient with one hot corner; season and time of day drive --daylight tokens.",
+ "imperfectionRules": "Two-plane wear budget. ENVIRONMENT PLANE: unlimited, but caused and local \u2014 smudge darkening at handles, scuffs at thresholds, rust where water runs (hinge seams, under handles), all scaling with --gym-age so a 20-year save is visibly distinct from day one at a glance. DOCUMENT PLANE: paper objects rotate \u22642\u00b0 (seeded per entity id, deterministic \u2014 never random per mount); numeric columns and compared data rotate exactly 0\u00b0; drift \u22646px; grain \u22646% opacity over text; stains and coffee rings live in margins only, ~1 sheet in 4, and may never cross a line of type. No two instances of the same object may be identical \u2014 wear variants are seeded or omitted. Staleness is diegetic notation (pencil vs pen, a written date), never opacity on live data. Repairs are permanent and dated; the gym patches, it never renovates.",
+ "motionLanguage": "Materials replace the single ease-warm token: --ease-paper (180\u2013260ms, always with 0.5\u20132\u00b0 rotation \u2014 paper never travels straight), --ease-steel (320\u2013450ms, hard stop, no soft tail), --ease-stamp (90\u2013120ms accelerating IN, impact never eases out), damped pin-swing for corkboard items, steps(2\u20134) for anything electric. Opacity tweens are reserved for light. No hover levitation ever \u2014 hover is touch or light: latch jiggle, door crack, corner curl, bulb snap. Cards deal in and file out (exit-before-unmount); nothing on the play loop exceeds 400ms; reduced-motion snaps everything.",
+ "guardrails": [
+  "Decision-critical text meets 4.5:1 (numerals 7:1) AFTER the lighting layer composites; no wear effect may drop it below. Faded ink is a container look, never an opacity on live data.",
+  "Type floors: 14px for anything the player acts on, 12px for labels; handwriting and stamps never solely carry a stat, price, or deadline.",
+  "Color never carries meaning alone \u2014 every state is redundantly encoded by word + shape/border + physical position (which tray, which stamp).",
+  "Interaction cost never increases: same or fewer clicks than the widget replaced, hit targets \u226544px, Advance Day/Week and training assignment stay one visible click.",
+  "Jitter decoration, never data: numeric columns are tabular, aligned, and unrotated; no stain, tape, or grain may overlap a numeral.",
+  "Focus-visible outline survives every restyle (styled as a brass glint atop the retained 2px ring); Esc always puts the object down; checklists are real radiogroups.",
+  "All counts and paths removed from visual chrome are preserved in aria-labels and accessible names; visible evidence carries them for sighted players.",
+  "No flicker above 3Hz, no permanent ambient animation on the content plane, all environmental motion behind prefers-reduced-motion \u2014 sessions run hundreds of Advance Weeks."
+ ],
+ "rulings": [
+  {
+   "conflict": "IA says the Press and Calendar are not rooms; the Creative Director's floor concept kept five doors.",
+   "ruling": "Demote. Three rooms \u2014 Floor, Office, Locker Room. The Press becomes the newspaper itself (bench + desk); the Calendar becomes the tear-off desk pad and wall calendar.",
+   "reasoning": "A route-table entry is not a reason to build a fake wall. Architectural honesty is what a struggling gym has; five equal doors was the card grid wearing wood."
+  },
+  {
+   "conflict": "UX demands cash visible at all times; Branding and the Art Director demand the CASH ticker dies with the header chrome.",
+   "ruling": "The ticker dies. Balance lives in the office ledger (last handwritten line, large), as a taped notecard beside the office door on the Floor, and \u2014 decisively \u2014 typed as a 'BANK BAL.' line on every money-bearing document (walk-in card, contract, bill).",
+   "reasoning": "No decision ever lacks the number at the moment of decision, which is what UX actually needs; a floating KPI is the loudest dashboard tell in the game."
+  },
+  {
+   "conflict": "Accessibility's contrast floor vs. Color/History/Storytelling's faded inks, dim marginalia, and dark corners.",
+   "ruling": "The two-plane law, without a 'lean-in brightening' crutch. Decision data sits on lit paper at full contrast at rest; faded ink, pencil dimness, and darkness are licensed only for flavor text and the environment plane.",
+   "reasoning": "1975 and accessibility agree: black ink on paper under a lamp is ~12:1 \u2014 higher contrast than the current amber-on-leather. We don't need to choose; we need to put the data on paper."
+  },
+  {
+   "conflict": "Narrative wants handwriting as the primary voice of evaluations; UX says handwriting is unscannable at roster sizes.",
+   "ruling": "Typewriter and stamp carry anything read repeatedly or compared; handwriting is capped at one-line, one-read marginalia at \u226514px.",
+   "reasoning": "A trainer's scrawl is character; eight lockers of scrawl is homework. The typed sheet IS the period-true fast read \u2014 real trainers typed the roster too."
+  },
+  {
+   "conflict": "Amber as brand accent / hover warmth vs. the Color theorist's 'amber is light, not ink.'",
+   "ruling": "Amber is light only \u2014 pools, shafts, brass glints, applied as overlay/multiply layers. No control may fill, stroke, or glow amber to indicate state. Active states are physical: tab pulled forward, check moved, stamp landed.",
+   "reasoning": "Accent-color logic is SaaS theming; the moment amber becomes a fill we are re-skinning the app we were hired to demolish."
+  },
+  {
+   "conflict": "Material artist and Historian want texture everywhere; Engineering fears filter cost; Engineering's fallback is flat tint.",
+   "ruling": "Baked SVG data-URI noise tiles (paper, plaster, steel, canvas) as shared tokens; live feTurbulence/displacement only in one-time static defs (stamps, pencil strokes, torn edges), never on elements that animate or scroll. The flat-color fallback is vetoed outright.",
+   "reasoning": "Texture is the deliverable \u2014 a flat fallback silently re-ships the failure. Baked tiles decode once and GPU-cache; this costs kilobytes, not frames."
+  },
+  {
+   "conflict": "Visual designer's seeded chaos vs. UX's fear of randomness touching data.",
+   "ruling": "All imperfection is deterministic (hash of entity id), capped at \u00b12\u00b0/6px on paper, 0\u00b0 on data columns, up to \u00b13\u00b0 on pure set dressing. Random-per-mount jitter is banned.",
+   "reasoning": "Seeded means the world is stable \u2014 the same note hangs crooked the same way forever, which reads as a place; re-rolling reads as a glitch and erodes trust in the data."
+  },
+  {
+   "conflict": "Set designer's paper popover for selects vs. UX's inline printed checklist.",
+   "ruling": "Checklist wins for \u22647 options (all options visible, zero open-click, real radiogroup). Longer lists get the clipboard-sheet popover. Native <select> dies everywhere immediately \u2014 it is the single most anachronistic pixel in the game.",
+   "reasoning": "The checklist is strictly better ergonomics AND better fiction; the popover is reserved for where inline genuinely can't fit."
+  },
+  {
+   "conflict": "Type specialist wants ~9 families; Engineering wants four; Historian wants Oswald recast as news gothic.",
+   "ruling": "Nine subsetted families, ~160KB budget. Big Shoulders Display, Roboto Slab, AND Oswald are deleted \u2014 Anton takes the headline-gothic and stamp roles.",
+   "reasoning": "Oswald-tracked-caps is the app's true typeface and the disease itself; keeping it 'restricted' guarantees relapse. A period world cannot be built from four fonts, but it can from nine subsets."
+  },
+  {
+   "conflict": "Lighting artist's neutral-art-plus-rig pipeline vs. artists wanting baked lighting in replacement art.",
+   "ruling": "The rig wins. The asset registry contract is amended: replacement art is delivered neutral/unlit; the room's overlay stack lights it. Maximum two blend-mode layers per room.",
+   "reasoning": "Baked light kills time-of-day, seasonal grading, and the guarantee that UI and art share one room. Consistency of light IS the film."
+  },
+  {
+   "conflict": "Motion designer's exit-before-unmount card choreography vs. Engineering's complexity objection and Accessibility's speed concern.",
+   "ruling": "Build it. WalkInViewer gets a 350ms 'deciding' phase; the card files right (locker), slides off left (turn away), or tucks to the drawer (later), next card dealing in with 100ms overlap. Reduced-motion snaps instantly.",
+   "reasoning": "This is the game's heartbeat \u2014 deciding a man's fate must land somewhere. 350ms once per decision is atmosphere that pays rent; consequence motion is a principle, not a garnish."
+  },
+  {
+   "conflict": "Visual designer wants per-instance random stamp angles for texture; UX wants fixed angles for pre-attentive column scanning.",
+   "ruling": "Fixed ink color and fixed angle per CATEGORY, with seeded \u00b11\u00b0 per-instance wobble inside that code.",
+   "reasoning": "Consistency is what makes stamps scannable down a roster; the wobble keeps them ink instead of icons. Both seats get what they actually need."
+  }
+ ],
+ "noList": [
+  "Rounded pill chips, tags, and badges of any kind (including the red notification count badge and its pulse)",
+  "Segmented controls, tab strips, and view-switcher toggles that aren't die-cut folder tabs or physical trays/clipboards",
+  "Native <select> elements and any OS form chrome",
+  "backdrop-filter / glassmorphism, and translucent tinted fills with no physical analogue",
+  "Omnidirectional glow box-shadows (0 0 N) and any emissive hover/state feedback on non-fixtures",
+  "Hover translateY levitation \u2014 on anything, especially 300lb steel lockers",
+  "Persistent app chrome: header bars, cash KPI, breadcrumbs, footer time bar, '+1/+7' programmer notation",
+  "Centered modal-over-scrim dialogs and toasts; anything floating in a void with an elevation shadow",
+  "Progress bars, KPI stat tiles, dot timelines, and activity feeds for anything the player reads or remembers",
+  "Letter-spacing above 0.05em anywhere except engraved brass and poster display; the tracked-microcaps overline label pattern",
+  "#7bbf6a and any hue outside the material palette as a semantic code; opacity-as-data on live values",
+  "Marketing copy in the world ('The temporal hub', 'My Office') \u2014 doors say what a sign painter would paint"
+ ]
+}
