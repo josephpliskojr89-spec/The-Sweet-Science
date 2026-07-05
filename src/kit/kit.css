@@ -1,0 +1,52 @@
+/*
+  Property Kit — shared prop styles
+  --------------------------------------------------------------------------
+  No widget here: every class is a physical object. Flat material colors,
+  zero private gradients or glows — the room's light rig lights these.
+*/
+
+/* --- Rubber stamp ------------------------------------------------------ */
+.stamp {
+  display: inline-block;
+  font-family: var(--type-poster);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: 2px solid currentColor;
+  padding: 1px 7px 0;
+  line-height: 1.35;
+  filter: url(#stamp-erode);
+  white-space: nowrap;
+  /* uneven inking */
+  -webkit-mask-image: var(--tex-paper);
+  mask-image: var(--tex-paper);
+  -webkit-mask-size: 160px;
+  mask-size: 160px;
+}
+.stamp--sm {
+  font-size: 12px;
+}
+.stamp--md {
+  font-size: 15px;
+}
+.stamp--lg {
+  font-size: 20px;
+  border-width: 3px;
+}
+
+/* --- BANK BAL. line ----------------------------------------------------- */
+.bankbal {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.bankbal__line {
+  font-family: var(--type-machine);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+  /* the figure line is data: exactly 0 degrees, no grain, full contrast */
+  transform: none;
+}
+.bankbal__figure {
+  font-weight: 700;
+}

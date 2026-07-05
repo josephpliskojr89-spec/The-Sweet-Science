@@ -7,18 +7,23 @@
     <title>The Sweet Science</title>
 
     <!--
-      Vintage type. Loaded from Google Fonts when network allows; if blocked,
-      the system fallbacks defined in theme.css take over gracefully.
-        - Oswald          condensed display (signage, headers)
-        - Big Shoulders   heavy slab display (title, banners)
-        - Special Elite   typewriter (fighter statements, card text)
-        - Roboto Slab     readable slab body
+      Nine period families, self-hosted latin subsets (~177KB total).
+      Assigned by SOURCE, never hierarchy — see docs/design/DESIGN-BIBLE.md.
+      The two that carry the most first-paint text are preloaded.
     -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Oswald:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;700&family=Special+Elite&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/SpecialElite-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/LibreFranklin-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
   </head>
   <body>

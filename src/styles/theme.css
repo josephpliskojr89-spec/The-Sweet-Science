@@ -1,55 +1,98 @@
 /*
   THE SWEET SCIENCE — Design Tokens
   --------------------------------------------------------------------------
-  The aesthetic language of a gym that has been there since the fifties.
-  Dark backgrounds, amber and brown tones, scuffed leather, a desk lamp on
-  while someone waits outside. Every color here is pulled from that world and
-  from the walk-in card reference. Change a value here, change it everywhere.
+  "Inherited Premises" (docs/design/DESIGN-BIBLE.md). Every token names a
+  material or an ink — something the owner could have bought, typed, painted,
+  stamped, or taped in 1975. Abstract tokens (--accent, --success) are banned.
+
+  Two planes, one law: the ENVIRONMENT (walls, steel, oak, brass) takes
+  unlimited seeded wear; the DOCUMENT plane (paper stocks + inks) holds
+  decision data at full contrast, 0 degrees, tabular.
+
+  Amber is LIGHT, never ink: --lamp-* may appear only inside a room's light
+  rig (background-image of .rig layers) — never as a fill, stroke, or text
+  color on a control.
 */
 
 :root {
-  /* --- Core surfaces (darkest to lightest) --- */
+  /* ------------------------------------------------------------------ */
+  /* ENVIRONMENT MATERIALS                                               */
+  /* ------------------------------------------------------------------ */
   --ink-black: #0c0907; /* deepest shadow, the back of the room */
-  --leather-black: #14100c; /* primary app background */
-  --leather-dark: #1f1812; /* raised panels */
-  --leather: #2a1f15; /* scuffed leather surfaces */
-  --leather-light: #3a2a1c; /* lit leather, borders */
-  --wood: #4a3722; /* worn wood, floorboards */
+  --leather-black: #14100c;
+  --leather-dark: #1f1812;
+  --leather: #2a1f15;
+  --leather-light: #3a2a1c;
+  --wood: #4a3722; /* worn floorboards */
+  --oak: #7a5c38; /* desk top, door frames */
+  --tobacco: #6f5136; /* corkboard, leather chair, aged varnish */
+  --locker-steel: #5c635a; /* battleship grey, in shadow */
+  --locker-steel-lit: #757c70; /* the same steel where the tube hits it */
+  --plaster-mint: #98a58e; /* institutional half-wall paint */
+  --gym-green: #435243; /* wainscot, ledger cloth, blotter paper */
+  --concrete: #8a8578; /* floor, lintels */
+  --brass-oxidized: #8a7440; /* plates, hooks, hinges at rest */
+  --brass-polished: #c9a55c; /* the worn-bright band where hands go */
+  --paint-red-faded: #8f4438; /* ring posts, door lettering, EXIT */
+  --canvas: #b5a98e; /* ring canvas, tarps */
 
-  /* --- Parchment (the card stock) --- */
-  --parchment: #e8dcc0; /* primary aged paper */
-  --parchment-dark: #d9c9a3; /* shadowed paper */
-  --parchment-deep: #c4b088; /* creased / worn paper */
+  /* ------------------------------------------------------------------ */
+  /* PAPER STOCKS (each its own temperature — never one "parchment")     */
+  /* ------------------------------------------------------------------ */
+  --newsprint: #d6d1c2;
+  --pulp: #d4b98a; /* cheap tablet paper, carbon forms */
+  --manila: #cfae72; /* folders, envelopes */
+  --index-card: #ece2c8;
+  --index-card-rule: #9fb0bd; /* the blue rule line */
+  --memo-pink: #e3c1b4; /* WHILE YOU WERE OUT slips */
 
-  /* --- Amber (the desk lamp, the warmth) --- */
-  --amber: #d99a4e; /* primary accent */
-  --amber-bright: #e8b566; /* highlight, hover glow */
-  --amber-deep: #b87a2e; /* pressed, shadowed amber */
-  --amber-ember: #8a5320; /* dim ember */
+  /* ------------------------------------------------------------------ */
+  /* INKS (ink never reaches pure black)                                 */
+  /* ------------------------------------------------------------------ */
+  --ink-ribbon: #33383e; /* typewriter */
+  --ink-graphite: #4a463f; /* pencil */
+  --ink-stamp-red: #8f3b2e;
+  --ink-stamp-violet: #5c4a63; /* mimeograph, date stamps */
+  --ink-ballpoint: #2f4468;
+  --ink-news: #2e2b26; /* press black */
+  --chalk: #e6e3d8;
 
-  /* --- Blood red (the WALK-IN CARD banner, names, danger) --- */
-  --oxblood: #7a2e1e; /* banner / heading red */
-  --oxblood-bright: #9c3a26; /* lit red */
-  --rust: #a6432a; /* fighter name red on parchment */
-
-  /* --- Text --- */
-  --text-warm: #e8dcc0; /* primary text on dark */
-  --text-muted: #a8987c; /* secondary text on dark */
-  --text-dim: #6f6450; /* tertiary / disabled */
-  --text-ink: #2a2118; /* text on parchment */
-  --text-ink-soft: #4a3e2e; /* secondary on parchment */
-
-  /* --- Functional --- */
-  --gold-line: #b88a4a; /* hairline dividers, gold leaf */
+  /* ------------------------------------------------------------------ */
+  /* LAMPLIGHT (light-rig layers ONLY — see header)                      */
+  /* ------------------------------------------------------------------ */
+  --lamp: #d99a4e;
+  --lamp-bright: #e8b566;
+  --lamp-deep: #b87a2e;
+  --lamp-ember: #8a5320;
+  --fluorescent: #cfd8c4; /* the locker room's cool green-white */
   --shadow-cast: rgba(0, 0, 0, 0.55);
 
-  /* --- Type families (web font, then graceful system fallback) --- */
-  --font-display: 'Big Shoulders Display', 'Oswald', 'Arial Narrow', sans-serif;
-  --font-condensed: 'Oswald', 'Arial Narrow', 'Helvetica Neue', sans-serif;
-  --font-slab: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-  --font-typewriter: 'Special Elite', 'Courier New', Courier, monospace;
+  /* ------------------------------------------------------------------ */
+  /* TEXTURE KIT — baked SVG turbulence tiles, defined once, blended     */
+  /* with material base colors. Never a live filter on animating nodes. */
+  /* ------------------------------------------------------------------ */
+  --tex-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23p)'/%3E%3C/svg%3E");
+  --tex-cork: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.22' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23c)'/%3E%3C/svg%3E");
+  --tex-steel: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.35 0.012' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23s)'/%3E%3C/svg%3E");
+  --tex-plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='480' height='480' filter='url(%23w)'/%3E%3C/svg%3E");
+  --tex-canvas: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='v'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.5 0.28' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23v)'/%3E%3C/svg%3E");
 
-  /* --- Spacing scale --- */
+  /* ------------------------------------------------------------------ */
+  /* TYPE — assigned by SOURCE, never hierarchy (see fonts.css)          */
+  /* ------------------------------------------------------------------ */
+  --type-poster: 'Anton', 'Arial Narrow', Impact, sans-serif; /* sign painter, stamps */
+  --type-fatface: 'Ultra', 'Bookman Old Style', serif; /* fight-bill display */
+  --type-typewriter: 'Special Elite', 'Courier New', monospace; /* worn field paperwork */
+  --type-machine: 'Courier Prime', 'Courier New', monospace; /* ledgers, records — tabular */
+  --type-form: 'Libre Franklin', 'Franklin Gothic Medium', Arial, sans-serif; /* pre-printed labels */
+  --type-hand: 'Caveat', 'Segoe Script', cursive; /* pencil marginalia, >=14px, flavor only */
+  --type-marker: 'Permanent Marker', 'Segoe Print', cursive; /* tape labels */
+  --type-news: 'Noticia Text', Georgia, serif; /* newsprint body */
+  --type-blackletter: 'UnifrakturMaguntia', 'Old English Text MT', serif; /* masthead word only */
+
+  /* ------------------------------------------------------------------ */
+  /* SPACING                                                             */
+  /* ------------------------------------------------------------------ */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -57,12 +100,55 @@
   --space-xl: 40px;
   --space-2xl: 64px;
 
-  /* --- Radii (cards are barely rounded — utilitarian, not soft) --- */
+  /* ------------------------------------------------------------------ */
+  /* MOTION — materials, not easings. Paper never travels straight;     */
+  /* steel stops hard; a stamp accelerates IN and never eases out.      */
+  /* ------------------------------------------------------------------ */
+  --ease-paper: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --t-paper: 220ms; /* 180-260ms, always with 0.5-2deg rotation */
+  --ease-steel: cubic-bezier(0.4, 0, 0.9, 0.6);
+  --t-steel: 380ms; /* 320-450ms, hard stop, no soft tail */
+  --ease-stamp: cubic-bezier(0.6, 0, 1, 0.4);
+  --t-stamp: 100ms; /* 90-120ms, accelerating in */
+  /* anything electric ticks: use steps(2) .. steps(4) inline */
+
+  /* ------------------------------------------------------------------ */
+  /* THE BUILDING'S AGE — 0 at founding, 1 at twenty years. Drives      */
+  /* seeded wear depth everywhere. Set from save.dayCount at app root.  */
+  /* ------------------------------------------------------------------ */
+  --gym-age: 0.35;
+
+  /* ==================================================================
+     LEGACY — SCHEDULED FOR DEMOLITION
+     Tokens the bible deletes, kept so unmigrated rooms render while the
+     building is rebuilt room by room. Each room's migration removes its
+     dependencies on this block; the block dies with the last room.
+     Fonts are remapped to their period replacements so even unmigrated
+     screens stop speaking Oswald.
+     ================================================================== */
+  --parchment: #e8dcc0;
+  --parchment-dark: #d9c9a3;
+  --parchment-deep: #c4b088;
+  --amber: #d99a4e;
+  --amber-bright: #e8b566;
+  --amber-deep: #b87a2e;
+  --amber-ember: #8a5320;
+  --oxblood: #7a2e1e;
+  --oxblood-bright: #9c3a26;
+  --rust: #a6432a;
+  --text-warm: #e8dcc0;
+  --text-muted: #a8987c;
+  --text-dim: #6f6450;
+  --text-ink: #2a2118;
+  --text-ink-soft: #4a3e2e;
+  --gold-line: #b88a4a;
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-condensed: 'Libre Franklin', 'Arial Narrow', sans-serif;
+  --font-slab: 'Noticia Text', Georgia, serif;
+  --font-typewriter: 'Special Elite', 'Courier New', Courier, monospace;
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
-
-  /* --- Timing --- */
   --ease-warm: cubic-bezier(0.22, 0.61, 0.36, 1);
   --t-fast: 140ms;
   --t-med: 280ms;

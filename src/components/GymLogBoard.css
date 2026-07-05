@@ -1,104 +1,197 @@
-/* The corkboard — pinned bottom-left of the floor, above the timebar. */
-.logboard {
-  position: absolute;
-  z-index: 8;
-  left: var(--space-lg);
-  bottom: 86px;
-  width: min(320px, 86vw);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--leather-light);
-  background: linear-gradient(180deg, rgba(31, 24, 18, 0.88), rgba(12, 9, 7, 0.92));
-  box-shadow:
-    inset 0 1px 0 rgba(232, 181, 102, 0.1),
-    0 12px 30px rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
-  overflow: hidden;
-}
+/*
+  The corkboard — left wall by the street door. Cork takes unlimited seeded
+  wear (pin holes, sun-faded ghosts); the slips' first lines are document
+  plane: >=14px typewriter at full contrast, stains in margins only.
+*/
 
-.logboard--closed {
-  width: auto;
-}
-
-.logboard__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
+.corkboard {
+  position: relative;
+  display: block;
   width: 100%;
-  padding: 8px 14px;
-  border-bottom: 1px solid rgba(58, 42, 28, 0.7);
-  transition: background var(--t-fast);
+  min-height: 180px;
+  padding: 14px 12px;
+  text-align: left;
+  background-color: var(--tobacco);
+  background-image: var(--tex-cork);
+  background-blend-mode: soft-light;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.4),
+    var(--shadow-dx, 3px) var(--shadow-dy, 5px) 9px var(--shadow-cast);
 }
-.logboard--closed .logboard__head {
-  border-bottom: none;
+/* oak frame */
+.corkboard__frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 7px solid var(--oak);
+  box-shadow:
+    inset 1px 1px 0 rgba(0, 0, 0, 0.45),
+    inset -1px -1px 0 rgba(214, 190, 150, 0.18);
 }
-.logboard__head:hover {
-  background: rgba(58, 42, 28, 0.35);
+/* old pin holes across the top rail + one sun-faded rectangle */
+.corkboard::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  height: 6px;
+  pointer-events: none;
+  background-image: radial-gradient(circle 1.5px, rgba(0, 0, 0, 0.55) 0 1.5px, transparent 2px);
+  background-size: 34px 6px;
+  background-repeat: repeat-x;
+  opacity: calc(0.25 + var(--gym-age) * 0.6);
+}
+.corkboard__ghost {
+  position: absolute;
+  top: 30%;
+  left: 22%;
+  width: 84px;
+  height: 58px;
+  background: rgba(224, 205, 165, 0.12);
+  box-shadow: 0 0 0 1px rgba(224, 205, 165, 0.08);
+  transform: rotate(-1.4deg);
 }
 
-.logboard__title {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: 11px;
-  color: var(--amber-deep);
-}
-
-.logboard__toggle {
-  font-family: var(--font-typewriter);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.logboard__list {
+.corkboard__slips {
+  position: relative;
   list-style: none;
   display: flex;
   flex-direction: column;
-  max-height: 260px;
-  overflow-y: auto;
+  gap: 6px;
+  margin-top: 8px;
 }
 
-.logboard__item {
+/* --- a pinned slip --- */
+.logslip {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: calc(100% - 10px);
+  padding: 6px 10px 7px 12px;
+  background-color: var(--newsprint);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
+  transform-origin: 14px 4px; /* the pin */
+}
+.logslip__pin {
+  position: absolute;
+  top: -3px;
+  left: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d9564a, #7c231b 75%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.logslip__date {
+  font-family: var(--type-hand);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink-graphite);
+  flex: none;
+}
+.logslip__text {
+  font-family: var(--type-typewriter);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-ribbon);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* margin coffee ring — never over the type */
+.logslip__stain {
+  position: absolute;
+  right: 3px;
+  bottom: -6px;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 3px solid rgba(111, 81, 54, 0.28);
+  filter: blur(0.4px);
+}
+
+/* older notes peeking beneath the legible three */
+.logslip--peek {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  margin-top: -13px;
+  z-index: -1;
+  background-color: #c9c2b0;
+}
+.logslip--peek .logslip__text,
+.logslip--peek .logslip__date {
+  opacity: 0; /* only the paper edge shows */
+}
+
+/* the newest slip swings on its pin as it's hung */
+.logslip--pinned-now {
+  animation: pin-swing 700ms cubic-bezier(0.3, 1.6, 0.4, 1) 1;
+}
+@keyframes pin-swing {
+  0% {
+    transform: rotate(4.5deg);
+  }
+  45% {
+    transform: rotate(-2.2deg);
+  }
+  75% {
+    transform: rotate(1deg);
+  }
+  100% {
+    transform: rotate(var(--seed-rot, 0deg)) translate(var(--seed-dx, 0), var(--seed-dy, 0));
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* LEAN-IN — the object shot: you step up to the board               */
+/* ---------------------------------------------------------------- */
+.corkboard-leanin {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 6%;
+  background: rgba(5, 3, 2, 0.55); /* the room falls out of focus, stays present */
+}
+.corkboard-leanin__board {
+  position: relative;
+  width: min(560px, 72vw);
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 26px 22px;
+  background-color: var(--tobacco);
+  background-image: var(--tex-cork);
+  background-blend-mode: soft-light;
+  border: 10px solid var(--oak);
+  box-shadow: 6px 10px 30px rgba(0, 0, 0, 0.7);
+}
+.corkboard-leanin__slips {
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 9px 14px;
-  border-bottom: 1px solid rgba(58, 42, 28, 0.45);
+  gap: 10px;
 }
-.logboard__item:last-child {
-  border-bottom: none;
+.corkboard-leanin__slips .logslip__text {
+  white-space: normal;
 }
-.logboard__item:first-child {
-  animation: log-pin var(--t-med) var(--ease-warm);
+.corkboard-leanin__back {
+  margin-top: 16px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--newsprint);
+  border: 1px solid rgba(214, 209, 194, 0.5);
+  padding: 8px 14px;
+  min-height: 44px;
 }
-@keyframes log-pin {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.logboard__date {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 9px;
-  color: var(--text-dim);
-}
-
-.logboard__text {
-  font-family: var(--font-slab);
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--text-warm);
-}
-
-@media (max-width: 700px) {
-  .logboard {
-    display: none; /* small screens: the log still lives in the save; board returns with a mobile pass */
-  }
+.corkboard-leanin__back:hover {
+  border-color: var(--newsprint);
 }

@@ -17,7 +17,7 @@ body,
 body {
   background-color: var(--leather-black);
   color: var(--text-warm);
-  font-family: var(--font-slab);
+  font-family: var(--type-news);
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -34,8 +34,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display);
-  font-weight: 700;
+  font-family: var(--type-poster);
+  font-weight: 400;
   letter-spacing: 0.02em;
   line-height: 1.05;
 }
@@ -53,10 +53,10 @@ button:disabled {
 }
 
 a {
-  color: var(--amber);
+  color: var(--brass-polished);
 }
 
-/* Worn amber scrollbars */
+/* Square utilitarian scrollbars — steel channel, no pill thumb */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -66,15 +66,14 @@ a {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--leather-light);
-  border-radius: 6px;
   border: 2px solid var(--ink-black);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--amber-ember);
+  background: var(--tobacco);
 }
 
 ::selection {
-  background: var(--amber-deep);
+  background: var(--lamp-deep);
   color: var(--ink-black);
 }
 
@@ -84,28 +83,51 @@ a {
   inset: 0;
 }
 
-/* Utility: a fine film grain + vignette to age every screen.
-   Applied via .worn on a positioned container. */
+/* Room light rig — one pointer-events:none overlay stack per room, layered
+   ABOVE content so backdrop and UI are lit in the same pass. Each room's CSS
+   defines its own .rig background layers (soft-light key pool, screen shafts,
+   multiply darkness). Max two blend layers per room. */
+.rig {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Seeded imperfection: paper objects tilt by their entity seed (set as
+   inline --seed-rot / --seed-dx / --seed-dy custom props via src/kit/seed).
+   DOCUMENT PLANE LAW: never apply to numeric columns or compared data. */
+.p-tilt {
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0))
+    rotate(var(--seed-rot, 0deg));
+}
+
+/* LEGACY — scheduled for demolition with the last unmigrated room.
+   The old full-screen vignette; rebuilt rooms use a .rig instead. */
 .worn::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(
-      ellipse at 50% 38%,
-      transparent 40%,
-      rgba(0, 0, 0, 0.35) 88%,
-      rgba(0, 0, 0, 0.6) 100%
-    );
+  background: radial-gradient(
+    ellipse at 50% 38%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 88%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
   mix-blend-mode: multiply;
   z-index: 50;
 }
 
-/* Reusable focus ring — amber, visible, period-appropriate */
+/* Focus — a brass glint on the environment; on paper, brass fails 3:1, so
+   any .on-paper scope swaps the ring to ribbon ink (DESIGN-BIBLE A23). */
 :focus-visible {
-  outline: 2px solid var(--amber-bright);
+  outline: 2px solid var(--brass-polished);
   outline-offset: 2px;
+}
+.on-paper :focus-visible,
+.on-paper:focus-visible {
+  outline-color: var(--ink-ribbon);
 }
 
 /* Respect reduced motion */
