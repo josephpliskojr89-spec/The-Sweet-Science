@@ -1,247 +1,217 @@
-/* The walk-in card — worn parchment in a dark leather clipboard. */
+/* CARD 7-A — the gym's own registration card on index stock. */
 
 .wic {
   position: relative;
-  width: min(480px, 92vw);
-  padding-top: 14px; /* room for the clip */
-}
-
-/* Clipboard clip */
-.wic__clip {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70px;
-  height: 26px;
-  border-radius: 5px 5px 3px 3px;
-  background: linear-gradient(180deg, #6b6258, #2c2722);
-  border: 1px solid #0c0907;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 3px 6px rgba(0, 0, 0, 0.6);
-  z-index: 3;
-}
-.wic__clip::after {
-  content: '';
-  position: absolute;
-  top: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 6px;
-  border-radius: 3px;
-  background: #15110d;
-}
-
-/* Dark leather border */
-.wic__frame {
-  position: relative;
-  padding: 18px;
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, #2a1d12, #1a120b);
-  border: 1px solid #0c0907;
-  box-shadow:
-    inset 0 0 0 2px rgba(120, 84, 40, 0.25),
-    inset 0 2px 10px rgba(0, 0, 0, 0.6),
-    0 24px 50px rgba(0, 0, 0, 0.6);
-}
-
-/* The parchment interior is created by stacking elements on a paper bg */
-.wic__frame {
-  --paper: #e8dcc0;
-  --paper-shade: #d9c9a3;
-  --ink: #2a2118;
-}
-
-/* Oxblood banner */
-.wic__banner {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--index-card);
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 22px, var(--index-card-rule) 22px 23px),
+    var(--tex-paper);
+  background-blend-mode: normal, multiply;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.4);
+  padding: 14px 16px 16px;
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 10px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #8a3322, #6e2415);
-  border: 1px solid #3a160d;
-  box-shadow: inset 0 1px 0 rgba(255, 200, 150, 0.2), inset 0 -2px 6px rgba(0, 0, 0, 0.4);
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 12px;
+}
+.wic__formno {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 8px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.6);
+}
+
+/* letterpress header over the oxblood rule */
+.wic__banner {
+  text-align: center;
+  border-bottom: 2.5px solid var(--paint-red-faded);
+  padding-bottom: 6px;
 }
 .wic__banner-text {
-  font-family: var(--font-display);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 26px;
-  color: #f0e0c2;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
-}
-.wic__star {
-  color: #e0a85a;
-  font-size: 16px;
+  font-family: var(--type-poster);
+  font-size: 24px;
+  letter-spacing: 0.06em; /* letterpress display */
+  color: var(--ink-news);
+  text-shadow: 1px 1px 0 rgba(46, 43, 38, 0.25);
 }
 
-/* Top: portrait + info on parchment */
+/* the patience flimsy, stapled to the corner */
+.wic__flimsy {
+  position: absolute;
+  top: -8px;
+  right: 14px;
+  z-index: 2;
+  padding: 6px 9px 7px;
+  background: #e9df9e;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.4);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 2deg));
+}
+.wic__staple {
+  position: absolute;
+  top: -3px;
+  left: 14px;
+  width: 13px;
+  height: 4px;
+  background: #7c8087;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+.wic__flimsy-line {
+  font-family: var(--type-machine);
+  font-weight: 700;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+  white-space: nowrap;
+}
+
 .wic__top {
-  display: grid;
-  grid-template-columns: 150px 1fr;
+  display: flex;
   gap: 16px;
-  padding: 16px;
-  border-radius: 4px;
-  background: var(--paper);
-  background-image:
-    radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.25), transparent 60%),
-    radial-gradient(ellipse at 80% 100%, rgba(150, 120, 70, 0.18), transparent 55%);
-  box-shadow: inset 0 0 24px rgba(150, 120, 70, 0.22);
+  align-items: flex-start;
 }
-
-.wic__portrait {
-  border: 1px solid #b39a6e;
-  border-radius: 3px;
-  overflow: hidden;
-  background: #14100c;
-  line-height: 0;
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25);
-  height: fit-content;
+/* the photograph, mounted with gummed corners */
+.wic__photo {
+  position: relative;
+  flex: none;
+  padding: 5px;
+  background: #ece5d3;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.4);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
+}
+.wic__photo :first-child {
+  display: block;
+}
+.wic__corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: rgba(90, 74, 44, 0.5);
+}
+.wic__corner--tl {
+  top: -3px;
+  left: -3px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.wic__corner--tr {
+  top: -3px;
+  right: -3px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.wic__corner--bl {
+  bottom: -3px;
+  left: -3px;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+.wic__corner--br {
+  bottom: -3px;
+  right: -3px;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 .wic__info {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  padding-top: 2px;
 }
-
-.wic__label {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 11px;
-  color: #7a6a4a;
-}
-
-.wic__name {
-  font-family: var(--font-slab);
-  font-weight: 700;
-  font-size: 25px;
-  line-height: 1.1;
-  color: #a6432a;
-  margin: 2px 0 12px;
-}
-.wic__nick {
-  color: #8a3322;
-}
-
-.wic__stats {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.wic__stat {
+.wic__field {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(122, 106, 74, 0.3);
+  border-bottom: 1px dotted rgba(46, 43, 38, 0.45);
+  padding-bottom: 2px;
+  min-height: 24px;
 }
-.wic__stat:last-child {
-  border-bottom: none;
+.wic__label {
+  flex: none;
+  width: 46px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.7);
 }
-.wic__stat dt {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 11px;
-  color: #7a6a4a;
-  min-width: 96px;
+.wic__field--name .wic__label {
+  width: auto;
 }
-.wic__stat dd {
-  font-family: var(--font-slab);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--ink);
+.wic__value {
+  font-family: var(--type-typewriter);
+  font-size: 15px;
+  color: var(--ink-ribbon);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wic__nick {
+  font-size: 13px;
 }
 
-/* Statement */
-.wic__statement {
-  margin-top: 14px;
-  padding: 14px;
-  border-radius: 4px;
-  background: var(--paper-shade);
-  box-shadow: inset 0 0 18px rgba(150, 120, 70, 0.25);
-}
+/* the typed statement in its printed box */
 .wic__statement-label {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 14px;
-  color: #8a3322;
-  margin-bottom: 8px;
-}
-.wic__statement-box {
-  background: #efe6cf;
-  border: 1px solid rgba(122, 106, 74, 0.4);
-  border-radius: 3px;
-  padding: 12px 14px;
-  box-shadow: inset 0 1px 4px rgba(122, 106, 74, 0.25);
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.7);
+  margin-bottom: 4px;
 }
 .wic__statement-text {
-  font-family: var(--font-typewriter);
+  font-family: var(--type-typewriter);
   font-size: 14px;
-  line-height: 1.7;
-  color: #34291c;
+  line-height: 1.6;
+  color: var(--ink-ribbon);
+  border: 1px solid rgba(46, 43, 38, 0.45);
+  padding: 10px 12px;
+  background: rgba(255, 255, 252, 0.25);
 }
 
-/* First impression */
+/* pencil first impression beside the printed gloves */
 .wic__impression {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 2px solid rgba(184, 138, 74, 0.5);
 }
 .wic__gloves {
-  color: #8a5320;
-  flex: 0 0 auto;
-}
-.wic__impression-label {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  color: #7a6a4a;
+  flex: none;
+  opacity: 0.6; /* printed on the form */
 }
 .wic__impression-text {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 16px;
-  color: #6e2415;
+  font-family: var(--type-hand);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink-graphite);
+  transform: rotate(-0.6deg);
 }
 
+/* YOUR READ below the dashed tear-rule */
 .wic__read {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed rgba(184, 138, 74, 0.45);
+  border-top: 1.5px dashed rgba(46, 43, 38, 0.5);
+  padding-top: 8px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
 }
 .wic__read-label {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  color: #7a6a4a;
-  margin-right: 8px;
+  flex: none;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.7);
 }
 .wic__read-text {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 14.5px;
+  font-family: var(--type-typewriter);
+  font-size: 14px;
   line-height: 1.5;
-  color: #c2a878;
-}
-
-@media (max-width: 420px) {
-  .wic__top {
-    grid-template-columns: 110px 1fr;
-  }
-  .wic__banner-text {
-    font-size: 21px;
-  }
+  color: var(--ink-ribbon);
 }
