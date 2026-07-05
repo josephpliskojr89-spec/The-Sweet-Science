@@ -22,7 +22,7 @@ export function PropDefs() {
           />
           <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" />
           <feComponentTransfer>
-            <feFuncA type="gamma" amplitude="1" exponent="1.6" offset="-0.06" />
+            <feFuncA type="gamma" amplitude="1" exponent="1.2" offset="0" />
           </feComponentTransfer>
         </filter>
 

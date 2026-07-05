@@ -17,11 +17,7 @@
   line-height: 1.35;
   filter: url(#stamp-erode);
   white-space: nowrap;
-  /* uneven inking */
-  -webkit-mask-image: var(--tex-paper);
-  mask-image: var(--tex-paper);
-  -webkit-mask-size: 160px;
-  mask-size: 160px;
+  opacity: 0.92; /* ink, not pixels — slightly starved */
 }
 .stamp--sm {
   font-size: 12px;

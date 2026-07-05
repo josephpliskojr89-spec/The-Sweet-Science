@@ -1,647 +1,1184 @@
-.office__body {
-  align-items: flex-start;
+/*
+  MY OFFICE — object shot, looking down ~30° at the owner's desk.
+  The desk is the room. One tungsten key upper-left; every shadow falls
+  3px 5px down-right. Nothing is centered — objects align to each other,
+  the way a right-handed man arranges a desk.
+*/
+
+.office-room {
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  overflow: hidden;
+  --shadow-dx: 3px;
+  --shadow-dy: 5px;
 }
 
-/* --- Finances --- */
-.finances {
-  width: min(720px, 94vw);
-  margin: 0 auto;
-  padding: var(--space-xl);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--leather-light);
-  background: linear-gradient(180deg, rgba(31, 24, 18, 0.78), rgba(10, 7, 5, 0.82));
-  box-shadow: inset 0 1px 0 rgba(232, 181, 102, 0.1), 0 24px 60px rgba(0, 0, 0, 0.6);
-  animation: room-rise var(--t-slow) var(--ease-warm);
+/* ---------------------------------------------------------------- */
+/* THE DESK                                                          */
+/* ---------------------------------------------------------------- */
+.desk {
+  z-index: 0;
+  background-color: var(--oak);
+  background-image:
+    /* plank grain */
+    repeating-linear-gradient(
+      92deg,
+      transparent 0 34px,
+      rgba(20, 14, 8, 0.16) 34px 36px,
+      transparent 36px 120px,
+      rgba(20, 14, 8, 0.1) 120px 121px,
+      transparent 121px 190px
+    ),
+    var(--tex-steel);
+  background-blend-mode: normal, multiply;
+  background-size:
+    100% 100%,
+    340px 340px;
+}
+/* drawer fronts cropped at the bottom frame edge */
+.desk__drawers {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 7%;
+  background: linear-gradient(180deg, #55401f 0 6%, #6b4f2a 6% 100%);
+  border-top: 2px solid rgba(20, 14, 8, 0.7);
+}
+.desk__drawers::before,
+.desk__drawers::after {
+  content: '';
+  position: absolute;
+  top: 46%;
+  width: 64px;
+  height: 9px;
+  background: linear-gradient(180deg, var(--brass-polished), var(--brass-oxidized));
+  border: 1px solid #55461f;
+  border-radius: 0 0 5px 5px;
+  /* hands darken the handles */
+  box-shadow: 0 0 10px rgba(12, 9, 7, calc(0.25 + var(--gym-age) * 0.3));
+}
+.desk__drawers::before {
+  left: 22%;
+}
+.desk__drawers::after {
+  right: 14%;
+}
+/* the coffee ring in the blotter's margin — never under type */
+.desk__ring {
+  position: absolute;
+  left: 52.5%;
+  top: 14%;
+  width: 34px;
+  height: 30px;
+  border-radius: 50%;
+  border: 4px solid rgba(60, 38, 18, 0.3);
+  filter: blur(0.5px);
+  transform: rotate(-4deg);
 }
 
-.finances__head {
+/* the pebbled-glass door sliver — the way back, top-left */
+.desk__door {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: clamp(120px, 13%, 210px);
+  height: 15%;
+  min-height: 84px;
+  z-index: 3;
+  padding: 0;
+  transform: skewX(-8deg) translateX(-10px);
+}
+.desk__door-glass {
+  position: absolute;
+  inset: 0 0 12% 0;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-md);
-  border-bottom: 1px solid var(--leather-light);
-  padding-bottom: var(--space-md);
-  margin-bottom: var(--space-lg);
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 40% 40%, #d8c896 0%, #b3985e 55%, #8a6c3a 100%);
+  border: 5px solid var(--oak);
+  border-top-width: 0;
+  border-left-width: 0;
+  overflow: hidden;
 }
-.finances__eyebrow {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: 10px;
-  color: var(--amber-deep);
+.desk__door-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--tex-paper);
+  background-size: 80px;
+  mix-blend-mode: multiply;
+  opacity: 0.7;
 }
-.finances__balance {
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 52px;
-  line-height: 1;
-  color: var(--amber-bright);
-  margin-top: 4px;
-}
-.finances__balance--low {
-  color: var(--rust);
-}
-.finances__date {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 10px;
-  color: var(--text-dim);
-}
-.finances__warning {
-  font-family: var(--font-slab);
-  font-style: italic;
+/* the gym's name, painted on the street side — reversed from in here */
+.desk__door-name {
+  font-family: var(--type-poster);
   font-size: 13px;
-  color: var(--rust);
-  margin-bottom: var(--space-lg);
+  letter-spacing: 0.08em;
+  color: rgba(122, 90, 32, 0.85);
+  transform: scaleX(-1);
+  white-space: nowrap;
+}
+.desk__door:hover .desk__door-glass {
+  filter: brightness(1.09);
 }
 
-.finances__section {
-  margin-bottom: var(--space-xl);
+/* ---------------------------------------------------------------- */
+/* THE BLOTTER + IN-TRAY                                             */
+/* ---------------------------------------------------------------- */
+.tray {
+  position: absolute;
+  left: 6%;
+  top: 17%;
+  width: 44%;
+  min-width: 420px;
+  max-height: 76%;
+  z-index: 2;
+  /* forest-green blotter paper inside tobacco-leather corners (A16) */
+  background-color: var(--gym-green);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  border: 10px solid var(--tobacco);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+    var(--shadow-dx) var(--shadow-dy) 12px var(--shadow-cast);
+  padding: 26px 22px 20px;
+  transition: opacity var(--t-paper) var(--ease-paper);
 }
-.finances__section-title {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
+/* brass corner caps */
+.tray::before,
+.tray::after {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(135deg, var(--brass-polished), var(--brass-oxidized) 70%);
+  border: 1px solid #55461f;
+}
+.tray::before {
+  top: -10px;
+  left: -10px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.tray::after {
+  bottom: -10px;
+  right: -10px;
+  clip-path: polygon(100% 100%, 100% 0, 0 100%);
+}
+.tray--dimmed {
+  opacity: 0.55;
+  pointer-events: none;
+}
+/* the wire tray front rail */
+.tray__wire {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 8px;
+  height: 8px;
+  border: 2px solid #9aa096;
+  border-bottom: none;
+  opacity: 0.9;
+}
+/* typed tray card wired to the front */
+.tray__card {
+  position: absolute;
+  top: -14px;
+  left: 34px;
+  padding: 3px 9px 4px;
+  background-color: var(--index-card);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  font-family: var(--type-machine);
+  font-weight: 700;
   font-size: 12px;
-  color: var(--amber-deep);
-  margin-bottom: var(--space-md);
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--leather-light);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
+  transform: rotate(-1.4deg);
+}
+/* the trainer's pencil note when the tray is empty */
+.tray__note {
+  font-family: var(--type-hand);
+  font-weight: 600;
+  font-size: 17px;
+  color: #cfd4c6;
+  padding: 26px 8px 30px;
 }
 
-.finances__lines {
+.tray__slips {
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(76vh - 120px);
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+
+/* --- one registration slip: FORM 3-A on index-card stock (A2) --- */
+.regslip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 76px;
+  padding: 12px 12px 12px 10px;
+  text-align: left;
+  background-color: var(--index-card);
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 17px, var(--index-card-rule) 17px 18px),
+    var(--tex-paper);
+  background-blend-mode: normal, multiply;
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
+  transition: transform var(--t-paper) var(--ease-paper);
+}
+.regslip:hover {
+  /* the slip slides out of the fan toward your hand */
+  transform: translate(calc(var(--seed-dx, 0px) + 3px), var(--seed-dy, 0))
+    rotate(var(--seed-rot, 0deg));
+}
+.regslip__form {
+  position: absolute;
+  top: 3px;
+  right: 8px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 8px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.55);
+}
+.regslip__photo {
+  position: relative;
+  flex: none;
+}
+.regslip__photo :first-child {
+  display: block;
+}
+.regslip__clip {
+  position: absolute;
+  top: -6px;
+  left: 4px;
+  width: 9px;
+  height: 20px;
+  border: 2px solid #7c8087;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+}
+.regslip__main {
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-.finances__line {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-md);
-  padding: 7px 4px;
-  font-family: var(--font-slab);
-  font-size: 15px;
-  color: var(--text-warm);
-  border-bottom: 1px solid rgba(58, 42, 28, 0.4);
-}
-.finances__line--sub {
-  padding-top: 0;
-  border-bottom: none;
-  font-family: var(--font-typewriter);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-.finances__line--muted {
-  color: var(--text-dim);
-}
-.finances__line--net {
-  border-bottom: none;
-  border-top: 2px solid var(--leather-light);
-  margin-top: 4px;
-  padding-top: 10px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 17px;
-  color: var(--parchment);
-}
-.finances__pos {
-  color: #7bbf6a;
-  font-weight: 700;
-}
-.finances__neg {
-  color: var(--rust);
-  font-weight: 700;
-}
-.finances__note {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: var(--space-md);
-}
-.finances__empty {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-
-.finances__books {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-.bookrow {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr 1.1fr;
-  align-items: baseline;
-  gap: var(--space-sm);
-  padding: 8px 4px;
-  border-bottom: 1px solid rgba(58, 42, 28, 0.4);
-  font-family: var(--font-slab);
-  font-size: 13px;
-}
-.bookrow:first-child {
-  background: rgba(217, 154, 78, 0.06);
-}
-.bookrow__month {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 12px;
-  color: var(--text-muted);
-}
-.bookrow__dues,
-.bookrow__out,
-.bookrow__net {
-  text-align: right;
-  font-size: 12px;
-}
-.bookrow__bal {
-  text-align: right;
-  font-weight: 700;
-  color: var(--parchment);
-}
-
-@media (max-width: 560px) {
-  .bookrow {
-    grid-template-columns: 1.4fr 1fr 1.1fr;
-  }
-  .bookrow__dues,
-  .bookrow__out {
-    display: none;
-  }
-}
-
-/* --- Office tabs (in the chrome) --- */
-.office__tabs {
-  margin-left: auto;
-  display: flex;
-  gap: 3px;
-  border: 1px solid var(--leather-light);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-.office__tab {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 12px;
-  color: var(--text-muted);
-  padding: 7px 14px;
-  background: rgba(0, 0, 0, 0.35);
-  transition: color var(--t-fast), background var(--t-fast);
-}
-.office__tab:hover {
-  color: var(--amber-bright);
-}
-.office__tab--on {
-  color: var(--ink-black);
-  background: var(--amber);
-  font-weight: 600;
-}
-
-/* --- The Ledger --- */
-.ledgerbook {
-  width: min(720px, 94vw);
-  margin: 0 auto;
-  padding: var(--space-xl);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--leather-light);
-  background: linear-gradient(180deg, rgba(31, 24, 18, 0.78), rgba(10, 7, 5, 0.82));
-  box-shadow: inset 0 1px 0 rgba(232, 181, 102, 0.1), 0 24px 60px rgba(0, 0, 0, 0.6);
-  animation: room-rise var(--t-slow) var(--ease-warm);
-}
-
-.ledgerbook__note {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 13px;
-  color: var(--text-dim);
-  margin: var(--space-md) 0 var(--space-lg);
-}
-
-.ledgerbook__list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-.ledgerbook__row {
-  display: flex;
-  gap: var(--space-lg);
-  align-items: baseline;
-  padding: 10px 4px;
-  border-bottom: 1px solid rgba(58, 42, 28, 0.5);
-}
-.ledgerbook__row:last-child {
-  border-bottom: none;
-}
-.ledgerbook__date {
-  flex: 0 0 84px;
-  font-family: var(--font-typewriter);
-  font-size: 11px;
-  color: var(--amber-deep);
-}
-.ledgerbook__text {
-  font-family: var(--font-slab);
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--text-warm);
-}
-
-@media (max-width: 640px) {
-  .office__tabs {
-    margin-left: 0;
-  }
-}
-
-.office {
-  width: min(720px, 94vw);
-  margin: 0 auto;
-  padding: var(--space-xl);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--leather-light);
-  background: linear-gradient(180deg, rgba(31, 24, 18, 0.78), rgba(10, 7, 5, 0.82));
-  box-shadow: inset 0 1px 0 rgba(232, 181, 102, 0.1), 0 24px 60px rgba(0, 0, 0, 0.6);
-  animation: room-rise var(--t-slow) var(--ease-warm);
-}
-
-.office__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-md);
-  border-bottom: 1px solid var(--leather-light);
-  padding-bottom: var(--space-md);
-}
-.office__title {
-  font-size: 36px;
-  color: var(--amber-bright);
-  letter-spacing: 0.03em;
-}
-.office__count {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.office__empty {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--text-muted);
-  padding: var(--space-xl) var(--space-md);
-  text-align: center;
-}
-
-.office__queue {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin: var(--space-lg) 0;
-}
-
-.qrow {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: 10px 12px;
-  text-align: left;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--leather-light);
-  background: rgba(0, 0, 0, 0.28);
-  transition: border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
-}
-.qrow:hover {
-  border-color: var(--amber-deep);
-  background: rgba(58, 42, 28, 0.4);
-  transform: translateX(2px);
-}
-
-.qrow__portrait {
-  flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
-  border-radius: 3px;
-  overflow: hidden;
-  border: 1px solid var(--leather-light);
-  background: var(--ink-black);
-  line-height: 0;
-  display: grid;
-  place-items: center;
-}
-/* Crop the head-and-shoulders to a tidy square thumbnail */
-.qrow__portrait svg {
-  width: 48px;
-  height: auto;
-  transform: translateY(2px) scale(1.15);
-  transform-origin: top center;
-}
-
-.qrow__main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
   min-width: 0;
+  flex: 1;
 }
-.qrow__name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: 0.02em;
-  color: var(--parchment);
+.regslip__name {
+  font-family: var(--type-typewriter);
+  font-size: 15px;
+  color: var(--ink-ribbon);
 }
-.qrow__meta {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 10px;
-  color: var(--text-dim);
+.regslip__meta {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
 }
-.qrow__impression {
-  font-family: var(--font-slab);
-  font-style: italic;
-  font-size: 13px;
-  color: var(--text-muted);
+.regslip__impression {
+  font-family: var(--type-hand);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--ink-graphite);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-.qrow__right {
-  flex: 0 0 auto;
+.regslip__right {
+  flex: none;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
-.qrow__patience {
-  font-family: var(--font-typewriter);
+/* the typed patience line — data, so typewriter, not pencil (A10) */
+.regslip__wait {
+  font-family: var(--type-machine);
   font-size: 11px;
-  color: var(--text-dim);
-}
-.qrow__patience--low {
-  color: var(--rust);
-}
-.qrow__review {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  color: var(--amber-deep);
-}
-.qrow:hover .qrow__review {
-  color: var(--amber-bright);
-}
-
-.office__divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0 var(--space-md);
-}
-.office__divider-seg {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
-  opacity: 0.4;
-}
-.office__divider-label {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  font-size: 10px;
-  color: var(--amber-deep);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
   white-space: nowrap;
 }
 
-.office__future {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  opacity: 0.6;
-}
-.office__future li {
-  position: relative;
-  padding: 8px 12px 8px 26px;
-  background: rgba(0, 0, 0, 0.25);
-  border-left: 2px solid var(--amber-ember);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--text-muted);
-}
-.office__future li::before {
-  content: '›';
+/* ---------------------------------------------------------------- */
+/* DESK OBJECTS at rest                                              */
+/* ---------------------------------------------------------------- */
+.deskobj {
   position: absolute;
-  left: 10px;
-  color: var(--amber-ember);
-}
-.office__future-note {
-  font-family: var(--font-typewriter);
-  font-size: 11px;
-  color: var(--text-dim);
+  z-index: 2;
+  padding: 0;
   text-align: center;
-  margin-top: var(--space-md);
+  transition: transform var(--t-paper) var(--ease-paper), filter var(--t-paper) var(--ease-paper);
+}
+.deskobj:hover {
+  /* lamp glint + a 2px slide toward the hand — never levitation */
+  filter: brightness(1.07);
+  transform: translate(2px, 2px);
 }
 
-@media (max-width: 560px) {
-  .office__future {
-    grid-template-columns: 1fr;
+/* the green accounts book, lower right, corner overlapping the blotter */
+.deskobj--accounts {
+  left: 47%;
+  bottom: 12%;
+  width: 19%;
+  min-width: 200px;
+  height: 26%;
+  background-color: var(--gym-green);
+  background-image: var(--tex-canvas);
+  background-blend-mode: multiply;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
+  transform: rotate(-1.5deg);
+}
+.deskobj--accounts:hover {
+  transform: rotate(-1.5deg) translate(2px, 2px);
+}
+.deskobj__accounts-spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16%;
+  background: var(--paint-red-faded);
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+}
+.deskobj__accounts-label {
+  position: absolute;
+  left: 30%;
+  right: 12%;
+  top: 38%;
+  padding: 6px 4px;
+  background: rgba(236, 226, 200, 0.92);
+  font-family: var(--type-typewriter);
+  font-size: 14px;
+  color: var(--ink-ribbon);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* THE COMPETITION folder, mid right */
+.deskobj--folder {
+  right: 17%;
+  top: 24%;
+  width: 20%;
+  min-width: 210px;
+  height: 24%;
+  background-color: var(--manila);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
+  transform: rotate(1.2deg);
+}
+.deskobj--folder:hover {
+  transform: rotate(1.2deg) translate(2px, 2px);
+}
+/* the tie string, wound round its button */
+.deskobj__folder-string {
+  position: absolute;
+  right: 12%;
+  top: 14%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #8a6d45;
+  box-shadow: -22px 6px 0 -6px #8a6d45;
+}
+.deskobj__folder-label {
+  position: absolute;
+  left: 10%;
+  right: 24%;
+  top: 42%;
+  font-family: var(--type-poster);
+  font-size: clamp(13px, 1.2vw, 17px);
+  letter-spacing: 0.09em; /* stenciled */
+  color: rgba(58, 40, 14, 0.8);
+}
+
+/* the bound gym ledger, cropped by the right frame edge */
+.deskobj--ledger {
+  right: -4%;
+  top: 55%;
+  width: 17%;
+  min-width: 180px;
+  height: 30%;
+  background-color: #3a3126;
+  background-image: var(--tex-canvas);
+  background-blend-mode: multiply;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-left: 10px solid #262019;
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
+  transform: rotate(-0.6deg);
+}
+.deskobj--ledger:hover {
+  transform: rotate(-0.6deg) translate(2px, 2px);
+}
+.deskobj__ledger-label {
+  position: absolute;
+  left: 18%;
+  top: 34%;
+  padding: 5px 10px;
+  background: rgba(236, 226, 200, 0.9);
+  font-family: var(--type-typewriter);
+  font-size: 13px;
+  color: var(--ink-ribbon);
+}
+
+/* the dead rotary phone, upper right dead zone */
+.deskobj--phone {
+  right: 6%;
+  top: 4%;
+  width: 150px;
+  height: 120px;
+  cursor: default;
+}
+.phone__body {
+  position: absolute;
+  left: 12px;
+  top: 18px;
+  width: 104px;
+  height: 74px;
+  background: linear-gradient(180deg, #2e2b28 0%, #1c1a18 100%);
+  border-radius: 10px 10px 4px 4px; /* bakelite, not chrome — a drawn object */
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
+  /* dusty, never grayed */
+  filter: saturate(0.7) brightness(0.92);
+}
+.phone__dial {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #4a4642 0 30%, #26231f 70%);
+  border: 3px solid #14120f;
+}
+.phone__handset {
+  position: absolute;
+  left: 50%;
+  top: -12px;
+  transform: translateX(-50%);
+  width: 108px;
+  height: 22px;
+  background: linear-gradient(180deg, #35322e, #1c1a18);
+  border-radius: 11px;
+}
+.phone__cord {
+  position: absolute;
+  left: -14px;
+  bottom: -8px;
+  width: 30px;
+  height: 26px;
+  border: 2px dashed #3a352f;
+  border-radius: 50%;
+  border-top: none;
+}
+.phone__tag {
+  position: absolute;
+  left: 0;
+  bottom: -14px;
+  right: 0;
+  padding: 3px 6px;
+  background: rgba(217, 211, 194, 0.85);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  font-family: var(--type-marker);
+  font-size: 11px;
+  line-height: 1.25;
+  color: #33302b;
+  transform: rotate(2deg);
+}
+
+/* the stained mug */
+.deskobj--mug {
+  right: 28%;
+  top: 9%;
+  width: 34px;
+  height: 40px;
+  background: linear-gradient(180deg, #8d8578 0%, #6e675c 100%);
+  border-radius: 3px 3px 8px 8px;
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
+  cursor: default;
+}
+.deskobj--mug::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 8px;
+  width: 14px;
+  height: 18px;
+  border: 4px solid #6e675c;
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* HELD OBJECTS — slide up from the bottom third, settle             */
+/* ---------------------------------------------------------------- */
+.held {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  bottom: 4%;
+  width: min(920px, 82%);
+  z-index: 4;
+  transform: translateX(-54%);
+  animation: pick-up 240ms var(--ease-paper) 1;
+}
+@keyframes pick-up {
+  0% {
+    transform: translateX(-54%) translateY(26%) rotate(0deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(-54%) translateY(0) rotate(0deg);
+    opacity: 1;
   }
 }
-
-/* --- Rivals — the competitive world --- */
-.rivals {
-  width: min(880px, 95vw);
-  margin: 0 auto;
-  padding: var(--space-xl);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--leather-light);
-  background: linear-gradient(180deg, rgba(31, 24, 18, 0.78), rgba(10, 7, 5, 0.82));
-  box-shadow: inset 0 1px 0 rgba(232, 181, 102, 0.1), 0 24px 60px rgba(0, 0, 0, 0.6);
-  animation: room-rise var(--t-slow) var(--ease-warm);
-}
-.rivals__head {
-  border-bottom: 1px solid var(--leather-light);
-  padding-bottom: var(--space-md);
-  margin-bottom: var(--space-lg);
-}
-.rivals__lede {
-  font-family: var(--font-slab);
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-.rivals__lede strong {
-  color: var(--amber);
-  font-style: italic;
+.held__putdown {
+  position: absolute;
+  right: 8px;
+  top: -2px;
+  z-index: 5;
+  padding: 7px 12px;
+  min-height: 44px;
+  font-family: var(--type-form);
   font-weight: 500;
-}
-.rivals__scope {
-  display: inline-flex;
-  margin-top: var(--space-md);
-  gap: 3px;
-  border: 1px solid var(--leather-light);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-.rivals__scope-btn {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   font-size: 12px;
-  color: var(--text-muted);
-  padding: 7px 16px;
-  background: rgba(0, 0, 0, 0.35);
-  transition: color var(--t-fast), background var(--t-fast);
+  letter-spacing: 0.03em;
+  color: #efe7cf;
+  background: rgba(20, 14, 8, 0.72);
+  border: 1px solid rgba(236, 226, 200, 0.4);
 }
-.rivals__scope-btn:hover {
-  color: var(--amber-bright);
+.held__putdown:hover {
+  border-color: rgba(236, 226, 200, 0.8);
 }
-.rivals__scope-btn--on {
-  color: var(--ink-black);
-  background: var(--amber);
-  font-weight: 600;
-}
-
-.rivals__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+.held__esc {
+  margin-left: 6px;
+  padding: 1px 5px;
+  border: 1px solid rgba(236, 226, 200, 0.5);
+  font-size: 10px;
 }
 
-.gymcard {
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--leather-light);
-  background: rgba(0, 0, 0, 0.28);
+/* ---------------------------------------------------------------- */
+/* THE ACCOUNTS BOOK, OPEN                                           */
+/* ---------------------------------------------------------------- */
+.book {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  background: #efe6cd;
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  border: 12px solid var(--gym-green);
+  border-radius: 0;
+  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
 }
-.gymcard--indie {
-  border-color: var(--amber-ember);
-  background: rgba(217, 154, 78, 0.05);
+/* the gutter */
+.book::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(40, 30, 16, 0.4), transparent);
 }
-/* Regional view — many gyms grouped by city, so the cards tighten up. */
-.gymcard--compact {
-  padding: 10px var(--space-md);
+.book__page {
+  padding: 26px 26px 20px;
+  overflow-y: auto;
+  min-width: 0;
 }
-.gymcard--compact .gymcard__name {
-  font-size: 15px;
+.book__heading {
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--ink-news);
+  border-bottom: 1px solid rgba(46, 43, 38, 0.5);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
 }
-.gymcard--compact .gymcard__sub {
-  font-size: 11.5px;
+.book__grid {
+  width: 100%;
+  border-collapse: collapse;
 }
-.gymcard__head {
+.book__line td {
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--ink-news);
+  padding: 6px 2px;
+  border-bottom: 1px solid rgba(90, 110, 130, 0.35);
+}
+/* the figures: typed, tabular, exactly 0° */
+.book__fig {
+  text-align: right;
+  font-family: var(--type-machine) !important;
+  font-size: 14px !important;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.book__fig--in {
+  color: var(--ink-ballpoint) !important;
+}
+.book__fig--out {
+  color: var(--ink-stamp-red) !important;
+}
+.book__subline td {
+  font-family: var(--type-machine);
+  font-size: 10px;
+  color: rgba(46, 43, 38, 0.65);
+  padding: 0 2px 6px;
+  border-bottom: 1px solid rgba(90, 110, 130, 0.35);
+}
+/* net under a true double rule */
+.book__line--net td {
+  border-top: 1px solid rgba(46, 43, 38, 0.7);
+  border-bottom: 3px double rgba(46, 43, 38, 0.8);
+  font-weight: 700;
+}
+.book__marginalia {
+  margin-top: 12px;
+  font-family: var(--type-hand);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--ink-graphite);
+}
+
+/* the balance — the last handwritten line, large, circled */
+.book__balance {
+  position: relative;
   display: flex;
   align-items: baseline;
-  gap: var(--space-md);
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 10px 6px 12px;
 }
-.gymcard__name {
-  flex: 1;
-  font-family: var(--font-display);
+.book__balance-label {
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--ink-news);
+}
+.book__balance-figure {
+  position: relative;
+  margin-right: 22px;
+  font-family: var(--type-machine);
   font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.02em;
-  color: var(--parchment);
+  font-size: 30px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ballpoint);
 }
-.gymcard__tier {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+/* the grease-pencil circle around it */
+.book__balance-figure::after {
+  content: '';
+  position: absolute;
+  inset: -8px -14px;
+  border: 3px solid rgba(74, 70, 63, 0.55);
+  border-radius: 50%;
+  transform: rotate(-3deg) scaleX(1.06);
+  pointer-events: none;
+}
+.book__balance-figure--red {
+  color: var(--ink-stamp-red);
+}
+.book__balance-date {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  color: var(--ink-ribbon);
+}
+.book__overdrawn {
+  font-family: var(--type-hand);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink-graphite);
+}
+.book__history {
+  max-height: 52%;
+  overflow-y: auto;
+}
+.book__month {
+  font-family: var(--type-machine) !important;
+  font-size: 12px !important;
+  white-space: nowrap;
+}
+.book__fig--bal {
+  font-weight: 700;
+}
+
+/* the overdraft notice, paperclipped askew to the page corner */
+.book__notice {
+  position: absolute;
+  right: 4%;
+  bottom: 6%;
+  width: 250px;
+  padding: 14px 14px 12px;
+  background: #f4f1e8;
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 2deg));
+  z-index: 3;
+}
+.book__notice-clip {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  width: 11px;
+  height: 26px;
+  border: 2.5px solid #8a8d92;
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+}
+/* rust bleeds under the clip */
+.book__notice-clip::after {
+  content: '';
+  position: absolute;
+  inset: 6px -3px 0;
+  background: radial-gradient(ellipse, rgba(143, 68, 56, 0.25), transparent 70%);
+}
+.book__notice-head {
+  display: block;
+  font-family: var(--type-form);
+  font-weight: 500;
   font-size: 10px;
-  padding: 3px 9px;
-  border-radius: 9px;
-  border: 1px solid currentColor;
+  letter-spacing: 0.03em;
+  color: var(--ink-news);
+  border-bottom: 1px solid rgba(46, 43, 38, 0.4);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
 }
-.gymcard__tier--established { color: var(--amber-bright); background: rgba(232, 181, 102, 0.1); }
-.gymcard__tier--regional { color: var(--parchment-dark); background: rgba(217, 201, 163, 0.07); }
-.gymcard__tier--local { color: var(--text-muted); background: rgba(0, 0, 0, 0.25); }
-.gymcard__tier--indie { color: var(--amber); background: rgba(217, 154, 78, 0.1); }
-.gymcard__sub {
-  font-family: var(--font-slab);
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-top: 2px;
+.book__notice-body {
+  margin-top: 8px;
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-ribbon);
 }
-.gymcard__none {
-  font-family: var(--font-slab);
-  font-style: italic;
+
+/* ---------------------------------------------------------------- */
+/* THE COMPETITION FOLDER, OPEN                                      */
+/* ---------------------------------------------------------------- */
+.folder {
+  position: relative;
+  height: 100%;
+  background-color: var(--manila);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
+  padding: 22px 46px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* die-cut tabs on the right edge */
+.folder__tabs {
+  position: absolute;
+  right: -34px;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2;
+}
+.folder__tab {
+  min-height: 44px;
+  padding: 10px 10px;
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  color: var(--ink-ribbon);
+  background-color: #c2a366;
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  clip-path: polygon(0 6%, 88% 0, 100% 12%, 100% 88%, 88% 100%, 0 94%);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.02em;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+.folder__tab--held {
+  background-color: var(--manila);
+  transform: translateX(6px);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.55);
+}
+.folder__tab--dogear {
+  clip-path: polygon(0 6%, 88% 0, 100% 12%, 100% 78%, 82% 100%, 0 94%);
+}
+
+/* the stapled appraisal memo */
+.folder__memo {
+  position: relative;
+  flex: none;
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 12px 16px 10px;
+  background-color: var(--pulp);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  box-shadow: var(--shadow-dx) var(--shadow-dy) 6px var(--shadow-cast);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
+}
+.folder__staple {
+  position: absolute;
+  top: -3px;
+  left: 22px;
+  width: 14px;
+  height: 4px;
+  background: #7c8087;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+.folder__memo-line {
+  font-family: var(--type-typewriter);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-ribbon);
+}
+.folder__memo-pencil {
+  margin-top: 4px;
+  font-family: var(--type-hand);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--ink-graphite);
+}
+
+.folder__sheets {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 4px 12px 2px;
+}
+.folder__citygroup {
+  margin-bottom: 14px;
+}
+.folder__cityname {
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: rgba(46, 43, 38, 0.85);
+  border-bottom: 1px solid rgba(46, 43, 38, 0.5);
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+}
+
+/* --- dossier half-sheets, shingled (A5) --- */
+.dossier {
+  position: relative;
+  background-color: #ece4cc;
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.18), var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
+  transform: translate(var(--seed-dx, 0), 0) rotate(var(--seed-rot, 0deg));
+  padding: 0 14px 10px;
+}
+.dossier--shingled {
+  padding-bottom: 0;
+}
+.dossier + .dossier {
+  margin-top: -4px;
+}
+.dossier--open {
+  z-index: 1;
+  margin-bottom: 10px;
+}
+.dossier__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 0 6px;
+  text-align: left;
+}
+.dossier__head:hover {
+  background: rgba(60, 44, 20, 0.07); /* fingertip smudge */
+}
+.dossier__name {
+  font-family: var(--type-typewriter);
+  font-size: 15px;
+  color: var(--ink-ribbon);
+  text-decoration: underline;
+}
+.dossier__sub {
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  color: rgba(51, 56, 62, 0.85);
+  padding-bottom: 6px;
+}
+.dossier__none {
+  font-family: var(--type-typewriter);
   font-size: 13px;
-  color: var(--text-dim);
-  margin-top: var(--space-sm);
+  color: rgba(51, 56, 62, 0.75);
+  padding: 4px 0 6px;
 }
-.gymcard__fighters {
+.dossier--indie {
+  margin-top: 14px;
+  background-color: var(--newsprint);
+}
+.dossier--indie .dossier__head {
+  cursor: default;
+}
+/* carbon copies in the regional divider — paper look only, ink stays dark */
+.dossier--carbon {
+  background-color: #d8d3c4;
+}
+.dossier--carbon .dossier__name,
+.dossier--carbon .dossier__sub {
+  color: #43484e;
+}
+
+.dossier__fighters {
   list-style: none;
   display: flex;
   flex-direction: column;
-  margin-top: var(--space-sm);
+  padding-bottom: 4px;
 }
-
 .fline {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.9fr 0.9fr;
+  gap: 8px;
   align-items: baseline;
-  gap: var(--space-md);
-  padding: 6px 0;
-  border-top: 1px solid rgba(58, 42, 28, 0.5);
+  padding: 4px 0;
 }
 .fline__name {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--text-warm);
+  font-family: var(--type-typewriter);
+  font-size: 14px;
+  color: var(--ink-ribbon);
 }
-.fline__class {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 11px;
-  color: var(--text-muted);
-  width: 116px;
-  text-align: right;
-}
+.fline__class,
 .fline__record {
-  font-family: var(--font-typewriter);
+  font-family: var(--type-machine);
   font-size: 12px;
-  color: var(--text-dim);
-  width: 96px;
-  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+  transform: none; /* data columns: 0°, always */
 }
 .fline__standing {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 10px;
-  width: 92px;
+  font-family: var(--type-machine);
+  font-size: 11px;
+  font-weight: 700;
   text-align: right;
+  color: var(--ink-ribbon);
 }
-.fline__standing--gold { color: var(--amber-bright); }
-.fline__standing--amber { color: var(--amber-deep); }
-.fline__standing--dim { color: var(--text-dim); }
+/* standing encoded by underline weight, never hue alone */
+.fline--gold .fline__standing {
+  text-decoration: underline;
+  text-decoration-style: double;
+}
+.fline--amber .fline__standing {
+  text-decoration: underline;
+}
+.fline--dim .fline__standing {
+  font-weight: 400;
+}
 
-.rivals__citygroup {
-  margin-bottom: var(--space-md);
+/* ---------------------------------------------------------------- */
+/* THE GYM LEDGER, OPEN                                              */
+/* ---------------------------------------------------------------- */
+.gledger {
+  position: relative;
+  height: 100%;
+  background: #efe6cd;
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 27px, rgba(159, 176, 189, 0.5) 27px 28px),
+    var(--tex-paper);
+  background-blend-mode: normal, multiply;
+  border: 14px solid #3a3126;
+  border-left-width: 26px;
+  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.rivals__cityname {
-  font-family: var(--font-condensed);
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
+/* taped spine */
+.gledger::before {
+  content: '';
+  position: absolute;
+  left: -26px;
+  top: 20%;
+  width: 26px;
+  height: 26%;
+  background: rgba(217, 211, 194, 0.28);
+}
+/* the clerk's flyleaf card (A22) */
+.gledger__flyleaf {
+  align-self: flex-start;
+  padding: 5px 10px 6px;
+  background-color: var(--index-card);
+  background-image: var(--tex-paper);
+  background-blend-mode: multiply;
+  font-family: var(--type-machine);
+  font-weight: 700;
   font-size: 12px;
-  color: var(--amber-deep);
-  margin-bottom: var(--space-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
+  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
 }
-.rivals__citygroup .gymcard {
-  margin-bottom: var(--space-sm);
+.gledger__page {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.gledger__rows {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.gledger__row {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  min-height: 28px;
+  padding: 3px 2px;
+}
+.gledger__date {
+  flex: none;
+  width: 84px;
+  font-family: var(--type-machine);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-ribbon);
+}
+.gledger__text {
+  font-family: var(--type-typewriter);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-ribbon);
 }
 
-@media (max-width: 620px) {
-  .fline__class { display: none; }
+/* ---------------------------------------------------------------- */
+/* OFFICE LIGHT RIG — one tungsten key upper-left, steep falloff     */
+/* ---------------------------------------------------------------- */
+.office-rig {
+  z-index: 40;
+  background-image: radial-gradient(
+    ellipse 640px 520px at 22% 18%,
+    rgba(232, 181, 102, 0.55),
+    rgba(232, 181, 102, 0.18) 55%,
+    transparent 78%
+  );
+  mix-blend-mode: soft-light;
+}
+/* the lamp's actual glow — one screen layer, one hot corner */
+.office-rig::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 560px 440px at 20% 16%,
+    rgba(244, 214, 150, 0.26),
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
+.office-dark {
+  z-index: 38;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 130% 120% at 24% 16%,
+    transparent 34%,
+    rgba(5, 3, 2, 0.42) 70%,
+    rgba(5, 3, 2, 0.72) 100%
+  );
+}
+
+/* ---------------------------------------------------------------- */
+/* REFLOW below 900px — the desk becomes a stack of objects          */
+/* ---------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .office-room {
+    overflow-y: auto;
+  }
+  .desk__ring {
+    display: none;
+  }
+  .tray {
+    position: relative;
+    inset: auto;
+    width: calc(100% - 28px);
+    min-width: 0;
+    max-height: none;
+    margin: 76px 14px 14px;
+  }
+  .tray__slips {
+    max-height: none;
+    overflow: visible;
+  }
+  .deskobj--accounts,
+  .deskobj--folder,
+  .deskobj--ledger {
+    position: relative;
+    inset: auto;
+    width: calc(100% - 28px);
+    min-width: 0;
+    height: 78px;
+    margin: 10px 14px 0;
+    display: block;
+  }
+  .deskobj--phone,
+  .deskobj--mug {
+    display: none;
+  }
+  .held {
+    left: 2%;
+    right: 2%;
+    width: auto;
+    transform: none;
+  }
+  @keyframes pick-up {
+    0% {
+      transform: translateY(26%);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  .book {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .book::before {
+    display: none;
+  }
+  .folder__tabs {
+    position: static;
+    flex-direction: row;
+    margin-bottom: 4px;
+  }
+  .folder__tab {
+    writing-mode: horizontal-tb;
+  }
+  .folder {
+    padding-right: 24px;
+  }
+  .fline {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+  .fline__class {
+    display: none;
+  }
 }
