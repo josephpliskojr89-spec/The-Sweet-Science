@@ -1,0 +1,860 @@
+[
+ {
+  "screen": "MY OFFICE \u2014 src/rooms/OfficeRoom.tsx/.css (Desk / Finances / Rivals / Ledger)",
+  "roomConcept": "/* OBJECT SHOT: looking down ~30\u00b0 at the owner's desk. */ The office is one desk you never leave \u2014 no tabs, no chrome. The camera hangs over scarred oak and a tobacco-leather blotter under a brass lamp clamped upper-left. Everything already sits where it lives: walk-in slips fanned in a wire in-tray on the blotter, a green cloth accounts book lower-right, a string-tied manila folder stenciled THE COMPETITION mid-right, the bound gym ledger half-cropped at the frame's right edge, a dead rotary phone with a paper tag. The player's hands do what a 1975 owner's hands do: pick a thing up (it slides from the bottom third, settles with 1\u00b0 rotation, desk edges still showing), read it, put it down with Esc. A sliver of the pebbled-glass door \u2014 the gym's name painted in reverse \u2014 stays top-left: the way back.",
+  "objectMap": [
+   {
+    "element": "Room shell (.room-screen rounded panel + vignette + breadcrumb header)",
+    "object": "The desk itself, full-bleed: oak top, leather blotter, drawer fronts cropped at bottom edge; a pebbled-glass door sliver top-left with reversed painted lettering names the room",
+    "behavior": "Static set; door sliver is the click target for 'back to the floor' (\u226544px), hover = latch jiggle + hinge light-crack; Esc from desk level exits the room (existing overlay-aware handler kept)",
+    "rationale": "Deletes the confessed 'same centered panel' lie; signage replaces breadcrumb text so the room names itself"
+   },
+   {
+    "element": "Four-tab strip (Desk/Finances/Rivals/Ledger, .office__tabs)",
+    "object": "Four physical objects resting on the desk: wire in-tray, green accounts book, manila intelligence folder, bound ledger \u2014 each a one-click pick-up",
+    "behavior": "Hover = lamp glint on the cover + 2px slide toward hand; click = object slides up from bottom third (--ease-paper, ~240ms) and fills frame with blotter visible at edges; Esc puts it down; active state IS the object being in your hands",
+    "rationale": "Same click count as tabs, but wayfinding becomes spatial memory \u2014 you reach for the green book, not a label"
+   },
+   {
+    "element": "Desk tab walk-in queue (.qrow: portrait, name, age, weight class, firstImpression, patience, Review)",
+    "object": "Registration slips: index-card stock (#ece2c8, blue rules), a small paperclipped portrait photo top-left corner, typed name/age/class (Special Elite), pre-printed rule boxes (Libre Franklin 'FORM 3-A'), penciled first-impression quote (Caveat \u226514px, one line), patience as a penciled date ('says he'll wait to Jul 12'); fanned in/under the wire tray, each seeded \u00b12\u00b0 by fighter id",
+    "behavior": "Hover = slip slides 3px out of the fan + hot lamp corner; click = slip deals up into WalkInViewer at that index (openWalkIns(ids, i) preserved); after a decision the tray visibly loses that slip within 400ms",
+    "rationale": "A man waiting for an answer IS a slip on your desk; the fan makes the queue readable at rest without a list widget"
+   },
+   {
+    "element": "Queue count badge in tab label ('Desk (3)') and '.office__count' line",
+    "object": "The visible stack itself plus a typed tray card wired to the in-tray front: '3 WAITING'; exact tally also in the tray's aria-label",
+    "behavior": "Card retypes when count changes; zero = card reads 'NOBODY WAITING' \u2014 never a numeric badge",
+    "rationale": "Counts as physical evidence (principle 6); the stack height is pre-attentive"
+   },
+   {
+    "element": "Impatient state (qrow__patience--low)",
+    "object": "Red rubber stamp 'GETTING RESTLESS' (Anton caps, stamp red #8f3b2e, fixed \u22122\u00b0 category angle, seeded \u00b11\u00b0 wobble, feTurbulence-eroded) across the slip's corner",
+    "behavior": "Appears when patience \u22643; word + stamp shape carry meaning, never hue alone; normal patience stays penciled date",
+    "rationale": "Urgency as ink slammed onto paper reads faster than a colored label and is period-true"
+   },
+   {
+    "element": "Empty queue state (.office__empty prose)",
+    "object": "Empty wire tray over bare blotter; the flavor line becomes a pencil note from the trainer left in the tray ('Nobody today. Keep the lights on \u2014 word spreads.')",
+    "behavior": "Static; tray aria-label announces empty",
+    "rationale": "Emptiness you can see is more eloquent than centered italic prose"
+   },
+   {
+    "element": "Future roadmap (FUTURE_DESK 'Book fights' + 'Phase 6' note)",
+    "object": "The dead rotary phone on the desk with a masking-tape tag (Permanent Marker): 'FIGHT BOOKING \u2014 line not hooked up yet'; the Phase 6 honesty stays typed small on the tag's back (Libre Franklin)",
+    "behavior": "Disabled = dusty, cord unplugged and visibly coiled; no hover response beyond a dull glint; when Phase 6 lands, the phone plugs in and becomes the booking interaction",
+    "rationale": "A future feature as a not-yet-working object keeps dev honesty diegetic and pre-builds the booking affordance"
+   },
+   {
+    "element": "Finances: cash on hand + as-of date + low state (.finances__balance)",
+    "object": "The accounts book (green cloth #435243, oxblood spine) opened; current balance is the last handwritten ballpoint line in the balance column, large (numerals 7:1), circled once in grease pencil, dated in the margin",
+    "behavior": "Negative balance = written in red ink per bookkeeping convention + 'OVERDRAWN' penciled beside it; per CD ruling this book is one of the three homes of the bank balance",
+    "rationale": "The number the whole game turns on becomes the line a worried owner circles at midnight"
+   },
+   {
+    "element": "Monthly summary lines (dues + paying/carrying counts, rent, upkeep, coach salaries or \u2014, net)",
+    "object": "Left page: pre-printed ruled ledger grid (Libre Franklin rules/labels), figures typed in Courier Prime \u2014 tabular, aligned, exactly 0\u00b0 rotation; income in ballpoint blue-black, outgoings in red ink; net under a true double-rule (single rule above, double below, accounting-correct); paying/carrying subline typed small beneath dues; settlement note ('settled the first of each month, {year} dollars') as pencil marginalia",
+    "behavior": "Conditional upkeep line simply absent when zero; '\u2014' for no coaches preserved; #7bbf6a is gone \u2014 red/blue ink IS the semantic, redundant with +/\u2212 signs",
+    "rationale": "Double-entry red-and-blue is the one place 1975 already had semantic color, so we inherit it instead of inventing it"
+   },
+   {
+    "element": "The Books history (bookrow: month, dues, out, net, running balance) + empty state",
+    "object": "Right page onward: closed months as Courier rows down the same ruled grid, balance column rightmost and boldest; most recent row in freshest ink (container look, not opacity-on-data); empty state = blank ruled page with penciled 'first month not closed yet'",
+    "behavior": "Scrolls within the page mask (overflow-y inside the book); rows keep all five columns, mobile drops dues/out columns as today",
+    "rationale": "A running balance column read down a bound page is the native 1975 interface for exactly this data"
+   },
+   {
+    "element": "Credit warning (.finances__warning)",
+    "object": "A bank overdraft notice on white bond, paperclipped askew (+2\u00b0 seeded) to the open page corner, form-printed (Libre Franklin) with a red 'PAST DUE' stamp; warning prose typed on the notice",
+    "behavior": "Only mounts when money < 0; removed when solvent; never overlaps the figures column",
+    "rationale": "A letter from the bank sitting ON your books is dread you can see before you read it"
+   },
+   {
+    "element": "Rivals header lede (competitiveness + reputation + magazine pointer)",
+    "object": "Typed appraisal memo stapled inside the folder's front cover: 'NEW YORK IS A CROWDED FIGHT TOWN. WE ARE AN UNKNOWN.' (Special Elite, key facts CAPS+underline, \u226514px); pointer to national rankings as a pencil note: 'nationals \u2014 see the magazine on the bench'",
+    "behavior": "Static; reputation word is typed (decision-relevant), flavor framing stays marginalia",
+    "rationale": "Your standing written in your own trainer's dry typewriter voice builds the world's judgment into an object you own"
+   },
+   {
+    "element": "Rivals scope toggle (local city / regional, .rivals__scope-btn)",
+    "object": "Two die-cut manila tabs on the folder's right edge (clip-path trapezoids, staggered widths, typed labels 'NEW YORK' / 'NORTHEAST'), one dog-eared",
+    "behavior": "Active tab pulled forward casting a hard shadow on the other; click = paper shuffle (--ease-paper, \u2264220ms) swapping the sheet stack; real radiogroup semantics, focus ring as brass glint over retained 2px outline",
+    "rationale": "The CD's canonical tab object, used where a tab is genuinely what the fiction contains: a divided dossier"
+   },
+   {
+    "element": "Gym cards (name, tier chip, manager \u00b7 style \u00b7 est. year, fighters of note) + independents card + regional city groups + compact variant",
+    "object": "One typed half-sheet dossier per gym, stapled in a stack inside the folder over a folded city street map (set dressing); gym name typed CAPS underlined; manager/style/founding as the typed second line; tier = rubber stamp per category rule (scouting green-gray, +1.5\u00b0 fixed, seeded wobble): 'ESTABLISHED' / 'REGIONAL' / 'LOCAL'; independents = a distinct newsprint-stock sheet (#d6d1c2) headed 'UNAFFILIATED MEN' at the back; regional view = the second divider's sheets with typed city headers ruled beneath, compact gyms as carbon copies (carbon look on paper stock only \u2014 ink stays \u22654.5:1)",
+    "behavior": "Sheets seeded \u00b11.5\u00b0 per gym id; 'No fighters of note.' typed as-is; hover on a sheet = fingertip-smudge highlight; sort orders (tier rank, city alpha) unchanged",
+    "rationale": "A rival isn't a card component \u2014 it's intelligence somebody typed up for you, and a folder of dossiers makes scouting feel like work the gym actually did"
+   },
+   {
+    "element": "Fighter lines in gym cards (name, weight class, record + KO, standing with gold/amber/dim tone)",
+    "object": "Typed columns inside each dossier: name (Special Elite), class and record in Courier Prime \u2014 tabular, 0\u00b0, no stain may touch them; standing as typed CAPS with redundant shape encoding: RANKED lines underlined twice, CONTENDER once, PRO/PROSPECT plain \u2014 tones become ink weight categories, never hue-only",
+    "behavior": "Static data rows; column alignment preserved for down-the-page scanning; mobile column-drop behavior kept",
+    "rationale": "Comparing records is the player's real task here, so this is document-plane law: machine columns at full contrast"
+   },
+   {
+    "element": "The Ledger (history entries: compact date + text, count, note)",
+    "object": "The bound gym ledger, cloth boards and taped spine, opened to the latest page; dates stamped down the left column (Courier, aligned, 0\u00b0), event text in Special Elite with seeded 88\u2013100% word-opacity ribbon variance; entry count typed on the flyleaf card ('214 entries \u2014 gyms forget nothing.') and in aria; older entries continue up-page as you scroll",
+    "behavior": "Opens to most recent (reverse-chron preserved); scroll within page mask; entries never re-jitter \u2014 seeded by dayCount+index; no timeline, no feed",
+    "rationale": "Principle 8 verbatim: the gym's memory as a book you leaf through makes twenty years of play feel physically accumulated"
+   }
+  ],
+  "layout": "Controlled asymmetry anchored by light. The lamp's pool upper-left is the eye's entry; the blotter sits off-center left beneath it, so the walk-in slips \u2014 the decisions \u2014 live in the brightest square of the frame. The accounts book lies lower-right at a seeded \u22121.5\u00b0, its corner overlapping the blotter edge; the COMPETITION folder sits mid-right, one corner under the ledger; the ledger itself is deliberately cropped by the right frame edge (the desk continues beyond the camera). The dead phone and a stained mug fill the upper-right dead zone; the door sliver breaks the top-left corner. Nothing is centered; nothing aligns to a grid \u2014 objects align to each other, the way a right-handed man arranges a desk. Picked-up objects settle slightly left-of-center, keeping the tray's slip count visible in the margin. Density is preserved: every datum readable at rest today remains readable at rest or one pick-up away \u2014 identical to the current one-tab-click cost.",
+  "materialsAndLight": "Surfaces: oak desktop (--oak with baked SVG grain tile), tobacco leatherette blotter with brass corner caps (--brass-oxidized), manila folder (--manila), index-card slips (--index-card, blue rules #9fb0bd), green book cloth (--gym-green) with oxblood spine, newsprint sheet, white bank bond, chrome-and-bakelite phone. OFFICE RIG per the vision: one tungsten key upper-left (--key tokens), steep falloff, shadows locked at 3px 5px down-right for every object; rendered as a single pointer-events:none overlay stack \u2014 soft-light radial pool plus off-center multiply darkness \u2014 above content, so paper and desk are lit in one pass. Components ship flat material colors; paper is lit, never luminous: each picked-up document carries one multiply lamp gradient with a single hot corner. Amber appears only in that pool and in brass glints.",
+  "typography": "By source, per the type system: SPECIAL ELITE \u2014 walk-in slips, dossiers, appraisal memo, ledger event text (the gym's own worn machine). COURIER PRIME \u2014 every number: accounts figures, fight records, running balances, dates (clean tabular output, 0\u00b0 always). LIBRE FRANKLIN 500 \u2014 pre-printed rules, form numbers ('FORM 3-A REV. 2/71'), the bank notice. CAVEAT \u2014 one-line pencil marginalia: first impressions, patience dates, settlement note (\u226514px, never sole carrier of a stat). PERMANENT MARKER \u2014 the phone's tape tag. ANTON \u2014 stamps only ('GETTING RESTLESS', 'PAST DUE', tier stamps), eroded via the shared filter. Big Shoulders/Oswald/Roboto Slab: deleted.",
+  "imperfections": "Caused and seeded, two-plane. Environment: forearm-worn blotter edge nearest camera; coffee ring at the blotter's right margin (never under a slip's type); fingerprint smudge on the lamp's brass neck; tape residue where an old tray label was; drawer handle darkened by hands; all scaling with --gym-age. Documents: slips fan at seeded \u00b12\u00b0 by fighter id \u2014 stable forever; folder dog-eared at one corner; one old accounts line neatly x-struck and rewritten (flavor row, never live data); ledger ink ribbon-varies 88\u2013100% per word; paperclip rust ghost on the bank notice; roughly one sheet in four carries a margin stain. Numeric columns: 0\u00b0, untouched, always.",
+  "immersionRationale": "The current screen's tell is that Desk, Finances, Rivals, and Ledger are the same dark panel wearing different data \u2014 the \"one reusable component\" lie named by the CD. This design makes the four sections four different physical things with different stocks, inks, weights, and resting places, so switching context feels like reaching, not routing. The player learns the desk kinesthetically: money is the green book at your right hand, threats are the tied folder, memory is the heavy ledger you can't quite fit in frame. Decisions land somewhere \u2014 a reviewed slip leaves the tray within 400ms, an overdraft arrives as the bank's paper physically on your books. Remove every label and the set still reads: slips waiting under lamplight say 'men want in,' the circled balance says 'we're barely making it,' the dead phone with its tag says 'someday we book fights.' That is the inherited-office feeling stated as the project's final goal.",
+  "implementationNotes": "Phase 1 is fully CSS/SVG: desk = layered gradients + baked data-URI noise tiles (oak, leather, manila, index, newsprint) as shared tokens; the 30\u00b0 look is composition, not 3D \u2014 flat rectangles, seeded rotate(), one shadow direction; folder tabs = clip-path trapezoids; stamps and torn edges = one-time static feTurbulence defs (never on animating elements); lighting = two blend-mode overlay layers max, per ruling. Keep the existing tab-state architecture (module-scope tab components, stable identity) \u2014 'tab' just becomes which object is held; keep the overlay-aware Esc handler, adding desk-level put-down. Registry slots for real art, delivered neutral/unlit: desk surface, lamp, phone, mug, tray, book covers, map. Risks to flag: slip fan must degrade to a straight column below ~600px width (density guardrail); carbon-copy regional sheets need contrast QA after the lighting layer composites (guardrail 1); the desk-overview adds many DOM layers \u2014 cap set dressing at static, no ambient animation, since sessions run hundreds of weeks. Files: /home/user/The-Sweet-Science/src/rooms/OfficeRoom.tsx, /home/user/The-Sweet-Science/src/rooms/OfficeRoom.css, tokens in /home/user/The-Sweet-Science/src/styles/theme.css."
+ },
+ {
+  "screen": "THE GYM FLOOR \u2014 src/screens/GymScreen.tsx/.css, src/components/TimeControls.tsx/.css, src/components/GymLogBoard.tsx/.css, src/components/RoomGlyph.tsx (deleted). ROOM SHOT: standing eye height (~5'8\"), just inside the street door, looking across the ring at the back wall. Full-bleed; walls meet viewport edges.",
+  "roomConcept": "You are standing on the training floor, ten feet inside the street door, keys still in your hand. The ring cuts across the midground \u2014 ropes, turnbuckles, a canvas that's been patched twice. The back wall is an elevation of real destinations at honest, unequal sizes: a raised pebbled-glass office door with the gym's name painted on it and light burning inside; a dark corridor to the lockers with a fluorescent gleam on steel; the chalkboard-and-pegboard training station beside the ring apron. On the near right wall, closest to your hands because you use it every minute, hangs the time station: a tear-off date pad and a punch clock. Your hands do three things here: read what the walls tell you, open doors, and tear off days. Nothing on screen is a panel; the five \"cards\" are demolished.",
+  "objectMap": [
+   {
+    "element": "Office door (nav \u2192 office room, currently 'My Office' card)",
+    "object": "Pebbled-glass wooden door on the back wall, raised two concrete steps, 'OFFICE' painted in sign-painter caps on the glass, gym name arched above it, warm tungsten light burning through the glass from inside",
+    "behavior": "Hover: latch jiggles 2px and the glass glint brightens (light, not fill). Click: door cracks open 8\u00b0, 380ms lateral pan + light change into the office. Focus: brass glint on retained 2px ring. Tagline dies; a door needs no marketing copy \u2014 aria-label keeps 'Office \u2014 walk-ins, fights, finances, rivals'.",
+    "rationale": "The lit glass says 'the business lives in there' without a word; it is the CD's named anchor object and the room's warmest light source."
+   },
+   {
+    "element": "Walk-ins-waiting count (red pulsing badge on office card)",
+    "object": "Stack of pink 'WHILE YOU WERE OUT' slips wedged under the office door and into the doorframe, one slip per walk-in, seeded angles; a typed tally card ('3 WAITING') clipped to the door glass",
+    "behavior": "Each advance that brings a walk-in slides a new slip under the door within 400ms (--ease-paper, settle rotation). Click slips: opens the office same as the door. Empty: bare threshold, tape ghost where the tally card clips. Exact count in aria-label and typed on the tally card.",
+    "rationale": "Counts as visible evidence (principle 6): you SEE three men waiting as three pieces of paper someone shoved under a door \u2014 the pulse animation becomes an event that physically happened."
+   },
+   {
+    "element": "Cash readout (header CASH $2,200 KPI)",
+    "object": "Index card taped beside the office doorframe, typed 'BANK BAL.' with the figure in Courier Prime tabular numerals, yellowed tape at two corners",
+    "behavior": "Static display, always legible (7:1 numerals, card angle 0\u00b0 on the figure line). Negative balance: figure typed as ($110) accountancy parens plus a red 'OVERDRAWN' rubber stamp across the card's margin \u2014 word + shape, never hue alone. Click: shortcut into the office ledger. Updates re-type in place, no tween.",
+    "rationale": "Implements the CD's cash ruling verbatim; a taped card by the office door is exactly where a broke owner would keep the number he checks before every yes."
+   },
+   {
+    "element": "Locker Room door (nav \u2192 locker room card)",
+    "object": "Open doorless corridor mouth on the back wall right, 'LOCKERS' hand-painted on the header board, cool fluorescent spill and a gleam of steel visible in the dark beyond",
+    "behavior": "Hover: the fluorescent gleam inside sharpens (screen-blend overlay only). Click: 380ms pan into the corridor, warm light crossfades to cool. It is bigger than the office door \u2014 a corridor, not a door \u2014 size states importance without a grid.",
+    "rationale": "A doorway you can see steel through IS the tagline; warm-to-cool light change makes the locker room a different climate, which is what a locker room is."
+   },
+   {
+    "element": "Roster count (parchment badge '8' on locker card)",
+    "object": "Small slate hung beside the corridor mouth, chalk-lettered 'IN CAMP' with a chalk tally-and-numeral ('||||  8'), chalk dust on the ledge",
+    "behavior": "Re-chalks with a 2-frame steps() scratch when the roster changes. Zero fighters: slate wiped, ghost of erased chalk. Count duplicated in aria-label on the corridor button.",
+    "rationale": "A trainer's head-count slate is period-true and readable pre-attentively; tally marks give the count physical history."
+   },
+   {
+    "element": "My Gym / training (nav \u2192 'My Gym' card: philosophy, coaches, upgrades)",
+    "object": "The ring itself plus its corner station: a chalkboard on the ring post ('TRAINING' chalked, philosophy word beneath) and a coach pegboard with hanging brass tags \u2014 the whole station is one large click target",
+    "behavior": "Hover: the hanging bulb over the ring snaps a touch brighter (light on object). Click: object-shot cut down onto the chalkboard/pegboard (the MyGymRoom view). The CD's three-room ruling is honored: 'My Gym' stops being a fake door \u2014 the floor you are standing on IS the gym, and its management view is the ring-corner station you lean into.",
+    "rationale": "Resolves the absurdity of a gym containing a door labeled 'My Gym'; training identity lives at the ring, where it would."
+   },
+   {
+    "element": "Coach-applicant count (alert badge on gym card)",
+    "object": "Bill spike on the chalkboard ledge holding applicants' letters \u2014 one envelope per applicant, seeded skew, typed tally slip beneath ('2 MEN ASKING')",
+    "behavior": "New applicant: envelope drops onto the spike with paper settle within 400ms of advance. Empty: bare spike. Exact tally typed and in aria.",
+    "rationale": "Men looking for cornerman work mailed letters in 1975; a spike of envelopes is a count you feel."
+   },
+   {
+    "element": "The Press (nav \u2192 press card)",
+    "object": "Folded newspaper lying on the oak bench in the near foreground, masthead partially visible, reading glasses beside it",
+    "behavior": "Hover: top corner of the front page curls (--ease-paper). Click: object shot \u2014 the paper lifts to fill the frame (the press screen), bench edge still visible at frame bottom. Esc puts it down.",
+    "rationale": "Implements the CD demotion ruling: the press was never a room, it was always the paper the owner reads on the bench."
+   },
+   {
+    "element": "Calendar (nav \u2192 calendar card, plus season display)",
+    "object": "Wall calendar hung crooked (seeded \u22122\u00b0) between office door and time station: 'MAY 1975', month grid with grease-pencil X's through spent days, upcoming fight dates circled in red grease pencil",
+    "behavior": "Hover: the sheet stirs at the bottom edge. Click: object shot into the schedule view. The grid itself already answers 'what's coming' at a squint \u2014 circles visible from the room shot. Month name + printed season art carry the season; aria keeps 'Spring, May 1975'.",
+    "rationale": "The calendar becomes what the CD ruled it is \u2014 a thing on a wall \u2014 and gains at-a-glance schedule info the old card never had."
+   },
+   {
+    "element": "Date display + ADVANCE DAY (footer date + button)",
+    "object": "Tear-off day pad on the near right wall, largest print in the room: 'FRIDAY' in Anton, 'MAY 2' huge, '1975' in Libre Franklin form-print, screwed steel backplate, torn stubs of spent days under the staple",
+    "behavior": "Hover: bottom corner of the leaf curls. Click (\u226544px, whole pad): leaf tears free, tumbles off with 1.5\u00b0 rotation (~280ms --ease-paper), next date already printed beneath \u2014 never blocks input, reduced-motion snaps. Never disabled. The pad IS the date readout, so advancing time and reading time are one object.",
+    "rationale": "Tearing off a day is the most legible time gesture 1975 owns; the click stays one gesture and the feedback is the data changing physically."
+   },
+   {
+    "element": "ADVANCE WEEK (footer button)",
+    "object": "Punch clock mounted directly below the pad: cast-steel case, brass face, card slot showing a typed time card 'WEEK OF MAY 2'; the whole clock is the button",
+    "behavior": "Hover: lamplight catches the brass rim (specular stop brightens). Click: lever slams in 100ms (--ease-stamp, steps(3)), card stamps and drops into the rack, bell tick; hard stop, no ease-out. Never disabled. Aria: 'Advance one week'.",
+    "rationale": "Punching out closes a working week \u2014 day is a light paper act, week is a heavy steel act; the material weight teaches the difference in commitment without a '+7'."
+   },
+   {
+    "element": "Gym log (collapsible GYM LOG panel, 5 recent lines)",
+    "object": "Corkboard on the left wall near the entrance: latest notes as typewritten slips and pencil scraps pinned overlapping, newest on top fully legible (Special Elite \u226514px), dates penciled in Caveat, older notes peeking beneath",
+    "behavior": "New entry pins on with a damped pin-swing after advance. Click board: object shot leaning in to read all recent lines. Empty: bare cork, old pin holes and sun-faded rectangles. The collapse toggle is deleted \u2014 on a wall the board occupies no 'space' to reclaim; nothing is lost, aria lists entries.",
+    "rationale": "A corkboard that visibly accretes paper makes the gym's quiet life ambient instead of a widget you manage."
+   },
+   {
+    "element": "HOME / exit (\u23fb HOME header button)",
+    "object": "Sliver of the street door at the far left frame edge \u2014 daylight through chicken-wire glass \u2014 with a red electric EXIT box glowing above it",
+    "behavior": "Hover: the door admits a wider blade of daylight. Click: confirmless, walks out to the home screen with a pan toward the light. The EXIT sign is a fixture, therefore the one legally emissive element on the floor.",
+    "rationale": "The way back stays in frame per the CD shot grammar, and the power-glyph anachronism dies; you leave a building through its door."
+   },
+   {
+    "element": "Gym identity (header: name, city/state, 'Local')",
+    "object": "The gym's name sign-painted big and faded across the back wall above the ring (Anton, letterpress bleed), 'NEW YORK, N.Y.' painted smaller beneath; a framed state license by the office door, typed 'CLASS: LOCAL CLUB \u2014 N.Y.S.A.C.'",
+    "behavior": "Non-interactive set signage; paint wear seeded from gym id and scaled by --gym-age. Reputation tier re-types on the license when it changes (and in aria). The header bar component is deleted entirely.",
+    "rationale": "Remove every label and the wall still says whose gym this is, where, and how far it has gotten \u2014 the brief's final test, passed literally."
+   },
+   {
+    "element": "Overlay hosting (ArrivalNotice, Toast, WalkInViewer, RoomRouter, FighterProfile)",
+    "object": "All overlays land as paper on this room's surfaces: notices deal onto the frame's bottom third as slips on the bench; toasts become a slip pinned briefly to the corkboard edge",
+    "behavior": "Deal-in with settle rotation, exit-before-unmount; Esc always puts the paper down; the floor's lighting rig lights them (multiply lamp gradient, one hot corner).",
+    "rationale": "Overlays stop floating in a void; everything that interrupts you arrives as something someone left for you."
+   }
+  ],
+  "layout": "Full-bleed elevation, no header, no footer, no centered grid. Horizon at standing eye height; one-point perspective flattened to near-elevation so targets stay honest rectangles. Left edge: street-door sliver + EXIT (the way back). Left wall: corkboard, low, slightly crowded toward the door. Back wall, left-of-center: office door up two steps \u2014 the eye's anchor, the only warm lit glass in the room, with cash card and license flanking it. Center: painted gym name high, ring ropes crossing the midground, bench with newspaper in the near foreground breaking the wall plane. Right-of-center: chalkboard/pegboard station at the ring corner; then the taller, darker locker corridor. Near right wall, angled toward camera and largest of all interactive objects: date pad over punch clock \u2014 frequency dictates proximity. Calendar hangs crooked in the seam between office and time station. Sizes are deliberately unequal (corridor > office door > chalkboard > calendar > newspaper); baselines drift a few seeded pixels. Nothing is centered; the composition balances mass (dark corridor right) against light (office glass left).",
+  "materialsAndLight": "Surfaces: painted concrete floor with rubber mats at the ring, gym-green wainscot under plaster-mint upper walls (--gym-green #435243, --plaster-mint #98a58e), oak bench and door casings (--oak), steel time-clock case and corridor gleam (--locker-steel), canvas ring apron, cork, manila, index-card stock, oxidized brass on the clock face. All via baked SVG noise tiles + flat material tokens \u2014 no per-component gradients. Light rig (single pointer-events:none overlay stack): three hanging bulbs at irregular spacing, one dead over the far corner; soft-light radial pools on floor and ring; a screen-blend daylight shaft from the street door driven by --daylight/season tokens; warm tungsten bloom inside the office glass; cool fluorescent spill from the locker corridor \u2014 the floor's two climates meeting. One shadow direction per the rig (down-right, 3px 5px). Amber appears only in these pools and on brass glints; no control fills amber, ever.",
+  "typography": "Sign-painter/poster (Anton): painted wall name, door signs OFFICE/LOCKERS, day-pad weekday, EXIT box. Fat-face (Ultra): set-dressing fight bills only. Form print (Libre Franklin 500, 12\u201314px): calendar grid, time-card ruling, license, pad's '1975'. Typewriter \u2014 Special Elite for corkboard notes, tally cards, pink slips; Courier Prime for the bank-balance figure and typed tallies (tabular, 0\u00b0). Hand: Caveat penciled dates on the corkboard; Permanent Marker on one taped repair label. Stamp (Anton, eroded shared filter): OVERDRAWN, the punch clock's card stamp. Chalk lettering on slate/chalkboard is drawn SVG strokes, not a font. Every glyph names its maker; no tracked microcaps anywhere.",
+  "imperfections": "Caused, local, seeded from save/gym id, scaled by --gym-age: hand-smudge darkening around the office doorknob and the punch-clock lever; scuffed threshold arcs at the corridor mouth; rust weeping from the time-clock mounting screws; the dead bulb; tape ghosts and sun-faded rectangles on the cork where old notes hung; chalk dust on the slate ledge; a dated plywood patch in the wainscot ('FIXED 3/71' in marker); calendar hung \u22122\u00b0, corkboard slips \u00b12\u00b0 seeded. Iron exceptions: the bank-balance figure, chalk tally numeral, pad date, and calendar grid sit at exactly 0\u00b0 with zero grain over numerals; stains live in margins only. No two slips or envelopes share a wear variant.",
+  "immersionRationale": "The current screen is five identical software cards floating over a mural \u2014 the CD's 'biggest lie' at its purest. This design deletes the panel as a species: every datum now has a place a 1975 owner would have put it, so the player reads the room the way the owner does \u2014 glance at the door for who's waiting, the taped card for money, the slate for head-count, the pad for the date. Frequency maps to proximity (the time station is at your hands; the archive corridor is across the room), so navigation teaches the building's geography instead of a menu's order. Time advancing \u2014 the game's heartbeat \u2014 becomes two sensorially distinct physical acts, paper and steel, and every advance produces visible consequence within 400ms: a slip slides under the door, a note pins to the cork, an envelope drops on the spike. Things happen TO the room, so the room reads as real. Remove all text and the lit office glass, steel gleam, wedged slips, and torn stubs still tell you everything \u2014 the brief's final test.",
+  "implementationNotes": "Phase 1 is fully buildable in CSS/SVG: the elevation is layered procedural SVG (wall, wainscot, ring ropes as paths, doors as rects with pebbled-glass = feTurbulence baked to a data-URI tile) behind absolutely-positioned HTML buttons whose hit areas exceed the drawn objects (\u226544px, especially the calendar and cash card). Lighting = one overlay stack of 2 blend layers max per the CD (soft-light radial pools + screen daylight shaft), tokens --key-*, --shadow-dx/dy. Tear-off pad: two stacked leaves, clip-path tear + transform tumble; punch clock lever: steps(3) transform; chalk = stroked SVG paths with dash jitter. Seeded jitter via a shared hash(entityId) util. Registry slots: back-wall art, ring, door textures \u2014 delivered unlit per the amended contract. Risks: (1) room-shot legibility below ~900px \u2014 ship a reflow where the elevation becomes a vertical wall-by-wall scroll, time station pinned bottom (never horizontal body scroll); (2) contrast of chalk-on-slate and painted signs must be audited AFTER the lighting composite (4.5:1, numerals 7:1); (3) GymLogBoard collapse and RoomGlyph deletions touch GymScreen.tsx structure \u2014 badge() logic survives as slip/envelope/tally counts with aria parity; ROOM_ORDER's five keys still route (gym \u2192 ring station, press \u2192 bench paper, calendar \u2192 wall calendar), so no state or route changes are required, only presentation."
+ },
+ {
+  "screen": "LOCKER ROOM \u2014 wall / list / development views (src/rooms/LockerRoom.tsx/.css, src/components/Locker/LockerWall.tsx/.css)",
+  "roomConcept": "A narrow concrete-block back room under two cool fluorescent tubes: one bank of eight mismatched steel lockers against a plaster-mint wall, a scarred wooden bench bolted to the floor beneath the near row, a brass key rack screwed beside the door frame, a trainer's clipboard hanging on a nail, and the bound Progress Book lying on the bench's far end. ROOM SHOT is the default: the wall of doors IS the wall view, full-bleed, no panel, no header \u2014 a sliver of the gym floor's warm light shows through the doorway at the left edge (the way back, Esc). The player's hands do gym-manager work: read doors, lift the clipboard, open the book, hand out keys, stamp fates.",
+  "objectMap": [
+   {
+    "element": "Room shell + back navigation (room-screen chrome, breadcrumb, Back button)",
+    "object": "The room itself, full-bleed: concrete block wall, stenciled 'LOCKERS' painted above the bank, doorway at left edge showing a sliver of the floor's tungsten light",
+    "behavior": "Click the doorway sliver or press Esc to cut back to the Floor (lateral pan + light change, 380ms, --ease-steel). No header, no breadcrumb, no floating panel \u2014 the code comment declares ROOM SHOT.",
+    "rationale": "Deleting the reusable dark panel is the single biggest fix; signage and a visible way back replace chrome with architecture."
+   },
+   {
+    "element": "Occupied locker door (portrait, name tape, click\u2192profile)",
+    "object": "Steel door, seeded per-fighter wear (dents, scratched paint, rust at hinge seams), a taped snapshot photo (the portrait) held by two tape corners, and a masking-tape name strip written in Permanent Marker",
+    "behavior": "Hover = latch jiggle (2px rotation wobble, --ease-steel) and the fluorescent catches the steel (specular stop brightens) \u2014 never translateY. Click = door cracks open 12\u00b0 then cuts to the profile (the man's file). Focus-visible = brass glint ring on the latch.",
+    "rationale": "A door you touch and open is the game's strongest existing prop; killing hover-levitation and glow makes it 300lb steel instead of a card."
+   },
+   {
+    "element": "Door status glyphs (mood dot, focus \u2726, dev arrow, tier accent)",
+    "object": "Physical marks ON the door: tier = grease-pencil letter (K / W / C) on the tape corner; mood = a folded paper slip wedged in the door vent only when warn/crit (his note to you); focus = a red-string tag hung on the latch reading 'FOCUS'; trajectory = a small pencil up-tick or down-tick beside the name on the tape",
+    "behavior": "All seeded, deterministic per fighter id; slip and tag carry title text and aria-labels ('morale: shaky'); no color-only signal \u2014 shape + word + position encode everything.",
+    "rationale": "Replaces three abstract UI dots with evidence a trainer would actually leave, readable at a glance down the bank."
+   },
+   {
+    "element": "Empty lockers (cap evidence, emptyCount)",
+    "object": "Doors standing ajar, dark inside, one bare hook visible; no 'EMPTY' letterpress label \u2014 an open door IS empty",
+    "behavior": "Non-interactive, aria-hidden with the count carried on the key rack's aria-label; each ajar angle seeded differently (\u00b13\u00b0 set-dressing budget).",
+    "rationale": "An open steel door communicates vacancy better than tracked microcaps ever could, and makes the cap a visible, countable fact."
+   },
+   {
+    "element": "Locker meter + without-count (used/lockerCap, noLockerCount/noLockerCap progress bar)",
+    "object": "Brass key rack by the door: eight numbered hooks, free lockers' keys hanging on leather fobs, used hooks bare; below it an index card in a metal card holder, typed: '8 LOCKERS \u2014 3 ASSIGNED / CARRYING 1 OF 4 WITHOUT'",
+    "behavior": "Card text updates on change; giving a locker visibly removes a key from the rack within 400ms (consequence motion). Full aria: 'Lockers: 3 of 8 used; 1 of 4 without.' The progress bar is deleted.",
+    "rationale": "Counts become countable objects (principle 6); keys foreshadow the give-locker action physically."
+   },
+   {
+    "element": "Focus slots meter (focusedCount/focusCapacity)",
+    "object": "A small pegboard strip labeled in stencil 'FOCUS TRAINING', with focusCapacity hooks; each used slot is a manila tag bearing the fighter's typed last name; free hooks hang empty",
+    "behavior": "Full state = every hook occupied (typed card beneath repeats '2 OF 2 IN USE'); assigning focus swings a tag onto the hook (damped pin-swing). Aria carries the tally.",
+    "rationale": "Scarcity you can see \u2014 a full hook board says 'no slots' before any tooltip does."
+   },
+   {
+    "element": "View switcher (Wall / List / Development buttons)",
+    "object": "Three objects in the room instead of a segmented control: the wall itself (default), the clipboard on its nail (taped label 'ROSTER'), and the Progress Book on the bench (marker on the cloth spine: 'PROGRESS')",
+    "behavior": "Click clipboard/book = OBJECT SHOT: it slides up from the bottom third and settles (200ms, --ease-paper, 1\u00b0 rotation), room dimmed but visible at the edges; Esc or clicking the room puts it down. Still one click per view; keyboard: both are real buttons in tab order with accessible names.",
+    "rationale": "The view toggle was the loudest dashboard tell; picking up the actual document preserves one-click switching while making 'views' diegetic."
+   },
+   {
+    "element": "The Bench (lockerless men, bench.length/noLockerCap, empty state)",
+    "object": "The real wooden bench under the lockers: each lockerless man is his snapshot photo paper-clipped to a manila trial card lying on the bench slats, typed last name beneath; a stencil on the bench edge reads 'TRIALS'",
+    "behavior": "Click a card = profile. Hover = corner curl. Empty state: bare slats and a typed card 'NOBODY WAITING.' Cap and 'limited training' typed on a card taped to the bench end; aria mirrors counts.",
+    "rationale": "\u2018The Bench' finally becomes a bench; trial cards (not doors) make the locker/no-locker class difference physical."
+   },
+   {
+    "element": "List view tier sections (TIER_META name, short, blurb, count, '\u2014 nobody here \u2014')",
+    "object": "The clipboard sheet: one typed roster page (Special Elite) ruled into three sections, each headed by a rubber-stamped tier name \u2014 MUST KEEP (blue-black), WATCH (graphite underline), CHOPPING BLOCK (stamp red) \u2014 with the blurb typed lowercase beneath and the count typed as 'x3' after the heading",
+    "behavior": "Empty tier = the typed line '\u2014 nobody here \u2014' stays verbatim. Sections are position-encoded (top/middle/bottom of sheet) per the CD's tray ruling; stamps at fixed per-category angles with seeded \u00b11\u00b0 wobble.",
+    "rationale": "Position + label + stamp encodes hierarchy exactly as the CD demands, and reads faster than colored pill headers."
+   },
+   {
+    "element": "Fighter row identity (portrait, name, age\u00b7class\u00b7tenure, traits / 'no obvious traits yet')",
+    "object": "A typed roster line: paper-clipped thumbnail photo, name in typewriter caps, second line Courier Prime 'AGE 24 \u00b7 WELTERWEIGHT \u00b7 41 DAYS' (tabular, unrotated), traits as small rubber stamps; 'no obvious traits yet' stays as typed lowercase",
+    "behavior": "Click name/photo = open profile; hover = fingertip-smudge highlight across the line (soft-light darkening), never a glow. Line rules printed in Libre Franklin form-print.",
+    "rationale": "The typed sheet is the period-true fast read; smudge hover keeps touch, kills SaaS states."
+   },
+   {
+    "element": "Mood / trajectory / feel chips (MoodChip, dev.label, feel.label + blurb tooltip)",
+    "object": "Rubber stamps inked on the roster line per the CD's fixed grammar: mood blue-black at 0\u00b0, trajectory stamp-red at \u22122\u00b0, feel green-gray at +1.5\u00b0, edges eroded via the shared feTurbulence def; feel's blurb becomes a one-line Caveat pencil note in the margin (\u226514px) plus title text",
+    "behavior": "Fixed angle/ink per category, seeded \u00b11\u00b0 per instance; meaning carried by word + border shape, never hue; absent feel = typed em-dash.",
+    "rationale": "Stamps scan pre-attentively down a column while staying ink, not icons \u2014 the exact CD ruling."
+   },
+   {
+    "element": "Tier assignment (3-button group per fighter)",
+    "object": "A printed three-box checklist on each line \u2014 \u2610K \u2610W \u2610C in Libre Franklin form print with full names in the title/aria \u2014 with one graphite pencil check (SVG stroke, seeded wobble)",
+    "behavior": "Real radiogroup; click a box to move the check (90ms stamp-in of the new mark, old one erased with a faint smudge remaining \u2014 permanent evidence). \u226544px targets; one click as today.",
+    "rationale": "The CD's checklist pattern verbatim: all options visible, zero open-click, and the leftover eraser smudge gives decisions memory."
+   },
+   {
+    "element": "Training focus select (9 options: General / Well-rounded / 7 attributes; slotsFull disable)",
+    "object": "Current assignment typed on the line ('GEN. TRAINING' or 'FOCUS: LEFT \u2014 POWER'); clicking it lifts a small index card popover \u2014 'TRAINING ORDERS, CARD 7-A REV. 9/74' \u2014 a printed 9-line checklist with one pencil check",
+    "behavior": "Clipboard-sheet popover per CD ruling (>7 options); real radiogroup, click a line to move the check and the card files itself away (260ms --ease-paper). When slotsFull and focus is null, the card's focus lines are printed 'ALL SLOTS FILLED \u2014 SEE HOOK BOARD' and disabled (dusty, not grayed); native select is deleted.",
+    "rationale": "Kills the single most anachronistic pixel in the room while keeping assignment at two clicks, same as opening the old dropdown."
+   },
+   {
+    "element": "Give Locker / Take Locker (cap-disabled with tooltips)",
+    "object": "A key: 'GIVE LOCKER' is a small brass key tag printed on the line \u2014 clicking it takes a key off the rack, which visibly loses one, and the man's card leaves the bench for a door; 'TAKE LOCKER' is the reverse, typed in form print with a stamped border",
+    "behavior": "Disabled at caps = the tag rendered dusty with the reason typed beside it ('EVERY LOCKER IS FULL' / 'NO ROOM ON THE BENCH'), also in title/aria. Consequence lands within 400ms: key moves, door tape appears or is peeled.",
+    "rationale": "The locker IS the game's core scarcity; handing a physical key makes the decision feel like patronage, not a toggle."
+   },
+   {
+    "element": "Cut / Stop considering + Confirm / Cancel",
+    "object": "A red grease pencil: first click strikes a straight x-strike line through the man's roster line and reveals two stamps hovering at the line's end \u2014 'RELEASED' (stamp red) and 'KEEP' (graphite)",
+    "behavior": "Confirm = RELEASED stamp slams (90\u2013120ms --ease-stamp, accelerating in, no ease-out) and the line files out; Cancel = the strike erases leaving a faint smudge. For trialists the stamp reads 'PASSED ON'. Both stamps \u226544px, labeled, focusable.",
+    "rationale": "Cutting a man should feel like ink hitting paper \u2014 irreversible weight the old rounded button never carried."
+   },
+   {
+    "element": "Development view (table: fighter, trajectory, feel, 7 attrs + trend arrows, lockerless note, footnote)",
+    "object": "The Progress Book: a bound ledger open flat (visible stitching, cloth spine at frame edge), Courier Prime tabular columns on ruled index-card blue lines \u2014 PWR SPD CHN STA DEF IQ FTW headers pre-printed in Libre Franklin; numerals typed at 0\u00b0 rotation, 7:1 contrast; trends are short pencil up-ticks/down-ticks beside each figure (shape carries direction, color secondary); trajectory and feel repeat as their category stamps; lockerless men get the typed line 'NO LOCKER \u2014 LIMITED TRAINING' spanning the columns",
+    "behavior": "Click a name = profile (smudge hover). The footnote ('Arrows show recent form\u2026') becomes a Caveat pencil note at the page bottom, \u226514px, flavor-only since data is redundantly typed. Page turns with --ease-paper on open.",
+    "rationale": "A bound book honors principle 8 \u2014 memory lives in objects \u2014 while Courier's natural tabularity gives better column scanning than the current grid."
+   }
+  ],
+  "layout": "Full-bleed, no centered panel. The locker bank runs from the left third to right of center in two uneven rows \u2014 doors are near-uniform but not perfectly: one narrower door (bought secondhand), gaps drift \u00b14px, the bank sits slightly left of viewport center. The doorway sliver anchors the far left; the brass key rack and hook board cluster on the right wall, breaking symmetry with small dense objects against the large steel mass. The bench runs beneath the near row, trial cards scattered with seeded offsets, weighted toward its right end. The clipboard hangs on its nail between rack and bank at eye height. Stenciled 'LOCKERS' signage, slightly off-level, is the room's only title. Object shots (clipboard, book, orders card) rise from the bottom third and fill ~80% of frame, steel and fluorescent light visible at every edge.",
+  "materialsAndLight": "Surfaces: --locker-steel doors (#5c635a, lit #757c70) with fresh/worn/old color-mix aging, --plaster-mint block wall above a --gym-green painted wainscot, --concrete floor with a rubber runner, oak bench, brass rack (oxidized, polished only where fingers reach), manila/index-card paper stocks on clipboard and book. Light per the CD rig: two cool fluorescent tubes as screen-blend bands defined once as room tokens, near-shadowless (shadow-dx/dy \u2248 0/2px), one tube on a rare steps() flicker (killed under reduced-motion); warm tungsten spill leaks through the doorway sliver as the sole amber in the room \u2014 amber is light falling on steel, never a fill. Components ship flat material colors; the single overlay stack lights doors and paper in one pass.",
+  "typography": "Special Elite carries the roster sheet and trial cards (worn gym paperwork); Courier Prime carries the Progress Book's compared numerals \u2014 tabular, one weight, 0\u00b0 rotation. Libre Franklin 500 does pre-printed form furniture: column headers, checklist boxes, card numbers ('CARD 7-A REV. 9/74'), tally cards. Anton, eroded by the shared stamp filter, is stamp voice: tier headings, RELEASED, mood/trajectory/feel. Permanent Marker writes tape names on doors and the book spine; Caveat is capped at one-line pencil marginalia (feel blurbs, the dev footnote) at \u226514px. Stencil lettering (Anton, masked) paints 'LOCKERS' and 'TRIALS'. Oswald, Big Shoulders, Roboto Slab: gone.",
+  "imperfections": "Environment plane, all seeded and caused: smudge darkening around every latch and the clipboard nail; scuffed wainscot at bench height where heels rest; rust streaks under hinge seams and at the key rack screws; one door repainted a slightly wrong green (a dated repair); dents scale with --gym-age. Document plane, capped: roster sheet rotates 1.2\u00b0 on its clip, trial cards \u22642\u00b0 each (per fighter id, deterministic); one sheet in four carries a margin coffee ring that never touches type; grain \u22646% over paper; numeric columns and checklist boxes at exactly 0\u00b0. The tape name strips fade per tenure \u2014 older men's marker is duller ink, a container look, never opacity on live data.",
+  "immersionRationale": "Every abstraction in this screen becomes something a 1975 trainer demonstrably owned: caps become keys and hooks you can count, tiers become stamped sections of a typed sheet, the dropdown becomes training orders on an index card, cutting a man becomes a red strike and a slammed stamp that leaves a smudge when you change your mind. The three 'views' stop being tabs and become the three things actually in such a room \u2014 the wall, the clipboard, the book \u2014 so switching views is reaching for an object, which is what management physically was. Consequence motion (a key leaving the rack, a tag swinging onto a hook, tape peeling off a door) means the room visibly remembers every decision within 400ms. Remove all labels and the set still reads: steel = roster, keys = scarcity, bench = men waiting, red stamp = the door.",
+  "implementationNotes": "Phase 1 is fully CSS/SVG: doors extend the existing lockers.tsx registry (neutral/unlit per the amended contract) with seeded dent/rust layers from baked SVG noise tiles; fluorescent bands are one pointer-events:none overlay stack replacing .worn; stamps/pencil strokes/tape use one-time static feTurbulence defs shared app-wide; the checklist radiogroup and orders-card popover are plain React with roving tabindex. Reuse the room's shadow tokens so paper and steel agree. Risks: (1) the object-shot transition must keep exit-before-unmount cheap \u2014 animate transform/opacity only; (2) door glyph slips need aria-labels since visual chrome shrinks; (3) narrow viewports \u2014 the bank must wrap without breaking the bench alignment, so bench cards belong to a separate flex row, not absolute positioning; (4) devview keeps min-width + overflow-x inside the book page, never the body. Real art later: door faces, bench wood, key fobs \u2014 all behind the registry, lit by the rig."
+ },
+ {
+  "screen": "Fighter Profile \u2014 src/screens/FighterProfile.tsx/.css (tabs: overview / record / biography / career / development; lockered and lockerless variants)",
+  "roomConcept": "OBJECT SHOT, office desk. The player has pulled this man's manila folder from the filing cabinet and dropped it open on the green desk blotter \u2014 camera looking down ~30\u00b0, the folder filling the frame, blotter leather and a sliver of oak desk edge showing all around, the still-open cabinet drawer visible at the top-left of frame (the way back). The player's hands are doing what a 1975 manager's hands did: flipping die-cut dividers, reading typed cards under the lamp, penciling a check on the standing list, and landing rubber stamps to decide a man's future. If he's asking about a locker, his note is physically lying on top of the folder and must be dealt with \u2014 stamped \u2014 before it slides aside. Esc files the folder back into the drawer.",
+  "objectMap": [
+   {
+    "element": "Screen container (role=dialog, Esc-to-close, closeProfile)",
+    "object": "Open manila folder on the office desk blotter \u2014 two flaps, typed name-tab on its edge ('VALDEZ, S.'), slid up from the bottom third with a paper settle (+0.8\u00b0 seeded rotation)",
+    "behavior": "Enters via --ease-paper 240ms slide-up with settle; Esc or filing it plays the reverse (folder closes, slides toward the drawer) before unmount; the walk-in viewer layering guard is preserved (Esc ignored while a card is on top). Blotter and desk edge always visible at frame edges per object-shot law.",
+    "rationale": "The folder IS the fighter file the brief demands; the current floating dark panel becomes a thing you physically pulled, and closing becomes filing \u2014 an act, not a route change."
+   },
+   {
+    "element": "Back button + 'Locker Room \u00b7 Fighter' breadcrumb",
+    "object": "The open filing-cabinet drawer sliver at top-left of frame: steel drawer face, typed index label 'ROSTER \u2014 ACTIVE', folder gap visible where this one came from",
+    "behavior": "Hover: latch glint (specular brightens, no levitation); click files the folder (same exit as Esc). Aria-label keeps 'Back to Locker Room (Esc)'. No header bar, no breadcrumb text \u2014 the drawer is the wayfinding.",
+    "rationale": "Replaces the loudest app chrome with the never-leaves-frame 'way back'; you can see where the folder lives, so the path needs no words."
+   },
+   {
+    "element": "Tab nav (Overview/Record/Biography/Career/Development; Development lockerOnly-disabled)",
+    "object": "Die-cut manila divider tabs along the folder's top edge \u2014 clip-path trapezoids, staggered widths, typed Special Elite labels, one dog-eared (seeded)",
+    "behavior": "Active tab pulled 2px forward, casting a hard shadow on the tab behind; switching sheets is a 180ms paper lift-and-drop, not a crossfade. Lockerless Development divider is dusty (not grayed), its sheet edge visibly absent, title tooltip retained ('Give him a locker to chart his development'); real button semantics + focus brass-glint ring kept.",
+    "rationale": "Folder dividers are the exact 1975 object for sectioned records; a dusty, sheetless divider tells the fog story physically."
+   },
+   {
+    "element": "Portrait + name/nickname + vitals dl (age/height/weight/class/from)",
+    "object": "B&W photograph paper-clipped (rusting clip) to the pre-printed FIGHTER REGISTRATION card: index-card stock, blue rules, Libre Franklin printed field labels ('AGE / HT. / WT. / CLASS / HOME'), typewriter-filled values; name typed as header line: VALDEZ, SAMUEL \u2014 \"nickname\" in typed quotes",
+    "behavior": "Photo sits at seeded \u22642\u00b0 tilt; typed values sit at exactly 0\u00b0 on the ruled lines at full ink contrast. Portrait registry slot unchanged (art drops in as the photo print, delivered unlit per the rig ruling).",
+    "rationale": "A government-form card answers the source test for every vital; photo-under-paperclip is the single strongest 'this is a dossier' cue in the frame."
+   },
+   {
+    "element": "Status cluster: hasLocker line, MoodChip, tenure, trialPatience flavor",
+    "object": "Bottom band of the registration card: LOCKER (stamp violet) or TRIAL \u2014 NO LOCKER (stamp red) rubber stamp; mood word stamped in blue-black ink at fixed 0\u00b0 with seeded \u00b11\u00b0 wobble; tenure typed ('IN GYM 86 DAYS'); patience line penciled in Caveat \u226514px ('he watches the lockered men\u2026')",
+    "behavior": "Stamps are static ink (feTurbulence-eroded, baked defs), category-fixed color+angle so they scan down a roster; mood tone carried by word + border shape, never hue alone; tenure is typed data at 0\u00b0. Granting a locker visibly over-stamps LOCKER across the TRIAL stamp within 400ms.",
+    "rationale": "Status becomes evidence with history \u2014 the over-stamped TRIAL mark permanently records that he was once on trial, which a chip could never say."
+   },
+   {
+    "element": "Flight-risk flag (flightRiskRead, tone + tooltip)",
+    "object": "Pink 'WHILE YOU WERE OUT' memo slip paper-clipped to the folder's top-right corner, breaking the folder silhouette; typed flight.label, red trajectory-category stamp at \u22122\u00b0 ('THEY'RE CALLING')",
+    "behavior": "Only exists for lockered men with poach interest; hover curls the slip corner (--ease-paper) and the full warning text ('Other gyms have noticed\u2026') is the slip's second typed line, also in the title/aria. Tone escalation = stamp wording + a second slip stacked, never hue alone.",
+    "rationale": "The brief names this artifact explicitly; a rival's phone message physically clipped to the file is a threat you can see coming across the room."
+   },
+   {
+    "element": "Locker request block (quote + grant/wait/honest, grant disabled when lockersFull)",
+    "object": "His note \u2014 a torn lined-notebook scrap lying diagonally ON TOP of the folder in ballpoint Caveat (the quote, \u226514px, one-read flavor per ruling), with a printed RESPONSE slip stapled beneath carrying three stamp targets: GIVE HIM A LOCKER / KEEP WAITING / STRAIGHT TALK \u2014 NO ROOM",
+    "behavior": "Dealt in above the dividers so it must be seen first; each response is a rubber stamp that lands (--ease-stamp 100ms in, no ease-out) on the slip, then the note files away and the folder settles. GIVE stamp dusty (not gray) when lockers are full, typed reason 'EVERY LOCKER FULL' pre-printed beside it, title retained. Role=group aria preserved.",
+    "rationale": "A man asking about his future should not be an alert banner; stamping your answer onto his note makes the decision land with physical consequence."
+   },
+   {
+    "element": "Attribute bars, lockered (7 attrs, value + trend arrow + windowChange/totalChange tooltip)",
+    "object": "ASSESSMENT sheet: printed ruled 0\u2013100 scales (Libre Franklin scale print), per the METER spec \u2014 typed Courier Prime numeral FIRST at 0\u00b0, then a flat-ended grease-pencil stroke exactly proportional on the printed rule; trend = two penciled tick marks and a pencil word ('coming on' / 'slipping') replacing \u25b2\u25bc",
+    "behavior": "Numerals tabular, aligned, unrotated, 7:1 after the lamp layer; hover shows a fingertip-smudge highlight on the row and the existing tooltip text ('+1.2 recent \u00b7 +4.1 since he arrived') as a penciled margin annotation revealed on hover AND kept in title for a11y. Stroke length animates only on data change (--ease-paper, once).",
+    "rationale": "Numeral-first keeps the read as fast as the old bar; grease pencil on a printed scale is what a trainer actually did to a chart in 1975."
+   },
+   {
+    "element": "Scouting bands, lockerless (band label or 'Too early to tell', coarse fill) + fog note + LIMITED tag",
+    "object": "Same printed scales on a TRIAL ASSESSMENT overlay sheet: no numerals \u2014 a soft pencil hatch smear covering the believed RANGE (band.fill width, feathered ends), typed band word (RAW / AVERAGE / BELOW AVERAGE) in the value column; too-early rows show a bare rule and a pencil '?'; fog note becomes the sheet's pre-printed fine print: 'COACH'S EYE ONLY \u2014 NOT A MEASUREMENT. ASSIGN LOCKER FOR FULL ASSESSMENT.'",
+    "behavior": "Band words are typed (compared repeatedly \u2192 typewriter per ruling), full contrast; hatch is decoration and may jitter, words may not. LIMITED chip becomes the sheet's own header stamp. Granting a locker swaps this sheet for the real assessment sheet with a paper flip.",
+    "rationale": "Fog rendered as a different SHEET (hedged, unnumbered, fine-printed) makes uncertainty diegetic \u2014 the paperwork itself refuses to commit, exactly like the manager."
+   },
+   {
+    "element": "devFeel tag, focus tag, developmentState tag + ceilingRead ('Your read')",
+    "object": "Category rubber stamps on the assessment sheet header: feel = scouting green-gray +1.5\u00b0 ('COMING ON'), development state = trajectory red \u22122\u00b0, current focus = typed notation 'FOCUS: FOOTWORK' on the printed FOCUS line; ceilingRead = one pencil Caveat margin line \u226514px in quotes",
+    "behavior": "Fixed ink/angle per category with seeded \u00b11\u00b0 wobble (scannable down the roster); feel.blurb kept as title on the stamp; stamps never carry a number. Empty focus = the printed line left blank.",
+    "rationale": "Stamps make qualitative reads pre-attentively scannable while staying ink, not icons; the ceiling read in pencil is the manager's own voice in his own margin."
+   },
+   {
+    "element": "'What You Know' traits list + hiddenTraits hint + empty state",
+    "object": "OBSERVATIONS continuation sheet: each visible trait typed as an underlined CAPS name with its typed blurb on the next ruled line; hidden-traits hint = pencil line at the bottom ('more to this man than he's shown'); empty = a nearly blank sheet with printed heading and pencil 'nothing obvious yet \u2014 time will tell'",
+    "behavior": "Each learned trait is appended as a new typed entry with its own seeded ribbon-opacity variance (88\u2013100% word-level), so the sheet visibly accretes over a save; no chips, no boxes.",
+    "rationale": "Traits typed one-at-a-time onto a growing sheet turn knowledge into accumulated paperwork \u2014 memory living in an object, not a tag cloud."
+   },
+   {
+    "element": "Tier control (MUST KEEP / WATCH LIST / CHOPPING BLOCK segmented buttons)",
+    "object": "Printed STANDING checklist on the standing-and-training slip: three pre-printed lines with checkboxes, one heavy pencil check; genuine radiogroup, all options always visible",
+    "behavior": "Click a line \u2192 the check is erased (ghost graphite smudge stays at the old line forever, seeded) and drawn at the new one within 400ms; hover = fingertip smudge; TIER_META blurbs kept as titles; encoding is position + word + check, never color. \u226544px line targets.",
+    "rationale": "Kills the segmented control (noList) with strictly better ergonomics \u2014 zero clicks to see all options \u2014 and the ghost smudge remembers your changed mind."
+   },
+   {
+    "element": "Training focus select (9 options) + Trainer select (You + coaches, free-slot counts, specialty) + chemistry read + lockerless training note",
+    "object": "TRAINING ASSIGNMENT slip: the current focus typed on a printed line; clicking lifts a clipboard-sheet popover (9 options > 7 \u2192 popover per ruling) listing General / Well-rounded / seven attributes as a printed radiogroup with pencil check. Trainers = inline printed checklist (\u22647 lines): 'YOU \u2014 2 FREE' then each coach typed 'DUKE OSSIE (CUTS & CHIN) \u2014 1 FREE', full slots typed 'FULL' and dusty; chemistry = pencil Caveat line under the checked trainer ('good fit \u2014 he listens to Duke'), chem.label also typed bold for the repeat-read. Lockerless: slip pre-printed 'NO LOCKER \u2014 LIMITED TRAINING' with the assign line struck through",
+    "behavior": "Popover slides up from the bottom third (an object you pick up), Esc puts it down without closing the folder (Esc layering handled like viewerIds); native <select> deleted; picking an option drops the sheet and types the new focus onto the slip within 400ms. Free counts are live typed numerals at 0\u00b0.",
+    "rationale": "Two native <select>s \u2014 the most anachronistic pixels on this screen \u2014 become the clipboard and checklist the CD already ruled for, at equal or fewer clicks."
+   },
+   {
+    "element": "Give/take locker + cut/stop-considering + confirm/cancel (with disabled reasons)",
+    "object": "Two rubber stamps resting at the slip's action line: ASSIGN LOCKER / PULL LOCKER (violet) and RELEASED / NO THANKS (red). Confirm = the red stamp's first press only inks a faint pre-impression plus a pre-printed line 'STRIKE FROM ROSTER? \u2014 CONFIRM / CANCEL' (typed, full contrast); second press slams it",
+    "behavior": "Confirm press uses --ease-stamp; on cut, RELEASED lands diagonally across the whole folder cover and the folder files out LEFT (exit-before-unmount, \u2264400ms) \u2014 consequence motion per principle 9. Disabled stamps are dusty with the typed reason pre-printed beside ('EVERY LOCKER FULL' / 'NO ROOM OFF THE WALL'); titles and aria preserved. Cancel returns the stamp to its rest position.",
+    "rationale": "Cutting a man should feel like stamping his file dead and filing it away \u2014 irreversibility rendered as ink, with the two-step confirm intact."
+   },
+   {
+    "element": "Record tab (9 cells: pro/amateur/KOs/streak/titles/ranking/years/earnings + scaffold note)",
+    "object": "Pre-printed FIGHT RECORD form, government-form style: ruled boxes with Libre Franklin printed captions and a form number ('FORM 7-B REV. 3/71'), values typed in Courier Prime \u2014 '0\u20130\u20130', 'UNRECORDED', '$0.00', 'NONE', 'UNRANKED', 'YRS WITH GYM: 3 MOS.'; below, rows of empty ruled bout lines (DATE / OPPONENT / RESULT / PURSE) waiting; scaffold note becomes the form's printed instruction line",
+    "behavior": "All nine data preserved as form fields at 0\u00b0, tabular; the visibly EMPTY bout ledger communicates 'career not started' better than the note alone (note kept as fine print). Future fights type in as ledger rows, never cards.",
+    "rationale": "A mostly blank official form is the period-true empty state \u2014 the promise of a career is literally printed ruling waiting for ink."
+   },
+   {
+    "element": "Biography tab (paragraphs, 'In his own words' quote, 'Your first read') + Career tab (year-grouped timeline) + Development tab (7 sparkline rows: series, current value, signed totalChange, weeks note)",
+    "object": "Three more sheets behind their dividers. BIOGRAPHY: typed Special Elite page, ragged-right, his quote indented with typed quotation marks and a pencil sideline; 'first read' as a pencil Caveat margin line \u226514px. CAREER: lined CONTINUATION SHEET, year rubber-stamped in the margin (violet), each moment a typed entry \u2014 accreting downward, never a dot timeline (principle 8); slots reserved for future taped-in clippings. DEVELOPMENT: graph-grid PROGRESS CHART (printed light-blue grid), each Sparkline redrawn as a grease-pencil trace across the grid, with a typed Courier column at right: current value and signed change (+4.1 / \u22120.3) tabular at 0\u00b0; trend arrows become the trace's own visible slope + a pencil word; weeks note typed as the chart's caption",
+    "behavior": "Sheets swap with the 180ms paper lift; pencil traces are static per render (no ambient animation), redrawn only when data changes; all signed values keep the up/down/flat encoding via word + slope, not color alone; scaffold notes become printed form instructions on each sheet.",
+    "rationale": "Bio as the typed page, career as a stamped continuation sheet, development as a grease-pencil chart \u2014 three different SOURCES for three kinds of memory, so removing every label would still tell you which sheet you're holding."
+   }
+  ],
+  "layout": "The folder fills the frame off-center \u2014 pushed slightly right and down, blotter showing widest at top-left where the lamp and drawer live. Left flap (narrower, ~34%): photograph clipped at a seeded tilt over the registration card, status stamps and pencil patience line beneath. Right flap: the sheet stack under staggered die-cut dividers; the active sheet sits a hair off-square (\u22641\u00b0, seeded) while every ruled line, numeral column, and scale on it runs dead level at 0\u00b0. The pink flight-risk memo breaks the folder's top-right silhouette; the locker-request note, when present, lies diagonally across both flaps and owns the eye first. Anchors in order: the photograph, red stamps, then the typed numeral column. Density matches today's screen \u2014 one sheet visible at a time, same scroll behavior inside the right flap.",
+  "materialsAndLight": "Manila (--manila #cfae72) folder on the office's forest-green leather blotter over oak; index-card stock (--index-card #ece2c8, blue rules #9fb0bd) for the registration and assessment cards; memo-pink slip; graphite, typewriter-ribbon, stamp-red, stamp-violet inks \u2014 never pure black. OFFICE rig only: tungsten key upper-left as one soft-light radial pool, shadows locked 3px 5px down-right, a single multiply lamp gradient across the paper with one hot corner near the drawer. Components ship flat; no private gradients or elevation shadows \u2014 the folder's lift over the blotter is one hard offset shadow in the room's direction. Amber appears solely as lamplight pooling and a brass glint on the paperclip and drawer handle; no control fills or glows amber.",
+  "typography": "Special Elite: all typewriter fill-ins \u2014 names, vitals, traits, biography, tenure, band words, focus/trainer lines. Courier Prime: every compared numeral \u2014 attribute values, signed deltas, record form figures, free-slot counts (tabular, 0\u00b0). Libre Franklin 500, 12\u201314px, \u22640.03em: pre-printed form captions, rules, form numbers, fine-print fog and scaffold notes. Anton caps through the shared erosion filter: all rubber stamps (LOCKER, TRIAL, mood, RELEASED, year stamps). Caveat \u226514px: pencil marginalia only \u2014 ceiling read, chemistry note, patience, hidden-trait hint. No Oswald, no tracked microcaps, no display headline on this screen.",
+  "imperfections": "All seeded from the fighter's id, deterministic forever: photo tilt \u22642\u00b0, memo-slip angle, which divider is dog-eared, stamp wobble \u00b11\u00b0, word-level ribbon variance 88\u2013100%. Handling wear scales with tenure and --gym-age: graphite darkening at the folder's grab edge, softened corners, rust blooming on the paperclip and staple. One folder in four carries a coffee ring \u2014 cover margin only, never crossing type. Ghost eraser smudges persist where the standing check used to be; the over-stamped TRIAL under LOCKER is permanent. Numeral columns, ruled scales, and record boxes: zero rotation, zero grain over 6%, no stain contact \u2014 jitter the decoration, never the data.",
+  "immersionRationale": "Every read this screen offers becomes a document a 1975 manager would actually keep, made by a nameable machine or hand \u2014 so the player stops parsing UI and starts handling a file. The strongest moves are the ones that give decisions mass: stamping your answer onto the kid's note, the RELEASED stamp slamming diagonally before the folder files out left, TRIAL permanently visible under the LOCKER over-stamp. The fog mechanic becomes physical honesty \u2014 a trialist gets a hedged, unnumbered TRIAL sheet with fine print instead of a dimmed widget \u2014 and the flight risk is a rival's phone message literally clipped to the corner. Because wear is seeded and permanent, revisiting the same man's folder feels like returning to a real object; because numerals stay typed, level, and lamp-lit, the fantasy never taxes the read.",
+  "implementationNotes": "Phase-1 is fully CSS/SVG: clip-path trapezoid dividers; baked data-URI noise tiles for manila/card/blotter; stamps and grease-pencil strokes as one-time static SVG defs with feTurbulence erosion (never on animating nodes); seeded jitter via a hash of fighter.id feeding CSS custom properties. Sparkline component re-skins to an SVG polyline with a pre-baked rough-stroke mask \u2014 cheap, redraws only on data change. Delete both native selects; the focus clipboard popover needs an Esc-layer guard alongside the existing viewerIds check, and the checklist/radiogroup must keep real radio semantics and the brass-glint focus ring. Verify numeral contrast (7:1) AFTER the multiply lamp layer \u2014 tune --index-card if needed. Registry slots for real art: portrait photo print (delivered unlit), blotter/desk texture, drawer face. Risks: request-note overlay pushing folder height on short viewports (let the right flap scroll internally); exit-before-unmount choreography needs a small unmount-delay wrapper; reduced-motion snaps all paper travel."
+ },
+ {
+  "screen": "The Walk-In Moment \u2014 WalkInViewer + WalkInCard + ArrivalNotice (plain, non-front-page mode). Files: src/screens/WalkInViewer.tsx/.css, src/components/WalkInCard/, src/components/ArrivalNotice.tsx/.css.",
+  "roomConcept": "OBJECT SHOT: you are standing just inside your office doorway, looking down ~30\u00b0 at a dark clipboard in your own hands. The desk ledge and green blotter fill the bottom of the frame; at the top edge, the pebbled-glass office door stands ajar and the man himself waits beyond it \u2014 a blurred silhouette through the glass, faint fluorescent light behind him. The registration card he just filled out is clipped to the board. Your tools are within reach on the desk's right rail: the locker key board, the floor-pass pad, the red rubber stamp on its ink tin, and the PENDING wire tray. Deciding a man's fate means physically doing something with his card \u2014 hang a key on it, tear a chit, stamp it, or set it in the tray. No scrim, no modal: the viewer IS this shot, sliding up from the bottom third and settling.",
+  "objectMap": [
+   {
+    "element": "WalkInViewer container (.wiv + .wiv__scrim, currently modal-over-blurred-scrim)",
+    "object": "Full-bleed office-doorway object shot: oak desk ledge and blotter at frame bottom, pebbled-glass door ajar at top with the waiting man's silhouette behind it",
+    "behavior": "Enters as a pick-up (slides up from bottom third, settles, 260ms --ease-paper); the previous room stays visible as a dark sliver above the door glass; silhouette subtly shifts weight (one 4s steps() loop, killed by reduced-motion)",
+    "rationale": "Kills the banned centered-modal-over-scrim; the man being visibly THERE, waiting behind glass, makes the decision about a person, not a data card"
+   },
+   {
+    "element": "WalkInCard frame + banner (leather border, oxblood WALK-IN CARD banner)",
+    "object": "The gym's own registration card: --index-card stock with blue rules on the dark clipboard, letterpress-printed header 'WALK-IN CARD' (Anton, ink-bleed) over a thin oxblood rule, form number 'CARD 7-A \u00b7 REV. 6/73' in the corner",
+    "behavior": "Card rotates \u22642\u00b0 seeded per fighter.id; clipboard never rotates; hover anywhere on card = faint lamp sheen, no lift",
+    "rationale": "A form the owner had printed cheap in '73 passes the object and source tests; the current leather-framed banner is a themed panel"
+   },
+   {
+    "element": "Portrait (150px framed SVG)",
+    "object": "Snapshot photograph mounted with four gummed photo corners, slightly off-square (seeded \u00b11.5\u00b0), faint sepia wash and gloss highlight",
+    "behavior": "Static; the same procedural Portrait SVG renders inside the photo paper; asset-registry slot for real photo art",
+    "rationale": "A paperclipped gym snapshot is how a 1975 file knows a face; an inset framed avatar is how Discord does"
+   },
+   {
+    "element": "Name + stats dl (Age/Height/Weight/Weight Class)",
+    "object": "Pre-printed form labels (Libre Franklin 500, 12px, 'NAME:', 'AGE:') with dotted rule lines; the fighter's answers typed over them in Special Elite \u226515px, ink #33383e",
+    "behavior": "Values sit exactly on the rules, 0\u00b0 rotation, tabular alignment; nickname typed in quotes on the same line",
+    "rationale": "Form-print label + typewriter answer is the two-source truth of every real intake form; current tracked-microcaps labels are the banned overline pattern"
+   },
+   {
+    "element": "Statement ('Why I Want To Train Here')",
+    "object": "The typed statement block on the card body, ruled box pre-printed on the form, filled by the office typewriter",
+    "behavior": "Special Elite with seeded word-level 88\u2013100% ribbon-opacity variance; one seeded strike-over character per ~3 cards; never below 4.5:1",
+    "rationale": "It already reads typed \u2014 grounding it as marks from a nameable machine finishes the job"
+   },
+   {
+    "element": "First Impression line + GlovesEmblem",
+    "object": "Pencil marginalia scrawled in the card's lower margin (Caveat, \u226515px, graphite #4a463f), the gym's gloves emblem printed on the form footer beside it",
+    "behavior": "One line, one-read flavor, seeded \u00b11.5\u00b0 baseline tilt; never carries a stat",
+    "rationale": "Your trainer's snap judgment in his own hand is character; per CD ruling handwriting is licensed exactly for this"
+   },
+   {
+    "element": "Your Read (ceilingRead)",
+    "object": "A typed evaluation line below a dashed tear-rule: 'YOUR READ:' pre-printed, the read typed in Special Elite \u226514px full-contrast ink",
+    "behavior": "Static, unrotated relative to card; currently rendered at #c2a878 on parchment \u2014 recolored to ribbon ink for contrast",
+    "rationale": "The read is compared across cards and drives the decision, so it goes to the typewriter, not the pencil (CD handwriting ruling)"
+   },
+   {
+    "element": "Patience line ('He'll wait N more days' / impatient)",
+    "object": "A small yellow flimsy slip stapled to the card's top-right corner: typed 'WILL WAIT \u2014 5 DAYS'; when patience \u22643, a red eroded stamp 'IN A HURRY' (Anton, fixed \u22122\u00b0, seeded \u00b11\u00b0 wobble) hits the slip instead",
+    "behavior": "Slip seeded \u00b12\u00b0, rusty staple; day count always typed (numeral, 7:1), stamp is redundant encoding by word+shape",
+    "rationale": "Urgency as a physical annotation on his paperwork reads pre-attentively down a stack; an italic caption under the card reads as UI"
+   },
+   {
+    "element": "Progress 'At the door \u00b7 X of N'",
+    "object": "The remaining cards visibly stacked under the current one (offset edges, seeded fan \u22643px each) with a typed paper band: 'AT THE DOOR \u2014 2 MORE WAITING'",
+    "behavior": "Stack thins as you decide; exact 'card 2 of 3' lives in the dialog's aria-label; next card deals in with 100ms overlap after the exit",
+    "rationale": "Counts as visible evidence (principle 6): you can see how many men are waiting the way you'd see a pile of paper"
+   },
+   {
+    "element": "'Give him a locker' button (+ lockersLeft/lockerCap sub-label, disabled when full)",
+    "object": "A small varnished key board on the desk's right rail: brass keys on paper fobs hanging on cup hooks, one hook per free locker, a typed strip below reading 'LOCKERS \u2014 3 OF 8 OPEN'",
+    "behavior": "One button (\u226544px) wrapping the board; hover = the nearest key catches the lamp (specular stop); click = key drops onto the card, then card files RIGHT toward the locker corridor (350ms deciding phase); disabled = bare hooks, dust, typed strip 'ALL OUT' \u2014 never grayed",
+    "rationale": "Capacity becomes brass you can count; giving a man a key is the literal 1975 act the button was abstracting"
+   },
+   {
+    "element": "'Train without a locker' button (+ noLockerLeft/noLockerCap, disabled when full)",
+    "object": "A pad of numbered floor-pass chits ('FLOOR ONLY \u2014 NO LOCKER', Franklin print) on the rail below the keys, pad band typed 'PROVISIONAL \u2014 2 OF 4 SPOTS'",
+    "behavior": "Hover = top chit's corner curls; click = chit tears off (--ease-paper) and clips to his card, card files right with the chit showing; disabled = cardboard backing exposed, penciled 'NO ROOM' across it",
+    "rationale": "A provisional pass is a weaker, cheaper piece of paper than a brass key \u2014 the hierarchy of the two offers is felt in material before it's read"
+   },
+   {
+    "element": "'Turn him away' button",
+    "object": "A red rubber stamp resting on an open ink tin at the rail's bottom, taped label on the handle: 'NOT FOR US'",
+    "behavior": "Hover = lamp glints on the handle (no lift); click = stamp strikes the card (90\u2013120ms accelerating in, no ease-out), eroded red 'NOT FOR US' lands at fixed \u22122\u00b0, card slides off LEFT past the door; the silhouette behind the glass turns and goes",
+    "rationale": "Refusal should cost a small violent gesture; the stamp impact plus the silhouette leaving is consequence motion the current gray button can never deliver"
+   },
+   {
+    "element": "'Decide later \u2014 keep his card in My Office' + Escape",
+    "object": "A wire in-tray labeled with a typed card 'PENDING \u2014 SEE OFFICE' sitting half-in-frame at the desk's bottom edge",
+    "behavior": "Click or Esc = card tucks down-right into the tray (settle rotation) and the next card deals in; slips already pending are visible in the tray, tally typed on the tray card and in aria",
+    "rationale": "'The card goes in the tray' teaches where deferred men live (My Office) through geography instead of a sentence"
+   },
+   {
+    "element": "Bank balance at the moment of decision (CD cash ruling)",
+    "object": "The desk pad's corner, visible at frame bottom-left: last line typed 'BANK BAL. \u2014 $2,200' (Courier Prime, tabular, 7:1)",
+    "behavior": "Static, unrotated; updates only between cards; duplicated in the dialog aria-label",
+    "rationale": "The ruling requires the number on every money-bearing document at decision time; the desk pad supplies it without resurrecting the KPI ticker"
+   },
+   {
+    "element": "ArrivalNotice plain mode (eyebrow, arrived/expired lines, departed list, poached list)",
+    "object": "A pink 'WHILE YOU WERE OUT' memo slip lying on the office blotter (or wedged under the door on the Floor shot): pre-printed Franklin form header and rules, events typed in Special Elite \u226514px; departures get a typed line each; poached men get a ballpoint annotation '\u2014 signed w/ St. Nicholas' in #2f4468",
+    "behavior": "Slip lands with settle rotation (seeded \u22642\u00b0); role=alert retained; all counts typed as numerals; poach regret encoded by word + pen source, never hue alone",
+    "rationale": "The CD names this exact object for notifications; a glowing amber-bordered toast is the loudest surviving dashboard tell on this screen"
+   },
+   {
+    "element": "Notice actions: View Now / View Later / Noted",
+    "object": "Three physical affordances around the slip: the walk-in cards themselves peeking from under the memo's edge (printed 'WALK-IN CARD' header visible) = View Now; the wire in-tray at right = View Later; a desk spindle spike at left = Noted (no-arrivals mode shows only the spike)",
+    "behavior": "Each is a real \u226544px button with full aria-label ('Review 2 walk-ins at the door'); hover = lamp catch or corner curl; Noted = slip impales on the spike (120ms stamp-ease) and stays there, spike stack growing over the save's life; one click each, same as today",
+    "rationale": "Picking up the cards, setting the memo aside, or spiking it are the three things a 1975 owner actually does with a message \u2014 and the spike quietly archives your neglect"
+   }
+  ],
+  "layout": "Full-bleed, one shadow direction (3px 5px down-right, tungsten key upper-left). The clipboard dominates, anchored center-left at ~55% width, seeded \u22642\u00b0 tilt, its stack fanning bottom-right. The right rail is the decision column, hung with deliberate un-alignment: key board highest (best offer, nearest the light), chit pad below it slightly left, stamp and ink tin at the bottom where a right hand rests. The PENDING tray breaks the frame's bottom edge; the desk-pad corner with BANK BAL. breaks bottom-left. The door glass and silhouette occupy the top fifth \u2014 the eye travels face \u2192 card \u2192 patience slip \u2192 keys, exactly the decision order. Nothing is centered; everything is reachable. Notice mode is sparser: one pink slip slightly off-center on the blotter, cards peeking beneath, spike and tray at the margins.",
+  "materialsAndLight": "Surfaces: oak desk edge (--oak), forest-green blotter paper with tobacco leather corners, --index-card stock with blue rules for the card, manila for fobs and tray card, --memo-pink for the slip, brass keys (--brass-oxidized, polished at the bow where fingers go), pebbled glass (baked noise tile + blur), red rubber and blackened tin. Office rig only: tungsten key pool upper-left as one soft-light radial overlay above content, steep falloff; a second cool screen-blend sliver leaks through the door glass from the fluorescent floor beyond. Paper is lit, never luminous \u2014 one hot corner via multiply gradient. Components ship flat; the rig lights everything in one pass.",
+  "typography": "Anton: the card's letterpress header and all stamps (NOT FOR US, IN A HURRY \u2014 eroded via the shared SVG filter). Libre Franklin 500, 12\u201314px: every pre-printed thing \u2014 field labels, form number, chit text, memo header, tray card. Special Elite: everything typed onto paper \u2014 answers, statement (ribbon variance), Your Read, patience count, memo lines. Courier Prime: BANK BAL. and capacity numerals, tabular, 0\u00b0. Caveat \u226515px: the trainer's one-line first impression and 'NO ROOM' pencil only. Ballpoint annotations on the memo in Caveat, #2f4468. Oswald/Roboto Slab/Big Shoulders: deleted from these files.",
+  "imperfections": "All seeded per fighter.id or slip id, deterministic. Card: \u22642\u00b0 tilt, one bent corner on ~1 in 4, ribbon variance, one strike-over; stats and numerals 0\u00b0. Patience slip: rusted staple, \u00b12\u00b0. Environment plane scales with --gym-age: clipboard clip worn bright at thumb position, dried ink ring where the tin sits, coffee ring on the blotter margin (never under paper), smudge on the door glass at hand height, one key fob grubbier than the rest, tape residue where an old label came off the key board. Spiked memos accumulate permanently. No stain ever crosses a line of type.",
+  "immersionRationale": "The current screen is a data card floating in blurred darkness with three lozenge buttons \u2014 the decision is a click. This design makes every choice a different physical verb with a different weight: brass key (commitment), torn paper chit (half-promise), red stamp (rejection), wire tray (cowardice with a visible backlog). The man is present \u2014 a silhouette behind pebbled glass who walks away when you stamp his card \u2014 so turning someone down costs a flicker of witnessed consequence, the heartbeat the bible asks for. Capacity stops being a sub-label and becomes countable brass and pad-thickness, so scarcity is felt before it's read. The BANK BAL. line on the desk pad means the money question is answered where the decision happens. And the spike quietly turning dismissed memos into a permanent stack makes even 'Noted' leave a trace in the building's memory.",
+  "implementationNotes": "Phase 1 is fully CSS/SVG: card, slips, chit pad, tray, and blotter are gradients + baked data-URI noise tiles; keys and key board are one inline SVG each (registry slots for real art, delivered unlit per the rig ruling); stamp erosion and pencil strokes use one-time static feTurbulence defs; door glass is a blurred copy of the existing Portrait SVG behind a noise tile + contrast filter \u2014 no live displacement, cheap. Exit choreography (file right / slide left / tuck to tray, 350ms, 100ms deal-in overlap) needs exit-before-unmount state in WalkInViewer \u2014 the CD already mandated it; reduced-motion snaps all of it. Keep buttons as real buttons with existing handlers, disabled semantics, and title text moved into visible typed strips + aria. Risks: narrow viewports (rail must wrap below the card at <720px keeping 44px targets); contrast must be re-verified AFTER the lamp overlay composites, especially the pink memo's ballpoint ink; delete backdrop-filter, the amber glow shadows, and the .arrival amber border in the same pass or the old chrome bleeds through."
+ },
+ {
+  "screen": "MY GYM \u2014 the office staff wall (src/rooms/MyGymRoom.tsx/.css): training identity, focused-slot usage, coaching staff, hiring posting/applicants, facilities & upgrades",
+  "roomConcept": "This is not a fourth room \u2014 the CD's three-room law holds. MY GYM is the OTHER WALL OF THE OFFICE: turn left from the desk and you face the wall where the owner runs the business as a business. A hand-painted sign with the gym's name and house philosophy, a corkboard of employment cards under a bare bulb, a HELP WANTED flyer with reply letters in a wire basket nailed beneath it, two clipboards on bent nails \u2014 the week's Personal Attention sheet and the contractor's estimate. Camera: standing eye height, wall fills the frame, plaster meeting concrete at the edges; picking up any paper cuts to the OBJECT SHOT (document over cork/blotter). Your hands pin flyers, stamp cards, open letters, and approve estimates. Esc puts paper down, then steps back to the floor.",
+  "objectMap": [
+   {
+    "element": "Back button + breadcrumb ('\u2190 Back to the floor', 'Your Gym \u00b7 My Gym')",
+    "object": "A sliver of the pebbled-glass office door at the left frame edge, gym name painted in reverse; no chrome, no breadcrumb \u2014 the painted sign IS the wayfinding",
+    "behavior": "Click the door sliver (or Esc) \u2192 380ms lateral pan back to the floor with light change; hover cracks the door 2px with a latch sound-frame. When a paper is picked up, Esc first puts it down",
+    "rationale": "The 'way back never leaves frame' rule replaces app chrome with architecture the player already trusts"
+   },
+   {
+    "element": "Screen title 'My Gym' + eyebrow 'Coaching & Staff'",
+    "object": "Hand-painted wooden sign high on the wall: gym name in Anton, painter's drips, mounted on two visible screws, one corner 1\u00b0 low",
+    "behavior": "Static set dressing; carries aria-label 'My Gym \u2014 coaching and staff'",
+    "rationale": "A struggling gym paints its own name once and never straightens it \u2014 signage names where you are, per the CD"
+   },
+   {
+    "element": "Training identity paragraph (philosophy from city archetype) + inline Locker Room link",
+    "object": "The philosophy is the sign's painted second line ('BROUGHT UP PRESSURE-STYLE' per archetype); the explanation is a typed house-rules card (Special Elite on index stock) pinned below; the Locker Room link is a pencil arrow note on that card: '\u2192 extra work set man-by-man, locker room'",
+    "behavior": "Card hover = pin-jiggle (damped swing); click the pencil note \u2192 openRoom('locker'). Data (philosophy word) also typed on the card at full contrast",
+    "rationale": "Philosophy is identity, so it's painted \u2014 permanent, proud, slightly crooked; the crossref is exactly what a trainer would scrawl"
+   },
+   {
+    "element": "Focused capacity count (focused.length / focusCapacity)",
+    "object": "'PERSONAL ATTENTION \u2014 THIS WEEK' clipboard on a nail: a pre-printed ruled form with exactly focusCapacity printed lines; empty lines stay visibly blank. Header typed: 'IN HAND: 3 OF 4'",
+    "behavior": "Capacity growth (coach hires, upgrades) adds printed lines \u2014 the form is 'REV.'-numbered (Libre Franklin 'FORM T-4 REV. 6/74'). Count also in aria-label",
+    "rationale": "Principle 6 \u2014 capacity becomes visible evidence: you SEE the empty lines you're wasting, no fraction widget needed"
+   },
+   {
+    "element": "Focused fighter rows (Portrait 40px, full name, focusLabel) \u2192 openProfile",
+    "object": "One typed line per fighter on that clipboard sheet: paperclipped 40px ID photo askew at the line's left, typewritten name, focus area typed in a fixed right-hand column (unrotated, tabular)",
+    "behavior": "Row hover = fingertip-smudge highlight (multiply, warm gray); click = the sheet's line lifts and the fighter's record card deals in (openProfile). Targets full-line, \u226544px",
+    "rationale": "A clipboard roster is the period-true fast read; paperclipped photos give the same 40px portrait without a card grid"
+   },
+   {
+    "element": "Focused empty state ('No one is in focused training\u2026')",
+    "object": "All lines blank plus one pencil marginalia (Caveat \u226514px): 'nobody down for extra work \u2014 pick 'em in the locker room'",
+    "behavior": "Static; the pencil note is also a click target for openRoom('locker')",
+    "rationale": "Emptiness reads as unused paper, not a placeholder illustration \u2014 and the note keeps the guidance functional"
+   },
+   {
+    "element": "Staff section (You + N coaches, focusCapacity slots)",
+    "object": "THE STAFF BOARD: a framed corkboard with exactly five card positions ruled onto the cork in old paint (you + max 4 coaches). A typed tally card is tacked to the frame rail: 'STAFF: YOU + 2 \u00b7 CORNER SLOTS: 6'",
+    "behavior": "Empty positions show bare cork, old tack holes, and sun-faded rectangles where past hires hung; tally card updates and carries the aria count",
+    "rationale": "The staff cap of 4 stops being a hidden rule \u2014 the board physically has no more room, which is why hiring locks"
+   },
+   {
+    "element": "Your own row (manager name, 'Head Trainer \u00b7 X/2 in use \u00b7 no salary')",
+    "object": "The oldest employment card on the board (Form E-2, index stock aged two shades darker), dog-eared, top-left position: typed name, 'HEAD TRAINER', 'SLOTS: 1 OF 2' typed; 'no pay \u2014 mine' in pencil",
+    "behavior": "Not clickable (no actions exist on it today); hover gives only the pin-jiggle of set dressing; slot usage re-types on change",
+    "rationale": "Your card being the yellowed, dog-eared one silently tells the founding date \u2014 memory living in an object"
+   },
+   {
+    "element": "Coach rows (name, tierName \u00b7 specialtyName \u00b7 used/slots, personalityName \u2014 specialtyBlurb)",
+    "object": "One employment index card per coach, seeded \u22642\u00b0 rotation per coach.id: photo corner (empty 'NO PHOTO' frame until real art), typed name, typed 'REGIONAL \u00b7 CUTMAN', typed 'SLOTS: 2 OF 3'; personality + blurb as one line of pencil marginalia ('old lion \u2014 deep wisdom, fading legs')",
+    "behavior": "Hover = pin-jiggle + lamp catch on the photo corner; all decision data typed at 4.5:1+ on --index-card; slots column aligned and unrotated across cards",
+    "rationale": "Tier/specialty/slots are compared down the board, so they're typed; personality is the trainer's private read, so it's pencil \u2014 the CD's handwriting ruling exactly"
+   },
+   {
+    "element": "'Let go' button (fireCoach)",
+    "object": "A small printed 'RELEASE' block in each card's bottom corner (Libre Franklin, boxed, \u226544px hit area)",
+    "behavior": "One click \u2192 'RELEASED' rubber stamp slams the card (--ease-stamp, 90\u2013120ms in, stamp-red, category angle \u22122\u00b0, seeded wobble), card drops off the board (350ms fall, exit-before-unmount) leaving a tack hole and faded rectangle permanently. Reduced-motion: instant removal, hole remains",
+    "rationale": "Firing a man should land somewhere \u2014 consequence motion, and the scar on the cork makes the decision part of the gym's history"
+   },
+   {
+    "element": "Hiring form: native <select> of CoachPosting + 'Put out the word' (postCoachJob)",
+    "object": "A HELP WANTED flyer form lying against the wall rail below the board: 'WANTED \u2014 CORNER HELP' in Anton, then a printed checklist of 8 lines (ANY QUALIFIED MAN + 7 specialties), all visible, one pencil check (real radiogroup); 'Put out the word' is a brass thumbtack resting on the flyer",
+    "behavior": "Click a line \u2192 the pencil check moves (styled radio, keyboard arrows work); click the tack \u2192 flyer rotates ~1.5\u00b0 and pins to the wall beside the board (--ease-paper). Native select is deleted",
+    "rationale": "The CD kills <select> outright; the checklist is fewer clicks (zero open-click) and the flyer makes 'posting a job' literal"
+   },
+   {
+    "element": "Active posting state ('Searching for: X') + 'Cancel search' (cancelCoachJob)",
+    "object": "The pinned flyer itself, now wearing the checked specialty and a typed line 'POSTED \u2014 WORD IS OUT'; cancel is the flyer's lifted bottom corner, printed 'TAKE DOWN'",
+    "behavior": "One click on the corner \u2192 flyer tears off the pin (paper ease + 2\u00b0 rotation), crumples out the bottom of frame; blank form returns to the rail",
+    "rationale": "The search's existence is spatial \u2014 a flyer is up or it isn't; no status text widget needed"
+   },
+   {
+    "element": "Applicants list (coach info + 'Hire \u00b7 $X/mo' disabled when staff \u22654, + 'Pass')",
+    "object": "Reply letters in a wire basket nailed under the flyer; each opened letter (OBJECT SHOT on click, or expanded inline at desktop width) is typed: name, tier \u00b7 specialty \u00b7 slots, pencil personality line, and 'ASKS $310/MO' plus 'BANK BAL. $1,412' in Courier Prime \u2014 the CD's money-on-every-money-document rule",
+    "behavior": "HIRE = 'HIRED' stamp (violet, 0\u00b0): letter files onto the board as a fresh employment card within 400ms. PASS = letter slides left into the wastebasket by the baseboard. Staff full: stamp sits dusty (never grayed) with pencil 'board's full \u2014 4 cards is all she holds'; title/aria preserved",
+    "rationale": "Hiring by mail is how 1975 actually worked, the salary decision has the bank line beside it, and the disabled state is explained by the physical board"
+   },
+   {
+    "element": "Applicants empty state ('No one's answered yet\u2026')",
+    "object": "The wire basket, visibly empty, plus pencil marginalia on the flyer margin: 'no takers yet \u2014 give it a week'",
+    "behavior": "Static; basket carries aria-label 'No applicants yet'",
+    "rationale": "An empty basket under a posted flyer tells the whole state pre-attentively \u2014 remove the words and it still reads"
+   },
+   {
+    "element": "Facilities & Upgrades: 3 tracks \u00d7 (trackName, level pips/max, blurb, effectAtLevel, effectGain, upkeep, cost button, maxed state) via purchaseUpgrade",
+    "object": "THE CONTRACTOR'S ESTIMATE, a carbon-copy sheet on the second clipboard: one section per track ('LOCKERS', 'EQUIPMENT', 'FLOOR SPACE'), every stage pre-printed as a line item. Bought stages carry dated 'PAID' stamps (level = count of PAID stamps + typed 'STAGE 2 OF 4' \u2014 pips deleted); current effect typed ('NOW: 14 LOCKERS'); next line shows gain typed, price and '+$25/MO UPKEEP' in Courier Prime, red-pencil underline on upkeep",
+    "behavior": "Buy = one click on the boxed price \u2192 'APPROVED' stamp lands, price line gets struck, new PAID entry appears, and the typed 'NOW:' figure re-types (consequence <400ms). Can't afford: stamp dusty + pencil 'short $438' computed against the bank line; title/aria kept. Maxed: contractor's typed note 'TOP OF THE LINE \u2014 NOTHING MORE TO SELL YOU', section rules closed",
+    "rationale": "An estimate sheet holds every datum the pips/blurb/gain stack held at equal density, and PAID stamps turn upgrade history into permanent paperwork"
+   },
+   {
+    "element": "'Cash on hand \u00b7 $X' section header",
+    "object": "Typed 'BANK BAL. $1,412 \u2014 7/5/75' line at the estimate's top, Courier Prime, unrotated, 7:1 contrast; no KPI strip anywhere",
+    "behavior": "Re-types on change; duplicated in aria on both hire letters and the estimate so no money decision lacks the number",
+    "rationale": "The CD's cash ruling verbatim: the number lives on every money-bearing document, never floats in chrome"
+   }
+  ],
+  "layout": "Full-bleed wall, no centered panel. The painted sign sits high and slightly left, 1\u00b0 off level. The staff board is the anchor mass \u2014 center-left, largest object, under the bare bulb, its five ruled card positions making the staffing math visible at a glance. Right of it, on its own nail 30px higher than feels 'designed', hangs the contractor's estimate clipboard. The HELP WANTED flyer pins in the gap between board and estimate; the wire letter basket is nailed beneath it, letters overhanging. The Personal Attention clipboard hangs lower-left, nearest the door sliver (you grab it on the way out). Baseboard, wastebasket, and a radiator edge ground the bottom. Nothing aligns to a grid \u2014 objects align to nails \u2014 but every document's internal columns are ruler-straight. Below 720px the wall becomes a vertical scroll: sign, board, flyer/basket, clipboards, in that order.",
+  "materialsAndLight": "Surfaces: mint-green painted plaster (--plaster-mint) going --concrete at the baseboard, scuffed at hand height; cork in a varnish-cracked oak frame (--oak); --manila and --index-card paper stocks with blue rules; --memo-pink for reply letters; oxidized brass tacks and clipboard clips (--brass-oxidized) with polished glints where thumbs land. Office rig only: tungsten key upper-left (the desk lamp behind you) plus a bare bulb centered over the staff board \u2014 rendered as one pointer-events:none overlay stack (soft-light radial pools, multiply darkness at corners), shadows uniformly 3px 5px down-right. Components ship flat; paper is lit by a multiply lamp gradient with one hot corner, never luminous. Amber appears only as light on brass and cork.",
+  "typography": "Anton: the painted sign, flyer headline 'WANTED', and all stamps (RELEASED, HIRED, PAID, APPROVED \u2014 eroded via the shared feTurbulence def). Special Elite: every typed field on employment cards, the flyer body, house-rules card, Personal Attention sheet. Courier Prime: all money \u2014 salaries, prices, upkeep, BANK BAL. \u2014 tabular, unrotated. Libre Franklin 500: pre-printed form furniture ('FORM E-2 REV. 3/71', 'RELEASE', 'TAKE DOWN', ruled boxes). Caveat \u226514px: one-line pencil marginalia only (personality reads, 'short $438', 'no takers yet'). Nothing else.",
+  "imperfections": "All seeded, all caused: cards rotate \u22642\u00b0 per coach.id; your card is two shades darker and dog-eared (it's been up since day one). Fired coaches leave permanent tack holes and sun-faded rectangles on the cork \u2014 the board accumulates the save's staffing history, scaling with --gym-age. Estimate sheet: one coffee ring in the margin (never crossing type), carbon smear at the clip. Smudge darkening on the clipboard where it's grabbed; paint drips under the sign; rust at the wire basket's nail. Numeric columns, checklist lines, and money figures: exactly 0\u00b0 \u2014 jitter decoration, never data.",
+  "immersionRationale": "Every management abstraction becomes something the owner's hands did. Staffing stops being a list with buttons: it's a board with five ruled spots, so the hire cap, the current headcount, and the cost of firing (a hole in the cork that never heals) are all read spatially before a single word. Hiring gains real time and distance \u2014 you pin a flyer, letters trickle into a basket, and stamping HIRED physically moves a man's paper onto your wall, which is what employing someone IS. The upgrade pips become PAID stamps with dates, so the estimate sheet doubles as the gym's improvement history. Capacity is blank ruled lines you're not using. And because it's the office's other wall \u2014 not a fourth room \u2014 the building stays honest: a struggling gym runs its whole business from one small room, and now the player stands in it.",
+  "implementationNotes": "Phase-1 fully procedural: plaster/cork/paper as baked SVG data-URI noise tokens; card positions via CSS grid with seeded transform offsets (hash of coach.id, same util as other rooms); stamps and torn flyer edge from one-time static feTurbulence defs; checklist is a real radiogroup (replaces the native select \u2014 8 options slightly exceeds the CD's \u22647 inline rule; the flyer is a full sheet so inline stays fine, flag to CD, clipboard-popover is the fallback); letter/card choreography with exit-before-unmount, all \u2264400ms, reduced-motion snaps. Tack holes/faded rectangles need fired-coach history persisted (store count or fired ids in save \u2014 small schema addition; degrade to seeded generic wear if vetoed). Real-art slots: coach photos (registry entry; 'NO PHOTO' corner until then), painted sign, cork/plaster tiles. Risks: narrow-viewport wall scroll must keep hire/fire targets \u226544px; verify estimate text \u226514px and money 7:1 after the lighting overlay composites."
+ },
+ {
+  "screen": "THE PRESS \u2014 newspaper + magazine reading (src/rooms/PressRoom.tsx/.css) and the Monday front-page landing (src/components/ArrivalNotice.tsx front-page + plain-notice modes)",
+  "roomConcept": "The Press is not a room \u2014 per the CD ruling it is the paper itself. OBJECT SHOT: camera looks down ~30\u00b0 at the scarred plywood bench just off the ring apron, under one hanging bulb. The player has picked up this week's broadsheet, folded to the sporting page; it fills the frame edge-to-edge except for bench wood showing on the right and bottom. The current issue of The American Boxing Monthly lies half-under the paper at the lower-left corner, its cover peeking \u2014 click it and it slides on top, already open to the Official Ratings page, the paper's edge now peeking instead. Esc or tapping the bench margin puts everything down and cuts back to the Floor (a sliver of ring light stays visible along the bottom edge). Monday's front page is a different shot: the same paper dealt onto the office desk blotter, still folded.",
+  "objectMap": [
+   {
+    "element": "Room shell (.room-screen panel, vignette, header chrome, breadcrumb)",
+    "object": "The bench surface itself \u2014 full-bleed object shot; no header, no breadcrumb, no panel. The masthead names where you are.",
+    "behavior": "Static resting surface; bench wood visible at asymmetric margins; bottom edge shows a sliver of the Floor's light (the way back). The 'panel' component is deleted, not restyled.",
+    "rationale": "A newspaper resting on wood under a bulb is a place; a rounded panel in a vignette void is the app we were hired to demolish."
+   },
+   {
+    "element": "Back button + Esc handler (closeRoom)",
+    "object": "Putting the paper down: the exposed bench margin is one large click target (aria-label 'Put the paper down \u2014 back to the floor (Esc)').",
+    "behavior": "Hover: the paper's near corner curls 2\u20133px (transform on a corner pseudo-element, never the text). Click/Esc: paper drops out the bottom third with --ease-paper and 1\u00b0 settle; Floor cuts in.",
+    "rationale": "You leave a newspaper by setting it down, not by pressing '\u2190 Back'; the persistent hover-curl teaches the affordance without a labeled control."
+   },
+   {
+    "element": "Paper/Magazine tab toggle (press__tabs)",
+    "object": "The other publication physically on the bench: whichever isn't being read peeks from the lower-left corner \u2014 magazine cover corner (nameplate + halftone) or the paper's folded ear.",
+    "behavior": "Hover: it slides out 6px with a paper-drag shadow. Click: it slides on top (240ms --ease-paper, 0.8\u00b0 rotation), other publication tucks beneath. One click, target \u226544px, aria 'Pick up The American Boxing Monthly'.",
+    "rationale": "Two publications on one bench is exactly how a 1975 gym read the sport; the swap is the same single click as the tab it replaces."
+   },
+   {
+    "element": "Paper masthead (paperName + 'Sporting Pages \u00b7 date' tagline)",
+    "object": "True broadsheet nameplate: the paper's name with the city word set in UnifrakturMaguntia (masthead only), flanked by ear boxes ('LATE CITY EDITION' / 'PRICE 15\u00a2'); beneath it a full-width double rule and an agate folio line: 'SPORTING PAGES \u2014 FRIDAY, MAY 2, 1975 \u2014 PAGE 14'.",
+    "behavior": "Static. Date lives in the folio at full contrast (it is decision-relevant context).",
+    "rationale": "The Roboto-Slab-bold masthead is a 2020 blog header; blackletter-over-double-rule is the single strongest 'this is a newspaper' signal that exists."
+   },
+   {
+    "element": "Clippings list (clipping text blocks)",
+    "object": "Real sports-page stories: 2\u20133 justified, hyphenated Noticia Text columns separated by hairline column rules; each story gets an Anton headline deck (1\u20133 sizes by story weight) or runs under a standing column head; stories separated by cut-off rules, not card borders.",
+    "behavior": "Static reading. No hover states \u2014 paper does not react to eyes. Break-inside avoid preserved; long weeks simply make a longer page that scrolls as one sheet.",
+    "rationale": "Headline hierarchy is how a reader triages a page in two seconds \u2014 the current uniform gray blocks lose the information scent a real sports page gives for free."
+   },
+   {
+    "element": "Clipping date (clipping__date, currently tracked red microcaps)",
+    "object": "Agate dateline opening the story's first line: 'NEW YORK, Apr 27 \u2014' in Libre Franklin 12px, news black.",
+    "behavior": "Inline, unrotated, full contrast. The tracked-red-microcaps overline pattern is deleted per the noList.",
+    "rationale": "Newspapers never printed floating date labels; the dateline is the period-true carrier of exactly the same datum."
+   },
+   {
+    "element": "Byline (clipping__byline '\u2014 Paul Turner')",
+    "object": "'By PAUL TURNER' agate byline under the headline deck; the recurring 'AROUND THE GYMS' items instead run under a standing boxed column head with the writer's name beneath it, same column position every issue.",
+    "behavior": "Static. Writer names are persistent world data, so the standing column belongs to the same man forever.",
+    "rationale": "A named column the player learns to trust ('Grossman's long-lunch item is never nothing') turns bylines from decoration into a relationship."
+   },
+   {
+    "element": "Empty paper state (paper__empty)",
+    "object": "The page still prints: a one-column brief under the head 'QUIET WEEK ON THE LOCAL BEAT' (the existing copy as body text), padded with a period house ad ('FRIDAY BOUTS \u2014 BROTHERHOOD ARENA \u2014 GEN. ADM. $3') as filler.",
+    "behavior": "Static; the house ad is set dressing (aria-hidden), the brief carries the real message.",
+    "rationale": "A newspaper with a blank page breaks the fiction harder than any panel; slow news filled with ads IS 1975."
+   },
+   {
+    "element": "Magazine masthead (MAGAZINE_NAME, tagline, 'Official Ratings \u00b7 year')",
+    "object": "A Ring-style monthly open to its ratings page: whiter coated stock than the newsprint, nameplate in Ultra fat-face, tagline in italic-free Noticia beneath, 'WORLD OFFICIAL RATINGS \u2014 1976' as a ruled department head; a typed subscriber mailing label ('SUBSCRIBER \u2014 HELL'S KITCHEN BOXING, NEW YORK') sits crooked on the visible cover corner when tucked away.",
+    "behavior": "Arrives already open (no cover-flip click tax). Dark-glossy-panel styling is deleted; ink is news black on paper.",
+    "rationale": "The mailing label says the gym has subscribed for years \u2014 world-building in one seeded sticker \u2014 and paper-white ratings finally read at 12:1 instead of amber-on-leather."
+   },
+   {
+    "element": "Division sections (magazine__division / divname)",
+    "object": "Ratings boxes exactly like The Ring's: 'HEAVYWEIGHT' in Anton caps inside a ruled box with a double rule above, divisions stacked heavyweight-first down the page.",
+    "behavior": "Static structure; empty divisions omitted as now.",
+    "rationale": "The ruled ratings box is the most recognizable artifact in boxing print history \u2014 instant authority, zero explanation."
+   },
+   {
+    "element": "Rank rows (rankrow: rank, name, camp, record)",
+    "object": "A leader-dot ratings table: '1. KENNETH GALLAGHER ..... 21-6-0 (12 KO)' \u2014 rank + name in Libre Franklin 500 caps, camp in 12px roman beneath or beside the name, records in Courier Prime tabular figures, right-aligned, 0\u00b0 rotation.",
+    "behavior": "No hover, no zebra striping. Records column is the sacred data plane: aligned, unrotated, no grain over numerals.",
+    "rationale": "Leader dots carry the eye from name to record the way flexbox gaps never will, and Courier record columns scan vertically for comparison \u2014 the actual job of a ratings page."
+   },
+   {
+    "element": "Player's own fighters appearing in the ratings",
+    "object": "A grease-pencil circle (seeded SVG ellipse, graphite #4a463f at ~85%) around the row of any fighter whose camp is the player's gym, drawn in the margin gutter so it never crosses the numerals.",
+    "behavior": "Deterministic per fighter id; appears only when the player's man is ranked. Purely additive flavor \u2014 the row underneath stays full contrast.",
+    "rationale": "The owner circling his own boy in the national ratings is the proudest mark a struggling gym ever makes; it also makes the player's stake in the page pre-attentively findable."
+   },
+   {
+    "element": "Front page mode (ArrivalNotice newIssue: masthead, dateLabel, headlines \u22645, quiet-week line)",
+    "object": "Monday's paper landing folded on the office desk blotter: above-the-fold only, a horizontal fold crease shading the lower edge, dealt in with 320ms --ease-paper and ~1\u00b0 settle; blotter leather and desk-lamp pool visible at the frame edges; headlines get one lead Anton deck + smaller decks; empty week prints the 'quiet week' one-column brief.",
+    "behavior": "role=alert kept; reduced-motion snaps. The centered modal, scrim, and rounded corners are deleted.",
+    "rationale": "News arriving as a thing that lands on your desk \u2014 not a dialog that interrupts you \u2014 is the difference between living in 1975 and being notified about it."
+   },
+   {
+    "element": "'At your gym' strip (arrivals, expired, departed, poached lines)",
+    "object": "A rule-boxed single-column brief on the front page under the printed head 'AT YOUR GYM' (boxed briefs are real newspaper anatomy); each event is one typeset line at full contrast; the actionable arrivals line gets a grease-pencil circle in its margin.",
+    "behavior": "Renders only when events exist (as now); departures and poachings are set as plain news lines \u2014 bad news in print stings correctly.",
+    "rationale": "Your gym appearing IN the paper, boxed like any local item, sells that the world watches you; the pencil circle is the owner's own hand flagging what needs doing."
+   },
+   {
+    "element": "Front-page actions (Review at the door / Read the full paper / To the floor)",
+    "object": "Three physical affordances: a memo-pink 'WHILE YOU WERE OUT' slip paper-clipped to the paper's top corner reading '2 MEN WAITING AT THE DOOR' (click = viewArrivalsNow, shown only when hasArrivals, exact count typed on it); the folded lower edge of the paper labeled in agate 'Cont. on Sporting Pages' (click anywhere on the fold = open The Press); the blotter margin around the paper (click/Esc = dismiss to floor).",
+    "behavior": "All targets \u226544px with full aria-labels ('Review 2 fighters at the door'); slip hover lifts 1px under its clip; fold hover brightens under the lamp; each is one click, matching current cost.",
+    "rationale": "Unfolding a paper to keep reading and answering the slip clipped to it are motor memories from a real desk \u2014 three buttons in a row are motor memories from Figma."
+   },
+   {
+    "element": "Plain mid-week notice (non-newIssue mode: eyebrow, lines, View Now / View Later / Noted)",
+    "object": "A single memo-pink 'WHILE YOU WERE OUT' pad slip on the blotter, typed lines (Special Elite) for each event; 'View Now' is the paper-clip slip pull (click the slip body), 'View Later / Noted' is sliding it into the wire in-tray at the frame edge (click the tray or Esc).",
+    "behavior": "Slip deals in with settle rotation (seeded \u22642\u00b0); filing to the tray animates 260ms then dismisses; the tray visibly holds the slip afterward, count in its aria-label.",
+    "rationale": "Mid-week events are gym business, not news \u2014 the pink slip keeps the notification system one consistent object everywhere in the game, per the CD's objectSystem."
+   }
+  ],
+  "layout": "The broadsheet dominates: full-bleed sheet rotated a seeded 0.7\u00b0, but its interior grid \u2014 masthead, double rule, three columns with hairline rules \u2014 is rigidly straight, so the crookedness lives in the object, never the type. Asymmetry is physical, not compositional: more bench shows on the right (\u224870px) than the left (\u224820px), the magazine corner breaks the lower-left edge, the fold ear breaks the top-right. The eye lands on the nameplate, drops through the lead Anton deck (top-left column, largest), then triages by deck size \u2014 real newspaper wayfinding replacing whitespace hierarchy. The Magazine swaps in at the same footprint but whiter, tighter, single-column ratings boxes stacked heavyweight-first. The Monday front page sits smaller and folded on the blotter, upper-left of frame, pink slip clipped at its corner, lamp pool anchoring the top-left.",
+  "materialsAndLight": "Surfaces: --newsprint (#d6d1c2) with the shared baked paper-noise tile and a faint halftone dot tile in image areas; magazine on brighter coated stock (index-card white, subtle screen-blend sheen band that shifts 4px on pickup); bench in stained plywood/oak tokens with visible grain gradient; front page rests on the office blotter leather. Light: the Floor rig \u2014 one hanging tungsten bulb, a soft-light radial pool upper-center of the sheet, multiply darkness pushing the bench corners down; the paper is lit, never luminous. Front page uses the Office rig: lamp upper-left, shadows 3px/5px down-right, one hot corner on the page. Amber appears only in these overlays; every ink on paper is news black or ribbon gray.",
+  "typography": "By source: UnifrakturMaguntia for one masthead word only; Anton for headline decks, standing column heads, and division heads; Ultra for the magazine's fat-face nameplate; Noticia Text justified/hyphenated for all story body; Libre Franklin 500 for agate \u2014 datelines, bylines, folios, ratings names; Courier Prime tabular for records and KO counts; Caveat only as the grease-pencil circles' implied hand (marks, not text); Special Elite on the pink slips. Oswald's tracked microcaps (tagline, dates, tabs) are deleted everywhere on this screen.",
+  "imperfections": "Seeded per issue (hash of dayCount): fold crease shading, one dog-eared corner, \u00b10.7\u00b0 sheet rotation, 1px ink misregistration on the nameplate only, ragged left deckle on the sheet edge (SVG clip-path, generated once). Bench: cup ring, tape residue, one cigarette scorch at the margin \u2014 environment plane, unlimited. Magazine: scuffed spine, crooked subscriber label (seeded \u22121.5\u00b0), thumbed corner. Front page: coffee ring in the blotter margin, never touching type. Grain \u22646% over text; ratings columns, records, and the yourGym lines stay at 0\u00b0 and full contrast \u2014 jitter the decoration, never the data.",
+  "immersionRationale": "The current screens tell you news exists; this design makes you read the news the way the owner does \u2014 pick up the paper off the bench, thumb to the sporting page, find your own gym boxed in column three. Every trust signal is diegetic: the standing column teaches you which writer's rumors matter; the subscriber label proves the gym has taken the Monthly for years; the grease-pencil circle around your ranked fighter is the owner's pride made visible. Monday stops being a modal and becomes the morning ritual of 1975 \u2014 the paper lands on the blotter, a pink slip is clipped to it, and you answer the slip or unfold the page with the same gestures a real desk demanded. Remove every label and the scene still says: small gym, one bulb, the whole sport arriving as ink.",
+  "implementationNotes": "Phase-1 is fully CSS/SVG: column-count + column-rule already exist; add hyphens:auto (needs lang='en' on the sheet), leader dots via dotted border-bottom flex fillers, halftone/newsprint as data-URI tiles, fold crease and lamp pools as gradient overlays (shading only \u2014 never transform text halves), deckle edge and grease-pencil ellipse as one-time static SVG defs, seeded by entity id. Data changes needed: press.ts clippings gain an optional headline field (fallback: derive standing-column head from templateId prefix like 'AROUND THE GYMS'); rankedElite rows need a 'isPlayerCamp' check (campOf vs save gym name) for the pencil circle. Fonts: subset UnifrakturMaguntia to the masthead word's glyphs (~4KB) and Ultra to the nameplate. Needs-real-art slots: magazine cover halftone photo (phase-1: SVG duotone silhouette), house-ad art. Risks: justified narrow columns can river \u2014 set min column width 240px; keep the publication-swap animation exit-before-unmount so mid-read remount bug (noted in the TSX comment) stays fixed via stable component identity."
+ },
+ {
+  "screen": "HOME / NEW GAME / SETTINGS / CALENDAR placeholder (src/screens/HomeScreen.tsx/.css, src/screens/newgame/*, src/screens/SettingsScreen.tsx, src/rooms/RoomPlaceholder.tsx)",
+  "roomConcept": "The first frame of the film is the street. Night, 1975. ROOM SHOT: standing on the sidewalk facing the gym's storefront \u2014 brick, a pebbled-glass door, and a big painted window with THE SWEET SCIENCE in chipped gold leaf. A sodium streetlamp pools light from upper-left; a tungsten lamp burns somewhere inside, glowing through the glass. Your hands hold a key ring. Continue is the key already in the deadbolt; New Game is the FOR LEASE card taped inside the window; Settings is the steel service panel beside the door. New Game cuts to an OBJECT SHOT: the landlord's desk, a three-page carbon lease packet under a paperclip, a pen, a road map, a rack of city cards. You are not choosing menu options \u2014 you are deciding whether to unlock a door or sign a lease.",
+  "objectMap": [
+   {
+    "element": "Title art (title__name + GlovesEmblem + rule)",
+    "object": "Gold-leaf sign painted on the storefront window glass \u2014 Ultra fat-face on an arc, painter's drop-shade outline, crossed-gloves motif painted between rules; the existing asset-registry slot becomes 'window sign art'",
+    "behavior": "Static set dressing; catches the streetlamp with one specular hot edge (light overlay, not glow); no hover",
+    "rationale": "The game's name becomes the gym's name on real glass \u2014 the title screen IS the establishing shot, not a logo lockup"
+   },
+   {
+    "element": "Eyebrow tagline 'A Boxing Gym Management Simulation \u00b7 1975'",
+    "object": "Smaller second line of window paint beneath the arc, single-stroke sign-painter caps (Anton, tracking within poster allowance)",
+    "behavior": "Static; same paint plane as title",
+    "rationale": "Subtitle survives verbatim but reads as what a sign painter would charge by the letter for"
+   },
+   {
+    "element": "Continue (disabled until save exists)",
+    "object": "The pebbled-glass door itself, brass deadbolt with YOUR key on a ring hanging in it; a full-height \u226544px hit region",
+    "behavior": "Hover: key glints + latch jiggle (--ease-steel micro); click: key turns, door cracks open with light spilling out, 380ms lateral pan into the save. Disabled (no save): no key in the lock, glass dark, dust on the kick plate \u2014 never grayed. aria-label 'Continue \u2014 load saved game'",
+    "rationale": "Continuing a save is literally letting yourself back into your own building; the disabled state is diegetic (you don't have keys yet)"
+   },
+   {
+    "element": "New Game",
+    "object": "Hand-lettered 'FOR LEASE \u2014 INQUIRE WITHIN' card taped inside the window glass, slightly crooked (seeded \u22121.5\u00b0)",
+    "behavior": "Hover: corner curls, lamp catches the card; click: cut to the landlord's desk object shot (lease packet slides up from bottom third and settles)",
+    "rationale": "Starting a career is answering a lease sign \u2014 the strongest possible 'struggling gym' fiction, and it disappears from the window once a save exists"
+   },
+   {
+    "element": "Settings",
+    "object": "Steel service panel beside the door, stenciled 'SERVICE' (Anton stamp), painted-over hinges, four seeded screwheads",
+    "behavior": "Hover: latch jiggle; click: panel door swings open to an object shot of the breaker box. Esc closes it",
+    "rationale": "Settings without breaking fiction: building utilities are the one 1975-true place knobs and switches live"
+   },
+   {
+    "element": "Settings stub content (4 planned rows: label + note, plus copy + Back)",
+    "object": "Inside the panel: empty knob knockouts and unlabeled breakers, each with a masking-tape label (Permanent Marker: 'MASTER VOL.', 'MUSIC', 'DIFFICULTY', 'WALK-IN FREQ.') and a penciled note on a taped index card ('not wired \u2014 Phase 3'); the explanatory copy is a typed card taped inside the panel door",
+    "behavior": "Rows are inert (dusty, not grayed); Back = closing the panel door (door edge is the \u226544px control, plus Esc); future real controls become actual knobs/breakers in these same holes",
+    "rationale": "The stub honestly says 'circuits not yet wired' in-world, and the object is pre-plumbed for the real controls to land later"
+   },
+   {
+    "element": "Version footer 'v0.2.0 \u2014 Phase 2'",
+    "object": "Small typed building-permit/inspection tag taped inside the glass at the window's lower corner (Libre Franklin pre-print, Special Elite fill)",
+    "behavior": "Static, 12px floor, full contrast on its paper",
+    "rationale": "Version metadata as municipal paperwork \u2014 visible to those who look, invisible to the fiction"
+   },
+   {
+    "element": "New-game stepper (3 steps, states on/done/todo) + step titles",
+    "object": "The lease packet is three carbon pages under one paperclip; typed header 'APPLICATION FOR COMMERCIAL LEASE \u2014 PAGE 1 OF 3' names the step; completed pages lie flipped at the top edge showing their filled lines, upcoming pages peek from underneath",
+    "behavior": "Page flip on advance (--ease-paper, 1\u00b0 rotation); done pages remain visible evidence; aria retains 'Step 2 of 3: Create Your Manager'",
+    "rationale": "Progress is physical page order, not a dot tracker \u2014 you can see what you already signed"
+   },
+   {
+    "element": "Gym name input (maxLength 42, Enter submits) + lead copy + hint",
+    "object": "The lease's 'TRADE NAME OF ESTABLISHMENT' ruled blank; player text renders Special Elite as you type, caret is a typewriter underscore; lead copy is the form's pre-printed clause (Libre Franklin); 'Press Enter when it feels right' is a Caveat pencil margin note",
+    "behavior": "Real <input>, autofocus, focus-visible brass ring on the ruled line; 42-char rule = the printed line simply ends",
+    "rationale": "Naming the gym on a legal line makes the 'weighty decision' the code comment wants \u2014 you're committing it to paper"
+   },
+   {
+    "element": "'Surprise me' name generators (gym + manager)",
+    "object": "A sign-painter's sample slip paper-clipped beside the blank ('SUGGESTED \u2014 J. Reyes, Signs') for the gym; a typed name-slip for the manager",
+    "behavior": "Click deals a new slip in (180ms paper ease, seeded \u00b11\u00b0) and types its text into the blank; \u226544px slip",
+    "rationale": "Random generation becomes someone handing you a suggestion on paper \u2014 same one-click cost"
+   },
+   {
+    "element": "Manager creation: portrait + nameplate (name, Age 25 \u00b7 1975) + Randomize look",
+    "object": "A state BOXING MANAGER'S LICENSE application card: procedural Portrait sits in the photo corner as a photo-booth print under paper photo-corners; name/age are typed license lines; 'RETAKE' is a stamped tab under the photo",
+    "behavior": "Descriptor changes update the print live; Randomize = brief photo-flash (white light overlay, \u22641 per click, reduced-motion: instant swap) and the print settles with 1\u00b0 rotation",
+    "rationale": "You are literally filling out the license that makes you a manager in 1975 \u2014 the portrait finally has a reason to exist on screen"
+   },
+   {
+    "element": "Skin tone + hair color swatch pickers (aria-pressed, titles)",
+    "object": "Two paint-chip sample strips stapled to the license (square chips, 0 radius, real color fills \u2014 chips ARE pigment, so material color is honest); selected chip gets a grease-pencil circle",
+    "behavior": "Real toggle buttons \u226544px, hover = lamp catch, selection = circle mark stamps on (90ms); names stay as title/aria",
+    "rationale": "Color-as-object: paint chips are the one period artifact where a color swatch is diegetic"
+   },
+   {
+    "element": "Hair style option list",
+    "object": "Pre-printed checklist on the license ('HAIR: \u2610 Cropped \u2610 ...') with one pencil check (Caveat mark, typed labels)",
+    "behavior": "Styled radiogroup per CD ruling \u2014 click a line to move the check; all options always visible",
+    "rationale": "Direct application of the checklist ruling; fewer clicks than the current option pills"
+   },
+   {
+    "element": "City selection: 15-city listbox (region meta, hover-focus preview, \u2713 selected, \u2605 Las Vegas locked) + detail panel (name, state\u00b7region, description paragraphs, style line, badges)",
+    "object": "A wire rack of typed city cards beside a folded Rand McNally road map. The list is the rack's typed index (Courier Prime roster, region column aligned, unrotated); hover/focus pulls that city's card forward onto the map \u2014 the card carries the full description, 'STYLE \u2014' typed footer line, and state/region dateline. Click circles the city in red grease pencil on the map and stamps the card SELECTED (red, \u22122\u00b0). Las Vegas is a glossy postcard pinned above the rack, caption 'DESTINATION \u2014 nobody starts here'; its card explains, never selects",
+    "behavior": "Same listbox roles/keyboard as now; 'Click to choose' becomes pre-printed tray instruction; locked = postcard, not padlock glyph",
+    "rationale": "Choosing where to plant your life should feel like standing over a map with a pencil \u2014 and the hover-preview interaction maps perfectly to pulling cards"
+   },
+   {
+    "element": "Back / Continue / Begin footer + OpeningScene (5 phases, beats, Skip, gym name, 'Step inside')",
+    "object": "Back = the previous page's exposed corner (typed 'BACK \u2014 PAGE 1'); Continue = flipping the packet forward via a brass paper-corner control; Begin = the SIGNATURE line \u2014 clicking signs (one-time Caveat stroke draw-on) and a FILED date stamp lands. Opening scene keeps its exact beats on black; the reveal is the storefront again, but the window now carries YOUR gym name in fresh paint (one letter still gleaming wet); 'Step inside \u2192' becomes the door key turning; Skip stays a small typed word, lower corner",
+    "behavior": "Disabled Continue = pen lying across the unfilled line (dusty, never gray); reduced-motion jumps to ready as coded",
+    "rationale": "The lease you signed pays off instantly: the FOR LEASE card is gone and your name is on the glass \u2014 cause and consequence in one cut"
+   },
+   {
+    "element": "RoomPlaceholder (Calendar Phase 7 et al): back/Esc, breadcrumb, glyph, name, tagline, contents list, summary slot, arrivesIn",
+    "object": "An unfinished room: bare bulb, drop cloth, a nail in the wall where the wall calendar will hang (Calendar's future object per CD demotion), and a clipboard on a nail holding a typed WORK ORDER \u2014 room name as typed header, tagline as the job description, contents as numbered line items, arrivesIn as a penciled completion date ('due Ph. 7'); optional summary is a note clipped on top; breadcrumb dies \u2014 the door behind you is stenciled with the room's painted name and is the back control (plus Esc, kept as coded)",
+    "behavior": "Esc/click puts the clipboard down and pans back (380ms); the top-layer Esc guard logic is preserved",
+    "rationale": "A placeholder that is honestly a room under construction keeps navigation meaningful without a floating roadmap panel; the bare nail foreshadows the calendar becoming an object, not a room"
+   }
+  ],
+  "layout": "Home: full-bleed storefront, no centering. The door sits right of center at true architectural scale; the painted window dominates the left two-thirds and holds the title high, the FOR LEASE card low-left (natural eye path: sign, then lease card, then door). Service panel hangs at hip height on the far right wall; permit tag in the window's bottom corner; sidewalk and curb ground the bottom edge. The streetlamp's pool anchors the eye on the door hardware \u2014 the actual primary action. New Game: object shot at ~30\u00b0, lease packet filling the frame but offset left, road map and card rack breaking the right edge, blotter visible all around. City step goes asymmetric two-column: typed index rack left (narrow), map with pulled card right (wide). Nothing is symmetric; everything rests on the desk.",
+  "materialsAndLight": "Street: sooted brick, pebbled wire-glass, gold leaf, painted steel panel, concrete sidewalk. Two named sources: sodium streetlamp upper-left (the room's key; shadows fall 3px 5px down-right) and warm tungsten interior glow bleeding through the door glass \u2014 the only amber on screen, applied as screen/soft-light overlays above content per the rig contract. Desk scene: office rig verbatim \u2014 tungsten lamp upper-left, steep falloff, one hot corner on the paper (multiply gradient). Paper stocks: --manila lease packet, --index-card city cards and license, --pulp map, --memo-pink landlord note. Panel interior lit by the streetlamp spilling in, near-shadowless steel. All fills flat material color; light lives only in the overlay stack.",
+  "typography": "Window sign: Ultra fat-face arc for THE SWEET SCIENCE, Anton for the painted subtitle and the SERVICE stencil. Lease/license pre-print: Libre Franklin 500, 12\u201314px, with form numbers ('FORM CL-7 REV. 9/71'). Player-typed fills and city index: Special Elite; city card body and comparative data: Courier Prime, tabular, 0\u00b0. Stamps (SELECTED, FILED, RETAKE): Anton caps through the shared erosion filter, fixed category angles. Pencil marginalia ('Press Enter when it feels right', checklist checks, signature): Caveat \u226514px, one-read flavor only. Masking-tape labels in the panel: Permanent Marker. Big Shoulders/Oswald/Roboto Slab deleted from all four screens.",
+  "imperfections": "Gold leaf chipped along letter bottoms; one letter of SCIENCE repainted brighter than its neighbors (an old repair, dated in tiny painter's script). Ghost rectangles of tape residue from posters that used to hang in the window. Rust streaks under the panel's screwheads; brass worn bright around the keyhole where hands go. The lease packet: coffee ring in the left margin of page 1 only, never crossing type; page 3's carbon pre-print is fainter (container flavor \u2014 typed fills stay full contrast). City cards rotate seeded \u22642\u00b0; the index column rotates 0\u00b0. FOR LEASE card yellowed at the tape. All seeded per install id, deterministic, never re-rolled.",
+  "immersionRationale": "The current home screen is a logo over a vignette \u2014 it tells you the genre; the storefront shows you the premise. Standing outside at night with a key encodes the entire fantasy (this building is yours to keep alive) before one word is read, and it passes the remove-all-labels test: door, lease sign, service panel each self-describe. Making New Game a lease you sign converts a wizard into the founding memory of the save \u2014 the stepper, inputs, and city picker all gain stakes because they're marks on a legal document. The opening scene's payoff (your name freshly painted where FOR LEASE hung) closes the loop with consequence motion, so the player's first Advance-Day happens in a building they watched themselves acquire. Continue-as-key makes every return session a homecoming.",
+  "implementationNotes": "Phase 1 is fully CSS/SVG: storefront as one SVG scene (brick via baked noise tile + gradients, pebbled glass via feTurbulence-baked tile with the interior glow behind it, gold leaf as filled text with layered hard shadows) with three absolutely-positioned DOM hit regions (door, lease card, panel) \u226544px, cursor + hover-light affordance, brass focus-visible ring. It drops into the existing background asset registry delivered neutral/unlit per the rig ruling \u2014 real painted-storefront art replaces it later without relayout. Lease/license/cards are DOM+CSS (real inputs, radiogroups, listbox \u2014 keep current roles and Enter/Esc handling verbatim). One-time signature draw-on uses stroke-dashoffset; photo flash and door-crack respect prefers-reduced-motion. Risks: scene-object discoverability at first launch (mitigate with signage text and the streetlamp pool aimed at the door); small-viewport storefront needs a clamp()-based scale with the window sign allowed to crop before controls do; 'The temporal hub' and 'My Office' copy in src/game/rooms.ts violates the noList and must be rewritten to sign-painter language when RoomPlaceholder is rebuilt."
+ }
+]

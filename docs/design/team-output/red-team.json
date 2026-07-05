@@ -1,0 +1,148 @@
+{
+ "findings": [
+  {
+   "where": "MY GYM spec roomConcept ('the OTHER WALL OF THE OFFICE: turn left from the desk') vs GYM FLOOR spec 'My Gym / training' entry ('click = object-shot cut down onto the chalkboard/pegboard (the MyGymRoom view)' at the ring corner)",
+   "kind": "inconsistency",
+   "issue": "The same view is architecturally located in two different places in the building: the Floor spec says MyGymRoom is the ring-corner chalkboard/pegboard station on the training floor; the MyGym spec says it is the office's other wall. A player who clicks the ring station teleports into the office without passing the office door \u2014 the building's geography, the project's core promise, lies.",
+   "fix": "Rule it once: MY GYM is the office wall (staff, hiring, contractor estimates are business paperwork and belong in the office per the three-room law). The Floor's ring-corner station keeps only the chalked philosophy word and pegboard as set dressing; clicking it plays the office-door pan first (380ms into the office, camera already facing the staff wall) so the cut never skips a doorway. Update the Floor objectMap entry to say 'routes through the office door' explicitly."
+  },
+  {
+   "where": "Walk-in registration card across three specs: OFFICE 'Desk tab walk-in queue' (index slips, 'FORM 3-A', patience as penciled date, 'GETTING RESTLESS' stamp) vs WALK-IN MOMENT 'WalkInCard' ('CARD 7-A \u00b7 REV. 6/73', stapled yellow flimsy 'WILL WAIT \u2014 5 DAYS', 'IN A HURRY' stamp) vs LOCKER ROOM training orders ('TRAINING ORDERS, CARD 7-A REV. 9/74')",
+   "kind": "inconsistency",
+   "issue": "One physical object \u2014 the card a walk-in filled out \u2014 is specced as three different documents: different form numbers (FORM 3-A vs CARD 7-A), different patience notation (penciled date vs typed stapled slip), and two different impatience stamps for the same state (GETTING RESTLESS vs IN A HURRY). Worse, CARD 7-A is simultaneously the walk-in card (REV. 6/73) and the locker room's training-orders card (REV. 9/74) \u2014 one gym cannot file two forms under one number. The player will hold the same man's paper on two screens and see two different props.",
+   "fix": "Define <WalkInRegCard> once in the component library with one form number (FORM 3-A REV. 6/73), one patience artifact (typed 'WILL WAIT \u2014 TO JUL 12' on the stapled flimsy), and one impatience stamp ('IN A HURRY', red, \u22122\u00b0). Office tray and WalkInViewer render the identical component at different scales. Renumber training orders to CARD 7-A exclusively (delete the walk-in card's 7-A) and add a one-page form-number registry to the style guide so every 'FORM/CARD' string is minted once."
+  },
+  {
+   "where": "HOME spec, 'Eyebrow tagline' entry: 'A Boxing Gym Management Simulation \u00b7 1975' painted as a second line on the storefront window",
+   "kind": "anachronism",
+   "issue": "No 1975 sign painter ever lettered 'A Boxing Gym Management Simulation' on glass \u2014 it is genre metadata and marketing copy inside the fiction, a direct noList violation ('doors say what a sign painter would paint') on the very first frame of the film. It also contradicts the screen's own rationale ('the title screen IS the establishing shot, not a logo lockup').",
+   "fix": "Paint what gym windows actually said: 'BOXING \u2014 TRAINING DAILY \u2014 MEMBERSHIPS' with 'EST. 1955' below the arc. If the genre subtitle must survive for store-page/first-launch clarity, put it outside the world: on the black title card that precedes the storefront reveal (the OpeningScene already owns beats-on-black), never on the glass."
+  },
+  {
+   "where": "FIGHTER PROFILE roomConcept ('his note is physically lying on top of the folder and must be dealt with \u2014 stamped \u2014 before it slides aside') and 'Locker request block' behavior ('Dealt in above the dividers so it must be seen first')",
+   "kind": "usability-regression",
+   "issue": "The request note physically covers both flaps until stamped, but the data needed to answer it \u2014 assessment sheet, attributes, standing, capacity \u2014 is underneath it. The current UI shows the request block alongside the tabs so the player reviews first, answers second; the redesign forces answer-before-evidence or an awkward peek, violating 'interaction cost never rises' at the exact moment a man's fate is decided.",
+   "fix": "Split 'seen first' from 'answered first': the note deals in on top (owns the eye), but one click/drag slides it to the blotter margin where it stays visibly pending (corner overlapping the folder edge, aria 'unanswered locker request'). The three response stamps work from either position. Stamping remains the only way to make it leave the desk \u2014 urgency preserved, evidence never gated."
+  },
+  {
+   "where": "OFFICE spec, 'Gym cards' entry: rival dossiers 'stapled in a stack inside the folder' \u2014 vs current .rivals__list (OfficeRoom.tsx:325\u2013349), a scrollable list showing many gyms at once",
+   "kind": "usability-regression",
+   "issue": "A stapled stack reads one sheet at a time; the current Rivals tab shows every local gym's name, tier, and fighters in one scroll. If comparing rivals means flipping half-sheets sequentially, scan density collapses \u2014 the exact 'eight lockers of scrawl is homework' failure the CD ruled against, rebuilt in paper.",
+   "fix": "Spec the stack as a shingled fan inside the folder: sheets overlap so each gym's typed CAPS name line and tier stamp are always visible (like real stapled sheets thumbed apart), and the whole fan scrolls inside the folder as one page mask. Clicking a shingle slides that sheet fully into view without hiding the other headers. Same data-at-rest as today's list, still paper."
+  },
+  {
+   "where": "Component library 'immersionRationale' palette audit ('multiply layers may darken paper \u226412%, so worst-case ribbon-on-index stays \u22487.3:1') vs manila-hosted decision text: folder tab labels (FighterProfile, Rivals), manila tray/tally cards, trial cards",
+   "kind": "usability-regression",
+   "issue": "The worst-case lighting math was run only for index-card stock. Ribbon ink on manila is \u22485.6:1 at rest; under the licensed 12% multiply darkening it drops to \u22484.3:1 \u2014 below the 4.5:1 decision-text floor. Every typed manila surface the player acts on (divider tab labels, 'ROSTER \u2014 ACTIVE' drawer label, tray cards, bench trial cards) can silently fail guardrail 1.",
+   "fix": "Two-part fix that improves the fiction: (a) folder tabs and drawer labels carry typed index-card label strips glued/inserted into the manila (period-true typed-strip tab inserts), putting ribbon-on-index \u22489:1 under any lamp; (b) extend the palette audit table to every ink\u00d7stock pair actually used for decision text, and add a lint rule: multiply overlays over --manila decision text capped at 6%."
+  },
+  {
+   "where": "Stamp wordings across specs: 'STRAIGHT TALK \u2014 NO ROOM' (FighterProfile response slip), 'GETTING RESTLESS' (Office), 'THEY'RE CALLING' (FighterProfile flight risk), plus drift for the same act \u2014 'PASSED ON' (Locker Room trialist) vs 'NO THANKS' (FighterProfile) vs 'NOT FOR US' (Walk-In)",
+   "kind": "anachronism",
+   "issue": "Rubber stamps are things the owner ordered once from a stamp shop and reuses for official, repeated acts \u2014 PAID, PAST DUE, RECEIVED. Conversational, situational phrases ('STRAIGHT TALK \u2014 NO ROOM', 'GETTING RESTLESS', 'THEY'RE CALLING') fail the source test: nobody buys a stamp for a sentence he'd say once. And three different stamps for 'declined a prospect' means the gym owns three redundant stamps \u2014 UI label variety wearing an erosion filter.",
+   "fix": "Publish a canonical stamp inventory (~10 stamps) in the style guide: RELEASED, PASSED ON, NOT FOR US, HIRED, PAID, APPROVED, PAST DUE, OVERDRAWN, LOCKER, TRIAL, plus the mood/trajectory/feel category sets in terse trade words. Every screen draws from the inventory; conversational nuance moves to its correct source \u2014 'straight talk' becomes the typed response-slip line under a plain NO ROOM stamp, 'getting restless' becomes the trainer's pencil, poach warning becomes the typed slip line under a terse red 'CALLED \u2014 ST. NICK'S' style notation."
+  },
+  {
+   "where": "THE PRESS spec, 'Magazine masthead' entry: 'WORLD OFFICIAL RATINGS \u2014 1976' while the game world is May 1975 (Floor: 'MAY 1975' calendar, 'FRIDAY MAY 2' pad)",
+   "kind": "anachronism",
+   "issue": "The current issue of the monthly on the bench is dated a year in the future. One hardcoded example string breaks the whole 'inherited premises' clock \u2014 a player who notices stops trusting every printed date in the building.",
+   "fix": "Derive the ratings-department year (and the subscriber label's implied run) from the in-game date: 'WORLD OFFICIAL RATINGS \u2014 {currentYear}'. Add a spec-wide rule: no literal year in any template string; all dates render through one formatDate helper so the paper, the pad, the ledger, and the license can never disagree."
+  },
+  {
+   "where": "Component library (no entry) vs BANK BAL. renditions: Floor index card ('BANK BAL.' + figure), Walk-In desk pad ('BANK BAL. \u2014 $2,200'), MyGym estimate ('BANK BAL. $1,412 \u2014 7/5/75'), hire letters, and the CD cash ruling requiring it 'on every money-bearing document'",
+   "kind": "inconsistency",
+   "issue": "The single most repeated datum in the game \u2014 mandated by a CD ruling to appear on every money-bearing document \u2014 has no component in the Property Kit. Four screens improvise it with drifting punctuation, optional date, and unspecified negative handling; the one number the player checks before every yes will look like four different clerks typed it.",
+   "fix": "Add <BankBalLine> to the component library: Courier Prime tabular, exactly 'BANK BAL. $2,200 \u2014 5/2/75', 0\u00b0 rotation, 7:1, negative rendered '($110)' with the red OVERDRAWN stamp in the margin, updates by re-typing in place. All five current renditions consume it; the ruling's three homes (ledger line, floor card, document line) become three placements of one object."
+  },
+  {
+   "where": "OFFICE spec 'Desk tab walk-in queue' ('patience as a penciled date \u2014 says he'll wait to Jul 12', Caveat) and MY GYM 'Facilities' ('Can't afford: pencil short $438')",
+   "kind": "inconsistency",
+   "issue": "The vision's own guardrail says 'handwriting and stamps never solely carry a stat, price, or deadline' \u2014 yet the office spec puts the walk-in's deadline solely in Caveat pencil, and MyGym puts the shortfall amount (the exact number the player must earn) solely in pencil. Two screens ship built-in guardrail violations.",
+   "fix": "Patience deadline goes to the typewriter on the same slip \u2014 typed 'WILL WAIT \u2014 TO JUL 12' (matching the unified walk-in card of finding 2) \u2014 with pencil reserved for flavor ('kid keeps checking the clock'). The shortfall gets typed onto the estimate as clerk's arithmetic: 'SHORT $438' in Courier beside the dusty stamp; the pencil line may echo it but never solely carry it."
+  },
+  {
+   "where": "GYM FLOOR spec, 'Roster count' entry: slate chalk-lettered 'IN CAMP' with 'a chalk tally-and-numeral (||||  8)'",
+   "kind": "inconsistency",
+   "issue": "Principle 6 says counts are visible evidence \u2014 but the drawn evidence (four tally strokes) contradicts the numeral (8). Evidence that lies is worse than a badge: a player who counts strokes and gets a different number than the digit learns to distrust every tally, key hook, and slip stack in the building.",
+   "fix": "Render exact seeded tally strokes grouped in five-gates (\ud834\udf78 + |||) always equal to the roster count, redrawn with the steps() chalk scratch on change; the chalk numeral beside them is the redundant fast read. Add a library rule under TallyProp: rendered object count must equal the typed/aria figure at all times \u2014 a unit-testable invariant."
+  },
+  {
+   "where": "GYM FLOOR spec, 'Calendar' entry ('upcoming fight dates circled in red grease pencil') vs OFFICE spec, 'Future roadmap' entry (dead rotary phone: 'FIGHT BOOKING \u2014 line not hooked up yet', Phase 6)",
+   "kind": "inconsistency",
+   "issue": "The wall calendar advertises circled upcoming fight dates while the office's dead phone declares fight booking doesn't exist until Phase 6. Two objects in adjacent rooms tell contradictory stories about whether fights are a thing; the calendar's headline at-a-glance value is content the game cannot produce.",
+   "fix": "Until Phase 6, the grease-pencil circles mark events the simulation already owns: rent due on the 1st (red), the monthly's arrival, and the current week bracket; spent days keep their X's. Spec the circle layer as data-driven from the schedule model so fight dates appear the day booking ships \u2014 the object is pre-plumbed, like the phone."
+  },
+  {
+   "where": "Vision objectSystem SELECT spec ('trainers hang as pegboard tags') vs FIGHTER PROFILE 'Trainer select' entry (inline printed checklist: 'YOU \u2014 2 FREE', 'DUKE OSSIE (CUTS & CHIN) \u2014 1 FREE')",
+   "kind": "inconsistency",
+   "issue": "The vision document says trainer selection renders as pegboard tags; the Fighter Profile spec ships it as a printed checklist. Unlike the tab divergence (which the component library explicitly resolves in entry 4), this one is silently unresolved \u2014 two builders will ship two different props for the same control.",
+   "fix": "Resolve it in the library the same way entry 4 resolved tabs: the checklist wins on the profile's training slip (\u22647 options, CD checklist ruling, comparison data typed inline); pegboard tags remain canonical only where trainers are displayed as room objects (the floor's ring-corner pegboard, locker-room hook board). Amend the objectSystem SELECT line to say so."
+  },
+  {
+   "where": "LOCKER ROOM 'Focus slots meter' (pegboard 'FOCUS TRAINING' with hooks and manila tags, canonical per FighterProfile's disabled text 'ALL SLOTS FILLED \u2014 SEE HOOK BOARD') vs MY GYM 'Focused capacity count' ('PERSONAL ATTENTION \u2014 THIS WEEK' clipboard with printed lines)",
+   "kind": "inconsistency",
+   "issue": "The same state \u2014 focused fighters vs focusCapacity \u2014 is embodied by two competing canonical objects in two rooms: a hook board and a ruled clipboard form. 'One team built one building' breaks: which object is the truth the disabled messages point to, and who in the fiction keeps them in sync?",
+   "fix": "Declare the locker-room hook board the source-of-truth object (assignment happens there; disabled states already cite it). The MyGym clipboard survives as an explicitly derived document \u2014 same data typed as the week's paperwork with a pencil note 'copied off the hook board' \u2014 or, cheaper, the clipboard's header line becomes 'SEE HOOK BOARD \u2014 LOCKER ROOM' with the roster lines kept for openProfile access. Either way, spec which object animates the consequence (tag swings on the board; the sheet merely retypes)."
+  },
+  {
+   "where": "Component library, DESTRUCTIVE ACTION entry ('Two-phase confirm kept everywhere') vs WALK-IN MOMENT 'Turn him away' (single click stamps the card \u2014 matches current WalkInViewer.tsx which has no confirm)",
+   "kind": "inconsistency",
+   "issue": "The library mandates two-phase confirm on all destructive stamps 'everywhere'; the walk-in screen specs a one-press stamp, faithful to today's one-click flow. Followed literally, the library adds a confirm click to the game's highest-frequency decision \u2014 an interaction-cost increase the guardrails forbid; followed loosely, the library is wrong and implementers will guess.",
+   "fix": "Amend the StampAction contract: two-phase confirm applies only where the current UI already confirms (roster cuts, firing coaches \u2014 irreversible loss of an owned asset); single-press stands for walk-in triage (turning away a stranger, recoverable via the patience window). Write both modes into the component's props (confirm: boolean) so the rule is code, not folklore."
+  },
+  {
+   "where": "OFFICE roomConcept/materials ('tobacco-leather blotter', 'tobacco leatherette blotter with brass corner caps') vs WALK-IN ('forest-green blotter paper with tobacco leather corners') and FIGHTER PROFILE ('the office's forest-green leather blotter')",
+   "kind": "inconsistency",
+   "issue": "Three object shots of the same desk describe two different blotters \u2014 tobacco leather vs forest green. It is the most-seen surface in the game; if its color changes between the office view, the walk-in moment, and the fighter folder, the 'one desk you never leave' fiction visibly reboots per screen.",
+   "fix": "Canonize one blotter in the materials section of the style guide: forest-green blotter paper (--gym-green, matching the accounts book cloth) inside tobacco-leather corners with brass caps \u2014 it satisfies all three specs' lighting intents. Add a 'set dressing registry' listing the desk's permanent props (blotter, lamp, phone, mug, tray, spindle) with tokens, so every object shot composites the same desk."
+  },
+  {
+   "where": "HOME spec, 'Skin tone + hair color swatch pickers': 'two paint-chip sample strips stapled to the license... chips ARE pigment'",
+   "kind": "anachronism",
+   "issue": "Paint chips stapled to a state boxing-manager's license application are implausible paperwork (no 1975 form carried pigment samples), and rendering skin tone selection as literal paint swatches is a tonal misstep the period setting makes riskier, not safer. It's a color-picker widget wearing a costume \u2014 the pattern the whole project exists to kill.",
+   "fix": "Use the object the license fiction already provides: a photo-booth contact strip paper-clipped beside the photo corner \u2014 a strip of small prints of the SAME procedural portrait, one per option, the chosen frame circled in grease pencil (selection mark consistent with the city map). Skin tone and hair become choosing your photo, which is diegetic, kinder, and shows the actual result instead of an abstract swatch."
+  },
+  {
+   "where": "HOME spec, 'Title art' + OpeningScene payoff ('the window now carries YOUR gym name in fresh paint') \u2014 undefined post-save storefront state",
+   "kind": "inconsistency",
+   "issue": "Before a save, the window reads THE SWEET SCIENCE (the game title); the opening scene repaints it with the player's chosen gym name. The spec never says what the Home screen's glass shows on the next launch with a save present \u2014 the title again (breaking the payoff and the 'this building is yours' premise) or the player's name (orphaning the game title). Continue-as-homecoming hinges on this frame.",
+   "fix": "Rule: once a save exists, the storefront IS the save \u2014 player's gym name on the glass (aged by --gym-age), player's city grime, key in the deadbolt. The game title lives on the pre-storefront black title card (same slot as the subtitle fix in finding 3) shown for a beat on boot. New Game after a save = the FOR LEASE card returns taped to a DIFFERENT window pane, so starting over never repaints your building behind your back."
+  },
+  {
+   "where": "THE PRESS spec, 'Front-page actions': clicking the fold ('Cont. on Sporting Pages') on the Monday paper lying on the office blotter 'opens The Press' \u2014 whose room shot is the bench on the gym floor",
+   "kind": "inconsistency",
+   "issue": "The paper teleports: you unfold it on the office desk and it lands on the plywood bench under the ring bulb, in a different room with a different light rig, mid-gesture. Object permanence \u2014 the design's whole currency \u2014 breaks on the game's weekly ritual.",
+   "fix": "Give the press reading view a rest prop like every PaperSurface: unfolding the Monday paper opens the full sporting page in place on the blotter under the office rig; the bench copy is where the SAME issue rests for the remainder of the week (the owner carried it out \u2014 a cut can even show it on the bench next time you're on the floor). One paper, two resting places, never both at once."
+  },
+  {
+   "where": "HOME spec, 'Settings stub content': breakers tape-labeled 'DIFFICULTY' and 'WALK-IN FREQ.' in the service panel",
+   "kind": "anachronism",
+   "issue": "MASTER VOL. and MUSIC plausibly live on an amp circuit, but no 1975 building has electrical service labeled DIFFICULTY or WALK-IN FREQ. \u2014 that's game-settings vocabulary written on tape, marketing-copy-in-the-world by another name. The panel conceit survives only if every label could exist without the game.",
+   "fix": "Split the panel's contents by fiction: breakers/knobs keep only audio ('PA', 'RADIO', 'BELL'). Game-rule settings become the typed HOUSE RULES card taped inside the panel door \u2014 a pencil-checked checklist ('TAKE ALL COMERS / STEADY TRADE / SLOW DOOR' for walk-in frequency; 'SPARRING: SOFT / HONEST / MEAN' for difficulty) using the existing Checklist component, in the owner's language."
+  },
+  {
+   "where": "GYM FLOOR spec, 'Gym log' entry ('newest on top fully legible, older notes peeking beneath', collapse toggle deleted) vs current GymLogBoard.tsx (defaults open, 5 lines visible at rest)",
+   "kind": "usability-regression",
+   "issue": "Today the player reads 5 recent log lines at rest; the corkboard shows one fully legible slip and requires a click-and-lean-in for the rest. That's a 5-to-1 information-density cut on the ambient 'what happened while I advanced' read, on the highest-frequency screen in the game.",
+   "fix": "Pin the three newest slips in a legible cascade (each \u226514px, overlapping but with full first lines exposed \u2014 real corkboards do this), older ones peeking beneath; the object-shot lean-in keeps the full recent list one click away with Esc back. Also spec that an Advance that adds N entries pins N slips, so the at-rest board carries the same post-advance information the 5-line panel did."
+  },
+  {
+   "where": "In-world copy across specs: Office ledger flyleaf '214 entries \u2014 gyms forget nothing.', Home city rack 'DESTINATION \u2014 nobody starts here', Locker Room list counts typed as 'x3' after tier headings",
+   "kind": "modern-software-tell",
+   "issue": "The narrator keeps leaking into the props: 'gyms forget nothing' is the design deck's voice typed onto a flyleaf; 'nobody starts here' is a tooltip explaining game rules on a postcard caption; 'x3' is programmer notation the noList explicitly bans in spirit ('+1/+7'). Each is a small crack, but they're on high-traffic objects and they all fail the 'who typed this?' source test.",
+   "fix": "Run a voice audit with one rule: every string must name its author in the fiction. Flyleaf: '214 ENTRIES \u2014 BEGUN MAR. 1955' (a clerk's note). Vegas postcard: pencil in the owner's hand, 'someday.' (the rules explanation lives on the typed city card in plain terms: 'no club starts in Vegas'). Tier counts: '(3 MEN)' in form print. Add the audit as a shipping gate alongside the object and source tests."
+  },
+  {
+   "where": "Component library entry 16 (focus ring auto-swaps to --ink-ribbon on paper stocks, brass on index \u22481.9:1) vs screen specs repeatedly promising 'brass glint ring' on paper objects (Office folder tabs, Locker Room checklist lines/roster lines, Fighter Profile dividers, lease form inputs)",
+   "kind": "inconsistency",
+   "issue": "The library correctly computes that brass fails 3:1 non-text contrast on paper and swaps to ink \u2014 but five screen specs, written first, still promise brass focus rings on paper surfaces. Implementers following a screen spec verbatim ship a 1.9:1 focus indicator, an accessibility failure on precisely the surfaces keyboard players use most (checklists, tabs, inputs).",
+   "fix": "Global find-and-replace in the screen specs: 'focus = brass glint ring' becomes 'focus = FocusRing (brass on environment, ribbon-ink on paper per library entry 16)'. Enforce with the .on-paper scope class on every PaperSurface so the swap is automatic and unmentioned in component code \u2014 screens can then never spec it wrong again."
+  },
+  {
+   "where": "GYM FLOOR room shot: data-bearing props readable at wall distance \u2014 'BANK BAL.' index card and '3 WAITING' tally card at the office door, chalk slate numeral, calendar's circled dates 'visible from the room shot'",
+   "kind": "usability-regression",
+   "issue": "The spec only flags legibility below 900px, but the tension exists at every width: an index card on a wall fifteen feet away, drawn at honest scale, cannot carry 14px/7:1 numerals; drawn large enough to read, it's a two-foot card and the scale honesty that sells the room dies. Unresolved, each implementer will pick a different lie and the elevation will read as neither legible nor believable.",
+   "fix": "Codify the lie once as a layout law: 'forced-perspective data props' \u2014 the flattened near-elevation already licenses non-photographic scale, so declare that any prop carrying live decision data renders at a fixed on-screen minimum (numerals \u226514px at 7:1, prop scaled to fit them) while pure set dressing keeps scene scale; cap the count of such props per room shot (Floor: cash card, tally card, slate, date pad \u2014 four). Everything else's exact figure lives one click deep and in aria, per principle 6."
+  }
+ ]
+}
