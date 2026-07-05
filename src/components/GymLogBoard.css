@@ -1,65 +1,34 @@
 /*
-  The corkboard — left wall by the street door. Cork takes unlimited seeded
-  wear (pin holes, sun-faded ghosts); the slips' first lines are document
-  plane: >=14px typewriter at full contrast, stains in margins only.
+  The gym log on the painted corkboard — the board is in the floor art;
+  we only pin the paper. Slips stay >=13px typewriter at full contrast.
 */
 
-.corkboard {
-  position: relative;
-  display: block;
-  width: 100%;
-  min-height: 180px;
-  padding: 14px 12px;
-  text-align: left;
-  background-color: var(--tobacco);
-  background-image: var(--tex-cork);
-  background-blend-mode: soft-light;
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.4),
-    var(--shadow-dx, 3px) var(--shadow-dy, 5px) 9px var(--shadow-cast);
-}
-/* oak frame */
-.corkboard__frame {
+/* transparent mount filling the board's rect on the scene */
+.corkmount {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  border: 7px solid var(--oak);
-  box-shadow:
-    inset 1px 1px 0 rgba(0, 0, 0, 0.45),
-    inset -1px -1px 0 rgba(214, 190, 150, 0.18);
+  padding: 4% 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: 2px;
 }
-/* old pin holes across the top rail + one sun-faded rectangle */
-.corkboard::after {
-  content: '';
-  position: absolute;
-  top: 12px;
-  left: 16px;
-  right: 16px;
-  height: 6px;
-  pointer-events: none;
-  background-image: radial-gradient(circle 1.5px, rgba(0, 0, 0, 0.55) 0 1.5px, transparent 2px);
-  background-size: 34px 6px;
-  background-repeat: repeat-x;
-  opacity: calc(0.25 + var(--gym-age) * 0.6);
+.corkmount:hover {
+  background: radial-gradient(ellipse at 50% 45%, rgba(255, 214, 140, 0.09), transparent 75%);
 }
-.corkboard__ghost {
-  position: absolute;
-  top: 30%;
-  left: 22%;
-  width: 84px;
-  height: 58px;
-  background: rgba(224, 205, 165, 0.12);
-  box-shadow: 0 0 0 1px rgba(224, 205, 165, 0.08);
-  transform: rotate(-1.4deg);
+.corkmount:focus-visible {
+  outline: 2px solid var(--brass-polished);
+  outline-offset: -2px;
 }
-
-.corkboard__slips {
+.corkmount__slips {
   position: relative;
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 7px;
+  max-width: 88%;
 }
 
 /* --- a pinned slip --- */
@@ -68,12 +37,9 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  width: calc(100% - 10px);
-  padding: 6px 10px 7px 12px;
+  padding: 5px 10px 6px 12px;
   background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
   transform-origin: 14px 4px; /* the pin */
 }
 .logslip__pin {
@@ -89,14 +55,14 @@
 .logslip__date {
   font-family: var(--type-hand);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--ink-graphite);
   flex: none;
 }
 .logslip__text {
   font-family: var(--type-typewriter);
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.35;
   color: var(--ink-ribbon);
   overflow: hidden;
   white-space: nowrap;
@@ -107,8 +73,8 @@
   position: absolute;
   right: 3px;
   bottom: -6px;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   pointer-events: none;
   border-radius: 50%;
   border: 3px solid rgba(111, 81, 54, 0.28);
@@ -119,13 +85,13 @@
 .logslip--peek {
   padding-top: 2px;
   padding-bottom: 2px;
-  margin-top: -13px;
+  margin-top: -11px;
   z-index: -1;
   background-color: #c9c2b0;
 }
 .logslip--peek .logslip__text,
 .logslip--peek .logslip__date {
-  opacity: 0; /* only the paper edge shows */
+  opacity: 0;
 }
 
 /* the newest slip swings on its pin as it's hung */
@@ -148,24 +114,23 @@
 }
 
 /* ---------------------------------------------------------------- */
-/* LEAN-IN — the object shot: you step up to the board               */
+/* LEAN-IN — step up to the board                                    */
 /* ---------------------------------------------------------------- */
 .corkboard-leanin {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 55;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding-left: 6%;
-  background: rgba(5, 3, 2, 0.55); /* the room falls out of focus, stays present */
+  justify-content: center;
+  background: rgba(5, 3, 2, 0.55);
 }
 .corkboard-leanin__board {
   position: relative;
-  width: min(560px, 72vw);
-  max-height: 82vh;
+  width: min(620px, 86vw);
+  max-height: 84vh;
   overflow-y: auto;
-  padding: 26px 22px;
+  padding: 28px 24px;
   background-color: var(--tobacco);
   background-image: var(--tex-cork);
   background-blend-mode: soft-light;
@@ -180,6 +145,16 @@
 }
 .corkboard-leanin__slips .logslip__text {
   white-space: normal;
+  font-size: 14px;
+}
+.corkboard-leanin__slips .logslip__date {
+  font-size: 14px;
+}
+.corkboard-leanin__bare {
+  font-family: var(--type-hand);
+  font-weight: 400;
+  font-size: 16px;
+  color: #d8d2c0;
 }
 .corkboard-leanin__back {
   margin-top: 16px;

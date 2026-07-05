@@ -1,1132 +1,231 @@
 /*
-  THE GYM FLOOR — full-bleed room shot.
-  --------------------------------------------------------------------------
-  Camera: standing eye height, just inside the street door, looking across
-  the ring at the back wall. One-point perspective flattened to a near-
-  elevation so targets stay honest rectangles. Nothing is centered; the
-  composition balances mass (dark corridor right) against light (office
-  glass left). One shadow direction: down-right, 3px 5px.
-
-  Layer order: walls (0) → ring (2) → corridor (4) → street door (5) →
-  props (6) → time station (7) → darkness (38) → light rig (40) → overlays.
+  THE GYM FLOOR — one piece of art, cover-scaled, with interactive objects
+  positioned in percentages of the image frame (see assets/floorScene.ts).
 */
 
 .floor {
   position: relative;
   flex: 1;
   overflow: hidden;
-  --shadow-dx: 3px;
-  --shadow-dy: 5px;
-  background-color: var(--plaster-mint);
+  background: #14100c;
 }
 
-/* ---------------------------------------------------------------- */
-/* WALLS + FLOOR                                                     */
-/* ---------------------------------------------------------------- */
-.floor__walls {
-  z-index: 0;
-  background-color: var(--plaster-mint);
-  background-image:
-    /* the concrete floor */
-    linear-gradient(180deg, transparent 0 76%, var(--concrete) 76.2% 100%),
-    /* rubber mats where the ring stands */
-    linear-gradient(180deg, transparent 0 82%, rgba(20, 16, 12, 0.5) 82% 96%, transparent 96%),
-    /* gym-green wainscot with its cap rail */
-    linear-gradient(
-      180deg,
-      transparent 0 53.8%,
-      rgba(0, 0, 0, 0.28) 53.8% 54.2%,
-      var(--gym-green) 54.2% 76%,
-      transparent 76%
-    ),
-    /* plaster mottling */
-    var(--tex-plaster);
-  background-blend-mode: normal, normal, normal, multiply;
-  background-size:
-    100% 100%,
-    62% 100%,
-    100% 100%,
-    480px 480px;
-  background-position:
-    0 0,
-    24% 0,
-    0 0,
-    0 0;
-  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
-}
-
-/* hanging bulbs — fixtures; one is dead over the far corner */
-.floor__bulb {
-  position: absolute;
-  top: 0;
-  width: 2px;
-  height: 64px;
-  background: rgba(10, 8, 6, 0.85);
-}
-.floor__bulb::after {
-  content: '';
-  position: absolute;
-  top: 64px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 22px;
-  height: 28px;
-  border-radius: 50% 50% 46% 46%;
-  background: radial-gradient(circle at 50% 38%, #f4dfa4 0 30%, #caa355 62%, #6d5730 100%);
-}
-.floor__bulb--1 {
-  left: 24%;
-}
-.floor__bulb--2 {
-  left: 50%;
-  height: 52px;
-}
-.floor__bulb--2::after {
-  top: 52px;
-}
-.floor__bulb--dead {
-  left: 67.2%;
-  height: 74px;
-}
-.floor__bulb--dead::after {
-  top: 74px;
-  background: radial-gradient(circle at 50% 38%, #4b463c 0 34%, #2e2a23 66%, #1c1915 100%);
-}
-
-/* the dated plywood repair in the wainscot — the gym patches, never renovates */
-.floor__patch {
-  position: absolute;
-  left: 47.5%;
-  top: 62%;
-  width: 74px;
-  height: 46px;
-  background-color: var(--oak);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  transform: rotate(0.6deg);
-  font-family: var(--type-marker);
-  font-size: 11px;
-  color: rgba(20, 14, 8, 0.75);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 3px;
-}
-
-/* ---------------------------------------------------------------- */
-/* PAINTED SIGNAGE — the wall says whose gym this is                 */
-/* ---------------------------------------------------------------- */
-.floor__signage {
+/* the scene scales like background-size: cover, anchored center */
+.scene {
   position: absolute;
   left: 50%;
-  top: 5.5%;
-  transform: translateX(-50%);
-  z-index: 1;
-  text-align: center;
-  pointer-events: none;
-  /* paint, not light: worn into the plaster */
-  opacity: calc(0.92 - var(--gym-age) * 0.25);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: max(100vw, calc(100vh * (16 / 9)));
+  aspect-ratio: 16 / 9;
 }
-.floor__gymname {
-  font-family: var(--type-poster);
-  font-size: clamp(30px, 4.6vw, 62px);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #ece2c4;
-  text-shadow:
-    1px 1px 0 rgba(46, 43, 38, 0.55),
-    2px 2px 0 rgba(46, 43, 38, 0.2);
-}
-.floor__gymcity {
-  font-family: var(--type-poster);
-  font-size: clamp(13px, 1.3vw, 18px);
-  letter-spacing: 0.04em;
-  color: rgba(236, 226, 196, 0.72);
-  margin-top: 2px;
-}
-
-/* ---------------------------------------------------------------- */
-/* THE RING — midground                                              */
-/* ---------------------------------------------------------------- */
-.floor__ring {
-  position: absolute;
-  left: 15%;
-  right: 28%;
-  top: 28%;
-  height: 54%;
-  z-index: 2;
-  pointer-events: none;
-  filter: drop-shadow(3px 5px 4px rgba(0, 0, 0, 0.35));
-}
-
-/* ---------------------------------------------------------------- */
-/* STREET DOOR + EXIT — the way back, far left frame edge            */
-/* ---------------------------------------------------------------- */
-.streetdoor {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: clamp(64px, 6.5vw, 104px);
-  z-index: 5;
-  padding: 0;
-}
-.streetdoor__leaf {
-  position: absolute;
-  inset: 8% 22% 0 0;
-  background-color: #33291c;
-  background-image: var(--tex-steel);
-  background-blend-mode: multiply;
-  border-right: 3px solid #201810;
-}
-/* chicken-wire glass, daylight behind it */
-.streetdoor__glass {
-  position: absolute;
-  left: 12%;
-  right: 14%;
-  top: 7%;
-  height: 38%;
-  background-color: #cbd3cf;
-  background-image:
-    linear-gradient(rgba(30, 30, 28, 0.55) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30, 30, 28, 0.55) 1px, transparent 1px),
-    linear-gradient(115deg, #e9efe7 0%, #aeb8b0 60%, #86928c 100%);
-  background-size:
-    9px 9px,
-    9px 9px,
-    100% 100%;
-  border: 3px solid #201810;
-}
-/* the one legally emissive element on the floor */
-.streetdoor__exitbox {
-  position: absolute;
-  top: 3.5%;
-  left: 8%;
-  z-index: 2;
-  font-family: var(--type-poster);
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  color: #ffd9c9;
-  background: var(--paint-red-faded);
-  border: 2px solid #5c2b22;
-  padding: 2px 8px 1px;
-  box-shadow: 0 0 16px rgba(198, 74, 52, 0.55);
-}
-/* the blade of daylight through the crack — widens as you reach for it */
-.streetdoor__daylight {
-  position: absolute;
-  right: 8%;
-  top: 8%;
-  bottom: 4%;
-  width: 8px;
-  background: linear-gradient(90deg, rgba(233, 239, 231, 0.5), transparent);
-  transition: width var(--t-paper) var(--ease-paper);
-  pointer-events: none;
-}
-.streetdoor:hover .streetdoor__daylight {
-  width: 26px;
-}
-
-/* ---------------------------------------------------------------- */
-/* CORKBOARD position on the left wall                               */
-/* ---------------------------------------------------------------- */
-.floor__cork {
-  position: absolute;
-  left: 6.4%;
-  top: 36%;
-  width: 18.5%;
-  min-width: 210px;
-  z-index: 6;
-  transform: rotate(-0.5deg);
-}
-
-/* ---------------------------------------------------------------- */
-/* OFFICE DOOR GROUP — up two steps, the room's warmest light        */
-/* ---------------------------------------------------------------- */
-.officegroup {
-  position: absolute;
-  left: 26.5%;
-  top: 17%;
-  width: 15.5%;
-  min-width: 190px;
-  z-index: 6;
-}
-.officedoor {
-  position: relative;
-  display: block;
-  width: 62%;
-  aspect-ratio: 0.44;
-  padding: 0;
-  /* the door: oak casing around pebbled glass */
-  border: 7px solid var(--oak);
-  border-bottom-width: 10px;
-  background-image:
-    /* wood lower panel */
-    linear-gradient(
-      180deg,
-      transparent 0 60%,
-      #7f6136 60% 62%,
-      var(--oak) 62% 100%
-    ),
-    /* lit pebbled glass above */
-    radial-gradient(ellipse at 50% 30%, #e9c877 0%, #c9a355 40%, #8a6c3a 78%, #6d5730 100%);
-  box-shadow:
-    inset 0 0 0 2px rgba(32, 24, 16, 0.6),
-    var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
-}
-/* pebbled texture over the lit glass */
-.officedoor::before {
-  content: '';
+.scene__art {
   position: absolute;
   inset: 0;
-  background-image: var(--tex-paper);
-  background-size: 90px;
-  opacity: 0.75;
-  mix-blend-mode: multiply;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* the wrapper already holds the aspect ratio */
+  user-select: none;
 }
-/* the light inside comes up when you reach for the door */
-.officedoor::after {
-  content: '';
+
+/* ---------------------------------------------------------------- */
+/* HOTSPOTS                                                          */
+/* ---------------------------------------------------------------- */
+.hotspot {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 50% 30%, rgba(255, 230, 160, 0.38), transparent 62%);
-  opacity: 0;
-  transition: opacity var(--t-paper) var(--ease-paper);
-  pointer-events: none;
+  padding: 0;
+  background: none;
+  border-radius: 2px;
 }
-.officedoor:hover::after {
-  opacity: 1;
+/* the room's light comes up when you reach for a door — light, not chrome */
+.hotspot:hover,
+.hotspot:focus-visible {
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 214, 140, 0.14), transparent 72%);
 }
-.officedoor__glasstext {
+.hotspot:focus-visible {
+  outline: 2px solid var(--brass-polished);
+  outline-offset: -2px;
+}
+
+/* typed tally card on the office door glass */
+.hotspot__tag {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  top: 6%;
-  width: 92%;
-  height: auto;
-  pointer-events: none;
-}
-.officedoor__arcname {
-  font-family: var(--type-poster);
-  font-size: 14px;
-  fill: #8a6428;
-  stroke: rgba(58, 40, 14, 0.5);
-  stroke-width: 0.6;
-  letter-spacing: 0.06em; /* sign-painter's arc — poster display exception */
-}
-.officedoor__word {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 34%;
-  font-family: var(--type-poster);
-  font-size: clamp(19px, 1.7vw, 26px);
-  letter-spacing: 0.1em; /* painted display lettering */
-  color: #7c5a20;
-  text-shadow: 0.5px 0.5px 0 rgba(255, 240, 200, 0.4);
-  pointer-events: none;
-}
-/* the brass latch — jiggles when you reach */
-.officedoor__latch {
-  position: absolute;
-  right: 6%;
-  top: 55%;
-  width: 9px;
-  height: 18px;
-  background: linear-gradient(180deg, var(--brass-polished), var(--brass-oxidized));
-  border: 1px solid #55461f;
-}
-.officedoor:hover .officedoor__latch {
-  animation: latch-jiggle 240ms var(--ease-paper) 1;
-}
-@keyframes latch-jiggle {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  30% {
-    transform: translateX(2px);
-  }
-  65% {
-    transform: translateX(-1px);
-  }
-}
-/* typed tally card clipped to the glass */
-.officedoor__tally {
-  position: absolute;
-  top: 26%;
-  right: -8%;
-  padding: 3px 7px 4px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
-  transform: rotate(1.2deg);
-}
-/* tape ghost where the tally card clips when nobody waits */
-.officedoor__tapeghost {
-  position: absolute;
-  top: 26%;
+  top: 22%;
   right: -6%;
-  width: 34px;
-  height: 16px;
-  background: rgba(232, 222, 196, 0.14);
-  box-shadow: 0 0 0 1px rgba(232, 222, 196, 0.1);
-}
-/* pink slips wedged under the door — one per man waiting */
-.officedoor__slips {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -12px;
-  height: 16px;
-  pointer-events: none;
-  z-index: 3;
-}
-.officedoor__slip {
-  position: absolute;
-  bottom: 2px;
-  width: 30px;
-  height: 19px;
-  background-color: var(--memo-pink);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-  animation: slip-slide 400ms var(--ease-paper) 1;
-}
-@keyframes slip-slide {
-  from {
-    transform: translateY(-10px) rotate(0deg);
-    opacity: 0;
-  }
-}
-/* two concrete steps up to the door */
-.officedoor__steps {
-  position: absolute;
-  left: -12%;
-  right: -12%;
-  bottom: -34px;
-  height: 34px;
-  background: linear-gradient(
-    180deg,
-    var(--concrete) 0 44%,
-    #6f6b60 44% 50%,
-    #7d7869 50% 92%,
-    #5d594f 92%
-  );
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 8px var(--shadow-cast);
-}
-
-/* the BANK BAL. index card taped beside the doorframe */
-.cashcard {
-  position: absolute;
-  left: 66%;
-  top: 12%;
-  white-space: nowrap;
-  padding: 9px 11px 10px;
+  padding: 3px 8px 4px;
   background-color: var(--index-card);
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 15px, var(--index-card-rule) 15px 16px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
-  text-align: left;
-  min-height: 44px;
-}
-.cashcard .bankbal__line {
-  font-size: 14px; /* forced-perspective data prop: numerals >=14px (A24) */
-}
-.cashcard__tape {
-  position: absolute;
-  width: 34px;
-  height: 13px;
-  background: rgba(217, 211, 194, 0.6);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
-}
-.cashcard__tape--tl {
-  top: -7px;
-  left: -9px;
-  transform: rotate(-38deg);
-}
-.cashcard__tape--br {
-  bottom: -7px;
-  right: -9px;
-  transform: rotate(-35deg);
-}
-
-/* the framed state license */
-.license {
-  position: absolute;
-  left: 70%;
-  top: 52%;
-  width: 128px;
-  padding: 7px 9px 8px;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 4px solid var(--oak);
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.license__head {
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 7px;
-  letter-spacing: 0.03em;
-  color: var(--ink-news);
-  border-bottom: 1px solid rgba(46, 43, 38, 0.4);
-  padding-bottom: 2px;
-}
-.license__row {
-  font-family: var(--type-typewriter);
-  font-size: 10px;
-  color: var(--ink-ribbon);
-}
-
-/* ---------------------------------------------------------------- */
-/* TRAINING STATION — the ring corner → My Gym                       */
-/* ---------------------------------------------------------------- */
-.station {
-  position: absolute;
-  left: 53.5%;
-  top: 36%;
-  width: 12.5%;
-  min-width: 150px;
-  z-index: 6;
-  padding: 0;
-  text-align: left;
-}
-.station:hover .station__chalkword {
-  /* the bulb over the ring snaps a touch brighter — light on chalk */
-  opacity: 1;
-}
-.station__board {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 92px;
-  background: #232823;
-  border: 5px solid var(--oak);
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 8px var(--shadow-cast);
-  padding: 10px 10px 8px;
-}
-.station__chalkword {
-  font-family: var(--type-poster);
-  font-size: 19px;
-  letter-spacing: 0.06em;
-  color: var(--chalk);
-  opacity: 0.88;
-  filter: url(#chalk-scratch);
-  transition: opacity var(--t-paper) var(--ease-paper);
-}
-.station__chalkline {
-  display: block;
-  margin-top: 9px;
-  width: 72%;
-  height: 3px;
-  background: rgba(230, 227, 216, 0.4);
-  filter: url(#chalk-scratch);
-}
-.station__pegboard {
-  position: relative;
-  width: 100%;
-  height: 54px;
-  margin-top: 6px;
-  background-color: #86653d;
-  background-image: radial-gradient(circle 1.6px, rgba(20, 14, 8, 0.8) 0 1.6px, transparent 2.4px);
-  background-size: 16px 14px;
-  border: 3px solid #5c4526;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 6px var(--shadow-cast);
-  display: flex;
-  gap: 12px;
-  padding: 8px 10px;
-}
-.station__peg {
-  width: 7px;
-  height: 16px;
-  background: linear-gradient(180deg, var(--brass-polished), var(--brass-oxidized));
-}
-.station__peg--tag {
-  position: relative;
-}
-.station__peg--tag::after {
-  content: '';
-  position: absolute;
-  top: 12px;
-  left: -4px;
-  width: 15px;
-  height: 22px;
-  background-color: var(--manila);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-  transform: rotate(3deg);
-}
-/* the ledge: bill spike + applicants' letters */
-.station__ledge {
-  position: relative;
-  display: block;
-  height: 40px;
-  margin-top: 4px;
-}
-.station__ledge::before {
-  content: '';
-  position: absolute;
-  left: -4px;
-  right: -4px;
-  bottom: 0;
-  height: 7px;
-  background: var(--oak);
-  border-top: 1px solid #8f6c42;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 5px var(--shadow-cast);
-}
-.station__spike {
-  position: absolute;
-  left: 16px;
-  bottom: 6px;
-  width: 2px;
-  height: 30px;
-  background: #b9bdb4;
-}
-.station__envelope {
-  position: absolute;
-  left: 4px;
-  bottom: 8px;
-  width: 34px;
-  height: 12px;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  animation: slip-slide 400ms var(--ease-paper) 1;
-}
-.station__asking {
-  position: absolute;
-  left: 48px;
-  bottom: 6px;
-  padding: 2px 6px 3px;
-  background-color: var(--pulp);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
   font-family: var(--type-machine);
   font-weight: 700;
-  font-size: 11px;
+  font-size: clamp(10px, 0.9vw, 13px);
   font-variant-numeric: tabular-nums;
   color: var(--ink-ribbon);
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
-  transform: rotate(-1.4deg);
   white-space: nowrap;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.55);
+  transform: rotate(1.6deg);
+}
+
+/* pink slips at the office threshold */
+.scene__slips {
+  position: absolute;
+  pointer-events: none;
+}
+.scene__slip {
+  position: absolute;
+  bottom: 10%;
+  width: 13%;
+  height: 46%;
+  background: var(--memo-pink);
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* ---------------------------------------------------------------- */
-/* LOCKER CORRIDOR — taller and darker than the office door          */
+/* THE CORKBOARD MOUNT (art supplies the cork; we pin the paper)     */
 /* ---------------------------------------------------------------- */
-.corridor {
+.scene__cork {
   position: absolute;
-  left: 70.5%;
-  top: 13%;
-  width: 12.5%;
-  min-width: 140px;
-  height: 56%;
-  z-index: 4;
-  padding: 0;
-}
-.corridor__header {
-  position: absolute;
-  top: -4px;
-  left: 0;
-  right: 0;
-  padding: 6px 0 5px;
-  background-color: var(--oak);
-  background-image: var(--tex-steel);
-  background-blend-mode: multiply;
-  font-family: var(--type-poster);
-  font-size: clamp(17px, 1.5vw, 23px);
-  letter-spacing: 0.1em; /* painted header board */
-  color: #e4dcc2;
-  text-shadow: 1px 1px 0 rgba(20, 14, 8, 0.6);
-  border: 2px solid #4a3722;
-  z-index: 2;
-}
-.corridor__dark {
-  position: absolute;
-  inset: 34px 6% 0;
-  background: linear-gradient(180deg, #0a0c0a 0%, #10140f 55%, #182018 100%);
-  border-left: 4px solid #55503f;
-  border-right: 4px solid #3c382c;
-  overflow: hidden;
-}
-/* the gleam of steel in the dark */
-.corridor__steel {
-  position: absolute;
-  left: 22%;
-  top: 24%;
-  width: 12px;
-  height: 58%;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--locker-steel) 22%,
-    var(--locker-steel-lit) 50%,
-    var(--locker-steel) 78%,
-    transparent
-  );
-  opacity: 0.55;
-  transition: opacity var(--t-paper) var(--ease-paper);
-}
-/* cool fluorescent spill on the corridor floor */
-.corridor__spill {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 26%;
-  background: linear-gradient(180deg, transparent, rgba(207, 216, 196, 0.16));
-}
-.corridor:hover .corridor__steel {
-  opacity: 0.95;
-}
-/* scuffed threshold arcs where twenty years of feet turned */
-.corridor__threshold {
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: -12px;
-  height: 14px;
-  background: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(12, 9, 7, calc(0.2 + var(--gym-age) * 0.35)),
-    transparent 70%
-  );
 }
 
-/* the IN CAMP slate beside the corridor mouth */
-.slate {
+/* ---------------------------------------------------------------- */
+/* THE CALENDAR, FILLED IN                                           */
+/* ---------------------------------------------------------------- */
+.scene__cal {
   position: absolute;
-  left: 64.5%;
-  top: 16%;
-  width: 5.5%;
-  min-width: 78px;
-  z-index: 6;
-  background: #262b26;
-  border: 4px solid #4a4438;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  padding: 8px 7px 10px;
+  padding: 1.2% 0.6% 0.8%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  transform: rotate(0.8deg);
+  text-align: center;
+  border-radius: 2px;
 }
-.slate__word {
-  font-family: var(--type-poster);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  color: var(--chalk);
-  opacity: 0.9;
-  filter: url(#chalk-scratch);
+.scene__cal:hover {
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 214, 140, 0.1), transparent 75%);
 }
-.slate__count {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+.scene__cal:focus-visible {
+  outline: 2px solid var(--ink-ribbon);
+  outline-offset: -2px;
 }
-.chalk-tally {
-  filter: url(#chalk-scratch);
-  opacity: 0.92;
-}
-.slate__numeral {
-  font-family: var(--type-poster);
-  font-size: 22px; /* the redundant fast read — data: no filter, no tilt */
-  color: var(--chalk);
-  font-variant-numeric: tabular-nums;
-}
-.slate__wiped {
-  width: 70%;
-  height: 20px;
-  background: radial-gradient(ellipse, rgba(230, 227, 216, 0.1), transparent 75%);
-}
-/* chalk dust on the ledge */
-.slate__ledge {
-  position: absolute;
-  left: -4px;
-  right: -4px;
-  bottom: -9px;
-  height: 6px;
-  background: #4a4438;
-}
-.slate__ledge::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: 18%;
-  width: 34%;
-  height: 2px;
-  background: rgba(230, 227, 216, 0.35);
-  filter: blur(1px);
-}
-
-/* ---------------------------------------------------------------- */
-/* WALL CALENDAR — hung crooked in the seam                          */
-/* ---------------------------------------------------------------- */
-.wallcal {
-  position: absolute;
-  left: 84.5%;
-  top: 6%;
-  width: 11%;
-  min-width: 150px;
-  z-index: 6;
-  padding: 10px 10px 12px;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 8px var(--shadow-cast);
-  transform: rotate(var(--seed-rot, -2deg));
-  transform-origin: 50% 4px;
-}
-/* the nail it hangs from */
-.wallcal::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #3a3a36;
-}
-.wallcal:hover {
-  /* the sheet stirs on its nail */
-  transform: rotate(calc(var(--seed-rot, -2deg) + 0.5deg));
-  transition: transform var(--t-paper) var(--ease-paper);
-}
-.wallcal__month {
-  display: block;
+.cal__month {
   font-family: var(--type-form);
   font-weight: 500;
-  font-size: 14px;
-  letter-spacing: 0.03em;
+  font-size: clamp(9px, 0.85vw, 14px);
+  letter-spacing: 0.06em;
   color: var(--ink-news);
-  text-align: center;
-  margin-bottom: 7px;
+  margin-bottom: 4%;
 }
-.wallcal__grid {
+.cal__grid {
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+  grid-auto-rows: 1fr;
 }
-.wallcal__cell {
+.cal__cell {
   position: relative;
-  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--type-form);
   font-weight: 500;
-  font-size: 12px;
+  font-size: clamp(8px, 0.7vw, 12px);
   color: var(--ink-news);
-  border: 0.5px solid rgba(46, 43, 38, 0.25);
 }
 /* grease-pencil X through spent days */
-.wallcal__cell--spent::after {
+.cal__cell--spent::after {
   content: '\00d7';
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -54%) rotate(-8deg);
   font-family: var(--type-hand);
   font-weight: 600;
-  font-size: 19px;
+  font-size: clamp(11px, 1vw, 17px);
   line-height: 1;
   color: #3f3b34;
-  opacity: 1;
-  transform: translate(-50%, -54%) rotate(-8deg);
 }
-/* today */
-.wallcal__cell--today {
-  box-shadow: inset 0 0 0 2px var(--ink-graphite);
+.cal__cell--today {
+  box-shadow: inset 0 0 0 1.5px var(--ink-graphite);
 }
-/* rent due the 1st — red grease-pencil circle (A12) */
-.wallcal__cell--rent::before {
+/* rent circled on the 1st */
+.cal__cell--rent::before {
   content: '';
   position: absolute;
-  inset: -1px;
-  border: 2px solid var(--ink-stamp-red);
+  inset: 6% 2%;
+  border: 1.5px solid var(--ink-stamp-red);
   border-radius: 50%;
-  transform: rotate(-4deg) scaleX(1.15);
+  transform: rotate(-5deg) scaleX(1.12);
   opacity: 0.85;
 }
 
 /* ---------------------------------------------------------------- */
-/* BENCH + NEWSPAPER — the near foreground → The Press               */
+/* THE STRIP — date, money, time controls                            */
 /* ---------------------------------------------------------------- */
-.benchpaper {
+.stripbar {
   position: absolute;
-  left: 28%;
-  bottom: 1.5%;
-  width: 24%;
-  min-width: 260px;
-  height: 15%;
-  min-height: 110px;
-  z-index: 6;
-  padding: 0;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 16px;
+  background: rgba(12, 9, 7, 0.82);
+  border: 1px solid rgba(201, 165, 92, 0.28);
+  border-radius: 2px;
 }
-.benchpaper__bench {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 58%;
-  background-color: var(--oak);
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 9px,
-      rgba(20, 14, 8, 0.22) 9px 11px,
-      transparent 11px 22px
-    ),
-    var(--tex-steel);
-  background-blend-mode: normal, multiply;
-  border-top: 3px solid #8f6c42;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
+.stripbar__date {
+  font-family: var(--type-machine);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: #e4dcc2;
+  white-space: nowrap;
 }
-/* legs */
-.benchpaper__bench::before,
-.benchpaper__bench::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  width: 12px;
-  height: 16px;
-  background: #55401f;
+.stripbar__cash {
+  font-family: var(--type-machine);
+  font-weight: 700;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: #e4dcc2;
+  white-space: nowrap;
 }
-.benchpaper__bench::before {
-  left: 8%;
+.stripbar__gap {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(201, 165, 92, 0.28);
 }
-.benchpaper__bench::after {
-  right: 8%;
+.stripbar__btn {
+  min-height: 36px;
+  padding: 5px 14px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: #e4dcc2;
+  border: 1px solid rgba(228, 220, 194, 0.4);
+  border-radius: 2px;
+  white-space: nowrap;
 }
-/* the folded paper */
-.benchpaper__paper {
-  position: absolute;
-  left: 12%;
-  bottom: 42%;
-  width: 46%;
-  height: 62%;
-  background-color: var(--newsprint);
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 7px, rgba(46, 43, 38, 0.14) 7px 8px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  box-shadow:
-    0 -1px 0 rgba(255, 255, 250, 0.4) inset,
-    2px 3px 6px rgba(0, 0, 0, 0.45);
-  transform: rotate(-2.4deg);
-  overflow: hidden;
-  transition: transform var(--t-paper) var(--ease-paper);
+.stripbar__btn:hover {
+  border-color: rgba(228, 220, 194, 0.85);
+  background: rgba(228, 220, 194, 0.08);
 }
-.benchpaper:hover .benchpaper__paper {
-  transform: rotate(-2.4deg) translateY(-2px);
+.stripbar__btn--week {
+  border-width: 2px;
 }
-/* the fold shadow across the middle */
-.benchpaper__foldlines {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 46%;
-  height: 8%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent);
-}
-.benchpaper__masthead {
-  position: absolute;
-  top: 6%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--type-blackletter);
-  font-size: clamp(15px, 1.5vw, 21px);
-  color: var(--ink-news);
-}
-/* the reading glasses */
-.benchpaper__glasses {
-  position: absolute;
-  right: 20%;
-  bottom: 52%;
-  width: 44px;
-  height: 16px;
-  border: 2px solid rgba(30, 26, 20, 0.85);
-  border-radius: 50%;
-  transform: rotate(8deg);
-}
-.benchpaper__glasses::after {
-  content: '';
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  width: 40px;
-  height: 14px;
-  margin-left: 2px;
-  margin-top: -8px;
-  border: 2px solid rgba(30, 26, 20, 0.85);
-  border-radius: 50%;
+.stripbar__btn--home {
+  border-color: rgba(228, 220, 194, 0.2);
+  color: rgba(228, 220, 194, 0.7);
 }
 
 /* ---------------------------------------------------------------- */
-/* TIME STATION position — near right wall                           */
+/* Small screens: the scene still covers; strip wraps                */
 /* ---------------------------------------------------------------- */
-.floor__time {
-  position: absolute;
-  right: 1.4%;
-  top: 42%;
-  z-index: 7;
-}
-
-/* ---------------------------------------------------------------- */
-/* LIGHT RIG — two blend layers + one plain darkness                 */
-/* ---------------------------------------------------------------- */
-.floor__rig {
-  /* warm pools under the live bulbs (none under the dead one),
-     tungsten bloom at the office glass, cool spill at the corridor */
-  background-image:
-    radial-gradient(ellipse 380px 340px at 24% 14%, rgba(232, 181, 102, 0.55), transparent 70%),
-    radial-gradient(ellipse 420px 360px at 50% 12%, rgba(232, 181, 102, 0.45), transparent 70%),
-    radial-gradient(ellipse 280px 420px at 31% 40%, rgba(232, 181, 102, 0.5), transparent 72%),
-    radial-gradient(ellipse 320px 460px at 77% 50%, rgba(207, 216, 196, 0.28), transparent 70%);
-  mix-blend-mode: soft-light;
-}
-/* the daylight shaft from the street door */
-.floor__rig::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    104deg,
-    rgba(233, 239, 231, 0.17) 0%,
-    rgba(233, 239, 231, 0.08) 9%,
-    transparent 20%
-  );
-  mix-blend-mode: screen;
-}
-/* off-center darkness — the far corner with the dead bulb goes first */
-.floor__dark {
-  z-index: 38;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 125% 108% at 36% 30%,
-    transparent 48%,
-    rgba(5, 3, 2, 0.4) 80%,
-    rgba(5, 3, 2, 0.66) 100%
-  );
-}
-
-/* ---------------------------------------------------------------- */
-/* REFLOW below 900px — the elevation becomes a wall-by-wall walk    */
-/* (never horizontal body scroll; time station pinned bottom)        */
-/* ---------------------------------------------------------------- */
-@media (max-width: 900px) {
-  .floor {
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    padding: 18px 16px 230px;
-  }
-  .floor__walls,
-  .floor__ring,
-  .streetdoor,
-  .floor__dark {
-    display: none;
-  }
-  /* props keep position:relative so their absolutely-positioned internals
-     stay inside them instead of escaping to the .floor */
-  .floor__signage,
-  .floor__cork,
-  .officegroup,
-  .station,
-  .corridor,
-  .slate,
-  .wallcal,
-  .benchpaper {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    min-width: 0;
-    flex: none;
+@media (max-width: 700px) {
+  .stripbar {
+    left: 8px;
+    right: 8px;
     transform: none;
-  }
-  .floor__signage {
-    order: 0;
-    pointer-events: none;
-  }
-  .officegroup {
-    order: 1;
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
     flex-wrap: wrap;
-  }
-  .officedoor {
-    width: 170px;
-    height: 320px;
-    aspect-ratio: auto;
-    flex: none;
-  }
-  .cashcard,
-  .license {
-    position: relative;
-    inset: auto;
-    left: auto;
-    top: auto;
-    transform: none;
-  }
-  .corridor {
-    order: 2;
-    height: 220px;
-  }
-  .slate {
-    order: 3;
-    flex-direction: row;
     justify-content: center;
-    gap: 14px;
-    width: auto;
-    align-self: flex-start;
-  }
-  .station {
-    order: 4;
-  }
-  .wallcal {
-    order: 5;
-    max-width: 340px;
-    align-self: center;
-  }
-  .benchpaper {
-    order: 6;
-    height: 150px;
-  }
-  .floor__cork {
-    order: 7;
-  }
-  .floor__time {
-    position: fixed;
-    right: 12px;
-    bottom: 12px;
-    top: auto;
-    z-index: 20;
-    transform: scale(0.82);
-    transform-origin: bottom right;
-  }
-  .floor__rig {
-    position: fixed;
+    gap: 8px;
   }
 }

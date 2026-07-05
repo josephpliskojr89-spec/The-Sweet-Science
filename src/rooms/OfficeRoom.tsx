@@ -49,7 +49,7 @@ import './OfficeRoom.css';
 type HeldObject = 'accounts' | 'competition' | 'ledger' | null;
 
 export function OfficeRoom() {
-  const { save, closeRoom, profileId, viewerIds } = useGame();
+  const { save, closeRoom, openRoom, profileId, viewerIds } = useGame();
   const [held, setHeld] = useState<HeldObject>(null);
 
   // Esc puts the held object down; Esc at desk level leaves the room —
@@ -144,6 +144,30 @@ export function OfficeRoom() {
           </div>
 
           <div className="deskobj deskobj--mug" aria-hidden="true" />
+
+          {/* the week's paper, tossed on the desk — the press */}
+          <button
+            className="deskobj deskobj--paper"
+            onClick={() => openRoom('press')}
+            aria-label="The newspaper — the sporting page and the magazine rankings"
+          >
+            <span className="deskobj__paper-fold" aria-hidden="true" />
+            <span className="deskobj__paper-name" aria-hidden="true">
+              {save.press.paperName}
+            </span>
+          </button>
+
+          {/* the staff clipboard on the wall — coaching, hiring, upgrades */}
+          <button
+            className="deskobj deskobj--staff"
+            onClick={() => openRoom('gym')}
+            aria-label="The staff wall — coaching, hiring, facilities and upgrades"
+          >
+            <span className="deskobj__staff-clip" aria-hidden="true" />
+            <span className="deskobj__staff-tape" aria-hidden="true">
+              STAFF &amp; UPGRADES
+            </span>
+          </button>
         </>
       )}
 
