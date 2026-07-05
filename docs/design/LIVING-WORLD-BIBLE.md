@@ -2257,3 +2257,2010 @@ Every person, gym, sanctioning body, network, casino, venue, and TV series is ge
 - The amateur pipeline (Golden Gloves, the gym's own amateur nights) is unmodeled though the Olympic beats lean on it for texture and walk-ins.
 - FightResult needs first-class knockdown counts and round-completion data for two-bums-classic and how-the-zero-dies; expose structured fields, not narrative parsing.
 - Pacing rehearsal: build a 1975-2000 dry-run harness that prints the year-by-year clipping/event density before shipping — 32 era beats plus 88 triggered events must be proven quiet enough.
+
+---
+
+# ADDENDUM — The Gap Session
+
+A second writers’ room convened to close the gaps flagged in Part V: a retired cornerman (coach lives), the returning historian (international layer, runtime divisions, the soft-cap world), a simulation-systems designer (rivalry memory, manager aging & legacy), and a cultural historian of American sport (the dignity-first pass). The owner’s four settled decisions — soft-cap endgame, full manager aging, divisions-arrive-as-history, deliberate social pass — were briefed as law. The same Creative Lead ruled by ID. Raw material: `team-output/gap-panel.json`, `gap-ruling.json`.
+
+## Addendum Vision
+
+The Bible gave the sport a memory; this addendum gives the gym one. The corner ages and dies on the same clock as the men it wraps; abroad stays a dateline that occasionally mails you a challenger; the divisions arrive crooked and become real under your tweener's feet; grudges live in one book that pays like a gate and reads like a will; the era's women and its color lines arrive as specific people at the door, in the paper's manners; and when the world goes quiet after the century issue, the remaining drama is the one the save has been writing all along — the manager's stairs, the second set of keys, the wall of clippings coming down one frame at a time. Ninety-eight submissions: one merge, five reshapes, no vetoes. The seats wrote to the house style, and the house is now complete enough to end.
+
+## Hill Rulings (Gap Session)
+
+**[UPHELD] Retired cornerman** — corner-mortality-no-grace
+
+> Death lands on the world's clock, fight week included; the funeral and the widow are the payoff and the ledger keeps both lines forever.
+
+**[UPHELD] Retired cornerman** — corner-hands-vs-craft
+
+> Skill compounds while hands and body quit — both hidden, surfacing only as felt reads (the third try at the tape), or the seat is sentimental furniture as charged.
+
+**[UPHELD] Retired cornerman** — corner-say-nothing-stays
+
+> The upheld dementia ruling crosses the ring apron intact: consequences, never a meter, and the drink chain's silence is selectable to the end.
+
+**[UPHELD-WITH-CONDITIONS] Retired cornerman** — corner-the-lineage-reads-forward
+
+> The hook ships and the reckoning must read it; conditions: lineage lives inside the single LegacyLedger (legacy.corner.lineage), and Coach.protege stays the coach's apprentice while the manager-succession flag renames to Coach.successor — two relationships, two fields.
+
+**[UPHELD] Retired cornerman** — corner-loyalty-not-dice
+
+> Thresholds, not rolls; a loyalist at 80 is a wall, the mercenary's note is typed, and personality is destiny on both sides of the apron.
+
+**[UPHELD] Boxing Historian (second session)** — ABROAD STAYS A DATELINE
+
+> Five doors, no foreign gyms or venues ever, matchmake() stays closed; every future request to flesh out London is answered with a clipping, by name, per this ruling.
+
+**[UPHELD] Boxing Historian (second session)** — EVERY BELT IS BORN CROOKED
+
+> The shallow book is the player's opportunity and the crony champion is beatable by design; implementation that balances the arrivals neutral deletes the history and the opportunity with it.
+
+**[UPHELD] Boxing Historian (second session)** — NEW DIVISIONS ARE REAL FURNITURE, NOT LABELS
+
+> deriveWeightClass changes mid-save, generation renormalizes, titleClaims and fees extend, and the 148-pound man's morning is the acceptance test; 154's arrival is seeded to resolve before the four kings' first collision.
+
+**[UPHELD] Boxing Historian (second session)** — THE SOFT CAP IS NEVER ANNOUNCED
+
+> The century issue observes closed doors and closes none; post-2000 the world only recombines existing structures, and the silence is the handover of the drama budget to the manager.
+
+**[UPHELD] Veteran simulation-game systems designer** — HEALTH IS NEVER A NUMBER
+
+> Felt reads in objects only, same law as moodLabel — and this ruling extends it to coach condition and hands; the first rendered bar kills the design.
+
+**[UPHELD] Veteran simulation-game systems designer** — THE RECKONING IS A READ, NOT A REWARD
+
+> Every reckoning document assembles from records kept at the time; if a fact is missing the fix is to start recording it, and the legacy ledger stays write-only in play.
+
+**[UPHELD] Veteran simulation-game systems designer** — RIVALRIES ARE ONE BOOK, NOT SCATTERED FLAGS
+
+> Heat, meetings, clauses, and the coined name in one persistent object wired to pursefor and the upheld press multiplier; crosstown-feud and the opponent-for-hire counter write INTO it or ten years of grudges evaporate.
+
+**[UPHELD] Veteran simulation-game systems designer** — NO GRADE AT THE END
+
+> One dry sentence from the oldest man, composed from ledger ratios; the paper's manners hold at the door of the ending or they were never manners.
+
+**[UPHELD] Veteran simulation-game systems designer** — ONE MORE YEAR MUST BE FATAL
+
+> the-paper-spells-it-right ships unsoftened; stakes that can't be lost aren't stakes, per the owner's full-aging decision.
+
+**[UPHELD] Veteran simulation-game systems designer** — SUCCESSION IS GROWN, NOT BOUGHT
+
+> Years of tenure and banked solo corners set handover quality, deferral compounds backward, and no late purchase substitutes for the decade you didn't spend cutting keys.
+
+**[UPHELD] Cultural Historian of American Sport** — HERITAGE IS A SELECTOR, NOT A STAT
+
+> Verified against fighters.ts (the subpool exists and is discarded today); heritage gates which authored moments can fire and may never touch a number — event-earned flags like travels-well price a ledgered night the player watched, never an identity, and the ambient-tax ban is permanent.
+
+**[UPHELD] Cultural Historian of American Sport** — THE REPORTER IS A WRITER, NOT A MONUMENT
+
+> She enters byline memory whole — warmth, adoption, feuds, the hit piece, the right to be wrong — and after credential day the game never marks her gender again.
+
+**[UPHELD] Cultural Historian of American Sport** — SAY NOTHING STAYS FREE
+
+> Silence is never scored; at most the world continues as it was, and the first hidden penalty would turn the whole pass into the lecture it refuses to be.
+
+**[UPHELD] Cultural Historian of American Sport** — THE FIFTEEN-YEAR FUSE SHIPS WHOLE
+
+> Cut events before fuses; the undercard's fourth paragraph and the widow's will are the proof that the save remembers people the way the ledger remembers money.
+
+## Verdict Ledger (Gap Session)
+
+98 submissions: **92 kept**, 5 reshaped, 1 merged, 0 vetoed. Reshapes and merges:
+
+- RESHAPE `corner-his-name-in-the-big-paper` — Trigger drops the untracked 'old pupil' placement; fires on tier/skill/age during any save-wide title week.
+- RESHAPE `intl-one-more-somewhere-warm` — Fires for roster men only; retired names route through era.intl.farewellBookings and comeback-itch.
+- RESHAPE `legacy-the-old-teachers` — Seeds compose with corner-last-of-the-handwrap-men and the teen arc's trainer death into one trainer-mortality calendar of distinct men (old-lion generation rate steps 10%→5%→2%); the shorter-second-obituary observation carries across the pair.
+- MERGE `legacy-the-quarter-century` → `legacy-century-issue` — Same century issue from two seats — the sidebar, the young byline, and the manager-at-fifty reading carry into the survivor, Bible merge precedent.
+- RESHAPE `the-lease-question` — Counterparty reads the civilian registry: if the leveled-with landlady's will fired, her estate's first refusal IS this event; the landlord's son exists only in saves without her arc.
+- RESHAPE `social-weight-classes-only` — Add a 60-day quarantine from every other social-category event so the Tuesday never reads as the game answering an incident it staged.
+
+## Part VI — The Systems
+
+Eleven mechanical systems, all kept. Data models are written against the actual save shape.
+
+### The Foreign Book (a foreign-elite pool, not a foreign world)
+
+*from: Boxing Historian (second session) · verdict: ?*
+
+> 
+
+**Data model:**
+
+Affiliation gains a third kind: { kind: 'foreign'; country: string; dateline: string } (population.ts). Foreign WorldFighters carry cityId: 'abroad' (a sentinel added to the CityId union, guarded everywhere by affiliation.kind), fidelity 'national', names rolled from per-save nationality subpools in names.json (per Part IV: real cities and countries are permitted as datelines — MEXICO CITY, LONDON, TOKYO, SAN JUAN — but every person is generated). Save adds era.intl: { countries: Array<{ country, dateline, namePoolId, weightBias: WeightClassKey[] }> (5-7 rolled per save from a fixed table), saintId: string | null, relocatedIds: string[], farewellBookings: Array<{ wfId, day, dateline }> }. No new fighter fields beyond affiliation; a relocated man simply rewrites affiliation to { kind:'rival', gymId } or independent and takes a real cityId.
+
+**Mechanics:**
+
+At world-gen, makeForeignElite(weightClass, rank) seeds 2-3 of each division's ten ranked slots (Integration Notes deepen the elite to ten) with foreign men, weighted to lightweight/welterweight (era.intl.weightBias); one plausible European heavyweight, no more. They churn on the same worldSim retire/replace rules, except a vacated foreign slot refills from the same country 60% of the time — national lineages, so the paper can say 'the fourth lightweight champion that city has sent out.' They NEVER appear in matchmake() results or the club/tuesday/network offer pools — the only doors between the player and abroad are title/eliminator bouts, the three intl triggered events, and relocation (roughly one foreign contender rank 4-10, age<28, converts to a US established-gym affiliation every 2-3 years, with a clipping). Foreign title fights resolve on the existing resolveOneFight wire, 2-4 datelined clippings a year, weekly surfacing budget respected. Farewell circuit: retired or fading WorldFighters with publicReputation>70 and age>34 roll one seeded overseas booking — one agate line, occasionally an elegy. Titles: era.titleClaims may be held by foreign ids from save start (1-2 divisions open with a foreign champion, weighted light).
+
+### The Division Ledger (weight classes that expand at runtime)
+
+*from: Boxing Historian (second session) · verdict: KEEP*
+
+> The strongest system submitted: runtime divisions as real furniture, honoring the class-derives-from-weight invariant, and it repairs Part V's flagged contradiction on schedule.
+
+**Lead's reshape:** deriveWeightClass and WEIGHT_CLASS_ORDER become functions of era.activeClasses with a five-class default for legacy callers; migration synthesizes the field and past activations apply silently — class derives from weight, so no fighter moves on load.
+
+**Data model:**
+
+weightClasses.ts splits into BASE_CLASSES (the five) and LATENT_CLASSES: junior_welterweight (limit 140, gen 136-140), junior_middleweight (154, gen 148-154), junior_lightweight (130, gen 126-130), super_middleweight (168, gen 161-168), cruiserweight (190, gen 176-190), each with { insertAfter: WeightClassKey, window: [yearLo, yearHi], cronyName: rolled per save }. WeightClassKey widens to the ten-key union. Save adds era.activeClasses: WeightClassKey[] (ordered); WEIGHT_CLASS_ORDER and deriveWeightClass(weightLbs) become functions of era.activeClasses. Migration: saves without the field get the five. RosterEntry gains scaleTroubleFlag (set by the existing the-scale-don't-lie event) so arrivals know who's been starving.
+
+**Mechanics:**
+
+Activation is a scripted world effect: the new key enters era.activeClasses; deriveWeightClass changes mid-save, honoring the existing invariant (class is derived from weight, never stored). Inaugural population: makeNationalElite fills ranks 1-10 for the new class BUT with ratings 4-8 points softer than an established division — the shallow book is the design; additionally 20-30% of adjacent-division fringe ranked men (ranks 6-10) migrate by mutating weightLbs into the new band, with a 'no longer starving to make 147' clipping. pickWeightClass CLASS_WEIGHTS renormalize, the new class taking share from both neighbors, so generation feeds it forever after. The inaugural champion is always a seeded crony (rating ~74, publicReputation ~55, the sanctioning president's countryman or client) — beatable on purpose. titleClaims, per-body rankings, and sanctioning-invoice fees extend to the class automatically; alphabet-soup-complete's annual champion-counting column now counts across ten divisions by 1990, which only improves the joke. Player side: a roster man's class changes only if his weightLbs moves — the div-a-natural-home triggered event is the only door, so the player chooses.
+
+### The Long Now (the soft-cap governor)
+
+*from: Boxing Historian (second session) · verdict: ?*
+
+> 
+
+**Data model:**
+
+era.softCap: { activeSince: number | null, frozenMultipliers: Record<WeightClassKey, number> (the final 1999 values: LW 1.6 / WW 1.8 / MW 1.3 / HW 1.1, juniors interpolated), cycles: { olympiad: nextYear, unification: Array<{ weightClass, nextWindow }>, torchbearers: Array<{ weightClass, wfId | null, phase: 'rise'|'reign'|'fade', nextRollYear }> }, mortuary: Array<{ npcOrArchetypeId, deathYear }> (rolled actuarially at activation), anniversaries: Array<{ sourceLedgerDay | eventId, fireDay, kind: '10th'|'25th'|'40th' }> }.
+
+**Mechanics:**
+
+When the last dated scripted sub-beat resolves (~2000), the evaluator stops reading the schedule and starts reading cycles. Hard constraints: purse multipliers freeze at frozenMultipliers (inflationFactor keeps compounding — numbers grow, structure doesn't); the offer-tier enum, gates, and venue list never change again; titleClaims stay at 3-4 per division; no institution is ever founded or killed. Each cycle re-rolls its next occurrence on completion and may only recombine existing structures. The paper's tone settles mechanically: front-page budget drops to ~1 per quarter outside cycle peaks, agate grows, and the anniversary desk schedules retrospectives off the save's own history ledger and stored clippings at 10/25/40-year marks. The mortuary fires obituaries for era.npcs and retired archetype fighters, each composed from the save's own archive — old history completing, never new history claimed. The manager's arc (another seat's system) inherits the drama budget by this silence.
+
+### Coach Lifecycle (aging, decline, retirement, death)
+
+*from: Retired cornerman · verdict: KEEP*
+
+> Craft compounding while the hands quit is the seat's whole truth, the drift caps match the existing skill model, and every field is consumed by a kept event — minimal and honest.
+
+**Lead's reshape:** condition and hands are hidden and surface only as felt reads under the health-is-never-a-number law (extended to staff by this ruling); applicant and market aging rides the existing patience clock; mercenaries never retiring stands — poachInterest guarantees their exit.
+
+**Data model:**
+
+Coach gains: hiredDayCount: number (tenure clock; -1 for market/applicant coaches); age becomes fractional and ticks like WorldFighter.age; condition: number 0-100 hidden (the body); hands: number 0-100 hidden (fine motor — the wrap/swab/stitch stat, seeded 70-95 at generation minus (age-40)); loyalty: number 0-100 (seeded by personality: loyalist 65, mercenary 25, old_lion 55, others 40-50); poachInterest: number 0-100; vice: 'none'|'drink'|'gambling' (seeded ~8% drink / ~5% gambling at generation, hidden); viceKnown: boolean; background: { exFighter: boolean, proBouts: number, trainedSince: number (year he first worked a corner), sawTooMuch: boolean }; partTime: boolean; feudWith: string|null; flags: Record<string, number> (once-per-coach event memory). GameSave gains coachAlumni: Array<{ name, specialty, tier, tenureDays, leftDayCount, how: 'retired'|'died'|'poached'|'fired'|'quit' }> — the corner's own ledger, read by legacy and by corner-one-more-camp.
+
+**Mechanics:**
+
+In advanceTime alongside worldSim: age += days/365 for staff, applicants, and the market pool. skill drifts +0.004/yr while employed under 55, cap 0.97 — craft compounds. hands decays -0.5/yr from 55, -2/yr from 64. condition decays -1/yr from 50, x1.7 with vice='drink', plus a rare monthly health-shock roll (-5 to -15) past 60. RETIREMENT: monthly roll from age 62, p = 0.03 * ((age-62)/8)^2, personality-scaled — loyalist x0.5 while any of his fighters reads Clicking, old_lion x1.4, mercenary never retires (he leaves via poaching or dies with his boots on). Fires corner-goes-home. DEATH: monthly actuarial roll from 55, p = 0.0004 * 1.35^(age-55), vice-multiplied x1.5; lands any advance including fight week — no grace. Fires corner-the-funeral chain; his slots vanish immediately and his focused fighters fall back to the manager with a chemistry-scaled morale hit (-6 Clicking, -2 otherwise). Applicant generation ages with the calendar: trainedSince and background roll off the current year, and after corner-last-of-the-handwrap-men the old_lion generation rate drops from 10% to 2% — the men who remember fifteen rounds literally run out.
+
+### Loyalty & Poaching (the other side of trust)
+
+*from: Retired cornerman · verdict: KEEP*
+
+> Personality-as-destiny applied to the apron: thresholds not dice, warnings at 40/70/90, and exits with destinations era.npcs can name so the paper has somewhere to send him.
+
+**Data model:**
+
+Uses Coach.loyalty and Coach.poachInterest above. era.npcs gains poaching sources (the casino payroll, the champion's camp, the named rival gym) so exits have a destination the paper can print. Coach.flags stores warning thresholds already shown.
+
+**Mechanics:**
+
+loyalty climbs +0.05/day while salary is paid on time and any of his fighters reads Clicking; drops on a missed month (-15), on backing the other man in a feud (-20), on firing his protege (-25), on refusing his fight-week release (-10). poachInterest accrues monthly when skill*tier outruns salary against market (market = TIER_SALARY midpoint x inflationFactor) and when gym reputation lags his tier; desert/boardwalk era beats multiply x1.5 for cutmen and corner_strategists during any save-wide title fight week. loyalty subtracts from accrual at 0.5:1 — 80+ loyalty is a wall. Thresholds: 40 = one dry gym-log line in his voice; 70 = the direct-conversation event (corner-the-offer-he-told-you-about for loyalists, a salary letter otherwise); 90 = exit (corner-the-note-on-the-door for mercenaries; others give two weeks and a reason). A coach leaving hot costs the roster: fighters he focused lose 6 morale / 3 trust if Clicking, and a mercenary gone to a named rival adds +15 poachInterest to his best focused fighter — he's telling the kid about the other gym's showers.
+
+### The Protege Line (succession — coordinate with manager-legacy)
+
+*from: Retired cornerman · verdict: ?*
+
+> 
+
+**Data model:**
+
+Coach.protege: { candidateId: string, kind: 'fighter'|'apprentice', progress: number 0-100, startedDay: number } | null. Fighter candidates are referenced by fighter id (the old-head event at Bible line 1743 feeds this same track — its promise converts INTO a protege line rather than duplicating one). GameSave gains legacy: { corner: { lineage: Array<{ mentorName, protegeName, yearFinished, outcome: 'hired'|'went-across-town'|'left-bitter' }> } } — the field the manager-legacy reckoning reads.
+
+**Mechanics:**
+
+Opened by corner-the-protege. progress +2/month baseline, +1 while the mentor is teacher or old_lion and the candidate trains under him (coachId match); pauses while the mentor is feuding; +20 one-time if the mentor's decline events fire (urgency). At 100, corner-diploma-day fires. Accepting mints a real Coach: tier one below mentor, skill = mentor.skill*0.75 + 0.1, slots per tier, personality inherited-with-variance, chemistry pre-warmed +0.06 with every current roster man — the only coach in the game whose numbers the player helped write. Every completed line appends to legacy.corner.lineage regardless of outcome; at the endgame accounting each line is a legacy credit, and a lineage coach still on staff when the manager's succession question arrives is the designed answer.
+
+### The Rivalry Book
+
+*from: Veteran simulation-game systems designer (Football Manager school) · verdict: KEEP*
+
+> One persistent book wired to pursefor and the upheld press-context multiplier turns ten years of grudges into money, copy, and a page the reckoning can read back.
+
+**Lead's reshape:** crosstown-feud momentum, opponent-for-hire's rematch counter, and every strings-system clause migrate into save.rivalries at integration — no private counters survive; rivalryFactor caps at x1.8 and the surfacing budget allows one rivalry item a month, hard.
+
+**Data model:**
+
+save.rivalries: Rivalry[]. Rivalry = { id: string ('riv_' + the two party ids in canonical order); kind: 'fighters' | 'gyms'; a, b: RivalryParty ({ fighterId } for a player/world fighter — world side keyed by WorldFighter.id, which survives promoteToFull — or { gymId } for the player gym vs a RIVAL_GYMS id); heat: number 0..100; meetings: RivalryMeeting[] ({ day, boutId, outcome (from a's side), method: Method, disputed: boolean, venue, purse }) — written from the same BoutRecord resolveFight already emits; series: { aWins, bWins, draws }; grudges: GrudgeNote[] ({ day, kind: 'disputed-card' | 'poached-man' | 'quote' | 'weigh-in' | 'clause-lapsed' | 'ducked', text }); clause: RematchClause | null ({ holder: 'a' | 'b' | 'promoter', byDay: number, purseFloor: number, sourceEventId: string }); coined: string | null (the press's name for it, generated once); dormantSince: number | null; settled: boolean }. One new field on nothing else — the book reads BoutRecord.opponentId, FightReport.method/judgeTotals, the alumni book (below), and departures' poach destination, all of which exist or are already ruled in.
+
+**Mechanics:**
+
+OPENING THE BOOK. A rivalry object is created when data the game already keeps crosses a line: (1) two men meet a second time (bouts[] already carries opponentId — the offer generator checks it) → heat 25; (2) any meeting ends SD or MD, or judgeTotals split with one card for the loser → that meeting is flagged disputed, heat +20 (a first-meeting robbery opens the book at 45); (3) a man who left the gym (alumni book: how = 'poached' or 'quit') is matched against his old house, or a player fighter faces the gym that poached him → a gym-kind rivalry at heat 30; (4) fighters of the same two local gyms cross a third time across any pairs → gym rivalry; (5) a rematch clause is signed anywhere (the opponent-for-hire counter, the strings system's option contracts) → the clause finally has a home: it is stored on the rivalry, not on the offer. HEAT. +15 per meeting, +10 if disputed, +10 for a stoppage of the local favorite; the existing crosstown-feud event writes its feed-it momentum INTO this heat instead of a private counter; called-out/quote press events +5. Decay −2/month with nothing booked; frozen while a clause is live; under 15 for 12 months sets dormantSince (rekindles at half price). Hard cap ~6 open rivalries; the evaluator's weekly surfacing budget allows at most one rivalry item a month. PAYOFF — wired to the two upheld hills. pursefor() gains rivalryFactor = 1 + min(heat, 80)/100 when the offer's two parties are in an open book (a hot feud pays up to x1.8, stacking under the era multiplier); the journalist's upheld press-context multiplier gains +0.25 for any rivalry bout and +0.5 for a rubber match — fighters get famous for being written about winning, and nothing gets written about like a grudge. RESOLUTION. A third meeting at 1–1 (or fifth at 2–2) is a rubber match: biggest purse of either career, winner's repSwing x1.5, settled = true, framed clipping, ledger line, legacy.rivalriesSettled +1. A settled book stops paying and starts being remembered — the reckoning reads it back. Retirement of either party with the series unsettled writes the grudge 'the question was never answered' into both men's copy forever. CLAUSES. { holder, byDay, purseFloor }: while live, third-party offers for the bound man carry a typed clause line; if the holder exercises, the bout books at max(purseFloor, pursefor); if byDay lapses, heat −15 and one dry clipping. Refusing an exercised promoter clause routes through the strings system's quiet refusal costs plus a 'ducked' grudge note (−4 publicReputation, heat +10 — ducking feeds the very fire it flees).
+
+### The Manager's Years
+
+*from: Veteran simulation-game systems designer (Football Manager school) · verdict: KEEP*
+
+> Fifteen silent years, then three concrete un-gamey costs (the corner, the slots, the distance), a three-scare architecture with a genuinely fatal third answer — full aging exactly as the owner ruled it.
+
+**Lead's reshape:** manager.protegeId renames successorCoachId; the manager's 0.02 corner term is formalized in resolveFight as part of this work; health is never rendered — felt reads only, on the bands.
+
+**Data model:**
+
+Manager (persistence.ts) extends to { name, age (now advances), appearance, birthDay: number (day-of-year, seeded at new game; MANAGER_START_AGE stays 25), health: number 0..100 (hidden — never rendered as a number, only as felt reads, same law as moodLabel), healthCeiling: number (starts 100; scares worked-through lower it, like TRUST_HEAL_CAP made flesh), scares: HealthScare[] ({ day, kind, heeded: boolean }), protegeId: string | null (a Coach.id), handedOver: { coachId, day, mode: 'desk' | 'full' } | null }. Coach gains protege?: boolean and protegeSince?: number — one flag, deferring to the cornerman seat's coach-life model everywhere else.
+
+**Mechanics:**
+
+THE DECADES. 1975–1989 (25–39): nothing. Health sits at 100 and the system is invisible for fifteen years — that silence is the design. 40s: health drifts −0.5/yr, plus strain ticks in any 90-day stretch where the manager personally works two or more corners (the 0.02 manager corner term in resolveFight is now HIS, and it costs him). The paper calls him 'the veteran manager' once and moves on. 50s: three concrete, un-gamey effects — (1) the corner: the manager's 0.02 corner bonus requires health ≥ 50 and no second fight night inside 10 days, otherwise the game quietly books the coach's number only, and the gym log says why in one line; (2) capacity: the manager personally holds 2 focused-training slots (the coachId: null slots) through his 40s, 1 in his 60s, 0 after handover — the stairs to the office got longer, so somebody else has to climb them, which is what coaches and the protege are FOR; (3) distance: desert and boardwalk cards list travel he may decline — decline costs nothing but the corner term and one gym-log sentence ('He watched it on the television in the office'). SCARES. Health-scare events (below) each offer heed (a real month lost: open offers expire unanswered, one camp runs without him) or work through it (healthCeiling −10 to −15, the next scare seeded sooner and worse). Health under 20, or a third unheeded scare, fires the ultimatum. SUCCESSION. Any coach with 5+ years' tenure may be named protege (the old-head promise pipeline pre-qualifies; loyalist and teacher personalities accept at once, a mercenary wants it in writing). A protege gains skill +0.02/yr (he is learning your book) and each big corner worked alone banks handover quality. Handing over with a seasoned protege preserves the gym's reputation and roster trust; handing over cold costs reputation −40% over two years and a roster-wide trust hit — succession cannot be bought at 64, only grown from 50. Desk mode ('the old man at the desk'): the protege runs the day-to-day, the player keeps sign-off on signings, cuts, and title fights — reduced verbs, same save. THE RECKONING. From age 50 with 20+ years' tenure, one quiet permanent option sits in the office desk drawer: step back. Choosing it (or the ultimatum forcing it) fires the Legacy Reckoning — which is a READ, not new content: the wall of framed clippings rehung one by one; the alumni book opened (every man who passed through: record, purses, how he left, whole or broken); the rivalry book's settled and unsettled questions; the byline with the most gym stories writes the farewell column (the journalist's upheld byline memory, load-bearing here); the Monthly gives it one paragraph; the ledger totals read out dry — purses won, dues carried for broke men, benefits thrown, the two-dollar envelopes that came back. No grade, no stars. The summation is a single sentence from the oldest man in the gym, composed from ledger ratios: if debts is empty and menRetiredWhole outnumbers menRetiredBroken — 'He never sent us out short.' If not, a different sentence, and the player earned that one too. Then emeritus (watch the world run) or close the book.
+
+### The Alumni Book & Legacy Ledger
+
+*from: Veteran simulation-game systems designer (Football Manager school) · verdict: KEEP*
+
+> A 25-year save cannot be summed from what it forgot; cheap, permanent, and it serves rivalry, benefit-night, the-fog, and the reckoning from one shelf.
+
+**Lead's reshape:** coachAlumni joins as a sibling array; legacy stays write-only during play and is read exactly twice — the century sidebar and the reckoning; existing events feed it without modification, as submitted.
+
+**Data model:**
+
+save.alumni: AlumnusRecord[] — written once at any departure, cheap and permanent: { fighterId, name, joinedDay, leftDay, how: 'retired' | 'cut' | 'quit' | 'poached' | 'medical' | 'died', record: WorldRecord, careerEarnings, trustAtExit: number, flags: string[] ('watch', 'benefit', 'the-fog', 'clean-bill', 'title') }. save.legacy: LegacyLedger — accrues automatically, is never spendable: { menDeveloped (walk-in to 15+ wins in house), champions: string[], titleNights, menRetiredWhole, menRetiredBroken, benefitsThrown, watchesGiven, clippingsFramed: string[], venuesOutlived, rivalriesSettled, refusals (strings refused on principle), debts: string[] (the fuse lines the ledger holds — the accommodation taken, the 'say nothing' chosen) }.
+
+**Mechanics:**
+
+Today a departed fighter simply vanishes from the roster array; a 25-year save cannot be summed from what it forgot. The alumni book is the fix and it serves both my gaps: rivalry-old-gym reads how='poached' and trustAtExit to decide how hard the departed man fights his old house (a man who left bitter arrives at condition +0.04 — he has something to prove and the engine can express it); benefit-night and the-fog already need to find retired men, and now there is somewhere to look. The legacy ledger is write-only during play — no event may ever read it as a resource, no choice may ever be priced in it (the retired fighter's upheld no-optimization hill extends here). It is read exactly twice: the quarter-century magazine sidebar, and the reckoning. Existing events feed it without modification: the engraved watch sets watchesGiven and the 'watch' flag; benefit-night sets benefitsThrown; the-doctor-said-stop heeded writes menRetiredWhole, dodged writes a debt; sanctioning-invoice refused on principle ticks refusals. 'The men who came back': at the reckoning, alumni with trustAtExit ≥ 70 or a watch/benefit flag are in the room; the men cut off the chopping block are not, and the copy notes the empty chairs without comment.
+
+### Quiet Demographics (heritage as event-selector, never a stat)
+
+*from: Cultural Historian of American Sport · verdict: ?*
+
+> 
+
+**Data model:**
+
+Fighter.heritage: the existing name-subpool key ('african_american' | 'latino' | 'italian' | 'jewish' | 'irish' | ...) persisted at generation time (fighters.ts already selects it to drive appearance; it is currently discarded). Migration backfills existing fighters by re-inferring from surname subpool. Never rendered in any UI, tooltip, or clipping variable.
+
+**Mechanics:**
+
+Read by exactly one consumer: event trigger evaluation in this pass, to decide which humane events CAN fire for which men. Hard-guarded by code review rule: heritage is never an input to attributes, ratings, purse math, offer generation, walk-in quality, AI matchmaking, or morale/trust formulas. The era's discrimination reaches the player only as authored moments with specific people in them — a desk clerk, a word in a column, a matchmaker's unfinished sentence — never as a systemic tax the player learns to optimize around.
+
+### People Who Aren't in the Business (civilian NPC registry)
+
+*from: Cultural Historian of American Sport · verdict: KEEP*
+
+> Created lazily, referenced forever, surfacing only through period channels — the registry is what lets the save remember people instead of issues, and the-lease-question now reads it too.
+
+**Data model:**
+
+Extend era.npcs (already specified in Integration Notes for business characters) with era.npcs.civilians: Array<{ id: string; role: 'woman_beat_writer' | 'landlady' | 'federation_desk' | 'bookkeeper' | 'rival_daughter' | 'licensed_boxer_w' | 'fighter_mother:<fighterId>'; name: string; disposition: number (-100..100); flags: Record<string, number | boolean>; firstSeenDay: number; exitDay?: number (seeded death/departure where the arc needs one) }>
+
+**Mechanics:**
+
+Created lazily by the first event that needs them, then referenced by id forever — the mother who reviewed one contract reviews the next one too. Disposition moves only through player choices, never ambiently. They surface exclusively through the period channels: letters, phone slips, notes on cork, one line in somebody else's clipping — no character screen, no portrait, no stat block. Long-fuse payoffs (the widow's will, the bank reference, the 1993 fourth paragraph) read flags set 5-15 game-years earlier; the registry is what lets the save remember people instead of issues.
+
+## Part VII — Timeline Inserts
+
+New scripted beats join the Part I timeline at these positions:
+
+- start intl-wire-from-across-the-water
+- after:poet-kings-last-reign legacy-the-third-fight
+- after:poet-kings-last-reign social-first-sanctioned-womens-bout
+- after:bicentennial-olympic-class social-press-box-credential
+- after:bicentennial-olympic-class intl-folding-chairs
+- after:poet-king-upset-and-redemption div-the-belt-between
+- after:alphabet-fracture-one intl-saint-of-the-republic
+- after:alphabet-fracture-one corner-the-clean-bucket
+- after:four-kings-era div-the-in-between-age
+- after:desert-city-ascendant div-a-division-for-the-doorman
+- after:teen-wrecking-ball-rise legacy-the-old-teachers
+- after:teen-unification corner-the-clipboard-men
+- after:teen-implosion intl-the-defector-wave
+- after:olympic-class-92-golden-boy corner-last-of-the-handwrap-men
+- after:lighter-weights-inherit legacy-century-issue
+- after:lighter-weights-inherit legacy-every-fourth-summer
+- after:lighter-weights-inherit legacy-the-next-one
+- after:lighter-weights-inherit legacy-briefly-whole
+- after:lighter-weights-inherit legacy-the-old-names
+
+### News Travels Slow and Sure
+
+*`intl-wire-from-across-the-water` · window: Pool seeded at world-gen; first datelined feature 1975-1977 (seeded) · analog of: Seventies wire-service coverage of the great foreign title scenes — the Mexico City lightweight wars, London heavyweight nights, the Tokyo and San Juan cards American papers ran a day late off the wire · from: Boxing Historian (second session)*
+
+**Beats:**
+- From the save's first ratings page, some of the names have never fought in an American ring — 2-3 per division, heaviest in the lighter weights, with hometowns the typesetter has to look up
+- The first foreign title change arrives datelined MEXICO CITY, wire copy run on page six with a photograph a day old; the paper's man did not attend and does not pretend he did
+- Two to four times a year thereafter, a title fight happens somewhere the paper isn't — LONDON, TOKYO, SAN JUAN — and the account is short, sure, and secondhand
+- Occasionally one of the foreign names relocates: a contender turns up at an established American gym with his record in a folder and no reputation the neighborhood can read
+
+**World effects:**
+- Foreign elite pool live from world-gen (see The Foreign Book): 2-3 of each division's ten ranked slots foreign; 1-2 divisions open with a foreign champion in era.titleClaims, weighted lightweight/welterweight
+- Foreign fighters are barred from matchmake() and every domestic offer tier — they touch the world only through rankings, title claims, the wire, relocation, and the intl triggered events
+- Foreign churn refills from the same country 60% of the time — national lineages the ratings page quietly tracks across decades
+- Supplies the ring-death challenger canon already requires ('a generated foreign fighter, brave past all sense') from this pool, so that beat's man has a hometown the obituary can name
+
+**Player-facing:** The ratings page always had the far names; now they have stories. Your fighters read the wire accounts aloud and mispronounce everything. When a foreign champion holds the belt in your man's division, the phone offers you eliminators, never him — until the away-corner call comes.
+
+### The Saint of the Lighter Weights
+
+*`intl-saint-of-the-republic` · window: Debut clippings 1978-1980; the reign runs unbeaten through the 80s (seeded); his aging and farewell belong to lighter-weights-inherit · analog of: Julio César Chávez — the lighter-weight god whose home country made his fights national holidays, with the long unbeaten number nobody stateside quite believed · from: Boxing Historian (second session)*
+
+**Beats:**
+- A lightweight from the foreign pool starts appearing in the wire copy with unusual frequency — he fights eight, ten times a year at home, and the number next to his name grows like a debt
+- His title fights empty the streets of his capital; the paper runs a feature on a city where the crime rate drops to nothing for one night a year, and files it under curiosities
+- American matchmakers offer him money to come north; he comes rarely, wins flatly, and goes home, and the American public never quite adopts what it cannot schedule
+- By the late 80s the magazine's pound-for-pound arguments begin and end with him — the sainthood is a fact of another country the sport here can only report
+
+**World effects:**
+- era.intl.saintId: one seeded foreign elite, lightweight-or-welterweight, rating 93+, generated with lionheart + chip_on_shoulder per the trait-as-destiny hill; his record accrues toward 80-90 fights on an accelerated wire schedule
+- His US publicReputation caps near 70 while his home coverage is holiday-toned — the gap between the two is printed, and is the point
+- His rare US appearances are seeded casino/cable cards: undercard slots at x2 purse for ranked player lightweights and welterweights
+- Feeds lighter-weights-inherit exactly as canon expects: he is the 'long-reigning lighter-weight god' whose losing fights become national days of mourning — this event owns only the rise and reign
+
+**Player-facing:** Your lighter men measure themselves against a man they have never seen fight except in a grainy wire photo. If you ever get a fighter ranked in his division, the offer to be fed to him at home is the richest and most honest bad idea the phone will ever propose.
+
+### Three Hundred Fights Nobody Saw
+
+*`intl-the-defector-wave` · window: 1990-1993 (arrival year seeded; 2-3 seasons of clippings) · analog of: The post-Iron Curtain wave — the Eastern amateur machine turning professional all at once, men with three hundred amateur bouts and no professional manners · from: Boxing Historian (second session)*
+
+**Beats:**
+- A short wire item: the sporting federations of the East are dissolving, and their fighters — state-trained since age nine — are suddenly free to be paid
+- They arrive with amateur records the paper prints with a question mark (312-14, it says, and the desk cannot check it) and professional records of zero
+- The good ones are placed with established American gyms by men in new suits; the first time one fights locally, the crowd learns what a decade of state coaching looks like in a four-rounder
+- Within three years two of them are ranked, and the magazine runs the piece the era demands: what else was over there all along?
+
+**World effects:**
+- Injects 3-5 relocated fighters (affiliation converts to US established gyms): age 22-27, rating 75-88, publicReputation 10-20 — the largest rating-to-reputation gap the world model ever shows, and matchmakers price them like it
+- 1-2 are heavyweights, honestly restocking the division the implosion hollowed — the post-circus heavyweight top ten gets its new blood from here
+- Their offer generation runs cheap for 24 months (nobody sells tickets to a mystery), then corrects hard once ranked — a visible demonstration that reputation, not rating, sets the purse
+- Arms intl-boy-off-the-boat: one of the wave may knock on the player's door if gym reputation is established-tier
+
+**Player-facing:** The gym argues about them for a month. If your heavyweight is ranked in the mid-90s, one of these men is between him and the title, and the tape on him is two rounds of silence and a stoppage. The wave is also the cheapest great fighter you will ever be offered — if your gym's name is good enough to draw him.
+
+### The Folding-Chair Circuit
+
+*`intl-folding-chairs` · window: Rolling 1976 onward, roughly one booking every 2-3 years (seeded); the poet-king's 1981-82 second farewell is retroactively its most famous card · analog of: The overseas farewell economy — aged American names fighting in Nassau, Jakarta, Tokyo for last paydays, in rings with folding chairs and local commissioners who ask nothing · from: Boxing Historian (second session)*
+
+**Beats:**
+- A name the paper used to set in headline type turns up in the agate: a ten-round decision in a country the sports desk had to find on a map
+- The circuit has its own logic — foreign promoters pay real money for a famous American name, the local commission licenses anyone still breathing, and the American press runs one line
+- Every few years the circuit produces its small elegy: a former contender, three farewells deep, quoted at the airport saying this one is the last one
+- When the poet-king takes his final fight in a foreign ring (canon: poet-king-sad-ending), the paper finally names the circuit for what it is, once, and goes back to the agate
+
+**World effects:**
+- Retired or fading WorldFighters (publicReputation>70, age>34) roll one seeded overseas farewell booking via era.intl.farewellBookings — the name keeps circulating without occupying a US venue slot
+- Each booking emits one agate line; roughly one in four earns a short elegy clipping; none affect US rankings — the circuit is a place records go to grow quietly worse
+- Arms the player-side triggered event intl-one-more-somewhere-warm with world precedent the fighter himself can cite
+- Composes with what-the-game-takes: men who take three or more circuit fights are weighted heavier in the dementia-arc eligibility rolls — the ledger keeps what the agate hides
+
+**Player-facing:** Mostly you see it as one line under BOXING in small type, a famous name and a far city. Then one year the far city calls your office, and the name it wants is one of yours.
+
+### A Belt Between the Belts
+
+*`div-the-belt-between` · window: 1977-1979 (activation seeded) — junior middleweight, 154 pounds, the first new division of the era · analog of: The sanctioning bodies inventing the junior divisions — a 154-pound belt created by the established council, inaugural champion a ratings-committee favorite, fees due on a weight that didn't exist last year · from: Boxing Historian (second session)*
+
+**Beats:**
+- The established council announces a new world championship at 154 pounds, citing 'the welfare of fighters caught between the weights'; the paper notes the inaugural title bout features the council president's countryman and prints the sanctioning fee schedule beside the story
+- The crony wins the vacant belt in a ballroom; the magazine declines to rate the division for a year, then surrenders to reality and adds the column (its established manner, per alphabet-fracture-one)
+- Within two years the belt is real anyway: the men who were starving to make 147 or giving away eight pounds at 160 fill the rankings, and the fights are good because the matches are finally fair
+- The precedent is set in the paper's dry summary: 'The council has discovered seven pounds no one had previously reported missing. It is expected to discover more.'
+
+**World effects:**
+- era.activeClasses gains junior_middleweight; deriveWeightClass changes mid-save; ranks 1-10 seeded soft (ratings 4-8 under an established division) plus 20-30% of welter/middle fringe ranked men migrating with weight mutations and 'no longer starving' clippings
+- The inaugural champion is the seeded crony (rating ~74, publicReputation ~55) — the shallow book and the weak king are the honest opening the era offers
+- Resolves the Bible's Part V reconciliation gap: the four-kings era (1980-81 onward) now climbs a real 147/154/160 lattice, exactly as its purse math assumed
+- Sanctioning-invoice and titleClaims machinery extend to the class automatically; pickWeightClass renormalizes so generation feeds 154 forever after
+
+**Player-facing:** The announcement clipping is comic; the fee schedule is not. Then the game does the quiet thing: your 148-pound man — the one the scale event has been torturing — suddenly has a natural home, and the div-a-natural-home letter is on your desk asking what kind of manager you are.
+
+### Heavyweights, Junior Grade
+
+*`div-a-division-for-the-doorman` · window: 1981-1983 (activation seeded) — cruiserweight, 190 pounds · analog of: The invention of cruiserweight (1979-80) — a division created for heavyweights who weren't, mocked for years, then legitimized by its first great war · from: Boxing Historian (second session)*
+
+**Beats:**
+- A sanctioning body announces a championship at 190 pounds 'for the athlete disadvantaged by the modern heavyweight's size'; the paper calls it a division for doormen and prints the inaugural card's gate, which is bad
+- For two or three years it is the sport's standing joke — its champions defend in half-empty ballrooms, and the magazine files its ratings under a heading a reader could miss
+- Then the seeded war: two of its top men go twelve rounds of the kind the paper cannot condescend to, and the account runs long and honest
+- The joke quietly stops. The division stays. Its best men still leave for heavyweight the moment the money whistles — the paper notes this is the truest thing about it
+
+**World effects:**
+- era.activeClasses gains cruiserweight; generation range 176-190 opens; light-heavyweight fringe men and small heavyweights migrate on activation
+- Division carries a purse multiplier of x0.8 — the only class priced under par, permanently; a title here is the game's cheapest and its clippings say so
+- One seeded legitimizing war 2-3 years post-activation upgrades the division's press treatment from comic to standard
+- Its ranked men drain upward: cruiser elites with rating>85 roll a chance to move to heavyweight, keeping heavyweight's book honest between the era beats
+
+**Player-facing:** For once the alphabet's greed is the player's bargain: a 185-pound man who was furniture at heavyweight is suddenly two fights from a ranking. The purse discount is printed on every offer, and taking the cheap belt anyway is a defensible way to build a name — the hollow-crown event already knows how the paper will spell it.
+
+### The In-Between Age
+
+*`div-the-in-between-age` · window: Rolling: junior welterweight (140) 1980-1982; junior lightweight (130) 1983-1985; super middleweight (168) 1986-1988 (each activation seeded). Ten divisions by 1990. · analog of: The alphabet completing the junior/super lattice through the 80s — each new belt born of a body's fee ledger or one superfight the bodies wanted to sanction · from: Boxing Historian (second session)*
+
+**Beats:**
+- Every few years another seven pounds is discovered: 140 arrives from the rival federation to spite the council's 154; 130 arrives with an inaugural champion who is, by the wildest coincidence, the federation vice-president's client
+- 168 arrives last and richest — invented so an aging middleweight superfight (seeded off the four-kings final verdict) can be sanctioned at a weight both camps will make; the belt is created for one specific evening and outlives it
+- Each arrival repeats the ritual: the indignant announcement, the fee schedule, the magazine's year of refusal, the surrender, the column
+- By 1990 the annual champion-counting column (canon: alphabet-soup-complete) counts across ten divisions, and the editor's arithmetic has become the sport's best-loved joke
+
+**World effects:**
+- Three further activations of era.activeClasses on the Division Ledger machinery — shallow inaugural top tens, crony first champions, fringe migration, generation renormalizing each time
+- World ranked population grows from 50 toward 100 across the era (ten slots by ten divisions), matching the Integration Notes' deepened elite; rankings-page clippings visibly lengthen
+- 168's birth is chained to the four-kings final verdict window so the superfight that justifies it is real in the save
+- Junior lightweight (130) extends the world below the old floor: era.intl weightBias points its elite heavily foreign, seeding the lighter-weight ascendancy the 90s canon requires
+
+**Player-facing:** The player learns the ritual and starts reading arrivals the way a landlord reads zoning notices: cynically, and for opportunity. Every activation fires div-a-natural-home checks against the roster, and a manager who kept a tweener alive in the wrong division for three years gets the game's best delayed payoff.
+
+### The Number of the Century
+
+*`legacy-century-issue` · window: 1999-2000, once (the last dated beat of the schedule; the Long Now governor activates when it resolves) · analog of: The millennium retrospective issues — every desk in America ranking its century in the winter of 1999 · from: Boxing Historian (second session)*
+
+**Beats:**
+- The magazine publishes its century number: the twenty-five best of the last twenty-five years, drawn from the save's own archive — the poet-king, the four kings, the wrecking ball, the saint, and, if a player fighter ever held a lineal top-5 place or a belt, him, with his clipping reprinted
+- The paper runs its own quieter version: the 1975 ratings page printed beside the current one, ten divisions where five used to be, and no comment offered because none is needed
+- The Tuesday series is already dark (canon), the halls are down to one per city (canon), the PPV canyon is old news — the issue closes no doors; it observes that they closed
+- Nothing announces that history is over. The next month's paper simply arrives, thinner in the front, the same in the agate
+
+**World effects:**
+- era.softCap activates on resolution: purse multipliers freeze at final-1999 values (LW 1.6 / WW 1.8 / MW 1.3 / HW 1.1, juniors interpolated); offer tiers, gates, venues, and titleClaims counts never change again
+- The evaluator switches from the dated schedule to the Long Now cycles (olympiad, torchbearer, unification, mortuary, anniversary desk)
+- Front-page budget drops to ~1/quarter outside cycle peaks; the anniversary desk seeds from the save's history ledger
+- The mortuary rolls actuarial death years for era.npcs and retired archetype fighters — the obituaries of the save's own giants are now scheduled, not scripted
+
+**Player-facing:** If your man is in the twenty-five, it is the proudest clipping the game ever hands you, and it is also, unmistakably, a headstone for an era. The manager is fifty this year. The paper doesn't say that either.
+
+### Every Fourth Summer
+
+*`legacy-every-fourth-summer` · window: Recurring from 2000, each Olympic year, forever (class strength rolled per cycle) · analog of: The Olympic pipeline as the sport's one reliable perennial — some classes golden, some threadbare, the machinery identical · from: Boxing Historian (second session)*
+
+**Beats:**
+- The Games come; a class turns pro; the strength of the class is rolled and IS the story — a five-star summer reads like 1976 again, a one-star summer produces the 'thinnest team since the boycott' column
+- The best medalist debuts on the existing premium tiers for a number the paper prints with the customary raised eyebrow — the eyebrow itself now forty years old, which the paper knows
+- At least one of each class busts on schedule, exposed by a club fighter with a real jab, and the paper's account could be swapped with its 1977 version but never is — the names are new and the sentences are earned fresh
+
+**World effects:**
+- Injects 2-5 WorldFighters with publicReputation 55-75 at zero fights per cycle, on the existing bicentennial-olympic-class machinery — no new institutions, no new tiers
+- Class strength (1-5, rolled) scales injection count and ratings; a weak class measurably thins the next half-decade's contender book, which the player's matchmaking feels
+- Arms the existing decorated-amateur-at-the-door walk-in event each cycle
+
+**Player-facing:** The one clock that never stops. A player in 2016 recruits against the same summer machinery he fought in 1977, and the game's honesty is that it works exactly the same — only he, and his manager, are slower getting to the door.
+
+### The Next One
+
+*`legacy-the-next-one` · window: Recurring from 2000: per marquee division, a torchbearer rises every 8-12 years (rolled), reigns 4-8, fades · analog of: The sport's permanent weather — every era anoints a best-since somebody, and the somebody is always drawn from the archive · from: Boxing Historian (second session)*
+
+**Beats:**
+- A procedurally generated star rises through the existing elite churn; the paper's coverage is built on comparison — he is 'the best since' an archive name from the save's own history, and the archive name is always printed
+- His reign runs on the frozen structures: the same PPV tier, the same casino datelines, the same alphabet arithmetic; his superfights are real events that change no rules
+- He fades on schedule, loses to the next one or to the clock, and the paper writes the column it has written before, well, because the man is new even if the shape isn't
+
+**World effects:**
+- era.softCap.cycles.torchbearers: per marquee division, roll arrival, generate via makeNationalElite with an archetype echo tagged from the save's archive; publicReputation arcs rise/plateau/decay on existing reputation machinery
+- His cards generate undercard offers at existing tier multipliers — the endgame player economy keeps a top to aim at without the world claiming new history
+- Comparisons quote the save's own ledger and clippings: a player fighter who made the archive can be the measuring stick the next one is held to — the game's longest-fused reward
+
+**Player-facing:** In 2009 a middleweight rises and the paper says he is the best since a name you managed. That sentence, in eight-point type, is what twenty-five years of your save was for.
+
+### Briefly, Whole
+
+*`legacy-briefly-whole` · window: Recurring from 2000: per rolled division, a unification collects the belts every 6-10 years and holds them 12-24 months · analog of: The perennial unification-and-refragmentation cycle — undisputed as a temporary weather condition, not an era · from: Boxing Historian (second session)*
+
+**Beats:**
+- A champion or a network wants the word 'undisputed' and buys the fights to get it; the belts collect on one nightstand for a season
+- The paper enjoys the arithmetic holiday — one champion per division, a rankings page a child could read — and openly gives it eighteen months
+- A vacation, a stripping by fax (the canon texture), a mandatory nobody will pay for — and the alphabet refills its vacancies; the counting column resumes
+
+**World effects:**
+- titleClaims for the division collapse to 1 for 12-24 months, then refragment to the standing 3-4 — a pure recombination of existing structures, no new bodies ever founded
+- Unification bouts carry the canon double-swing prestige; the undisputed window boosts that division's offer quality briefly
+- Refragmentation reuses existing stripping/interim clippings — the cycle is legible as a cycle by the third occurrence, which is the design
+
+**Player-facing:** A player with a ranked man learns to time the weather: challenge during fragmentation when belts are cheap, or hold for the undisputed window when one fight means everything. The world isn't changing anymore — but it still turns.
+
+### The Old Names
+
+*`legacy-the-old-names` · window: Rolling from 2000: obituaries on actuarial schedule; anniversary features at 10/25/40-year marks of the save's own events · analog of: The sports page's long memory — the obituaries of an era's giants and the round-number retrospectives that are how a paper admits time has passed · from: Boxing Historian (second session)*
+
+**Beats:**
+- The poet-king dies in his seventies, and the front page — the last one the old rules allow — is composed from the save's own stored clippings: the defenses, the upset, the folding chairs
+- The old bylines go too: a retired writer's obituary quotes his farewell column (canon: death-of-the-afternoon-paper), and if a player fighter made his list, the fighter is named again
+- On round anniversaries the paper reprints its own history — twenty-five years since the ring death, forty since the surrender — each with one new paragraph and no new claims
+- The anniversary desk includes the gym: ten years since your man's title, twenty-five since the night at the old hall, drawn from the history ledger without commentary
+
+**World effects:**
+- era.softCap.mortuary fires obituaries for era.npcs and retired archetype fighters on rolled death years — each composed from stored clippings and ledger lines, never newly invented facts
+- The anniversary desk schedules off the save's history ledger and era schedule; player milestones qualify on the same round-number rules as world events
+- Obituaries of the save's giants are the only post-2000 front pages outside cycle peaks — the paper's settled tone made mechanical
+
+**Player-facing:** This is where a twenty-five-year save pays its interest: the paper burying men you watched rise, in words it wrote about them the first time. The manager reads every one. The game never says why.
+
+### The Last of the Handwrap Men
+
+*`corner-last-of-the-handwrap-men` · window: 1992-1995 (death date seeded per save) · analog of: The passing of the great trainers' generation — Ray Arcel dying in 1994, Eddie Futch working into his 80s; the men who trained under the men who invented the modern corner · from: Retired cornerman*
+
+**Beats:**
+- The sport's great old trainer — an era.npcs elder generated at save creation, corner man to champions across six decades — dies past ninety, at home, with the television on
+- The funeral clipping: the line around the block, champions of six decades as pallbearers, men who hadn't spoken in twenty years holding the door for each other
+- The magazine runs a tribute issue — his corner rules printed verbatim, half of them three words long
+- Within two years the columnists start writing that nobody teaches the old way anymore, and for once the columnists are right
+
+**World effects:**
+- Coach generation: old_lion roll rate drops from 10% to 2%, and newly generated old lions carry trainedSince>=1955 instead of earlier — the pre-war lineage is extinct
+- Elite-tier applicant frequency -20% for two years (the bench got shorter and every gym in the country noticed the same week)
+- Any hired coach age>=65 gains +5 loyalty permanently — the ones still working know what they are now
+- Arms the corner-one-more-camp and corner-the-lifetime-chair events at increased weight for five years
+
+**Player-facing:** The obituary runs front-of-sports; your oldest coach asks for two days to travel to it, and if you pay his train fare it's +8 loyalty and one gym-log line about what he said when he got back, which was nothing
+
+### The Clean Bucket
+
+*`corner-the-clean-bucket` · window: 1978-1982 (circular arrives seeded; enforcement 6-12 months later) · analog of: State commissions banning Monsel's solution and restricting corner substances to adrenaline 1:1000 — the end of the cutman's private chemistry · from: Retired cornerman*
+
+**Beats:**
+- A fighter in another state finishes a bout with his cheek burned through by something out of an unlabeled bottle; the paper runs it at three paragraphs
+- The commission circular arrives — mimeographed, numbered, listing what a kit may contain, which is suddenly very little
+- Inspectors start opening kits at weigh-ins; the old cutmen stand there like men having their houses searched
+- Within a year the good young cutmen are the ones who learned pressure and position instead of chemistry, and the trade quietly divides into before and after
+
+**World effects:**
+- Cutmen with trainedSince<1968 take -0.05 effective skill for 6 months (the adaptation clock); afterward it returns — the good ones always had the hands, the bottle was a shortcut
+- A small 'corner inspection' line joins the fight-night settlement sheet at commission venues
+- Sets the era flag that arms corner-the-kit
+
+**Player-facing:** The circular goes up on the corkboard; your cutman reads it twice and says nothing, which is how he says everything
+
+### The Clipboard Men
+
+*`corner-the-clipboard-men` · window: 1986-1990 (the upset seeded; the fashion follows over 3 years) · analog of: The 1980s strength-and-conditioning revolution — Mackie Shilstone building the light-heavyweight who took the heavyweight title, and every camp suddenly wanting a man with a stopwatch and a degree · from: Retired cornerman*
+
+**Beats:**
+- A light-heavyweight moves up and takes the heavyweight title behind a 'physical conditioning consultant' with a clipboard, a college degree, and no scar tissue anywhere on him
+- The magazine runs the consultant's regimen as a two-page feature; old trainers are quoted calling it homework
+- Within two years every televised camp lists one; the word 'periodization' enters the sport and refuses to leave
+- The old conditioners either learn the new numbers or start describing themselves as old-school, which is a price tag falling
+
+**World effects:**
+- Conditioner market salaries +40% over 3 years; conditioner applicants under 40 begin generating with trainedSince>=1980 and a 'new school' background flag
+- New-school conditioners on a staff with a hardass or old_lion coach add standing feud pressure — feeds corner-two-chairs at 2x weight for that pairing
+- Conditioner specialty effectiveness on stamina +10% era-forward — the clipboard actually works, which is the part the old men can't forgive
+
+**Player-facing:** The feature clipping; a salary letter from your own conditioner inside the month; applicant letters that mention periodization, a word your trainer refuses to say aloud
+
+### The Third Fight Settles It
+
+*`legacy-the-third-fight` · window: 1975-1976, chained to the poet-king's brutal war beat inside poet-kings-last-reign (that war IS this trilogy's third act — this event is the press layer on it, not a second fight) · analog of: Ali–Frazier III, October 1975 — the fight that taught the American sports page the words 'trilogy' and 'rubber match', and what a settled score is worth at the gate · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Beats:**
+- The week of the king's war with his generational rival, the paper runs the full anatomy: two fights each way or one apiece, every disputed card relitigated, ten years of quotes laid end to end — the first time the save's press treats a rivalry as a single continuing story with a ledger of its own
+- The purse figures print beside the history: the third fight pays more than the first two combined, and the paper says so in one dry sentence
+- After the war, the retrospective closes the book: the series has an answer now, and both men paid the whole price for it — 'the closest thing to death,' the winner is quoted, and the paper lets the line sit
+- For a season afterward, the rumor column measures every local feud against it — two club fighters who split a pair are 'a rubber match waiting on a promoter with nerve'
+
+**World effects:**
+- Arms the Rivalry Book's vocabulary and economics save-wide: from this beat on, rivalryFactor applies in pursefor and the +0.25/+0.5 rivalry press-context multiplier is live — the world has now SEEN what a settled trilogy sells for, so the mechanics have a memory to point at
+- The press coining machinery activates: rivalries crossing heat 60 with 2+ meetings get named by the paper, in the style this retrospective established
+- One reference purse (the trilogy's closing gate) enters the clipping record as the number all later rivalry purses are measured against in copy
+
+**Player-facing:** A week of clippings the player mostly witnesses; the one mechanical tell arrives later and quietly — the first time two of his own men split a pair with anybody, the promoter's pitch uses the new word: 'People pay to see a thing finished.'
+
+### The Old Teachers Go
+
+*`legacy-the-old-teachers` · window: 1984-1988 (two deaths, 18-30 months apart, both seeded per save) · analog of: The passing of the great old trainer-managers in the mid-80s — Cus D'Amato dying in 1985 with his last prodigy not yet champion; Ray Arcel and Eddie Futch working corners into their eighties as the last of a species · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Lead's edit:** Seeds compose with corner-last-of-the-handwrap-men and the teen arc's trainer death into one trainer-mortality calendar of distinct men (old-lion generation rate steps 10%→5%→2%); the shorter-second-obituary observation carries across the pair.
+
+**Beats:**
+- A famous old trainer — a generated name the paper has quoted since the network era, the kind of man who trained champions in three decades — dies upstate with his last great prospect not yet finished; the obituary is long and the paper gets it right
+- Eighteen months to two years later a second one goes, and this obituary is shorter, because the first one used up what the desk had to say — the paper notices this about itself, in one line
+- Between the two, the Monthly runs the feature the era demands: who is learning the corners now? The answer it finds is 'almost nobody', and it names the handful of old lions still working
+- If the player employs an old_lion coach, he asks for the day to go to the funeral. There is no mechanical reason to say yes. Say yes.
+
+**World effects:**
+- old_lion coach applicants become permanently rarer in the market after the second death (rollTier's old-lion 10% weight halves) — the species is going, which is the point
+- The succession question enters the world's vocabulary: from this beat on, rumor items occasionally ask which gyms have 'a second set of keys cut' — texture that makes the player's own protege decision feel like the era asking, not the UI
+- Arms legacy-the-funeral-suit and doubles the arrival weight of legacy-second-keys for 24 months
+
+**Player-facing:** Two obituaries a save apart in feel; the Monthly feature; and if the player is past 45 with no protege named, one sentence in the second obituary lands differently than it would have at 30 — the game changes nothing, the player's own age does the work
+
+### A Chair of Her Own
+
+*`social-press-box-credential` · window: Hired 1976-77 (seeded); credential refused the same season; credential won 1977-79 (per-save: a court order or the commission quietly folding); a working byline for the rest of the save · analog of: The late-70s credential fights of women sportswriters — the Ludtke-era locker-room and press-row bans falling one lawsuit at a time — and the first women to hold a boxing beat · from: Cultural Historian of American Sport*
+
+**Beats:**
+- The city paper hires a young woman onto the sports desk; her early items run under her initials, which is the desk's idea, not hers
+- The commission's press steward refuses her a ringside credential — the typed reason is 'no accommodations,' and the paper prints the memo without comment, which is the paper at its best
+- She works the sport anyway, from the rooms that will have her: gyms, weigh-in hallways, the commission's own public filings — her copy is better sourced than the men's because it has to be
+- The paper appeals; the credential comes through; her first ringside byline runs under her full name and the story is about the fight, because she has been waiting years to write about the fight
+- Years on she is simply one of the beat's bylines — she adopts fighters, argues scorecards, holds grudges, and is eligible to be the young replacement voice when death-of-the-afternoon-paper fires
+
+**World effects:**
+- A persistent byline is ADDED to PressState.writers under the Bible's byline-memory model ({name, warmth, clipsByFighter, adoptedFighterId?}) — she runs on the same fields as every writer, no special case, forever
+- During the refusal phase her items cannot be datelined ringside: her clippings source from gyms and offices, and the player's gym is one of the rooms she can report from — arms triggered event social-reporter-at-the-gym-door
+- Credential day fires one clipping in the paper's flattest voice; her warmth carries a permanent +10% favorable framing toward any gym that held its door open during the refusal phase (the open-door flag)
+- She participates fully in existing machinery: the-adoption, locker-room-door, the-hit-piece, the farewell column — including the right to be wrong about your fighters
+
+**Player-facing:** Her first call to the gym is staged like any writer's call — the game never marks her arrival as an occasion. What the player sees: the steward's memo quoted once in a rumor item, a season of her initials, and one morning a ringside byline with a full name on it. The paper never says the word milestone, and neither does the game.
+
+### Six Rounds, Sanctioned
+
+*`social-first-sanctioned-womens-bout` · window: First state license 1975-77 (a western commission, seeded); first sanctioned women's bout on a local undercard 1978-79; occasional agate through the 80s; a televised women's bout on a circus-era undercard 1993-96 · analog of: The 1975 Nevada licensing of a woman professional, the 1977 New York licensing suit, and the first sanctioned women's undercard bouts of the late 70s; the shadow beat is the mid-90s televised undercards that made one woman a draw · from: Cultural Historian of American Sport*
+
+**Beats:**
+- A western commission licenses a woman professional; the wire item runs everywhere at two inches, and every gym in the country holds the same argument that week — yours included, by the spit bucket, at volume
+- Your state licenses women after a lawsuit it was going to lose; the first sanctioned women's bout in the state goes four rounds on a local undercard, honest work, and the crowd that came to laugh went quiet by the second
+- The sports editor makes the call the design endorses: the result runs in the agate with everyone else's, no feature, no fuss — a fight is a fight in the type that records fights
+- Mid-90s: a woman on a circus-era undercard has the best fight of the night and the paper that ran her license on page nine puts her above the fold; the purse figure prints, and it is small, and the paper says so
+
+**World effects:**
+- Women's results enter the local agate as occasional texture (1-2 lines/year, no player mechanics) — the world in print stops being entirely male, quietly, the way it actually did
+- Arms triggered events social-mornings-are-hers (the licensed boxer who rents your floor) and social-the-undercard-above-the-fold (the fifteen-year payoff)
+- The roster stays as scoped — no women's signings; the design surface is the gym as a building, a business, and a room with a door
+- The 90s beat reads the save's flags: if the player's gym rented her the mornings in 1978, the 1990s coverage names the gym in the fourth paragraph
+
+**Player-facing:** The license item on the corkboard; the old heads' week of opinions in the gym log; the undercard result in agate. The log records who from your gym went to watch and what the oldest coach said when he came back — 'Fastest hands on the card,' and then he rinsed the mouthpieces, which was the whole conversation.
+
+## Part VIII — The New Event Categories
+
+## Category: coach (26 events)
+
+### The Third Try at the Tape
+
+*`corner-the-hands` · Once per qualifying coach · from: Retired cornerman*
+
+**Trigger:** Staff coach specialty trainer|cutman AND age>=63 AND hands<=45 AND a bookedFight within 21 days; once per coach
+
+You watched him wrap the kid's left this morning. Third try at the tape. He made a joke about the cold and everybody on the floor pretended not to see, which is how you know everybody saw. The hands that wrapped four champions are done wrapping, and he is the only man in the building who hasn't admitted it.
+
+**Choices:**
+- Take him off wraps quietly — a younger man tapes, he stands there and talks the kid's hands into it
+- Say nothing and leave him the tape
+- Sit him down about hanging it up
+
+**Effects:**
+- Off wraps: loyalty -5 but he stays; his corner and training benefits keep; a recurring gym-log line about the old man supervising with two fingers and a raised eyebrow
+- Say nothing: selectable, no lecture — but each booked fight carries an 8% bad-wrap roll: fighter hand injury (restUntil +45 days, morale -8), the paper never learns why, and if it fires he retires inside the month and the ledger keeps one dry line about who let him keep the tape
+- Sit down: retirement conversation — loyalist or tenure>=5yr converts to partTime (slots -1, salary -40%, stays on the floor); otherwise fires corner-goes-home with loyalty intact
+
+### Everybody Wants Him Thursday
+
+*`corner-fight-week-raid` · Uncommon, repeatable at 18-month cooldown · from: Retired cornerman*
+
+**Trigger:** Staff cutman tier established|elite AND player bookedFight within 10 days AND (boardwalk-city-opens or desert-city-ascendant has fired)
+
+A title camp called your cutman at the gym number, which was a courtesy or an insult depending how you read it. Same weekend as your kid's fight, double his month in one night, and a hotel with a pool. He handed you the phone message himself, which is more than most men would have done.
+
+**Choices:**
+- Let him work their corner — your kid gets the second man Saturday
+- Refuse the release
+- Match the money for good — a raise that says he never has to take the call again
+
+**Effects:**
+- Release: loyalty +10, a one-time finder's fee to the books ($40 inflated — camps pay for the introduction), but your bout's corner factor drops to the no-coach rate; if your fighter loses cut-adjacent, the gym log knows exactly what was missing
+- Refuse: loyalty -10, poachInterest +15; he works your corner like a professional, which is the worst part
+- Match: salary +30% permanent, poachInterest resets to 0, and the next raid call goes unreturned — the trade notices whose man he is
+
+### The Light On at Nine
+
+*`corner-free-lessons` · Uncommon, once per coach-fighter pair · from: Retired cornerman*
+
+**Trigger:** Staff coach personality teacher, tenure>=6 months, AND a roster fighter with tier='chopping' OR lowest potential on roster, morale<=45, focus=null
+
+The light was on at nine and you went back figuring you'd left it. The kid nobody's paying attention to was in the ring, and the teacher was walking him through the jab again, patient as water on a stone. He's not charging anybody. He didn't hear you come in, or he did and didn't care.
+
+**Choices:**
+- Say nothing and leave the light on
+- Make it official — a real assignment, one of his slots
+- Tell him the paying men come first
+
+**Effects:**
+- Say nothing: the kid +8 morale, +2 trust, a slow ringIq drip while both remain; the day the coach realizes you knew and let it be, loyalty +4
+- Official: consumes a slot, full focused training, chemistry auto-reads Clicking (teacher and a kid nobody wanted is the oldest good pairing in the sport); coach loyalty +8
+- Paying men first: loyalty -12; the light goes off; if the kid is lockerless, trialPatience -20 — the last man who believed in him just got ordered to stop
+
+### The Fire Door
+
+*`corner-cant-watch` · Rare, per qualifying coach · from: Retired cornerman*
+
+**Trigger:** Staff coach background.exFighter with proBouts>=30 AND a fighter assigned to him (coachId match) loses by KO/TKO taking heavy punishment (FightReport stoppage against), OR the-fog is active on any roster man he trained
+
+He was gone from the corner before the count finished. You found him by the fire door with his kit still in his hand, looking at the alley like it had an answer in it. Sixty-one fights, he said. I know how it ends. He wasn't asking to be talked out of anything.
+
+**Choices:**
+- Give him the training floor and take him off fight nights
+- Talk him back into the corner
+- If he offers his resignation, take it with both hands
+
+**Effects:**
+- Floor only: keeps all training benefits, loses his corner factor on fight nights; loyalty +8 — you saw him and didn't make him say it twice
+- Talk back: holds if loyalty>=60; the next stoppage loss refires this event at double weight and he retires on the spot. Under 60 loyalty he works one more card and quits inside the month
+- Resignation: fires corner-goes-home with a variant line; his fighters take the standard exit hit but his best kid gets one gym-log line about writing the old man letters
+
+### Mints at Ten in the Morning
+
+*`corner-the-smell` · Once per coach (chain, stage one) · from: Retired cornerman*
+
+**Trigger:** Staff coach vice='drink', viceKnown=false, tenure>=3 months; fires on a random advance
+
+Mints on his breath at ten in the morning, and a carefulness to how he walked the length of the ring apron. He was as good as ever on the mitts. Better, maybe. That's the part they don't tell you about — some of them are better, for years, right up until the night they aren't.
+
+**Choices:**
+- Let it lie
+- Ask him straight
+
+**Effects:**
+- Let it lie: 'say nothing' stands, unpunished — the chain arms corner-the-morning-after on its own clock
+- Ask: he denies it with the fluency of practice; viceKnown=true, loyalty -4 (he knows you know); the chain still arms, but the stage-three odds are halved — being seen early is worth something even when it's denied
+
+### Nobody Worked the Left Side
+
+*`corner-the-morning-after` · Once per coach (chain, stage two) · from: Retired cornerman*
+
+**Trigger:** corner-the-smell has fired for this coach, 3-12 months elapsed; escalation lands on a fight-week morning if a bookedFight exists, otherwise a Monday
+
+He missed the whole morning. Fight week. The kid wrapped his own hands from memory and didn't say a word, which is loyalty, and worse than any complaint. Your coach came in at two with his shirt pressed and a story about his sister's car, told well. It was a good story. It had been used before.
+
+**Choices:**
+- Cover for him — the gym doesn't need to know what it already knows
+- The conversation, and a place upstate — a month's salary, paid quiet
+- Let him go
+
+**Effects:**
+- Cover: fighters' trust untouched, ledger keeps one line in your own hand; stage three arms at full weight
+- The place upstate: money -1 month of his salary (inflated); 70% it takes — vice pressure ends, skill intact, loyalty +20 permanent, and years later one no-choice gym-log line about the coffee he drinks now; 30% relapse straight to stage three
+- Let him go: standard fire; fighters he trained -4 morale; the paper never learns why and neither does the roster, which costs you nothing and him everything
+
+### The Long Minute
+
+*`corner-the-spit-bucket-night` · Once per coach (chain, stage three) · from: Retired cornerman*
+
+**Trigger:** corner-the-morning-after unresolved (covered, or upstate relapse) AND a bookedFight resolves with him in the corner
+
+You smelled it when he leaned in with the sponge. He gave the kid the wrong round number and the right advice, in that order, and the minute between rounds lasted a year. Whatever happens on the cards tonight, something in the corner already lost.
+
+**Choices:**
+- (No choice on the night — the night happens)
+
+**Effects:**
+- His corner factor runs negative for this bout (-0.03 in resolveFight's corner term)
+- Win or lose, he resigns before Monday — a note, handwritten, no story this time; coachAlumni records 'quit'
+- If the bout was lost, his assigned fighter -6 morale but +2 trust toward YOU if you ran the upstate branch earlier — the kid knows you tried; the ledger's line is the driest in the game: 'Worked his last corner at [venue]. The bucket was clean.'
+
+### Two Chairs, One Floor
+
+*`corner-two-chairs` · Uncommon; one active feud maximum per gym · from: Retired cornerman*
+
+**Trigger:** Two staff coaches, each tenure>=6 months, with a clashing pair (hardass vs teacher; technician vs motivator; any old_lion vs a conditioner hired after corner-the-clipboard-men; or two coaches sharing a specialty) AND no active feud (feudWith null on both)
+
+Nobody threw a punch. Nobody raised a voice. They just split the floor without asking you — the bags are his, the ring is his, and the kids are learning to pick a country. The gym got quieter and the quiet is the loudest thing in it.
+
+**Choices:**
+- Back the senior man
+- Back the better man
+- Knock heads — split the hours formally and make them shake on it
+- Let it burn
+
+**Effects:**
+- While feuding: combined slots -1, chemistry -0.04 for any fighter under either man, monthly gym-log sniping in two distinct voices
+- Back one: feud ends; the other's loyalty -20 and poachInterest +25 — you just wrote his reference letter for somebody else
+- Knock heads: 60% ends it (both loyalty -5, one gym-log line about the handshake that used four total fingers); 40% it simmers and refires in 6 months
+- Let it burn: feud persists until one leaves, and whichever exit event fires, it names the feud in its second sentence
+
+### The Line Around the Block
+
+*`corner-the-funeral` · Per qualifying coach death (deaths themselves rare by design) · from: Retired cornerman*
+
+**Trigger:** A staff coach dies (Coach Lifecycle mortality) with tenure>=3 years OR tier>=established
+
+The line went around the block and halfway up the next one. Men who hadn't spoken in twenty years held the door for each other. Half the sport was inside and the other half sent flowers with their real names on the cards, which for some of them was a first. The kid he trained stood at the back in his good jacket and didn't sit down once.
+
+**Choices:**
+- Close the gym for the day and pay for the funeral
+- Attend with the roster
+- Send flowers
+
+**Effects:**
+- Pay: money -1 month of his salary (inflated); gym-wide +4 trust — they watched what you did with a dead man's bill nobody would have known about; ledger milestone; pressItem obituary that names your gym in the second paragraph
+- Attend: gym-wide +2 trust, ledger milestone, the obituary runs without your gym's name
+- Flowers: nothing mechanical, and one gym-log line records who noticed the empty pews from your corner of town
+- All branches: his focused fighters -8 morale; a Clicking fighter -12 and one quiet grief line a month for three months; coachAlumni records 'died' with tenure
+
+### The Bucket With the Name On It
+
+*`corner-the-widow` · Once per funeral · from: Retired cornerman*
+
+**Trigger:** 2-6 weeks after corner-the-funeral
+
+His wife came by with his kit. The bucket had your gym's name painted on the side in his handwriting — he'd done it years ago and never mentioned it. She asked if he'd left anything in his locker, and you both understood she was asking something else.
+
+**Choices:**
+- A month's pay, quietly, in an envelope with her name on it
+- The kit stays in the corner with his name on it
+- Both
+
+**Effects:**
+- The pay: money -1 month salary (inflated); one ledger line; no reputation, no press — nobody knows, which is the point
+- The kit: a permanent corkboard fixture; every fight-night report for the next year carries his bucket in its corner line
+- Both: both. No branch punishes — this is grief, not optimization, per the joyful-events ruling's spirit
+
+### He Sees It
+
+*`corner-the-protege` · Once per mentor coach · from: Retired cornerman*
+
+**Trigger:** Staff coach personality teacher|old_lion, tenure>=2 years, skill>=0.6, AND either a roster fighter age>=30 with 20+ total bouts or a corner-night-school apprentice present; protege slot empty
+
+He's been leaving the mitts out for the kid. Staying past close, saying less each week, which with him means it's going well. He sees it, the old man said, tapping his temple, and went back to the bag. Coaches don't say that about people. In fifty years you hear it maybe four times.
+
+**Choices:**
+- Put them together formally
+- Not now
+
+**Effects:**
+- Formal: opens the protege track (candidateId set, progress 0); mentor loyalty +10; a monthly gym-log line as the teaching moves from hands to eyes to silence
+- Not now: refires in a year if conditions hold; if the mentor dies or retires first, one line about the mitts left out for a kid who never got told
+
+### Not One Word the Whole Session
+
+*`corner-diploma-day` · Once per protege · from: Retired cornerman*
+
+**Trigger:** protege.progress>=100
+
+The old man watched from the apron and didn't say one word the whole session, which from him is a diploma with a wax seal on it. Afterward he told you the kid was ready and then he told you the part you already suspected — that a gym across town had made the kid an offer, because the trade can smell a corner man coming the way it smells rain.
+
+**Choices:**
+- Give him a corner of his own here — hire him
+- Let him take the job across town
+- Keep him as the old man's second a while longer
+
+**Effects:**
+- Hire: mints a real Coach — tier one below mentor, skill = mentor.skill*0.75+0.1, chemistry pre-warmed +0.06 with the whole roster; mentor loyalty +8 AND his retirement roll doubles from here — his work is done, and that is the true cost of the best coach you will ever employ; lineage records 'hired'
+- Across town: pressItem about the new corner man and where he learned it; lineage records 'went-across-town' — still a legacy credit, the tree grows where it grows; mentor loyalty +4
+- Keep as second: progress decays -5/month; 30%/year he leaves bitter (lineage 'left-bitter', mentor loyalty -6, and the mentor's one comment enters the gym log: 'You don't keep a sharpened tool in the drawer.')
+
+### A Champion's Name From 1961
+
+*`corner-old-lion-forgets` · Once per qualifying coach · from: Retired cornerman*
+
+**Trigger:** Staff coach personality old_lion, age>=68, condition<=40; once per coach
+
+He called the kid by a champion's name from 1961, twice, and then wrapped the best left hand you have ever seen wrapped. It comes and goes. You have been around long enough to know that it will mostly come.
+
+**Choices:**
+- Say nothing
+- Ease him to mornings only
+- The conversation
+
+**Effects:**
+- Say nothing: selectable and unlectured, per the fog ruling — but 10%/month a corner-night error fires (the wrong instruction at the wrong minute: corner factor negative for one bout, one gym-log line the roster reads in silence)
+- Mornings only: partTime (slots -1, salary -30%); loyalty +6; the decline slows — structure holds a man together longer than pride does
+- The conversation: fires corner-goes-home with honors; if his protege track is live, progress +20 — urgency teaches fast; if you looked away for a year first, the ledger's retirement line carries one extra clause, and that is the entire punishment
+
+### The Stairs Got Long
+
+*`corner-goes-home` · Per retirement · from: Retired cornerman*
+
+**Trigger:** Coach Lifecycle retirement roll fires, or routed here by corner-the-hands / corner-cant-watch / corner-old-lion-forgets
+
+Two weeks' notice in an envelope, which he handed over like a man paying a debt. A sister with a porch, three states south. The stairs got long, he said, and that was the whole speech, and it was a better speech than most.
+
+**Choices:**
+- A farewell night — the gym, the folding chairs, the stories
+- A handshake and his last check
+- Ask him for one more year
+
+**Effects:**
+- Farewell: money -$60 (inflated); gym-wide +3 morale; ledger milestone; pressItem if tier>=established — the paper likes a man who leaves standing up
+- Handshake: clean exit, ledger line, coachAlumni records 'retired'
+- One more year: loyalty>=70 he stays 12 months at slots -1, then goes for good, no second ask; under 70 he declines gently — asking costs nothing but the answer, and the answer is its own gym-log line
+- Any branch, tenure>=8 years: he leaves his notebooks — a permanent flag: the gym's focused-training effectiveness +2%. The notebooks ARE the estate
+
+### A Man Likes to Be Asked
+
+*`corner-the-offer-he-told-you-about` · Repeatable, 2-year cooldown per coach · from: Retired cornerman*
+
+**Trigger:** Staff coach personality loyalist AND poachInterest>=70
+
+He put the letter on your desk looking unopened, but it had been opened and refolded with care. Real letterhead, real money, a camp you've read about. I'm not going, he said, before you could speak. But a man likes to be asked. And then he went back to work, because that is who he is, which is the entire problem with what they're offering.
+
+**Choices:**
+- Raise him to the letter's number
+- Thank him, and mean it
+- Give him the title — head trainer of this gym, his name on the office door
+
+**Effects:**
+- Raise: salary matched to market, poachInterest to 0
+- Thank him: loyalty +5 and poachInterest -30 — for a loyalist, being seen counts at better than market rates; the letter goes in his drawer, not the trash, and stays there
+- Title: loyalty +12, poachInterest -40, one gym-log line about the stencil drying; every mercenary on staff +5 poachInterest — titles are free and everybody knows it
+
+### Typed
+
+*`corner-the-note-on-the-door` · Per mercenary exit at threshold · from: Retired cornerman*
+
+**Trigger:** Staff coach personality mercenary AND poachInterest>=90
+
+He didn't make a speech either. The note thanked you for the opportunity — typed, both copies, one for your files. By the weekend he was in a camp with a casino's name behind it, wearing a jacket with somebody else's gym on the chest, working exactly as hard as he worked for you, because that was never the question with him.
+
+**Choices:**
+- Wish him well when the paper calls
+- Say nothing
+- Tell the paper what you actually think
+
+**Effects:**
+- Well-wishes: pressItem, gym reputation +1 — the trade notices class
+- Nothing: nothing; the clipping runs without you
+- The truth: a livelier clipping, gym reputation -1, and his new camp's offers to your fighters arrive 10% lighter for a year — small men get small purses
+- All branches: fighters he focused -6 morale; his best focused fighter (highest potential) +15 poachInterest; coachAlumni records 'poached' with the destination
+
+### Third Bottle From the Left
+
+*`corner-the-kit` · Once per qualifying cutman · from: Retired cornerman*
+
+**Trigger:** corner-the-clean-bucket has fired AND staff cutman with background.trainedSince<1968 AND a bookedFight resolves at a commission venue; once per cutman
+
+The inspector went through the kit like a customs man. Third bottle from the left had no label, because it never needed one — every cutman his age owns that bottle and every inspector this year is looking for it. The old man watched him hold it up to the light and said nothing, the way you watch someone go through your late father's coat.
+
+**Choices:**
+- Hand it over
+- That's mineral oil
+- Pay whatever the fine is and keep walking
+
+**Effects:**
+- Hand over: his effective skill -0.05 for 6 months while he relearns the fight with legal hands; loyalty -3 — not at you, but you're the one standing there
+- Mineral oil: 70% the inspector moves on (nothing; the bottle retires itself quietly next week anyway); 30% caught — $100 fine (inflated), gym reputation -2, and a dry commission letter for the corkboard
+- The fine: $60 (inflated) on the settlement sheet, no argument, and the old man's one comment enters the gym log: 'Forty years and nobody ever asked what was IN it when it worked.'
+
+### A Cutman's Hands Go Where the Cuts Are
+
+*`corner-moonlighting` · Uncommon, repeatable at 12-month cooldown · from: Retired cornerman*
+
+**Trigger:** Staff cutman or corner_strategist tier local|regional, tenure>=1 year; a rival gym's result in the press cycle names your man in their corner
+
+Nobody hid it, exactly. His name was right there in the paper, fourth paragraph, working the other corner at the Armory on a night you didn't have a card. A cutman's hands go where the cuts are — that's the trade and it's older than you. Still. It reads a certain way over coffee.
+
+**Choices:**
+- Exclusivity — a 25% raise and your corner only
+- Let it ride
+- Make him choose, no raise attached
+
+**Effects:**
+- Exclusivity: salary +25%, poachInterest -20, the paper's next mention of him carries your gym's name
+- Let it ride: he brings back what he sees — the next offer involving that rival gym's fighters arrives with full opponent detail (a free scout, and everyone stays friends)
+- Choose without money: loyalty -8; 60% he stays and the gym log notes what it cost him; 40% he picks the open road inside three months
+
+### The Forty-First Fight
+
+*`corner-what-he-carried` · Once per qualifying coach (witnessed, no options — per the no-optimization ruling) · from: Retired cornerman*
+
+**Trigger:** Staff coach background.exFighter, tenure>=1 year, AND a roster fighter of his wins a genuine war (FightReport: 10+ rounds or knockdowns both ways); once per coach
+
+After everyone went home he told you about his forty-first fight, at midnight, in the empty gym, in the voice men use for weather reports. He never once looked at you while he told it. Then he put the chairs up and said good night, and you understood a number of things about him at once, none of which either of you will mention again.
+
+**Choices:**
+- (No choice — you were told, that's all)
+
+**Effects:**
+- background.sawTooMuch revealed to the player; loyalty +10
+- His fighters' restUntil after hard bouts extends 10% under him — he pads their recovery himself, off the books, and now you know why
+- When corner-cant-watch comes for him — and it will — the event text acknowledges this night in one clause
+
+### Asked After Him by His First Name
+
+*`corner-a-name-he-knew` · Rare, maximum twice per coach · from: Retired cornerman*
+
+**Trigger:** Staff coach vice='gambling', tenure>=6 months, AND a bookedFight within 21 days whose purse exceeds the gym's monthly overhead
+
+A man you didn't know asked after your coach at the door — by his first name, pleasantly, the way collection agents and old teammates both do. Your coach has been taking the long way home for a month. These two facts have been introduced to each other.
+
+**Choices:**
+- Pay it quiet
+- Tell him it's his to handle
+- Move him off the fight — a leak in the corner is a leak in the game plan
+
+**Effects:**
+- Pay: money -(4x his weekly salary, inflated); loyalty +15; the vice sleeps for 12 months and one gym-log line marks the day he found out who paid
+- His to handle: 30% the other corner knows your game plan — corner factor negated for the bout, and the gym log wonders in one sentence how they knew to circle left; 70% he handles it and never says how
+- Move him off: the bout runs safe, loyalty -8, the debt is still out there and the event may refire once
+
+### Certain Lands the Same as Mean
+
+*`corner-hardass-and-the-glass-kid` · Uncommon, once per pairing · from: Retired cornerman*
+
+**Trigger:** Staff coach personality hardass assigned (coachId) to a fighter with insecure trait, chemistryRead=Friction, 3+ months on the pairing
+
+The kid flinches when the old man clears his throat now. He's not mean — you've known mean, and this isn't it. He's certain, which lands the same on some men, and this kid is one of those men, and neither of them can see it from where they're standing.
+
+**Choices:**
+- Reassign the kid
+- Tell the hardass to find a lower gear
+- Let it ride — pressure makes some men
+
+**Effects:**
+- Reassign: kid +6 morale; hardass loyalty -4 ('soft' is his whole review of the decision)
+- Lower gear: loyalty>=60 — 50% he genuinely eases (chemistry penalty halves permanently for this pairing, one gym-log line about the old man saying 'good' out loud for the first time); under 60 loyalty it's -10 more and no change
+- Ride: the Friction continues (kid trust -4/month per the standing chemistry rules); if the kid quits the gym under it, hardass loyalty -6 — he knew too, and now he owns his half
+
+### The Letter With No Return Address He'd Admit To
+
+*`corner-night-school` · Rare, twice per save · from: Retired cornerman*
+
+**Trigger:** Any staff coach tier>=established; a letter arrives from a local man age 24-30 asking to apprentice unpaid; maximum twice per save
+
+The letter asked to sweep up, carry the bucket, and watch. It named your coach specifically and got two things about his career right that never made the papers, which means the kid did his homework, which is the entire job.
+
+**Choices:**
+- Take him on
+- Pass
+
+**Effects:**
+- Take: no salary; after 18 months he converts to a coach applicant — tier local, skill 0.45-0.55, chemistry pre-warmed with your roster, and a valid protege candidate (kind='apprentice') for corner-the-protege
+- Pass: nothing; a year later the paper may mention a young corner man across town whose letter you can still find in the desk drawer
+
+### The Last of the Neighborhood Professors
+
+*`corner-his-name-in-the-big-paper` · Once per qualifying coach · from: Retired cornerman*
+
+**Trigger:** Staff coach tier elite OR (established AND skill>=0.78), age>=55; a world-sim title defense resolves in a division where his generated background places an old pupil
+
+The magazine's feature called him the last of the neighborhood professors and mentioned your gym by street address. He read it once at his desk, folded it along the columns, and put it in the drawer where he keeps the things he doesn't talk about. The phone started ringing before the issue was fully on the stands.
+
+**Choices:**
+- (No choice — fame arrives; the follow-ups are yours to handle)
+
+**Effects:**
+- Gym reputation +2; coach-applicant quality raised one tier for 6 months (good coaches read the magazine too — mirrors the Bible's line-1636 texture)
+- His poachInterest +20 — fame travels with a suitcase; the loyalty system decides what happens next, which is the point of the loyalty system
+- One framed clipping joins the office wall permanently
+
+**Lead's edit:** Trigger drops the untracked 'old pupil' placement; fires on tier/skill/age during any save-wide title week.
+
+### The Best Money the Gym Spends
+
+*`corner-the-lifetime-chair` · Once per qualifying coach (witnessed, no options, no optimization — per the upheld joyful-events hill) · from: Retired cornerman*
+
+**Trigger:** Staff coach age>=70 AND tenure>=10 years; weight doubled after corner-last-of-the-handwrap-men
+
+You stopped paying him to work sometime last year and started paying him to be here, and it is the best money the gym spends. The kids bring him their report cards. He watches three rounds of sparring and says four words and the four words are always right. Fifty years of other men's blood, and what's left is the eye.
+
+**Choices:**
+- (No choice — some things you just get to have)
+
+**Effects:**
+- Gym-wide +2 morale baseline while he lives; ledger milestone
+- His hands can hit zero and it no longer matters — the chair by the ring is a position now, listed at slots 0, salary his to keep
+- When the Lifecycle clock finally takes him, corner-the-funeral fires at maximum register
+
+### Person-to-Person
+
+*`corner-one-more-camp` · Rare, once per save · from: Retired cornerman*
+
+**Trigger:** coachAlumni contains a coach who retired from your staff 2+ years ago (how='retired', tenure>=3 years) AND old-lion-miracle has fired AND player books a fight against a nationally ranked opponent
+
+He called person-to-person, which men his age do when it matters. He'd read about your kid's fight in the magazine, three states away, in a house that is too quiet. One camp, he said. I'll wrap, I won't climb the stairs. You could hear the television going behind him, and behind that, nothing.
+
+**Choices:**
+- Bring him back for the camp
+- Tell him the truth about the stairs
+
+**Effects:**
+- Back: one-time salary (his old rate, inflated); the bout's corner factor +0.02 over your current coach's; gym-wide +3 morale for the camp — the roster watches how the trade treats its old men and files it away; afterward he goes home on his own steam, and the ledger keeps the date
+- The truth: kindly, and final; -0 mechanically; one gym-log line, and the next time his name appears in the save it is in a different typeface
+
+### Careful as a Man Borrowing Money
+
+*`corner-the-second-chair-ask` · Uncommon, repeatable at 12-month cooldown per fighter · from: Retired cornerman*
+
+**Trigger:** bookedFight within 14 days AND the fighter's assigned coach (coachId) reads Friction while another staff coach would read Clicking for him
+
+The kid asked, careful as a man borrowing money, whether the other coach could be in his corner Saturday. Just Saturday, he said, twice. He'd clearly rehearsed it on the bus. Both coaches were within earshot of the question, because gyms are built out of earshot and nothing else.
+
+**Choices:**
+- Give him the corner he asked for
+- Keep the assignment
+
+**Effects:**
+- Give: the bout resolves with the Clicking coach's corner factor; fighter +4 morale going in; the assigned coach loyalty -6 unless personality teacher (teachers know it was never about them)
+- Keep: fighter -5 morale going in; if he loses, one gym-log line records the bus-rehearsed question nobody granted
+- Either way the pairing question surfaces in the UI's chemistry read afterward — the ask WAS the information
+
+## Category: divisions (2 events)
+
+### A Natural Home
+
+*`div-a-natural-home` · common at each activation; once per fighter per activation · from: Boxing Historian (second session)*
+
+**Trigger:** era.activeClasses grows AND roster fighter's weightLbs within 6 lbs above the new class limit OR inside the new generation band OR scaleTroubleFlag set (the-scale-don't-lie memory)
+
+The paper is still making jokes about the new belt when your man reads the weight limit out loud, twice. He has been boiling down to a number his body stopped agreeing with two camps ago, or giving eight pounds to men built like doors. Somewhere in an office, for reasons that have everything to do with fees and nothing to do with him, somebody just invented the division he was born in.
+
+**Choices:**
+- Move him to the new division
+- Keep him where the money and his name already are
+
+**Effects:**
+- Move: weightLbs re-settles into the new band, class re-derives; the inaugural rankings are shallow BY DESIGN — if publicReputation>=35 he enters the new top 10 within 2-3 wins, typically 2-4 places above his old standing; morale +8 and a gym-log line about him eating breakfast during fight week for the first time in years
+- Move: purse discount ~15% for 12 months (the new division sells cheap until it earns its ink), and the sanctioning-invoice event will find him at his new rank on schedule
+- Keep: no cost now; the scale events keep firing; if a rival tweener moves and wins the new belt inside 2 years, one dry clipping notes the champion 'once outweighed by a man who wouldn't move' — publicReputation unaffected, morale -4, and he read it twice
+- Traits: glory_hunter wants the older belt's prestige (-4 morale on moving); chip_on_shoulder loves a division nobody respects yet (+6 on moving)
+
+### First of His Kind
+
+*`div-first-of-his-kind` · rare; once per fighter · from: Boxing Historian (second session)*
+
+**Trigger:** player fighter wins a title or reaches nationalRank<=3 in a weight class activated fewer than 3 years ago
+
+He is the best in the world at a weight the paper was calling a filing error last spring. The coverage can't decide what it's covering: the account of the fight is honest, the headline has quotation marks in it, and the columnist spends four paragraphs on the sanctioning body's fee schedule and one on your man's left hand.
+
+**Choices:**
+- Let the work answer for itself
+- Put him in with a name from an old division to make the point (seek a crossover bout)
+
+**Effects:**
+- Either way, now: reputation gain runs at the new-division discount (+8 where an established belt pays +15) — the quotation marks are mechanical
+- The long fuse: when the division ages past 8 years, the magazine runs 'The First Ones' — a feature on the men who made the invented weights real; he is named, +6 permanent publicReputation, a ledger milestone, and if he is retired by then the clipping arrives at the gym anyway, addressed to you
+- Crossover bout: an offer generates against a ranked man one division up or down at x1.5 purse; win and the discount ends immediately (+12 rep, the quotation marks come off in print); lose and the columnists say the new belt was tested and found light — division-wide, his fault, -4
+- Traits: chip_on_shoulder fighter frames every slight clipping himself; the corkboard notes his locker door is becoming an archive
+
+## Category: international (3 events)
+
+### The Away Corner
+
+*`intl-away-corner` · uncommon; at most once per fighter per 2 years · from: Boxing Historian (second session)*
+
+**Trigger:** era>=1977 AND player fighter nationalRank<=10 AND a foreign champion or foreign elite rank<=3 exists in his division (era.titleClaims or affiliation.kind==='foreign') AND no bout booked
+
+The connection is bad and the money is good. A promoter in the champion's country wants your man — in the champion's building, before the champion's people, with the champion's commission appointing the judges. He is courteous about all of it. The purse has a comma in it and the word 'guaranteed' is used twice, which is once more than men use it when it's true.
+
+**Choices:**
+- Take the trip
+- Take it, but hold out for neutral officials (purse cut ~20%)
+- Decline — he can come here if he wants your man
+
+**Effects:**
+- Take: purse x2.5 his domestic rate, travel expense line on the settlement; decision-win probability skewed -15% (the house judges), KO immune to the skew; win abroad: publicReputation +18 and a wire clipping that runs at home AND there; lose a close one: the paper prints 'robbed' with no question mark, publicReputation -2 only, and the robbed-on-the-cards machinery arms
+- Neutral officials: skew removed, purse -20%, the foreign promoter's future offers cool for 24 months — he remembers being called a thief politely
+- Decline: nothing now; the foreign camp defends against someone else and your man's mandatory position decays 1-2 places over the year
+- Traits: glory_hunter +6 morale on the trip (the airport, the strangeness, the stakes); comfort_seeker -8 and trains badly abroad (small performance penalty); chip_on_shoulder fights the away corner like it insulted him personally: +3 performance
+
+### The Boy Off the Boat
+
+*`intl-boy-off-the-boat` · rare; at most twice per save · from: Boxing Historian (second session)*
+
+**Trigger:** an intl relocation fired within 12 months (era.intl.relocatedIds grew) OR intl-the-defector-wave active; AND gym reputation at established tier AND roster below capacity
+
+He comes with a folder: a record from somewhere else, stamped in two languages, and a letter from a trainer you've never heard of vouching for him in handwriting that took an hour. His English is four hundred words and 'jab' is one of them. Nobody in this city has ever paid to watch him, which is another way of saying he's free.
+
+**Choices:**
+- Sign him
+- Trial month first
+- Pass — you can't read the folder and neither can anyone else
+
+**Effects:**
+- Sign: a fighter whose rating-to-reputation gap is the widest the game generates (publicReputation 5-15, real ability rolled 60-88); his purses run ~40% under scale for 18 months — the market prices the reputation, not the man
+- Homesickness: morale -2/month baseline; any win that makes the paper cancels it that month (+4) — the clipping gets mailed home, and the gym log notes the envelope
+- If he cracks the rankings: his home country's paper adopts him; datelined clippings begin arriving from both sides of the water, and his purse discount ends overnight
+- Trial month: 30% chance an established rival signs him out from under you (walkInPoachChance machinery, and they CAN read a folder); Pass: 12 months later a clipping may report what the folder said, in someone else's corner
+
+### Somewhere Warm
+
+*`intl-one-more-somewhere-warm` · rare; once per fighter, at most twice per save · from: Boxing Historian (second session)*
+
+**Trigger:** roster fighter age>=34 AND publicReputation>=45 AND (losses in his last 3 bouts OR retired flag set) AND intl-folding-chairs active
+
+The call comes at a strange hour because of the time difference, which tells you where it's from before the voice does. A promoter in a far city wants a famous American name for one night — ten rounds, real money, a crowd that will cheer him just for being who he used to be. The local paper won't send anyone. Whatever happens there arrives home as one line of agate, and everybody on the phone knows that's part of the price.
+
+**Choices:**
+- Book it — the money is real and the shame is far away
+- Book it, and go with him yourself
+- Turn it down and tell him it was a wrong number
+
+**Effects:**
+- Book: purse x2 his last domestic number, travel line on the settlement; the result runs as agate only — a loss costs publicReputation -2 instead of the -8 a hometown loss would; commission physical still gates it (the-doctor-said-stop machinery is not suspended by distance)
+- Go with him: +8 trust; the gym log gets the trip in three lines, and if he loses, the entry about the flight home is the saddest joyful-category line the corkboard will ever hold
+- Traits: family_man takes it for the money and the morale splits the difference (+4 ledger, -4 pride, net a man who doesn't talk about it); lionheart fights like it's the Garden and his performance takes no age penalty this one night; comfort_seeker comes home heavier
+- Each circuit fight taken adds weight in the what-the-game-takes and the-fog eligibility rolls — the ledger keeps what the agate hides; Turn it down: he finds out 40% of the time; if glory_hunter, -6 morale ('you decided for me')
+
+**Lead's edit:** Fires for roster men only; retired names route through era.intl.farewellBookings and comeback-itch.
+
+## Category: legacy (16 events)
+
+### As Told To
+
+*`legacy-as-told-to` · once per save (re-offer per effects) · from: Boxing Historian (second session)*
+
+**Trigger:** year>=2000 AND history ledger holds >=25 milestones AND a persistent byline with warmth above neutral exists (PressState.writers)
+
+The writer is younger than some of your fight posters. She wants an hour a month — the gym in the club era, what the Tuesday series paid, what the poet-king's closed-circuit nights were like from a folding seat four blocks over. 'As told to,' the column would say. You realize, listening to her list what she wants to know, that you are the only person left in this building who was there.
+
+**Choices:**
+- Sit for it
+- Decline — the past is filed where you keep it
+
+**Effects:**
+- Sit: a recurring monthly column, each installment quoting a REAL entry from the save's history ledger in the paper's voice; small permanent gym-reputation floor while it runs; walk-in quality ticks up slightly — kids come in because of the stories, and the gym log says so
+- Sit: the byline's warmth rises to adopted-adjacent for the GYM itself, not a fighter — the first press relationship the manager owns personally
+- Each column has a 20% chance of surfacing one old consequence gently: the accommodation if it was taken, the venue nights you shared or didn't — the column never accuses, it just remembers accurately, and the ledger's old fuses are its sources
+- Decline: nothing; offered once more 5 years later, and if declined twice the retrospective runs anyway without you — shorter, colder, sourced from the clippings alone
+
+### We Had One of Those
+
+*`legacy-we-had-one-of-those` · recurring, quarterly cap, post-2000 only · from: Boxing Historian (second session)*
+
+**Trigger:** year>=2000 AND any roster fighter's style/trait signature matches a fighter in the history ledger (same weight class + shared trait or style tag)
+
+The old-timer on the heavy bag watches the new kid shadowbox for a full minute and says it to nobody: 'We had one of those. In '82. Better feet on this one.' The kid doesn't hear him. The corkboard does.
+
+**Effects:**
+- No choices, no rewards, no optimization angle — witnessed, not played, per the upheld joyful-events hill
+- One gym-log line pairing the current man with the archive name, drawn from the ledger; quarterly cap gym-wide
+- If the archive name later appears in an anniversary feature or obituary (legacy-the-old-names), the pairing line is quoted back in print — the corkboard and the paper agreeing across decades
+
+### The Kid at the Desk Is Forty
+
+*`the-kid-at-the-desk-is-forty` · once per save · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age reaches 40 (birthday tick, 1990 in a day-one save)
+
+The anniversary item called you 'the veteran manager' and it wasn't wrong, which was the strange part. Fifteen years of Tuesdays. The kid who signed the lease would not recognize the hands sorting this mail, and the hands don't mind.
+
+**Effects:**
+- Witnessed only: one clipping, one gym-log line, one ledger entry
+- The aging system's first surfacing — deliberately weightless, so that when weight arrives a decade later the player remembers being warned by nothing but a word in the paper
+- No mechanical change. Health has not moved. That is the design.
+
+### The Stairs
+
+*`the-stairs` · once per save · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age >= 48 AND manager.health < 85 (first crossing only)
+
+The kid carrying the spit bucket took the stairs two at a time and you took them the regular way, and somewhere in the middle of them you did the arithmetic you make your fighters do. The office didn't move. The stairs got longer.
+
+**Effects:**
+- Witnessed: a gym-log line only — the aging system's felt-read voice is established here (health is never a number; it is the stairs, the handwriting, the flight not taken)
+- From this crossing on, felt-reads surface roughly quarterly when health bands change, always in objects and never in figures
+- Arms nothing-just-winded
+
+### Nothing, Just Winded
+
+*`nothing-just-winded` · the first health scare; once, then the escalation chain owns the schedule · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age >= 50 AND manager.health < 80; probability scales with strain (two or more corners personally worked in the trailing 90 days)
+
+It happened between the second round and the third, with the stool in your hands — a tightness that had opinions. You finished the night. You have been finishing the night on it for a while now, if you're honest, and you are famously not.
+
+**Choices:**
+- See the doctor and take the month
+- Work through it — February has fights in it
+
+**Effects:**
+- Take the month: open fight offers expire unanswered (the real cost, in the real economy); one booked corner runs coach-only; health stabilizes and the scare is logged heeded — the next one arrives later and smaller
+- Work through: healthCeiling −10 permanent (the TRUST_HEAL_CAP of the body); the next scare is seeded 30% sooner and one grade worse; the gym log notes nothing, because you told nobody, and that silence is stored too
+- Deliberate echo of the fighter event 'Nothing, Just Banged It' — the manager has spent 25 years hearing that sentence from other men; the game hands it to him verbatim
+
+### The Doctor Said Slow Down
+
+*`the-doctor-said-slow-down` · once; the middle of the three-scare architecture · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** Second scare: fires per the escalation seed after nothing-just-winded (later and mild if heeded; sooner and harder if not); manager.age >= 54
+
+This doctor doesn't do the raised eyebrow. He does numbers on a pad, turned to face you, and a long silence you recognize from your own office — it's the one you use on managers of fighters who should stop. You never noticed it was a technique until it was aimed at you.
+
+**Choices:**
+- Heed it — hand off the daily corners and cut the load
+- Get a second opinion from a friendlier man across the state line
+
+**Effects:**
+- Heed: manager focused-training slots drop from 2 to 1 permanently; the corner term becomes coach-only past one fight night a month; if no protege is named, the second-set-of-keys event fires within 60 days at top priority — the body just voted on succession
+- The dodge: healthCeiling −15; a friendlier letter for the drawer; the mirror is exact and intentional — the-doctor-said-stop's looser-state dodge, aimed at you, and the ledger holds the fuse the same way it holds your fighters'
+- Either way the scare becomes public inside the gym: roster men with family_man check on you in the log; an insecure fighter takes −4 morale (if the ground under the gym can wobble, anything can)
+
+### The Second Set of Keys
+
+*`the-second-set-of-keys` · recurring until answered permanently; the succession system's front door · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age >= 45 AND a coach on staff with 5+ years tenure and personality loyalist, teacher, or old_lion (the old-head promise pipeline pre-qualifies its man at 3 years); weight doubles for 24 months after legacy-the-old-teachers
+
+The locksmith on the corner does two keys for a dollar. You've been walking past him for a month with the question in your pocket. It isn't about the door. Every man in the building knows what a second set of keys is about, which is why nobody has ever asked you for one.
+
+**Choices:**
+- Cut the keys — name him
+- Not yet (the event returns in 18-30 months; the pool may be thinner)
+- Never — this gym has one name on the lease and one in it
+
+**Effects:**
+- Name him: Coach.protege = true, protegeSince set; his skill +0.02/yr (he is learning your book); his trust-equivalent locks high; each big corner he works alone banks handover quality against the day
+- Not yet: no cost now; each deferral past age 58 costs 20% of eventual handover quality — succession is grown, not bought, and the compound interest runs backward
+- Never: gym-log line, dry; the reckoning will note the keys in one dry sentence; if a mercenary coach of tenure 4+ is on staff, 40% he reads the room and takes other work within a year
+
+### Let Him Work the Corner
+
+*`let-him-work-the-corner` · recurring while a protege is named; 3-4 solo corners make a full handover · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A protege is named AND a bout of 8+ rounds or purse >= 3x gym monthly overhead is booked
+
+He didn't ask. He just started packing the bag the night before — the swabs, the iron, the good scissors — and left it by the door where you'd see it, which in this business is a formal application.
+
+**Choices:**
+- Give him the corner alone
+- Work it together one more time
+- Take it yourself — some nights are not for teaching
+
+**Effects:**
+- Alone: his corner value applies (skill-scaled, likely below your combined worth — a real, visible cost); win or lose, handover quality banks a step; the fighter's post-fight log line reads the future ('The kid taped him like you taped him. Exactly like.')
+- Together: half a step banked, no risk; available twice before he understands the bag by the door isn't being seen and morale of a loyalist protege dips (-4)
+- Yourself: strain ticks (the aging system is watching the workload); the protege banks nothing; his patience is long but it is not a circle
+
+### The Man Who Waited
+
+*`the-man-who-waited` · once per passed-over coach; the cost accounting of the keys · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A protege is named while another coach of tenure 4+ years with personality mercenary or hardass is on staff
+
+He heard about the keys the way everyone hears everything in a gym — from the plumbing. He came to the office with his hat actually in his hands, which you had understood to be a figure of speech, and asked one question, straight: was it ever going to be him?
+
+**Choices:**
+- Tell him the truth — it was never going to be him, and tell him why
+- Soften it — the timing, the fit, the way these things go
+- Offer him something real — first refusal on the head-coach room if the protege ever leaves
+
+**Effects:**
+- Truth: 50% he respects it and stays two more years at full effort (hardass: 70% — his whole personality is respecting the straight answer); otherwise he gives notice with a handshake
+- Soften: he stays 6 months and leaves without the handshake; roster fighters he trained take −4 morale when he goes (they heard the plumbing too)
+- Something real: he stays; the promise is stored; if the protege ever departs, this event's sequel collects the debt with interest
+- All branches: one gym-log line, and the protege watches how you handle it — the succession is learning from this too
+
+### They Passed the Hat for You
+
+*`they-passed-the-hat-for-you` · once per save · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A heeded health scare has become neighborhood knowledge (gym tenure >= 15 years, gym reputation >= 0.5), 30-60 days after
+
+The envelope under the door had no name on it, the way the ones for your broke fighters never had names on them. Inside was more than it should have been and less than it wanted to be, and a note in a hand you half-recognized: 'For the electric. A gym needs its lights on.'
+
+**Effects:**
+- Witnessed, per the joyful-events law — no choices, no reward loop: cash +$60-150 (inflated), which at this tenure is not money, it is a sentence
+- Roster-wide morale +4; one ledger line the manager didn't write, which the reckoning will read back
+- The deliberate mirror of sleeps-in-the-gym: the neighborhood has been keeping a ledger on you the whole time, and this is the first time you see your own balance
+
+### A Young Man's Game
+
+*`a-young-mans-game` · rare, repeatable with long cooldown; the aging system's cheapest and best sentence · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age >= 60 AND a walk-in arrives with age <= 18
+
+The kid asked the protege, quietly, whether the old fella by the window was somebody. The protege said yes and didn't elaborate, which was the right answer and also, you noticed from the window, a test he'd just passed.
+
+**Effects:**
+- Witnessed: gym-log only
+- If a protege is named, the exchange banks a sliver of handover quality — the succession is partly the gym learning to answer for you
+- If no protege exists, the line lands differently: the kid never gets an answer, and the log's version of the scene is one clause shorter
+
+### The Lease Question
+
+*`the-lease-question` · once, with one possible return; the point where the money the game made you finally buys something the reckoning can hold · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.age >= 55 AND money >= 24 months of current overhead AND gym tenure >= 20 years
+
+The landlord's son runs the building now, and the landlord's son doesn't like boxing or believe in it. He offered you the building at a number that made sense to exactly one person in the room, and then he said the thing his father never would have: 'Or the lease runs out when it runs out.'
+
+**Choices:**
+- Buy the building
+- Negotiate the long lease instead — ten years, his terms
+- Let it ride — you've outlived worse landlords
+
+**Effects:**
+- Buy: a large one-time cost (seeded to sting: 18-30 months of overhead); the rent line leaves the books forever; the reckoning gains its heaviest object — 'the gym outlived the lease' — and a handed-over gym cannot be closed out from under the protege
+- Long lease: modest cost, rent +15%; the question returns once more in the early soft-cap years, harder
+- Ride: nothing now; a 15% chance per 5 years the building sells and the gym must relocate — the one event that can take the door itself, held by the ledger like every other fuse
+
+**Lead's edit:** Counterparty reads the civilian registry: if the leveled-with landlady's will fired, her estate's first refusal IS this event; the landlord's son exists only in saves without her arc.
+
+### The Funeral Suit
+
+*`the-funeral-suit` · once per save · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** legacy-the-old-teachers fires its second death AND an old_lion coach is on staff (or a coach of tenure 10+ years)
+
+He asked for the day off in writing, which he has never once done, and the note said only: 'Friday. He trained the man who trained me.' The suit he keeps in the equipment room got brushed Thursday night.
+
+**Choices:**
+- Go with him
+- Give him the day and mind the gym
+
+**Effects:**
+- Go: the gym runs itself for a day (a training day lost — a real, tiny cost); his trust-equivalent +10 permanent; on the drive back he tells you one true thing about one of your fighters — a trait reveal, routed through the existing budget, consumed not added
+- Stay: nothing lost, nothing gained; one gym-log line about the suit on its hanger by the door at 6 a.m.
+- Either way: the manager's own scares gain a small heed-bias afterward — a funeral is the most effective doctor's letter ever written
+
+### The Doctor Said Stop
+
+*`the-doctor-said-stop-manager` · once; the aging system's terminal gate · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** manager.health < 20, OR a third unheeded scare
+
+The title of this event is the title of another one. You have sat on the other side of this sentence four times in this office, holding some fighter's file, watching some man decide whether to hear it. Now it's your file. The doctor waits the way you always waited.
+
+**Choices:**
+- Hand over — the protege takes the day-to-day, you keep the desk (desk mode: sign-off on signings, cuts, and title fights; the rest is his)
+- Step back all the way (fires the Legacy Reckoning)
+- One more year
+
+**Effects:**
+- Hand over: handover quality (banked corners, protege years) sets how much reputation and roster trust survive the transition; the save continues at the desk — reduced verbs, same world, your name still on the lease
+- Step back: the reckoning runs in full; then emeritus (watch the world go) or close the book
+- One more year: genuinely available and genuinely fatal — health continues down; if it reaches 0, the-paper-spells-it-right fires and the save ends as an estate; the game will not blink first, per the owner's 'full' ruling
+
+### The Wall of Clippings
+
+*`the-wall-of-clippings` · once; in a soft-cap world, this is the ending — YOUR ending · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** The player opens the desk drawer and chooses to step back (available from age 50 with 20+ years tenure), or the-doctor-said-stop-manager routes here
+
+It takes a full evening to take the frames down, and you do it in order, oldest first, because that's how they went up. The first one still has the misspelled name. Somewhere around 1986 you stop reading them and start remembering them instead, which is faster and worse.
+
+**Choices:**
+- Read it all out (the full reckoning, document by document)
+- The short version — the ledger totals and the last line only
+
+**Effects:**
+- The reckoning is a READ of the save, never new content: the framed clippings rehung one by one; the alumni book opened in full (every man, his record, his purses, how he left, whole or broken); the rivalry book's settled series and unanswered questions; the farewell column by the byline with the most gym stories; the Monthly's single paragraph; the ledger totals, dry
+- The men who came back: alumni with trustAtExit >= 70 or a watch/benefit flag are in the room that night; the men cut off the chopping block are not, and the copy counts the chairs without comment; legacy.debts (the accommodation, the say-nothing) are read out last, in full, in the paper's flattest voice
+- No grade, no score, no stars: the summation is one sentence from the oldest man in the gym, composed from ledger ratios — if debts is empty and menRetiredWhole > menRetiredBroken: 'He never sent us out short.' Other ledgers earn other sentences, and the game means every one of them; then emeritus or the end, as chosen
+
+### The Paper Spells It Right
+
+*`the-paper-spells-it-right` · once, and only down the chosen path; the hard edge of the owner's 'full' ruling · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** One-more-year was chosen at the ultimatum AND manager.health reaches 0 within the seeded fuse (12-20 months)
+
+The paper spelled the name right, both times it appeared — the headline and the last line. The writer who drew the assignment was the one with the most bylines on this gym, and he wrote it the way the good ones do: ignored the trophies and interviewed the broom.
+
+**Effects:**
+- The save closes as an estate: the full reckoning documents assemble themselves without the player's hand — the wall, the alumni book, the rivalry book, the ledger — presented as what was found in the office
+- The obituary is written by the byline with the most player-gym clippings (byline memory, load-bearing); if a protege holds the keys, the last paragraph says the gym opened Monday at six, same as always — the one consolation the system can honestly offer
+- The oldest man's sentence still runs, unchanged in form: the ledger doesn't grade on a curve for dying at the desk. This ending ships, or the aging has no stakes.
+
+## Category: rivalry (12 events)
+
+### The Same Man Twice
+
+*`the-same-man-twice` · common once any book is open; the backbone verb of the rivalry system · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** rollFightOffers produces an opponentId already present in the fighter's bouts[] where the prior outcome was 'L', or a 'W' whose meeting is flagged disputed (method SD/MD or split judgeTotals) — the offer generator gains a deliberate 20% weight toward such opponents when a book is open
+
+The pitch is one sentence shorter than usual, because the promoter knows he doesn't need it. Your man knows the name. He knew it before you finished saying it — he's been saying it to the heavy bag for five months.
+
+**Choices:**
+- Take the rematch
+- Not yet — let it cook (decline; heat holds, the book stays open)
+- Never — route around him for good
+
+**Effects:**
+- Opens or heats the Rivalry Book entry (heat +15 on booking); the purse already carries rivalryFactor — the number on the offer card is visibly better than the same opponent cold, and no one says why
+- Take + chip_on_shoulder or hot_tempered: morale +8 through camp (his native weather); take + insecure: morale −6 (the loss lives in his hands); the gym log notes which, in one line
+- Never: heat −20, a 'ducked' grudge note if heat was ≥ 50 (−3 publicReputation, one dry rumor item) — routing around a question has a price the paper collects
+
+### Everyone Scored It Different
+
+*`everyone-scored-it-different` · uncommon; reliable after any split-card loss, which the engine produces honestly · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A player bout resolves L by SD or MD with judgeTotals split (at least one card for your man); fires 30-60 days after the robbed-on-the-cards clipping runs
+
+The promoter calls before the swelling's down. He read the same cards everybody read, and he's done the same arithmetic: a disputed decision is the only loss that raises a man's price. He'd like to sell the argument twice.
+
+**Choices:**
+- Take the rematch at his number
+- Hold out — the argument gets more valuable if you let it age (30% the other camp books elsewhere and heat cools −15; otherwise the offer returns at purse +20%)
+- Let it go — some robberies you frame, some you forget
+
+**Effects:**
+- The meeting is already flagged disputed in the book (heat opened at 45 if this was the first meeting); the rematch purse carries rivalryFactor plus the disputed premium
+- Win the rematch: repSwing x1.25 and the paper closes the argument ('the cards were wrong the first time, said so by the man himself'); lose it clean: the argument dies and heat −25 — the world decides the first cards were right
+- Hold out + glory_hunter: morale −5 while he waits (he wants the man, not the money); hold out + comfort_seeker: morale +3 (no rush)
+
+### Paper in the Drawer
+
+*`paper-in-the-drawer` · fires whenever a clause comes due — clauses now have exactly one home and one collection agent · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A live RematchClause exists with holder 'promoter' or the opposing camp, and dayCount reaches byDay − 30
+
+The letter is typed and short and refers to paragraph four. You signed paragraph four in a good month, when the purse in paragraph one made paragraph four look small. It doesn't look small now. He's exercising it.
+
+**Choices:**
+- Honor the clause — book the rematch at the floor
+- Ask for relief — offer the holder a step-aside piece of the next purse (money for freedom, the strings system's native trade)
+- Refuse and let the lawyers write to each other
+
+**Effects:**
+- Honor: bout books at max(purseFloor, current pursefor with rivalryFactor); clause clears; heat +10 — the book always gets its meeting eventually
+- Step-aside: −15% of the fighter's next purse to the holder as a typed settlement line; clause clears; a dry rumor item ('an accommodation was reached') and heat −10
+- Refuse: routes through the strings system's quiet refusal costs (this promoter's offers −30% frequency 12 months), a 'ducked' grudge note, −4 publicReputation, heat +10 — refusing a rematch is how rivalries get famous without fights
+
+### The Third Fight
+
+*`the-rubber-match` · rare — twice, maybe three times in a long save; the biggest purse event the rivalry system can produce · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** An open fighters-kind rivalry reaches series 1-1 (or 2-2), heat >= 50, both men active and within one weight class
+
+The promoter doesn't pitch this one at all. He names the number and waits. It's the biggest number anyone has ever said to you on this phone, and both of you know the history did the selling — two fights, two answers, and a city that can't stand not knowing.
+
+**Choices:**
+- Make the third fight
+- Price him — hold for 15% more (works if heat >= 65; below that the moment can pass, heat −10)
+- Protect your man — the first two took years off him (decline; the book stays open forever)
+
+**Effects:**
+- The bout books at the largest purse of either man's career (rivalryFactor at full heat plus the +0.5 rubber-match press-context multiplier); the paper coins the series' name now if it never did
+- Winner: repSwing x1.5, settled = true, framed clipping, ledger line, legacy.rivalriesSettled +1; loser: morale −15 but trust unmoved — nobody in the gym thinks less of a man who lost a rubber match, and the game says so in the log
+- Decline: heat freezes at its value permanently; every future mention of either man carries the unanswered question; at the reckoning, the unsettled book is read out as exactly that
+
+### He Knows Where the Showers Leak
+
+*`he-knows-where-the-showers-leak` · uncommon; requires the alumni book, which is why the alumni book exists · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** An offer's opponent matches an alumni record with how = 'poached' or 'quit' (the WorldFighter created by worldFighterFromFighter keeps the id), or the opponent's gymId is the rival that poached a player fighter within 3 years
+
+The name on the offer sheet used to be on a locker twenty feet from your office. He knows your man's habits from four hundred rounds of sparring, he knows which stair creaks, and he knows what you said the day he left — whichever version of it he's been carrying.
+
+**Choices:**
+- Take it — the gym settles things in the ring
+- Pass — you don't fight family, even the family that left
+
+**Effects:**
+- Take: opens/heats the gym-kind rivalry (+20); the departed man's trustAtExit drives his night — trustAtExit < 40 grants him condition +0.04 (bitterness is a training camp) and the fight engine gets to say the rest; trustAtExit >= 70: both corners nod at the weigh-in and the paper writes the warm version
+- Your man's read: chip_on_shoulder +6 morale in camp (a stablemate who left is a judgment to overturn); family_man −4 (he liked the guy)
+- Pass: heat −10 and a single gym-log line — the men noticed you wouldn't make it, and the roster's reading of that splits by trait, quietly
+
+### What the East Side Calls It
+
+*`what-the-east-side-calls-it` · once per rivalry; rare enough to feel like weather · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** Any rivalry crosses heat 60 with meetings.length >= 2 and coined === null
+
+It happened in the paper first, the way these things do. Wednesday's column referred to 'the east-side question' without explaining it, and nobody needed the explanation. A thing with a name is a thing people buy tickets to.
+
+**Effects:**
+- The press generates and stores the coined name (from the venue, the neighborhoods, or the men's styles — never their real records); all future copy about the pair uses it
+- Both parties +2 publicReputation — being half of a named thing is standing
+- A framed-clipping candidate; witnessed, no choices, no optimization angle — per the upheld joyful-events law, this one is for the shoebox
+
+### Two Dollars' Worth of Shoving
+
+*`two-dollars-worth-of-shoving` · uncommon; at most once per rivalry · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A rivalry bout is booked with heat >= 40 and either man carries hot_tempered (visible or hidden — chemistry is real whether read or not)
+
+It started at the scales and it was over in four seconds, which was three seconds longer than the commission likes. Nobody landed anything. The photographer landed everything.
+
+**Choices:**
+- Pay the fine and say nothing
+- Make him apologize in print (a statement through the writer)
+
+**Effects:**
+- Either way: commission fine $50 (inflated) on the settlement sheet; heat +10; the photo runs and the gate feels it — the promoter's settlement adds a 10% purse bump with a one-line note ('the shoving sold the balcony')
+- Say nothing + hot_tempered man: morale +4 (you let him be himself); apologize + hot_tempered: morale −6, trust −3 (you sided with the scales)
+- If the hidden trait was hidden, it isn't now — the reveal routes through the existing pacing budget, consumed not added
+
+### Nobody Asks About It Anymore
+
+*`nobody-asks-about-it-anymore` · rare; once per dormant rivalry · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A rivalry with dormantSince set 24+ months, settled === false, and both parties still active (either side age < 36)
+
+The writer's Sunday item was three paragraphs of whatever-happened-to, and the last line was the knife: 'The two best men this city produced at the weight went one fight each and then went quiet, and the quiet is the loudest thing either of them ever did.'
+
+**Choices:**
+- Make the call to the other camp yourself
+- Let it stay a question
+
+**Effects:**
+- Call: 60% an offer generates within 45 days at a nostalgic purse (rivalryFactor at half the frozen heat — the money remembers less than the men do); rekindled book resumes normal rules
+- Let it stay: the writer runs the sour coda ('some fights die of shyness' — the crosstown event's own line, deliberately reused); −1 publicReputation each; the book closes unsettled and waits for the reckoning
+- Your fighter + glory_hunter: reading the item costs him −5 morale either way — the question is about him and he knows it
+
+### The Other House
+
+*`the-other-house` · uncommon; at most two gym rivalries alive at once · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A gyms-kind rivalry reaches heat >= 50 (three cross-gym meetings, or a poach plus two meetings)
+
+It's not one fight anymore and everybody knows it. The paper runs the two gyms' results in facing columns now. Kids walking in off the street mention the other place unprompted, checking your face when they say it.
+
+**Choices:**
+- Lean into it — every crosstown card is a statement
+- Cool it publicly — one gracious quote about the other man's operation
+
+**Effects:**
+- Lean in: offers pairing the two houses' men +40% frequency and +25% purse while heat holds; walk-in rate +10% (a feud is advertising); hot_tempered roster men each carry a 10% annual chance of a gym-front incident clipping ($75 fine, heat +10)
+- Cool it: heat −15; the rival manager returns the quote or doesn't — 50/50, generated once, and if he doesn't, the paper notices who was gracious (gym reputation +0.02, the cheap dignity dividend)
+- Either way the rivalry persists at gym level even as individual fighters retire — houses outlive men, which is what makes it a second kind of book
+
+### The Night It Was Over
+
+*`the-night-it-was-over` · rare; once per settled rivalry — the payoff after the payoff · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** A fighters-kind rivalry with settled === true, 6-12 months after the rubber match, both men still living in the region
+
+Somebody's testimonial dinner, and the photographer caught them at the same table — the two of them, older, laughing at something nobody else at the table could have understood. Three fights and forty rounds buys a kind of friendship nothing else sells.
+
+**Effects:**
+- Witnessed only, per the joyful-events law: no choices, no reward, no optimization angle
+- Your man (winner or loser) +6 morale the week the photo runs; the clipping is frameable
+- One gym-log line from the youngest man in the gym, asking how you get to have an enemy like that
+
+### The Fight Nobody Will Make
+
+*`the-fight-nobody-will-make` · rare; the historically honest case — most great rivalries are the ones that never happened · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** An open rivalry with heat >= 70 and no bookable meeting for 12+ months because the standing gap grew (one party's publicReputation exceeds the other's by 25+, or one holds a nationalRank the other can't reach)
+
+The money went one way and the question stayed where it was. His people return your calls a day slower each time, and the last time the writer asked them about your man, the quote was two words: 'Who?' Everyone in the city knows exactly who.
+
+**Choices:**
+- Chase it — a public challenge through the paper (a statement, the era's instrument)
+- Bank the heat — say nothing and let the question do its work
+
+**Effects:**
+- Chase: +2 publicReputation for your man (the underdog with the megaphone reads well), heat +10, and a 15% annual chance the other camp needs a comeback opponent someday and remembers the noise — the long fuse the book holds
+- Bank: heat freezes; the question follows both men into every profile written about either, and into the reckoning unsettled
+- chip_on_shoulder: chasing it is worth +6 morale regardless of outcome; comfort_seeker: chasing costs −4 (he was fine being almost)
+
+### He's Got His Number
+
+*`hes-got-his-number` · uncommon; the rivalry system's hardest choice, and honest both ways · from: Veteran simulation-game systems designer (Football Manager school)*
+
+**Trigger:** An open rivalry at series 0-2 against your man (two losses, any method, same opponent — read straight off bouts[])
+
+Styles make fights and this style makes losses. Twice now, and the second one wasn't closer. The gym has stopped talking about it in front of him, which is how he knows they're talking about it.
+
+**Choices:**
+- The third fight anyway — some walls you go through
+- Route around him — rebuild the record elsewhere and never say the name again
+
+**Effects:**
+- Third fight + win: the great redemption — repSwing x1.5, +12 morale, settled = true, the best clipping of his career ('the third time, he solved it'); third fight + loss: −20 morale, retirement-pressure events at 2x weight for 12 months if age >= 30 — three losses to one man is a sentence with a period on it
+- lionheart or chip_on_shoulder: he wants the third fight and the gym log says so before you decide; insecure: −8 morale just from the offer existing
+- Route around: heat decays normally, but the writer keeps score — any title talk for your man draws the dry parenthetical ('unfinished business at home notwithstanding'), −1 publicReputation per year while both are active
+
+## Category: social (19 events)
+
+### The Notebook at Seven A.M.
+
+*`social-reporter-at-the-gym-door` · once per save · from: Cultural Historian of American Sport*
+
+**Trigger:** social-press-box-credential refusal phase active AND any roster fighter publicReputation >= 15
+
+The steward won't credential her, so she does the work where the work will have her. She's at the door at seven with a notebook and yesterday's agate already memorized, asking to watch camp. The men on the beat phone the promoter's office for their quotes. She came to the gym.
+
+**Choices:**
+- Give her the run of the place
+- Fights and official statements only
+- Turn her away
+
+**Effects:**
+- Run of the place: her gym-sourced items run through the refusal phase — ordinary press machinery, +1-2 publicReputation per feature for covered fighters; byline warmth +20 permanent; open-door flag set: her first RINGSIDE feature after credential day is about a fighter of yours (publicReputation +8, a framed clipping)
+- Fights only: neutral — she covers the gym like any writer covers a gym that keeps writers at arm's length
+- Turn her away: no cost now; warmth -15 permanent; her credential-day column names the rooms that were open when the arena wasn't, and your gym is not in the sentence
+- No trait branches — this event is about you, not the fighters
+
+### The Second Physician
+
+*`social-his-mother-reads-the-fine-print` · uncommon, once per fighter · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter age <= 23 AND open FightOffer with purse >= $400 x inflationFactor(year) AND (family_man OR homeCityId === gym city)
+
+You gave him the offer sheet to take home and it came back with his mother attached. She sat down in the office, put on the glasses she keeps on a chain, and found in four minutes what you'd missed in two readings: the training expenses billed against the purse twice, once as 'camp' and once as 'preparation.' 'Who is paying for the second physician,' she asked, 'and why is it my son, twice?'
+
+**Choices:**
+- Reopen the deal with her arithmetic in your pocket
+- Smooth it over — the language is standard
+- Ask her to look over every sheet from now on
+
+**Effects:**
+- Reopen: purse +8-12% — the matchmaker strikes the line without argument, which tells you what it was; fighter trust +8 (his mother's word travels ahead of yours); this promoter's padded-expense events fire at 0.5x weight for the gym thereafter
+- Smooth it over: nothing now; 60% she does the arithmetic aloud at Sunday dinner — fighter trust -6, morale -4, and she is right
+- Standing arrangement: his future bookings carry a 3-day family-review delay; his purses average +5% for his career; glory_hunter: morale -4 (his mother at the table); family_man: morale +6; she becomes a registered civilian NPC the save remembers
+
+### The Good Coat
+
+*`social-the-widow-upstairs` · once per save; the follow-ups are the arc · from: Cultural Historian of American Sport*
+
+**Trigger:** Monthly books settle with gym cash < 1 month's overhead AND year >= 1976
+
+The building has been hers since her husband died — he bought it off a glove manufacturer in '51 and she has run it better than he did, a fact the whole block knows and nobody says. On the first of the month she came down the back stairs herself, in the good coat, and asked about the rent. Not the money first. Whether the gym was in trouble.
+
+**Choices:**
+- Level with her — open the ledger on the desk
+- Tell her the check is coming (it isn't)
+- Pay half now and promise the rest inside the month
+
+**Effects:**
+- Level: she carries the month without using the word charity; she enters the civilian registry and the rent stays flat for 3 years while she owns the building; once a year she watches a card from the back row and the gym log notes the coat
+- The check is coming: 50% she knows you're lying and says nothing; within a year the building has a management company — rent +10% and every notice thereafter arrives typed with a reference number
+- Half now: the honest middle; terms unchanged, disposition unchanged
+- Long fuse: her death is seeded 8-15 years out. A leveled-with gym gets first refusal from the will — the building at a fair price, the one chance to own your own floor. A gym that dodged gets the estate's realtor and the open market
+
+### Postmark by Friday
+
+*`social-the-woman-at-the-federation-desk` · once per save (the relationship is permanent) · from: Cultural Historian of American Sport*
+
+**Trigger:** sanctioning-invoice has fired AND a mandatory-defense letter or ratings filing is pending on any player fighter
+
+You called the federation about the filing and got, as always, the same voice — the woman who has run that office since it was two rooms and a mimeograph. The chairman signs what she puts in front of him, in the order she puts it there. Everyone who understands the sport understands this. The chairman does not.
+
+**Choices:**
+- Deal with her as the office she is — exact paperwork, courtesy, her name spelled right
+- Go over her head to the chairman, whom you met at the convention
+
+**Effects:**
+- Courtesy: filings clear on time; ranking updates land the issue they should; and once, years on, a purse-bid deadline you'd have missed arrives early in a plain envelope with one line — 'Postmark by Friday. — R.' A saved title shot the ledger records in full
+- Over her head: the chairman is warm and useless; your paperwork finds the bottom of a pile that has no top; ranking updates run 1-2 magazine issues late for 24 months; the fee invoices, of course, are never late
+- Either way she joins the civilian registry — every later sanctioning event routes through her disposition
+
+### Open Monday at Six
+
+*`social-the-daughter-keeps-the-gym` · rare, once per save · from: Cultural Historian of American Sport*
+
+**Trigger:** A rival gym folds or its manager dies in worldSim churn AND that gym's founding_year is 10+ years back
+
+Everyone in the trade waited for the estate sale. Instead the sign got repainted — same name — and his daughter, who has kept the book for him since she was fourteen and knows every four-rounder's purse in the city to the dollar, opened Monday at six like always. The paper gave it a paragraph. The paragraph did not use the word surprising, but you could hear the writer deciding not to.
+
+**Choices:**
+- Send condolences and propose shared sparring between the houses
+- Wait, and poach her best man while the estate settles
+- Nothing — competitors are competitors
+
+**Effects:**
+- Sparring: the fold is reversed in worldSim — her gym survives; a standing arrangement gives one player fighter per quarter quality outside sparring (small development bump, gym-log lines); years on, when a promoter squeezes both gyms on one card, she calls you first — that card's purses +15% because two houses held the line
+- Poach: 55% you land the fighter through normal poach machinery; her gym folds for good; the paper runs one dry paragraph about the estate sale and the trade remembers which week you called — gym reputation -0.02, and her former fighters' camps never work with yours again
+- Nothing: worldSim decides on its own (40% she makes it anyway, and remembers nobody called)
+
+### Three Mornings a Week
+
+*`social-mornings-are-hers` · once per save · from: Cultural Historian of American Sport*
+
+**Trigger:** social-first-sanctioned-womens-bout license beat has fired AND year >= 1978 AND gym cash flow negative or neutral last month
+
+She put the license on your desk before you could ask — same card your men carry, same commission seal, her photograph unsmiling in the corner. She wants the ring three mornings a week before your men come in, and she can pay, which is more than half your roster can say. The old heads have opinions. The rent also has an opinion.
+
+**Choices:**
+- Rent her the mornings
+- The floor is spoken for
+
+**Effects:**
+- Rent: +$25/month (inflated) recurring income line; two weeks of gym-log grumbling, then it stops — the oldest coach watched her double-end work a full minute and said only 'Who taught her that?' and the answer was nobody, which is the most he ever gave anyone; her bouts run in the agate thereafter
+- Decline: nothing now; a gym across town takes the rent, and when her name makes the paper the dateline is theirs
+- Long fuse: renting sets the flag social-the-undercard-above-the-fold reads fifteen years later; she joins the civilian registry either way
+
+### Before Thursday
+
+*`social-the-bookkeepers-call` · rare, once per save in full form · from: Cultural Historian of American Sport*
+
+**Trigger:** Booked fight promoted by the crooked-promoter NPC (era.npcs) OR any booked purse >= $600 x inflationFactor(year) with a promoter carrying a prior bounced-check flag
+
+A woman who says she has kept the promoter's books for nineteen years calls the gym at closing time, voice level as a ruled line. 'Deposit the check the morning you get it. Before Thursday. I was never on this phone.' Then the dial tone, which in this business counts as a signature.
+
+**Choices:**
+- Bank it first thing
+- The check can wait like it always does
+
+**Effects:**
+- Bank it: the purse clears; Thursday the promoter's account is a newspaper story; the fighter never learns how close it came, but the ledger does
+- Wait: the existing bounced-check machinery fires — the purse is paper pending recovery
+- Either way, months later a typed request arrives: she is applying at a bank — nineteen years and no letterhead of her own — and needs a reference. Writing it costs nothing; years later, gym loan or upgrade paperwork at that bank finds your file already marked 'known to us,' one financing at easier terms
+
+### The Scrapbook
+
+*`social-every-clipping-even-that-one` · rare, once per fighter, joyful · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter with clipsByFighter >= 6 in byline memory, at least one a hostile piece (the-hit-piece or a KO-loss report), AND homeCityId === gym city
+
+His mother visited the gym on a Tuesday, was shown everything, touched nothing, and at the door opened her handbag to show you the scrapbook: every clipping he ever got, in order, under waxed paper. Including the one that ran under the word EXPOSED. 'He earned that one too,' she said, and closed the bag.
+
+**Choices:**
+- None — witnessed, not played
+
+**Effects:**
+- Fighter morale +8, trust +4 when the gym log reaches him
+- insecure: any lingering morale penalty from the hostile piece clears — it turns out somebody kept it for a different reason than the writer wrote it
+- One gym-log line; no reputation change — nobody important was watching, which was the point
+
+### Fourth Paragraph
+
+*`social-the-undercard-above-the-fold` · once per save · from: Cultural Historian of American Sport*
+
+**Trigger:** year >= 1993 AND social-mornings-are-hers was accepted AND nineties-heavyweight-circus era active
+
+The circus undercard needed a curiosity and got the best fight of the night. The paper that ran her license on page nine in 1978 put her above the fold — and in the fourth paragraph, the gym that rented her a ring three mornings a week when nobody else in the city would return her calls.
+
+**Choices:**
+- None — witnessed, not played
+
+**Effects:**
+- Gym reputation +0.05; walk-in rate +20% for 8 weeks
+- A framed clipping in the office, permanent set dressing
+- Ledger milestone cross-referencing the 1978 entry — fifteen years between cause and effect, the save remembering
+- Any old head still on staff who grumbled in '78 gets one gym-log line, and none of them admits anything
+
+### A Problem With the Reservation
+
+*`social-a-problem-with-the-reservation` · uncommon, repeatable with long cooldown · from: Cultural Historian of American Sport*
+
+**Trigger:** Booked away bout (offer venue not in press.venues) AND fighter heritage african_american or latino AND year <= 1988 (weight halves after 1982, never reaches zero)
+
+The hotel had the reservation, and then, with the bags on the sidewalk, developed a problem with it. The clerk was very sorry. The manager was very sorry. Nobody looked at anybody. Your fighter stood reading the fight bill on the lobby wall like it was the only thing in the room, because he has seen this desk before and knows exactly how long this takes.
+
+**Choices:**
+- Take the rooms across town, no discussion
+- Stand at the desk until it's sorted
+- Put it on the promoter — his town, his fight, his phone call
+
+**Effects:**
+- Across town: -$20 travel line (inflated); the far room and the long drive cost -0.02 condition for the bout; trust +3 — you didn't make him stand there; chip_on_shoulder: he tapes the hotel's matchbook inside his bag, and that is the whole entry
+- The desk: 70% a room appears in forty minutes, funny how; fighter morale -6 (he stood in a lobby being a problem), trust +6 (you didn't blink); insecure: morale -10 instead
+- The promoter: 80% fixed inside the hour and the dressing room Saturday is better than the contract says; 20% the promoter says the sentence you'll remember longer than the fight, and you're back at the desk anyway
+- No reputation mechanics, no press item — the paper didn't cover these nights and the game won't pretend it did; one flat line in the ledger
+
+### A Nice Piece
+
+*`social-a-credit-to-the-sport` · uncommon, once per fighter · from: Cultural Historian of American Sport*
+
+**Trigger:** A feature clipping (hometown-hero-front-page, kitchen-table-profile, or week-in-the-gym) runs on a fighter with heritage african_american and publicReputation >= 25, under a byline with warmth >= 0
+
+The piece was kind. That was the trouble with it. It counted the ways he was 'articulate' and 'well-spoken' and 'a credit,' with the surprise sitting under every word like a coin under a tablecloth. He read it twice on the ring apron, folded it once, and said it was a nice piece, in the voice you'd use for weather.
+
+**Choices:**
+- Mention it to the writer, once, without heat
+- Let it go
+- Ask him what he thought of it
+
+**Effects:**
+- Mention it: the writer is puzzled, means well, and thinks about it on the drive home; the word stops appearing under that byline; warmth unchanged — he took it as craft advice, which it also was; nothing else changes, because that is the size of what one conversation does
+- Let it go: nothing; the word comes back in about a year under somebody's byline, because it always did
+- Ask him: trust +5; the answer runs by trait — chip_on_shoulder: 'It's fuel'; family_man: 'My mother liked it,' end of subject; insecure: morale -4, he hadn't noticed until you asked, and the game does not warn you of this
+- The feature's ordinary rep gain already landed; this event touches no numbers the clipping didn't — it is about the men, not the arithmetic
+
+### Eleven Tickets
+
+*`social-carrying-the-block` · uncommon, once per fighter — the block only claims a man once · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter homeCityId === gym city AND publicReputation crosses 30 AND a booked bout at a local venue (extends hometown-hero-front-page: that event is the Sunday feature, this is the fight)
+
+The barber put the fight bill in the window, between the two photographs that are always in the window. Men who never knew his name before the paper did now call him 'our boy' on the corner and mean it, which is a gift and a weight in the same envelope. He bought eleven tickets with his own money for people who cannot know he paid. He asked you not to mention it.
+
+**Choices:**
+- Get the block its section — comps and a word with the box office
+- Close camp and keep the week ordinary
+- Let him carry it however he carries it
+
+**Effects:**
+- The section: gate/purse +10% (the block buys the rows around the comps); a WIN in front of the block: morale +14 and a permanent +2 morale baseline — some walks home a man keeps; a LOSS: morale -16, double the ordinary, and the gym log says only that he took the long way; insecure: the section is a mistake the game does not flag
+- Close camp: purse unchanged; morale -4 — he hears the door close on his people even though you closed it for him
+- Let him: trait decides — chip_on_shoulder or lionheart carry it fine (+small condition); insecure: -0.03 condition, the noise gets in; family_man: his mother runs the tickets better than the box office does, and that line goes on the cork
+
+### Half of Every Purse
+
+*`social-money-orders-home` · uncommon, once per fighter · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter homeCityId !== gym city AND careerEarnings >= $800 x inflationFactor(year) AND baseDues === 0
+
+You found out why he's broke. Money-order receipts in the bottom of his bag going back two years — half of every purse, the same name, the same town, the week after every fight including the ones he lost. He has never mentioned it. Men who talk about it are not usually the ones doing it.
+
+**Choices:**
+- Keep carrying his dues and never say a word
+- Tell him the gym is proud of him
+
+**Effects:**
+- The reveal recolors the save: his broke flag stops reading as trouble — the-camel-coat fires at 0.5x weight for him from now on (the sharks read him wrong too)
+- Say nothing: trust +6, landing two weeks later without explanation — he noticed the dues never came up again and understood what that meant
+- Tell him: morale +4, but he'd rather you hadn't; family_man exception: morale +8, he shows you the school photograph the money buys
+- If he ever wins a purse >= $2,000 (inflated): one gym-log line — the receipt that week was for the whole thing, and he kept back bus fare
+
+### Gas Is Gas
+
+*`social-the-angle-they-didnt-buy` · rare (requires the parent event), repeatable with different pairs · from: Cultural Historian of American Sport*
+
+**Trigger:** sold-on-the-wrong-angle has fired on a booked bout AND opponent WorldFighter.cityId === fighter.homeCityId (they came up through the same circuit) — extends the parent event, never replaces it
+
+The two of them came up through the same church-basement smokers; they have held pads for each other. The promoter's posters have them ready to burn each other's neighborhoods down, and the papers are running with it. Thursday your kid asked if they could share the ride to the commission physical — same office, same morning, and gas is gas.
+
+**Choices:**
+- Let them share the ride
+- Keep them apart until the bell — the promoter is paying for a war
+
+**Effects:**
+- Share: a photographer catches them outside the physical laughing at something neither will ever repeat; it runs; the angle deflates — gate -10% off the angle's +30%, but both kids fight loose: +0.03 condition for your man, and win or lose the post-fight photograph is the two of them with a towel apiece — publicReputation +3 each, the rare clipping both mothers keep; the promoter is furious in a way that costs nothing, since the fight sold anyway and he will never admit relief
+- Keep apart: the parent event's machinery runs untouched — the angle, the money, and whatever it does to the men, per the original design
+
+### They Go by Weight in Here
+
+*`social-weight-classes-only` · rare, at most twice per save · from: Cultural Historian of American Sport*
+
+**Trigger:** Roster spans 3+ name-pool heritages AND roster size >= 8 AND any roster fighter returned from an away bout in the last 45 days
+
+Whatever the front page was selling this week, Tuesday in the gym was Tuesday. The sparring wheel took men in the order the sparring wheel takes them. A visiting writer, fishing, asked the old coach what he made of everything going on out there, and the old coach nodded at the ring and said they go by weight in here, and went back to taping hands.
+
+**Choices:**
+- None — witnessed, not played
+
+**Effects:**
+- Gym-wide morale +2; one ledger line
+- If a byline with warmth > 0 is covering the gym that month, a short color item runs — gym reputation +0.02
+- No other mechanics, and the event never names what was on the front page. The restraint is the design: the gym doesn't make speeches, it makes Tuesdays
+
+**Lead's edit:** Add a 60-day quarantine from every other social-category event so the Tuesday never reads as the game answering an incident it staged.
+
+### It's a Gate Thing
+
+*`social-the-house-fighter-question` · uncommon, once per fighter · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter heritage african_american or latino AND publicReputation >= 40 AND record.wins >= 12 AND his bouts ledger shows no 10-round main event at a local venue while a lower-reputation local WorldFighter has held one there
+
+The matchmaker likes him fine. Everyone likes him fine. But the ten-round slot at the hall keeps going to the kid who 'sells to the regulars,' and when you finally ask the question straight, the matchmaker explains it without ever finishing a sentence: 'You know how the crowd is, is all. It's a gate thing. It's not a — you know it's not a — it's a gate thing.'
+
+**Choices:**
+- Take the co-feature and steal the show
+- Press for the main event at a shorter purse and let the gate testify
+- Take it to the paper
+
+**Effects:**
+- Steal the show: if the co-feature outshines the main event (KO or high-action win), the next local offer is the ten-round slot at full terms and the crowd is never mentioned again — the honest path and the slowest
+- Press: main event at purse x0.85; a WIN with a good house ends the question permanently — main-event terms restored, local purse floor +10%; a thin house proves nothing to a man who decided years ago, and it's co-features for 12 months
+- The paper: requires a byline with warmth > 0; one uncomfortable column runs; the hall gives him the slot next card at full purse and books your gym coldly ever after — that venue's offer frequency -20% permanently; chip_on_shoulder: morale +8 regardless, because somebody finally said it in print
+- The matchmaker is never written as a villain — he is written as a man doing arithmetic on numbers somebody else wrote down, which is worse, and truer
+
+### The Sixth Round
+
+*`social-what-the-crowd-yelled` · uncommon, repeatable across different venues · from: Cultural Historian of American Sport*
+
+**Trigger:** Away bout (venue not in press.venues) against an opponent whose cityId matches the venue's city AND fighter heritage african_american or latino AND year <= 1988
+
+The local paper's write-up the next day was polite. The room was not. What came over the ropes in the sixth you could not have printed then and the game will not print now; the referee heard it too and found nothing about it in his rulebook. Your man fought the last four rounds like the town owed him money.
+
+**Choices:**
+- Afterward: give what was yelled to a friendly byline back home
+- Leave it in the room
+
+**Effects:**
+- A WIN in that room: publicReputation +4 extra and a permanent travels-well flag — matchmakers know what winning there costs, and his away offers carry +10% purse from now on
+- A LOSS there: no extra reputation loss (even the Monthly scores that room with an asterisk); morale -6
+- Traits: lionheart or chip_on_shoulder bank it — +0.03 condition next bout; insecure: double the morale swing either way
+- Print it: the column runs, one venue's matchmaker is embarrassed, and that venue offers nothing to any of your fighters for 12 months; ask the fighter first and he says print it or don't, it's Tuesday to him — trust +4 for asking, either answer
+
+### Where He First Put on Gloves
+
+*`social-a-night-for-the-rec-center` · rare, once per fighter · from: Cultural Historian of American Sport*
+
+**Trigger:** Fighter homeCityId === gym city AND publicReputation >= 35 AND the seeded neighborhood-loss roll fires (the rec center where he started loses its roof — fire or city budget, per save)
+
+The deacon came with two of the rec center's coaches, hats in hands the way men hold hats when the ask is bigger than the words. The place where your fighter first put on gloves is closed — the roof, the budget, the usual. They want one exhibition night with his name on it. There is no purse in it for anyone.
+
+**Choices:**
+- Do the night
+- Send money quietly instead ($100, inflated)
+- Decline
+
+**Effects:**
+- Do the night: no purse; fighter morale +10; the block's kids at the door for 8 weeks — walk-in wave skewed young, raw, and broke; gym reputation +0.03; the paper gives it two paragraphs, which is enough
+- Send money: the center reopens eventually; nothing prints; trust +4 when he finds out anyway, because that block keeps no secrets from its own
+- Decline: nothing now; if he learns of the ask (60%), family_man or chip_on_shoulder: morale -6 — he'd have wanted the night
+
+### Three Towns, Three Names
+
+*`social-the-old-heads-circuit` · rare, once per save · from: Cultural Historian of American Sport*
+
+**Trigger:** Coach with personality old_lion AND age >= 58 on staff AND any roster fighter age <= 21 AND a rained-out roadwork morning (weather roll)
+
+Roadwork rained out, the young ones on the apron with nowhere to be, and the old coach got talking about the circuit that never made the record books — how he fought the same man in three towns in one month under three different names, because those were the bookings there were for men like them; about the champion of his day who couldn't buy a title shot for nine years and tended bar famous and broke. Nobody moved for an hour. The rain kept on.
+
+**Choices:**
+- Let the morning go long
+- Get them back to work
+
+**Effects:**
+- Let it go: roster fighters age <= 21 gain ringIq +1 — it was an education; morale +4 among them; one line of it survives to the gym log; if a byline with warmth > 0 hears about the morning, the paper's best piece of the year runs — gym reputation +0.03, and for a month the old man gets letters from men he fought under other names
+- Back to work: nothing lost; he has told these stories for forty years and will tell them again; the young ones heard the first ten minutes anyway, which were the ten minutes that mattered
+- No world mechanics — the history arrives as one man remembering, which is how it actually survived
+
+## Part IX — Integration Deltas
+
+SAVE SHAPE. Coach gains hiredDayCount, fractional age, hidden condition and hands, loyalty, poachInterest, vice/viceKnown, background, partTime, feudWith, flags, protege (his own apprentice line), and successor/successorSince (the manager-succession flag, renamed from the systems seat's protege to resolve the field collision). Manager gains birthDay, hidden health, healthCeiling, scares[], successorCoachId, handedOver; age now advances. GameSave gains coachAlumni[], alumni[] (fighter departures, written once, permanent), legacy (the write-only LegacyLedger with corner.lineage folded in), and rivalries[] (the one book — crosstown-feud momentum, opponent-for-hire rematch counters, and strings clauses all migrate into it). Fighter persists heritage (the surname subpool fighters.ts already rolls and discards); RosterEntry gains scaleTroubleFlag. era (per the standing Integration Notes) additionally carries intl { countries, saintId, relocatedIds, farewellBookings }, activeClasses, softCap { frozenMultipliers, cycles, mortuary, anniversaries }, and npcs.civilians[]. weightClasses.ts splits BASE_CLASSES/LATENT_CLASSES; deriveWeightClass and WEIGHT_CLASS_ORDER become functions of era.activeClasses. cities gains one 'abroad' pseudo-row so getCity never throws on a foreign man.
+
+EVALUATOR. advanceTime order becomes: worldSim → coach lifecycle tick (age, skill drift, hands/condition decay, retirement and actuarial death rolls — deaths land any advance, fight week included) → manager tick (birthday, health, strain) → scripted sub-beats (now including division activations, which renormalize pickWeightClass CLASS_WEIGHTS and re-derive classes mid-save) → soft-cap cycles once legacy-century-issue resolves → triggered evaluation → press cycle. resolveFight's BoutRecord feeds the rivalry book every bout; pursefor gains rivalryFactor (cap x1.8) under the era multiplier; the upheld press-context multiplier gains +0.25 rivalry / +0.5 rubber-match. Surfacing budgets extend, never widen: one rivalry item a month, coach and social events inside the standing one-choice-per-advance cap, quarterly cap on we-had-one-of-those, social-weight-classes-only quarantined 60 days from other social events. resolveFight formalizes the manager's 0.02 corner term (health- and schedule-gated from his 50s) and the coach corner factors the corner events price. The three famous-trainer deaths (old-teachers x2, handwrap-men) seed as one calendar of distinct men, stepping the old-lion generation rate 10%→5%→2%.
+
+MIGRATION. Bump SAVE_VERSION. Old saves synthesize: era.activeClasses from the year (past activations apply state silently — class derives from weight, so no roster man moves on load; a mid-90s save just sees ten columns); coaches backfilled (fractional age, loyalty seeded by personality, hiredDayCount approximated from save age, vice and hands rolled off age); manager backfilled (birthDay rolled, health interpolated from age with a clean scare history); empty rivalries/alumni/coachAlumni/legacy; heritage re-inferred from surname subpool; the credential byline joins PressState.writers only in saves young enough for her window, else she exists as an established working byline. The ring-death silent-fire rule extends to every new scripted beat.
+
+## Part X — Sensitivity Notes (the Cultural Seat)
+
+Everything the cultural seat submitted ships — nineteen triggered events, two scripted arcs — with one reshape: social-weight-classes-only gains a 60-day quarantine from other social events so the gym's Tuesday never reads as the game answering an incident it staged. The standard applied, event by event: (1) specificity — every event is one person on one night with a choice in front of the player, never a category with a caption; (2) the game never prints the slur and never writes the player a speech — the memo, the unfinished sentence, and the folded clipping indict themselves; (3) silence stays free everywhere, costing at most the world continuing as it was; (4) heritage never touches a number ambiently — verified in fighters.ts that the selector already exists and is discarded, so persisting it is honest, and the one purse-adjacent flag (travels-well) prices a ledgered night the player watched, not an identity; (5) the kindest choice can be wrong — asking the insecure man about the 'credit' piece hurts him, the block's section is a mistake for the wrong temperament — and that asymmetry is what keeps the pass from lecturing. The reservation and crowd events carry no press items by design: the paper didn't cover those nights, and retro-covering them would be the exploitation the hill bans. The women of the pass — writer, licensed boxer, landlady, federation desk, bookkeeper, owner's daughter, the mothers — are professionals and neighbors running on existing machinery (byline memory, rent lines, the civilian registry), never monuments; the reporter keeps the right to be wrong. Nothing died. These nineteen set the bar any future social content must clear: the era arriving as people, at the door, in the paper's manners.
+
+## Part XI — Remaining Gaps (supersedes Part V)
+
+- Amateur pipeline (Golden Gloves, gym amateur nights) still unmodeled — carried forward from Part V.
+- Gym relocation / the desert as a player destination still has no event path — carried forward from Part V.
+- The Part V pacing dry-run harness must now also prove coach-lifecycle, rivalry, manager-aging, and social densities (98 new events) quiet enough before ship.
+- FightResult structured knockdown counts (Part V) remain pending and now also serve rivalry disputed-card detection beyond judgeTotals.
+- Emeritus mode's reduced verb set (watch the world run after the reckoning) needs one small definition pass.

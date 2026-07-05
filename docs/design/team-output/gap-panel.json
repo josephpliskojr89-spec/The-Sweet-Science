@@ -1,0 +1,1759 @@
+[
+ {
+  "role": "Boxing Historian (second session) \u2014 the international layer, the junior divisions arriving as history, and the soft-cap endgame",
+  "systems": [
+   {
+    "name": "The Foreign Book (a foreign-elite pool, not a foreign world)",
+    "dataModel": "Affiliation gains a third kind: { kind: 'foreign'; country: string; dateline: string } (population.ts). Foreign WorldFighters carry cityId: 'abroad' (a sentinel added to the CityId union, guarded everywhere by affiliation.kind), fidelity 'national', names rolled from per-save nationality subpools in names.json (per Part IV: real cities and countries are permitted as datelines \u2014 MEXICO CITY, LONDON, TOKYO, SAN JUAN \u2014 but every person is generated). Save adds era.intl: { countries: Array<{ country, dateline, namePoolId, weightBias: WeightClassKey[] }> (5-7 rolled per save from a fixed table), saintId: string | null, relocatedIds: string[], farewellBookings: Array<{ wfId, day, dateline }> }. No new fighter fields beyond affiliation; a relocated man simply rewrites affiliation to { kind:'rival', gymId } or independent and takes a real cityId.",
+    "mechanics": "At world-gen, makeForeignElite(weightClass, rank) seeds 2-3 of each division's ten ranked slots (Integration Notes deepen the elite to ten) with foreign men, weighted to lightweight/welterweight (era.intl.weightBias); one plausible European heavyweight, no more. They churn on the same worldSim retire/replace rules, except a vacated foreign slot refills from the same country 60% of the time \u2014 national lineages, so the paper can say 'the fourth lightweight champion that city has sent out.' They NEVER appear in matchmake() results or the club/tuesday/network offer pools \u2014 the only doors between the player and abroad are title/eliminator bouts, the three intl triggered events, and relocation (roughly one foreign contender rank 4-10, age<28, converts to a US established-gym affiliation every 2-3 years, with a clipping). Foreign title fights resolve on the existing resolveOneFight wire, 2-4 datelined clippings a year, weekly surfacing budget respected. Farewell circuit: retired or fading WorldFighters with publicReputation>70 and age>34 roll one seeded overseas booking \u2014 one agate line, occasionally an elegy. Titles: era.titleClaims may be held by foreign ids from save start (1-2 divisions open with a foreign champion, weighted light)."
+   },
+   {
+    "name": "The Division Ledger (weight classes that expand at runtime)",
+    "dataModel": "weightClasses.ts splits into BASE_CLASSES (the five) and LATENT_CLASSES: junior_welterweight (limit 140, gen 136-140), junior_middleweight (154, gen 148-154), junior_lightweight (130, gen 126-130), super_middleweight (168, gen 161-168), cruiserweight (190, gen 176-190), each with { insertAfter: WeightClassKey, window: [yearLo, yearHi], cronyName: rolled per save }. WeightClassKey widens to the ten-key union. Save adds era.activeClasses: WeightClassKey[] (ordered); WEIGHT_CLASS_ORDER and deriveWeightClass(weightLbs) become functions of era.activeClasses. Migration: saves without the field get the five. RosterEntry gains scaleTroubleFlag (set by the existing the-scale-don't-lie event) so arrivals know who's been starving.",
+    "mechanics": "Activation is a scripted world effect: the new key enters era.activeClasses; deriveWeightClass changes mid-save, honoring the existing invariant (class is derived from weight, never stored). Inaugural population: makeNationalElite fills ranks 1-10 for the new class BUT with ratings 4-8 points softer than an established division \u2014 the shallow book is the design; additionally 20-30% of adjacent-division fringe ranked men (ranks 6-10) migrate by mutating weightLbs into the new band, with a 'no longer starving to make 147' clipping. pickWeightClass CLASS_WEIGHTS renormalize, the new class taking share from both neighbors, so generation feeds it forever after. The inaugural champion is always a seeded crony (rating ~74, publicReputation ~55, the sanctioning president's countryman or client) \u2014 beatable on purpose. titleClaims, per-body rankings, and sanctioning-invoice fees extend to the class automatically; alphabet-soup-complete's annual champion-counting column now counts across ten divisions by 1990, which only improves the joke. Player side: a roster man's class changes only if his weightLbs moves \u2014 the div-a-natural-home triggered event is the only door, so the player chooses."
+   },
+   {
+    "name": "The Long Now (the soft-cap governor)",
+    "dataModel": "era.softCap: { activeSince: number | null, frozenMultipliers: Record<WeightClassKey, number> (the final 1999 values: LW 1.6 / WW 1.8 / MW 1.3 / HW 1.1, juniors interpolated), cycles: { olympiad: nextYear, unification: Array<{ weightClass, nextWindow }>, torchbearers: Array<{ weightClass, wfId | null, phase: 'rise'|'reign'|'fade', nextRollYear }> }, mortuary: Array<{ npcOrArchetypeId, deathYear }> (rolled actuarially at activation), anniversaries: Array<{ sourceLedgerDay | eventId, fireDay, kind: '10th'|'25th'|'40th' }> }.",
+    "mechanics": "When the last dated scripted sub-beat resolves (~2000), the evaluator stops reading the schedule and starts reading cycles. Hard constraints: purse multipliers freeze at frozenMultipliers (inflationFactor keeps compounding \u2014 numbers grow, structure doesn't); the offer-tier enum, gates, and venue list never change again; titleClaims stay at 3-4 per division; no institution is ever founded or killed. Each cycle re-rolls its next occurrence on completion and may only recombine existing structures. The paper's tone settles mechanically: front-page budget drops to ~1 per quarter outside cycle peaks, agate grows, and the anniversary desk schedules retrospectives off the save's own history ledger and stored clippings at 10/25/40-year marks. The mortuary fires obituaries for era.npcs and retired archetype fighters, each composed from the save's own archive \u2014 old history completing, never new history claimed. The manager's arc (another seat's system) inherits the drama budget by this silence."
+   }
+  ],
+  "scriptedEvents": [
+   {
+    "id": "intl-wire-from-across-the-water",
+    "title": "News Travels Slow and Sure",
+    "window": "Pool seeded at world-gen; first datelined feature 1975-1977 (seeded)",
+    "analogOf": "Seventies wire-service coverage of the great foreign title scenes \u2014 the Mexico City lightweight wars, London heavyweight nights, the Tokyo and San Juan cards American papers ran a day late off the wire",
+    "beats": [
+     "From the save's first ratings page, some of the names have never fought in an American ring \u2014 2-3 per division, heaviest in the lighter weights, with hometowns the typesetter has to look up",
+     "The first foreign title change arrives datelined MEXICO CITY, wire copy run on page six with a photograph a day old; the paper's man did not attend and does not pretend he did",
+     "Two to four times a year thereafter, a title fight happens somewhere the paper isn't \u2014 LONDON, TOKYO, SAN JUAN \u2014 and the account is short, sure, and secondhand",
+     "Occasionally one of the foreign names relocates: a contender turns up at an established American gym with his record in a folder and no reputation the neighborhood can read"
+    ],
+    "worldEffects": [
+     "Foreign elite pool live from world-gen (see The Foreign Book): 2-3 of each division's ten ranked slots foreign; 1-2 divisions open with a foreign champion in era.titleClaims, weighted lightweight/welterweight",
+     "Foreign fighters are barred from matchmake() and every domestic offer tier \u2014 they touch the world only through rankings, title claims, the wire, relocation, and the intl triggered events",
+     "Foreign churn refills from the same country 60% of the time \u2014 national lineages the ratings page quietly tracks across decades",
+     "Supplies the ring-death challenger canon already requires ('a generated foreign fighter, brave past all sense') from this pool, so that beat's man has a hometown the obituary can name"
+    ],
+    "playerFacing": "The ratings page always had the far names; now they have stories. Your fighters read the wire accounts aloud and mispronounce everything. When a foreign champion holds the belt in your man's division, the phone offers you eliminators, never him \u2014 until the away-corner call comes."
+   },
+   {
+    "id": "intl-saint-of-the-republic",
+    "title": "The Saint of the Lighter Weights",
+    "window": "Debut clippings 1978-1980; the reign runs unbeaten through the 80s (seeded); his aging and farewell belong to lighter-weights-inherit",
+    "analogOf": "Julio C\u00e9sar Ch\u00e1vez \u2014 the lighter-weight god whose home country made his fights national holidays, with the long unbeaten number nobody stateside quite believed",
+    "beats": [
+     "A lightweight from the foreign pool starts appearing in the wire copy with unusual frequency \u2014 he fights eight, ten times a year at home, and the number next to his name grows like a debt",
+     "His title fights empty the streets of his capital; the paper runs a feature on a city where the crime rate drops to nothing for one night a year, and files it under curiosities",
+     "American matchmakers offer him money to come north; he comes rarely, wins flatly, and goes home, and the American public never quite adopts what it cannot schedule",
+     "By the late 80s the magazine's pound-for-pound arguments begin and end with him \u2014 the sainthood is a fact of another country the sport here can only report"
+    ],
+    "worldEffects": [
+     "era.intl.saintId: one seeded foreign elite, lightweight-or-welterweight, rating 93+, generated with lionheart + chip_on_shoulder per the trait-as-destiny hill; his record accrues toward 80-90 fights on an accelerated wire schedule",
+     "His US publicReputation caps near 70 while his home coverage is holiday-toned \u2014 the gap between the two is printed, and is the point",
+     "His rare US appearances are seeded casino/cable cards: undercard slots at x2 purse for ranked player lightweights and welterweights",
+     "Feeds lighter-weights-inherit exactly as canon expects: he is the 'long-reigning lighter-weight god' whose losing fights become national days of mourning \u2014 this event owns only the rise and reign"
+    ],
+    "playerFacing": "Your lighter men measure themselves against a man they have never seen fight except in a grainy wire photo. If you ever get a fighter ranked in his division, the offer to be fed to him at home is the richest and most honest bad idea the phone will ever propose."
+   },
+   {
+    "id": "intl-the-defector-wave",
+    "title": "Three Hundred Fights Nobody Saw",
+    "window": "1990-1993 (arrival year seeded; 2-3 seasons of clippings)",
+    "analogOf": "The post-Iron Curtain wave \u2014 the Eastern amateur machine turning professional all at once, men with three hundred amateur bouts and no professional manners",
+    "beats": [
+     "A short wire item: the sporting federations of the East are dissolving, and their fighters \u2014 state-trained since age nine \u2014 are suddenly free to be paid",
+     "They arrive with amateur records the paper prints with a question mark (312-14, it says, and the desk cannot check it) and professional records of zero",
+     "The good ones are placed with established American gyms by men in new suits; the first time one fights locally, the crowd learns what a decade of state coaching looks like in a four-rounder",
+     "Within three years two of them are ranked, and the magazine runs the piece the era demands: what else was over there all along?"
+    ],
+    "worldEffects": [
+     "Injects 3-5 relocated fighters (affiliation converts to US established gyms): age 22-27, rating 75-88, publicReputation 10-20 \u2014 the largest rating-to-reputation gap the world model ever shows, and matchmakers price them like it",
+     "1-2 are heavyweights, honestly restocking the division the implosion hollowed \u2014 the post-circus heavyweight top ten gets its new blood from here",
+     "Their offer generation runs cheap for 24 months (nobody sells tickets to a mystery), then corrects hard once ranked \u2014 a visible demonstration that reputation, not rating, sets the purse",
+     "Arms intl-boy-off-the-boat: one of the wave may knock on the player's door if gym reputation is established-tier"
+    ],
+    "playerFacing": "The gym argues about them for a month. If your heavyweight is ranked in the mid-90s, one of these men is between him and the title, and the tape on him is two rounds of silence and a stoppage. The wave is also the cheapest great fighter you will ever be offered \u2014 if your gym's name is good enough to draw him."
+   },
+   {
+    "id": "intl-folding-chairs",
+    "title": "The Folding-Chair Circuit",
+    "window": "Rolling 1976 onward, roughly one booking every 2-3 years (seeded); the poet-king's 1981-82 second farewell is retroactively its most famous card",
+    "analogOf": "The overseas farewell economy \u2014 aged American names fighting in Nassau, Jakarta, Tokyo for last paydays, in rings with folding chairs and local commissioners who ask nothing",
+    "beats": [
+     "A name the paper used to set in headline type turns up in the agate: a ten-round decision in a country the sports desk had to find on a map",
+     "The circuit has its own logic \u2014 foreign promoters pay real money for a famous American name, the local commission licenses anyone still breathing, and the American press runs one line",
+     "Every few years the circuit produces its small elegy: a former contender, three farewells deep, quoted at the airport saying this one is the last one",
+     "When the poet-king takes his final fight in a foreign ring (canon: poet-king-sad-ending), the paper finally names the circuit for what it is, once, and goes back to the agate"
+    ],
+    "worldEffects": [
+     "Retired or fading WorldFighters (publicReputation>70, age>34) roll one seeded overseas farewell booking via era.intl.farewellBookings \u2014 the name keeps circulating without occupying a US venue slot",
+     "Each booking emits one agate line; roughly one in four earns a short elegy clipping; none affect US rankings \u2014 the circuit is a place records go to grow quietly worse",
+     "Arms the player-side triggered event intl-one-more-somewhere-warm with world precedent the fighter himself can cite",
+     "Composes with what-the-game-takes: men who take three or more circuit fights are weighted heavier in the dementia-arc eligibility rolls \u2014 the ledger keeps what the agate hides"
+    ],
+    "playerFacing": "Mostly you see it as one line under BOXING in small type, a famous name and a far city. Then one year the far city calls your office, and the name it wants is one of yours."
+   },
+   {
+    "id": "div-the-belt-between",
+    "title": "A Belt Between the Belts",
+    "window": "1977-1979 (activation seeded) \u2014 junior middleweight, 154 pounds, the first new division of the era",
+    "analogOf": "The sanctioning bodies inventing the junior divisions \u2014 a 154-pound belt created by the established council, inaugural champion a ratings-committee favorite, fees due on a weight that didn't exist last year",
+    "beats": [
+     "The established council announces a new world championship at 154 pounds, citing 'the welfare of fighters caught between the weights'; the paper notes the inaugural title bout features the council president's countryman and prints the sanctioning fee schedule beside the story",
+     "The crony wins the vacant belt in a ballroom; the magazine declines to rate the division for a year, then surrenders to reality and adds the column (its established manner, per alphabet-fracture-one)",
+     "Within two years the belt is real anyway: the men who were starving to make 147 or giving away eight pounds at 160 fill the rankings, and the fights are good because the matches are finally fair",
+     "The precedent is set in the paper's dry summary: 'The council has discovered seven pounds no one had previously reported missing. It is expected to discover more.'"
+    ],
+    "worldEffects": [
+     "era.activeClasses gains junior_middleweight; deriveWeightClass changes mid-save; ranks 1-10 seeded soft (ratings 4-8 under an established division) plus 20-30% of welter/middle fringe ranked men migrating with weight mutations and 'no longer starving' clippings",
+     "The inaugural champion is the seeded crony (rating ~74, publicReputation ~55) \u2014 the shallow book and the weak king are the honest opening the era offers",
+     "Resolves the Bible's Part V reconciliation gap: the four-kings era (1980-81 onward) now climbs a real 147/154/160 lattice, exactly as its purse math assumed",
+     "Sanctioning-invoice and titleClaims machinery extend to the class automatically; pickWeightClass renormalizes so generation feeds 154 forever after"
+    ],
+    "playerFacing": "The announcement clipping is comic; the fee schedule is not. Then the game does the quiet thing: your 148-pound man \u2014 the one the scale event has been torturing \u2014 suddenly has a natural home, and the div-a-natural-home letter is on your desk asking what kind of manager you are."
+   },
+   {
+    "id": "div-a-division-for-the-doorman",
+    "title": "Heavyweights, Junior Grade",
+    "window": "1981-1983 (activation seeded) \u2014 cruiserweight, 190 pounds",
+    "analogOf": "The invention of cruiserweight (1979-80) \u2014 a division created for heavyweights who weren't, mocked for years, then legitimized by its first great war",
+    "beats": [
+     "A sanctioning body announces a championship at 190 pounds 'for the athlete disadvantaged by the modern heavyweight's size'; the paper calls it a division for doormen and prints the inaugural card's gate, which is bad",
+     "For two or three years it is the sport's standing joke \u2014 its champions defend in half-empty ballrooms, and the magazine files its ratings under a heading a reader could miss",
+     "Then the seeded war: two of its top men go twelve rounds of the kind the paper cannot condescend to, and the account runs long and honest",
+     "The joke quietly stops. The division stays. Its best men still leave for heavyweight the moment the money whistles \u2014 the paper notes this is the truest thing about it"
+    ],
+    "worldEffects": [
+     "era.activeClasses gains cruiserweight; generation range 176-190 opens; light-heavyweight fringe men and small heavyweights migrate on activation",
+     "Division carries a purse multiplier of x0.8 \u2014 the only class priced under par, permanently; a title here is the game's cheapest and its clippings say so",
+     "One seeded legitimizing war 2-3 years post-activation upgrades the division's press treatment from comic to standard",
+     "Its ranked men drain upward: cruiser elites with rating>85 roll a chance to move to heavyweight, keeping heavyweight's book honest between the era beats"
+    ],
+    "playerFacing": "For once the alphabet's greed is the player's bargain: a 185-pound man who was furniture at heavyweight is suddenly two fights from a ranking. The purse discount is printed on every offer, and taking the cheap belt anyway is a defensible way to build a name \u2014 the hollow-crown event already knows how the paper will spell it."
+   },
+   {
+    "id": "div-the-in-between-age",
+    "title": "The In-Between Age",
+    "window": "Rolling: junior welterweight (140) 1980-1982; junior lightweight (130) 1983-1985; super middleweight (168) 1986-1988 (each activation seeded). Ten divisions by 1990.",
+    "analogOf": "The alphabet completing the junior/super lattice through the 80s \u2014 each new belt born of a body's fee ledger or one superfight the bodies wanted to sanction",
+    "beats": [
+     "Every few years another seven pounds is discovered: 140 arrives from the rival federation to spite the council's 154; 130 arrives with an inaugural champion who is, by the wildest coincidence, the federation vice-president's client",
+     "168 arrives last and richest \u2014 invented so an aging middleweight superfight (seeded off the four-kings final verdict) can be sanctioned at a weight both camps will make; the belt is created for one specific evening and outlives it",
+     "Each arrival repeats the ritual: the indignant announcement, the fee schedule, the magazine's year of refusal, the surrender, the column",
+     "By 1990 the annual champion-counting column (canon: alphabet-soup-complete) counts across ten divisions, and the editor's arithmetic has become the sport's best-loved joke"
+    ],
+    "worldEffects": [
+     "Three further activations of era.activeClasses on the Division Ledger machinery \u2014 shallow inaugural top tens, crony first champions, fringe migration, generation renormalizing each time",
+     "World ranked population grows from 50 toward 100 across the era (ten slots by ten divisions), matching the Integration Notes' deepened elite; rankings-page clippings visibly lengthen",
+     "168's birth is chained to the four-kings final verdict window so the superfight that justifies it is real in the save",
+     "Junior lightweight (130) extends the world below the old floor: era.intl weightBias points its elite heavily foreign, seeding the lighter-weight ascendancy the 90s canon requires"
+    ],
+    "playerFacing": "The player learns the ritual and starts reading arrivals the way a landlord reads zoning notices: cynically, and for opportunity. Every activation fires div-a-natural-home checks against the roster, and a manager who kept a tweener alive in the wrong division for three years gets the game's best delayed payoff."
+   },
+   {
+    "id": "legacy-century-issue",
+    "title": "The Number of the Century",
+    "window": "1999-2000, once (the last dated beat of the schedule; the Long Now governor activates when it resolves)",
+    "analogOf": "The millennium retrospective issues \u2014 every desk in America ranking its century in the winter of 1999",
+    "beats": [
+     "The magazine publishes its century number: the twenty-five best of the last twenty-five years, drawn from the save's own archive \u2014 the poet-king, the four kings, the wrecking ball, the saint, and, if a player fighter ever held a lineal top-5 place or a belt, him, with his clipping reprinted",
+     "The paper runs its own quieter version: the 1975 ratings page printed beside the current one, ten divisions where five used to be, and no comment offered because none is needed",
+     "The Tuesday series is already dark (canon), the halls are down to one per city (canon), the PPV canyon is old news \u2014 the issue closes no doors; it observes that they closed",
+     "Nothing announces that history is over. The next month's paper simply arrives, thinner in the front, the same in the agate"
+    ],
+    "worldEffects": [
+     "era.softCap activates on resolution: purse multipliers freeze at final-1999 values (LW 1.6 / WW 1.8 / MW 1.3 / HW 1.1, juniors interpolated); offer tiers, gates, venues, and titleClaims counts never change again",
+     "The evaluator switches from the dated schedule to the Long Now cycles (olympiad, torchbearer, unification, mortuary, anniversary desk)",
+     "Front-page budget drops to ~1/quarter outside cycle peaks; the anniversary desk seeds from the save's history ledger",
+     "The mortuary rolls actuarial death years for era.npcs and retired archetype fighters \u2014 the obituaries of the save's own giants are now scheduled, not scripted"
+    ],
+    "playerFacing": "If your man is in the twenty-five, it is the proudest clipping the game ever hands you, and it is also, unmistakably, a headstone for an era. The manager is fifty this year. The paper doesn't say that either."
+   },
+   {
+    "id": "legacy-every-fourth-summer",
+    "title": "Every Fourth Summer",
+    "window": "Recurring from 2000, each Olympic year, forever (class strength rolled per cycle)",
+    "analogOf": "The Olympic pipeline as the sport's one reliable perennial \u2014 some classes golden, some threadbare, the machinery identical",
+    "beats": [
+     "The Games come; a class turns pro; the strength of the class is rolled and IS the story \u2014 a five-star summer reads like 1976 again, a one-star summer produces the 'thinnest team since the boycott' column",
+     "The best medalist debuts on the existing premium tiers for a number the paper prints with the customary raised eyebrow \u2014 the eyebrow itself now forty years old, which the paper knows",
+     "At least one of each class busts on schedule, exposed by a club fighter with a real jab, and the paper's account could be swapped with its 1977 version but never is \u2014 the names are new and the sentences are earned fresh"
+    ],
+    "worldEffects": [
+     "Injects 2-5 WorldFighters with publicReputation 55-75 at zero fights per cycle, on the existing bicentennial-olympic-class machinery \u2014 no new institutions, no new tiers",
+     "Class strength (1-5, rolled) scales injection count and ratings; a weak class measurably thins the next half-decade's contender book, which the player's matchmaking feels",
+     "Arms the existing decorated-amateur-at-the-door walk-in event each cycle"
+    ],
+    "playerFacing": "The one clock that never stops. A player in 2016 recruits against the same summer machinery he fought in 1977, and the game's honesty is that it works exactly the same \u2014 only he, and his manager, are slower getting to the door."
+   },
+   {
+    "id": "legacy-the-next-one",
+    "title": "The Next One",
+    "window": "Recurring from 2000: per marquee division, a torchbearer rises every 8-12 years (rolled), reigns 4-8, fades",
+    "analogOf": "The sport's permanent weather \u2014 every era anoints a best-since somebody, and the somebody is always drawn from the archive",
+    "beats": [
+     "A procedurally generated star rises through the existing elite churn; the paper's coverage is built on comparison \u2014 he is 'the best since' an archive name from the save's own history, and the archive name is always printed",
+     "His reign runs on the frozen structures: the same PPV tier, the same casino datelines, the same alphabet arithmetic; his superfights are real events that change no rules",
+     "He fades on schedule, loses to the next one or to the clock, and the paper writes the column it has written before, well, because the man is new even if the shape isn't"
+    ],
+    "worldEffects": [
+     "era.softCap.cycles.torchbearers: per marquee division, roll arrival, generate via makeNationalElite with an archetype echo tagged from the save's archive; publicReputation arcs rise/plateau/decay on existing reputation machinery",
+     "His cards generate undercard offers at existing tier multipliers \u2014 the endgame player economy keeps a top to aim at without the world claiming new history",
+     "Comparisons quote the save's own ledger and clippings: a player fighter who made the archive can be the measuring stick the next one is held to \u2014 the game's longest-fused reward"
+    ],
+    "playerFacing": "In 2009 a middleweight rises and the paper says he is the best since a name you managed. That sentence, in eight-point type, is what twenty-five years of your save was for."
+   },
+   {
+    "id": "legacy-briefly-whole",
+    "title": "Briefly, Whole",
+    "window": "Recurring from 2000: per rolled division, a unification collects the belts every 6-10 years and holds them 12-24 months",
+    "analogOf": "The perennial unification-and-refragmentation cycle \u2014 undisputed as a temporary weather condition, not an era",
+    "beats": [
+     "A champion or a network wants the word 'undisputed' and buys the fights to get it; the belts collect on one nightstand for a season",
+     "The paper enjoys the arithmetic holiday \u2014 one champion per division, a rankings page a child could read \u2014 and openly gives it eighteen months",
+     "A vacation, a stripping by fax (the canon texture), a mandatory nobody will pay for \u2014 and the alphabet refills its vacancies; the counting column resumes"
+    ],
+    "worldEffects": [
+     "titleClaims for the division collapse to 1 for 12-24 months, then refragment to the standing 3-4 \u2014 a pure recombination of existing structures, no new bodies ever founded",
+     "Unification bouts carry the canon double-swing prestige; the undisputed window boosts that division's offer quality briefly",
+     "Refragmentation reuses existing stripping/interim clippings \u2014 the cycle is legible as a cycle by the third occurrence, which is the design"
+    ],
+    "playerFacing": "A player with a ranked man learns to time the weather: challenge during fragmentation when belts are cheap, or hold for the undisputed window when one fight means everything. The world isn't changing anymore \u2014 but it still turns."
+   },
+   {
+    "id": "legacy-the-old-names",
+    "title": "The Old Names",
+    "window": "Rolling from 2000: obituaries on actuarial schedule; anniversary features at 10/25/40-year marks of the save's own events",
+    "analogOf": "The sports page's long memory \u2014 the obituaries of an era's giants and the round-number retrospectives that are how a paper admits time has passed",
+    "beats": [
+     "The poet-king dies in his seventies, and the front page \u2014 the last one the old rules allow \u2014 is composed from the save's own stored clippings: the defenses, the upset, the folding chairs",
+     "The old bylines go too: a retired writer's obituary quotes his farewell column (canon: death-of-the-afternoon-paper), and if a player fighter made his list, the fighter is named again",
+     "On round anniversaries the paper reprints its own history \u2014 twenty-five years since the ring death, forty since the surrender \u2014 each with one new paragraph and no new claims",
+     "The anniversary desk includes the gym: ten years since your man's title, twenty-five since the night at the old hall, drawn from the history ledger without commentary"
+    ],
+    "worldEffects": [
+     "era.softCap.mortuary fires obituaries for era.npcs and retired archetype fighters on rolled death years \u2014 each composed from stored clippings and ledger lines, never newly invented facts",
+     "The anniversary desk schedules off the save's history ledger and era schedule; player milestones qualify on the same round-number rules as world events",
+     "Obituaries of the save's giants are the only post-2000 front pages outside cycle peaks \u2014 the paper's settled tone made mechanical"
+    ],
+    "playerFacing": "This is where a twenty-five-year save pays its interest: the paper burying men you watched rise, in words it wrote about them the first time. The manager reads every one. The game never says why."
+   }
+  ],
+  "triggeredEvents": [
+   {
+    "id": "intl-away-corner",
+    "title": "The Away Corner",
+    "trigger": "era>=1977 AND player fighter nationalRank<=10 AND a foreign champion or foreign elite rank<=3 exists in his division (era.titleClaims or affiliation.kind==='foreign') AND no bout booked",
+    "story": "The connection is bad and the money is good. A promoter in the champion's country wants your man \u2014 in the champion's building, before the champion's people, with the champion's commission appointing the judges. He is courteous about all of it. The purse has a comma in it and the word 'guaranteed' is used twice, which is once more than men use it when it's true.",
+    "choices": [
+     "Take the trip",
+     "Take it, but hold out for neutral officials (purse cut ~20%)",
+     "Decline \u2014 he can come here if he wants your man"
+    ],
+    "effects": [
+     "Take: purse x2.5 his domestic rate, travel expense line on the settlement; decision-win probability skewed -15% (the house judges), KO immune to the skew; win abroad: publicReputation +18 and a wire clipping that runs at home AND there; lose a close one: the paper prints 'robbed' with no question mark, publicReputation -2 only, and the robbed-on-the-cards machinery arms",
+     "Neutral officials: skew removed, purse -20%, the foreign promoter's future offers cool for 24 months \u2014 he remembers being called a thief politely",
+     "Decline: nothing now; the foreign camp defends against someone else and your man's mandatory position decays 1-2 places over the year",
+     "Traits: glory_hunter +6 morale on the trip (the airport, the strangeness, the stakes); comfort_seeker -8 and trains badly abroad (small performance penalty); chip_on_shoulder fights the away corner like it insulted him personally: +3 performance"
+    ],
+    "frequency": "uncommon; at most once per fighter per 2 years"
+   },
+   {
+    "id": "intl-boy-off-the-boat",
+    "title": "The Boy Off the Boat",
+    "trigger": "an intl relocation fired within 12 months (era.intl.relocatedIds grew) OR intl-the-defector-wave active; AND gym reputation at established tier AND roster below capacity",
+    "story": "He comes with a folder: a record from somewhere else, stamped in two languages, and a letter from a trainer you've never heard of vouching for him in handwriting that took an hour. His English is four hundred words and 'jab' is one of them. Nobody in this city has ever paid to watch him, which is another way of saying he's free.",
+    "choices": [
+     "Sign him",
+     "Trial month first",
+     "Pass \u2014 you can't read the folder and neither can anyone else"
+    ],
+    "effects": [
+     "Sign: a fighter whose rating-to-reputation gap is the widest the game generates (publicReputation 5-15, real ability rolled 60-88); his purses run ~40% under scale for 18 months \u2014 the market prices the reputation, not the man",
+     "Homesickness: morale -2/month baseline; any win that makes the paper cancels it that month (+4) \u2014 the clipping gets mailed home, and the gym log notes the envelope",
+     "If he cracks the rankings: his home country's paper adopts him; datelined clippings begin arriving from both sides of the water, and his purse discount ends overnight",
+     "Trial month: 30% chance an established rival signs him out from under you (walkInPoachChance machinery, and they CAN read a folder); Pass: 12 months later a clipping may report what the folder said, in someone else's corner"
+    ],
+    "frequency": "rare; at most twice per save"
+   },
+   {
+    "id": "intl-one-more-somewhere-warm",
+    "title": "Somewhere Warm",
+    "trigger": "roster fighter age>=34 AND publicReputation>=45 AND (losses in his last 3 bouts OR retired flag set) AND intl-folding-chairs active",
+    "story": "The call comes at a strange hour because of the time difference, which tells you where it's from before the voice does. A promoter in a far city wants a famous American name for one night \u2014 ten rounds, real money, a crowd that will cheer him just for being who he used to be. The local paper won't send anyone. Whatever happens there arrives home as one line of agate, and everybody on the phone knows that's part of the price.",
+    "choices": [
+     "Book it \u2014 the money is real and the shame is far away",
+     "Book it, and go with him yourself",
+     "Turn it down and tell him it was a wrong number"
+    ],
+    "effects": [
+     "Book: purse x2 his last domestic number, travel line on the settlement; the result runs as agate only \u2014 a loss costs publicReputation -2 instead of the -8 a hometown loss would; commission physical still gates it (the-doctor-said-stop machinery is not suspended by distance)",
+     "Go with him: +8 trust; the gym log gets the trip in three lines, and if he loses, the entry about the flight home is the saddest joyful-category line the corkboard will ever hold",
+     "Traits: family_man takes it for the money and the morale splits the difference (+4 ledger, -4 pride, net a man who doesn't talk about it); lionheart fights like it's the Garden and his performance takes no age penalty this one night; comfort_seeker comes home heavier",
+     "Each circuit fight taken adds weight in the what-the-game-takes and the-fog eligibility rolls \u2014 the ledger keeps what the agate hides; Turn it down: he finds out 40% of the time; if glory_hunter, -6 morale ('you decided for me')"
+    ],
+    "frequency": "rare; once per fighter, at most twice per save"
+   },
+   {
+    "id": "div-a-natural-home",
+    "title": "A Natural Home",
+    "trigger": "era.activeClasses grows AND roster fighter's weightLbs within 6 lbs above the new class limit OR inside the new generation band OR scaleTroubleFlag set (the-scale-don't-lie memory)",
+    "story": "The paper is still making jokes about the new belt when your man reads the weight limit out loud, twice. He has been boiling down to a number his body stopped agreeing with two camps ago, or giving eight pounds to men built like doors. Somewhere in an office, for reasons that have everything to do with fees and nothing to do with him, somebody just invented the division he was born in.",
+    "choices": [
+     "Move him to the new division",
+     "Keep him where the money and his name already are"
+    ],
+    "effects": [
+     "Move: weightLbs re-settles into the new band, class re-derives; the inaugural rankings are shallow BY DESIGN \u2014 if publicReputation>=35 he enters the new top 10 within 2-3 wins, typically 2-4 places above his old standing; morale +8 and a gym-log line about him eating breakfast during fight week for the first time in years",
+     "Move: purse discount ~15% for 12 months (the new division sells cheap until it earns its ink), and the sanctioning-invoice event will find him at his new rank on schedule",
+     "Keep: no cost now; the scale events keep firing; if a rival tweener moves and wins the new belt inside 2 years, one dry clipping notes the champion 'once outweighed by a man who wouldn't move' \u2014 publicReputation unaffected, morale -4, and he read it twice",
+     "Traits: glory_hunter wants the older belt's prestige (-4 morale on moving); chip_on_shoulder loves a division nobody respects yet (+6 on moving)"
+    ],
+    "frequency": "common at each activation; once per fighter per activation"
+   },
+   {
+    "id": "div-first-of-his-kind",
+    "title": "First of His Kind",
+    "trigger": "player fighter wins a title or reaches nationalRank<=3 in a weight class activated fewer than 3 years ago",
+    "story": "He is the best in the world at a weight the paper was calling a filing error last spring. The coverage can't decide what it's covering: the account of the fight is honest, the headline has quotation marks in it, and the columnist spends four paragraphs on the sanctioning body's fee schedule and one on your man's left hand.",
+    "choices": [
+     "Let the work answer for itself",
+     "Put him in with a name from an old division to make the point (seek a crossover bout)"
+    ],
+    "effects": [
+     "Either way, now: reputation gain runs at the new-division discount (+8 where an established belt pays +15) \u2014 the quotation marks are mechanical",
+     "The long fuse: when the division ages past 8 years, the magazine runs 'The First Ones' \u2014 a feature on the men who made the invented weights real; he is named, +6 permanent publicReputation, a ledger milestone, and if he is retired by then the clipping arrives at the gym anyway, addressed to you",
+     "Crossover bout: an offer generates against a ranked man one division up or down at x1.5 purse; win and the discount ends immediately (+12 rep, the quotation marks come off in print); lose and the columnists say the new belt was tested and found light \u2014 division-wide, his fault, -4",
+     "Traits: chip_on_shoulder fighter frames every slight clipping himself; the corkboard notes his locker door is becoming an archive"
+    ],
+    "frequency": "rare; once per fighter"
+   },
+   {
+    "id": "legacy-as-told-to",
+    "title": "As Told To",
+    "trigger": "year>=2000 AND history ledger holds >=25 milestones AND a persistent byline with warmth above neutral exists (PressState.writers)",
+    "story": "The writer is younger than some of your fight posters. She wants an hour a month \u2014 the gym in the club era, what the Tuesday series paid, what the poet-king's closed-circuit nights were like from a folding seat four blocks over. 'As told to,' the column would say. You realize, listening to her list what she wants to know, that you are the only person left in this building who was there.",
+    "choices": [
+     "Sit for it",
+     "Decline \u2014 the past is filed where you keep it"
+    ],
+    "effects": [
+     "Sit: a recurring monthly column, each installment quoting a REAL entry from the save's history ledger in the paper's voice; small permanent gym-reputation floor while it runs; walk-in quality ticks up slightly \u2014 kids come in because of the stories, and the gym log says so",
+     "Sit: the byline's warmth rises to adopted-adjacent for the GYM itself, not a fighter \u2014 the first press relationship the manager owns personally",
+     "Each column has a 20% chance of surfacing one old consequence gently: the accommodation if it was taken, the venue nights you shared or didn't \u2014 the column never accuses, it just remembers accurately, and the ledger's old fuses are its sources",
+     "Decline: nothing; offered once more 5 years later, and if declined twice the retrospective runs anyway without you \u2014 shorter, colder, sourced from the clippings alone"
+    ],
+    "frequency": "once per save (re-offer per effects)"
+   },
+   {
+    "id": "legacy-we-had-one-of-those",
+    "title": "We Had One of Those",
+    "trigger": "year>=2000 AND any roster fighter's style/trait signature matches a fighter in the history ledger (same weight class + shared trait or style tag)",
+    "story": "The old-timer on the heavy bag watches the new kid shadowbox for a full minute and says it to nobody: 'We had one of those. In '82. Better feet on this one.' The kid doesn't hear him. The corkboard does.",
+    "choices": [],
+    "effects": [
+     "No choices, no rewards, no optimization angle \u2014 witnessed, not played, per the upheld joyful-events hill",
+     "One gym-log line pairing the current man with the archive name, drawn from the ledger; quarterly cap gym-wide",
+     "If the archive name later appears in an anniversary feature or obituary (legacy-the-old-names), the pairing line is quoted back in print \u2014 the corkboard and the paper agreeing across decades"
+    ],
+    "frequency": "recurring, quarterly cap, post-2000 only"
+   }
+  ],
+  "hills": [
+   "ABROAD STAYS A DATELINE. The international layer is a pool and a wire, never a simulation: no foreign gyms, no foreign venues in the standing offer pool, no foreign fidelity tier. Foreign fighters touch the player's world through exactly five doors \u2014 the ratings page, title claims, relocation, the wire clippings, and the three intl triggered events. Every future request to 'flesh out' Mexico City or London must be answered with a clipping, not a system. Thin by design IS the design, and I will fight scope creep here by name.",
+   "EVERY BELT IS BORN CROOKED. Each new division arrives as a scandal \u2014 a body inventing seven pounds to crown its own man and bill the fees \u2014 with inaugural rankings that are shallow on purpose. The shallow book is the player's honest opportunity and the crony champion is beatable by design; legitimacy is earned only in the ring over years (the cruiser war, the First Ones feature). If implementation sands the arrivals into neutral 'content updates' with balanced inaugural rankings, the history is lost and the opportunity with it.",
+   "NEW DIVISIONS ARE REAL FURNITURE, NOT LABELS. Activation must change deriveWeightClass at runtime, renormalize generation (pickWeightClass CLASS_WEIGHTS), seed and migrate real ranked men, extend titleClaims and sanctioning fees, and change a roster tweener's actual life through the one door of his own weight moving. The 148-pound man's morning is different after 154 exists \u2014 that is the acceptance test. And the 1977-79 arrival of 154 is load-bearing: it repairs the Bible's flagged contradiction so the four kings climb a real 147/154/160 lattice.",
+   "THE SOFT CAP IS NEVER ANNOUNCED. No clipping declares history over; the century issue observes closed doors, it closes none. Post-2000 the world runs on cycles that may only recombine existing structures \u2014 frozen multipliers, fixed tiers, no institution founded or killed, ever \u2014 and the paper's sole editorial on time passing is the anniversary desk and the obituary page, both sourced from the save's own archive. The endgame's drama belongs to the manager's arc, and the world hands it over by silence, not signage."
+  ]
+ },
+ {
+  "role": "Retired cornerman \u2014 fifty years of buckets, swabs, and other men's blood; the coach-life seat",
+  "hills": [
+   "corner-mortality-no-grace: Coaches age and die on the same roster clock as the world's fighters \u2014 the death roll can land mid-camp, fight week, anytime, with no scheduling mercy. The funeral and the widow are the payoff, and the ledger keeps both lines forever.",
+   "corner-hands-vs-craft: skill and hands are separate numbers that move in opposite directions \u2014 craft compounds with age and never decays, the hands and the body quit. An old trainer must get wiser and less able AT THE SAME TIME or this whole seat is sentimental furniture.",
+   "corner-say-nothing-stays: the drink chain and the old lion's fog keep 'say nothing' selectable and unpunished by anything except consequences \u2014 exactly per the upheld dementia hill. No morality meter reaches the corner.",
+   "corner-the-lineage-reads-forward: diploma-day mints a real Coach whose numbers the player helped write, and the legacy.corner lineage array must be readable by the manager-legacy reckoning \u2014 the last protege standing is this seat's answer to 'who gets the gym.' Coordinate with the systems seat; I will fight for the hook existing even if the reckoning changes shape.",
+   "corner-loyalty-not-dice: poaching runs on the loyalty number, not random rolls \u2014 a loyalist at 80 is genuinely unpoachable and the mercenary's goodbye note is typed. Personality must be destiny for coaches the way traits are for fighters (the Bible's trait-as-destiny hill, applied to the other side of the ring apron)."
+  ],
+  "systems": [
+   {
+    "name": "Coach Lifecycle (aging, decline, retirement, death)",
+    "dataModel": "Coach gains: hiredDayCount: number (tenure clock; -1 for market/applicant coaches); age becomes fractional and ticks like WorldFighter.age; condition: number 0-100 hidden (the body); hands: number 0-100 hidden (fine motor \u2014 the wrap/swab/stitch stat, seeded 70-95 at generation minus (age-40)); loyalty: number 0-100 (seeded by personality: loyalist 65, mercenary 25, old_lion 55, others 40-50); poachInterest: number 0-100; vice: 'none'|'drink'|'gambling' (seeded ~8% drink / ~5% gambling at generation, hidden); viceKnown: boolean; background: { exFighter: boolean, proBouts: number, trainedSince: number (year he first worked a corner), sawTooMuch: boolean }; partTime: boolean; feudWith: string|null; flags: Record<string, number> (once-per-coach event memory). GameSave gains coachAlumni: Array<{ name, specialty, tier, tenureDays, leftDayCount, how: 'retired'|'died'|'poached'|'fired'|'quit' }> \u2014 the corner's own ledger, read by legacy and by corner-one-more-camp.",
+    "mechanics": "In advanceTime alongside worldSim: age += days/365 for staff, applicants, and the market pool. skill drifts +0.004/yr while employed under 55, cap 0.97 \u2014 craft compounds. hands decays -0.5/yr from 55, -2/yr from 64. condition decays -1/yr from 50, x1.7 with vice='drink', plus a rare monthly health-shock roll (-5 to -15) past 60. RETIREMENT: monthly roll from age 62, p = 0.03 * ((age-62)/8)^2, personality-scaled \u2014 loyalist x0.5 while any of his fighters reads Clicking, old_lion x1.4, mercenary never retires (he leaves via poaching or dies with his boots on). Fires corner-goes-home. DEATH: monthly actuarial roll from 55, p = 0.0004 * 1.35^(age-55), vice-multiplied x1.5; lands any advance including fight week \u2014 no grace. Fires corner-the-funeral chain; his slots vanish immediately and his focused fighters fall back to the manager with a chemistry-scaled morale hit (-6 Clicking, -2 otherwise). Applicant generation ages with the calendar: trainedSince and background roll off the current year, and after corner-last-of-the-handwrap-men the old_lion generation rate drops from 10% to 2% \u2014 the men who remember fifteen rounds literally run out."
+   },
+   {
+    "name": "Loyalty & Poaching (the other side of trust)",
+    "dataModel": "Uses Coach.loyalty and Coach.poachInterest above. era.npcs gains poaching sources (the casino payroll, the champion's camp, the named rival gym) so exits have a destination the paper can print. Coach.flags stores warning thresholds already shown.",
+    "mechanics": "loyalty climbs +0.05/day while salary is paid on time and any of his fighters reads Clicking; drops on a missed month (-15), on backing the other man in a feud (-20), on firing his protege (-25), on refusing his fight-week release (-10). poachInterest accrues monthly when skill*tier outruns salary against market (market = TIER_SALARY midpoint x inflationFactor) and when gym reputation lags his tier; desert/boardwalk era beats multiply x1.5 for cutmen and corner_strategists during any save-wide title fight week. loyalty subtracts from accrual at 0.5:1 \u2014 80+ loyalty is a wall. Thresholds: 40 = one dry gym-log line in his voice; 70 = the direct-conversation event (corner-the-offer-he-told-you-about for loyalists, a salary letter otherwise); 90 = exit (corner-the-note-on-the-door for mercenaries; others give two weeks and a reason). A coach leaving hot costs the roster: fighters he focused lose 6 morale / 3 trust if Clicking, and a mercenary gone to a named rival adds +15 poachInterest to his best focused fighter \u2014 he's telling the kid about the other gym's showers."
+   },
+   {
+    "name": "The Protege Line (succession \u2014 coordinate with manager-legacy)",
+    "dataModel": "Coach.protege: { candidateId: string, kind: 'fighter'|'apprentice', progress: number 0-100, startedDay: number } | null. Fighter candidates are referenced by fighter id (the old-head event at Bible line 1743 feeds this same track \u2014 its promise converts INTO a protege line rather than duplicating one). GameSave gains legacy: { corner: { lineage: Array<{ mentorName, protegeName, yearFinished, outcome: 'hired'|'went-across-town'|'left-bitter' }> } } \u2014 the field the manager-legacy reckoning reads.",
+    "mechanics": "Opened by corner-the-protege. progress +2/month baseline, +1 while the mentor is teacher or old_lion and the candidate trains under him (coachId match); pauses while the mentor is feuding; +20 one-time if the mentor's decline events fire (urgency). At 100, corner-diploma-day fires. Accepting mints a real Coach: tier one below mentor, skill = mentor.skill*0.75 + 0.1, slots per tier, personality inherited-with-variance, chemistry pre-warmed +0.06 with every current roster man \u2014 the only coach in the game whose numbers the player helped write. Every completed line appends to legacy.corner.lineage regardless of outcome; at the endgame accounting each line is a legacy credit, and a lineage coach still on staff when the manager's succession question arrives is the designed answer."
+   }
+  ],
+  "scriptedEvents": [
+   {
+    "id": "corner-last-of-the-handwrap-men",
+    "title": "The Last of the Handwrap Men",
+    "window": "1992-1995 (death date seeded per save)",
+    "analogOf": "The passing of the great trainers' generation \u2014 Ray Arcel dying in 1994, Eddie Futch working into his 80s; the men who trained under the men who invented the modern corner",
+    "beats": [
+     "The sport's great old trainer \u2014 an era.npcs elder generated at save creation, corner man to champions across six decades \u2014 dies past ninety, at home, with the television on",
+     "The funeral clipping: the line around the block, champions of six decades as pallbearers, men who hadn't spoken in twenty years holding the door for each other",
+     "The magazine runs a tribute issue \u2014 his corner rules printed verbatim, half of them three words long",
+     "Within two years the columnists start writing that nobody teaches the old way anymore, and for once the columnists are right"
+    ],
+    "worldEffects": [
+     "Coach generation: old_lion roll rate drops from 10% to 2%, and newly generated old lions carry trainedSince>=1955 instead of earlier \u2014 the pre-war lineage is extinct",
+     "Elite-tier applicant frequency -20% for two years (the bench got shorter and every gym in the country noticed the same week)",
+     "Any hired coach age>=65 gains +5 loyalty permanently \u2014 the ones still working know what they are now",
+     "Arms the corner-one-more-camp and corner-the-lifetime-chair events at increased weight for five years"
+    ],
+    "playerFacing": "The obituary runs front-of-sports; your oldest coach asks for two days to travel to it, and if you pay his train fare it's +8 loyalty and one gym-log line about what he said when he got back, which was nothing"
+   },
+   {
+    "id": "corner-the-clean-bucket",
+    "title": "The Clean Bucket",
+    "window": "1978-1982 (circular arrives seeded; enforcement 6-12 months later)",
+    "analogOf": "State commissions banning Monsel's solution and restricting corner substances to adrenaline 1:1000 \u2014 the end of the cutman's private chemistry",
+    "beats": [
+     "A fighter in another state finishes a bout with his cheek burned through by something out of an unlabeled bottle; the paper runs it at three paragraphs",
+     "The commission circular arrives \u2014 mimeographed, numbered, listing what a kit may contain, which is suddenly very little",
+     "Inspectors start opening kits at weigh-ins; the old cutmen stand there like men having their houses searched",
+     "Within a year the good young cutmen are the ones who learned pressure and position instead of chemistry, and the trade quietly divides into before and after"
+    ],
+    "worldEffects": [
+     "Cutmen with trainedSince<1968 take -0.05 effective skill for 6 months (the adaptation clock); afterward it returns \u2014 the good ones always had the hands, the bottle was a shortcut",
+     "A small 'corner inspection' line joins the fight-night settlement sheet at commission venues",
+     "Sets the era flag that arms corner-the-kit"
+    ],
+    "playerFacing": "The circular goes up on the corkboard; your cutman reads it twice and says nothing, which is how he says everything"
+   },
+   {
+    "id": "corner-the-clipboard-men",
+    "title": "The Clipboard Men",
+    "window": "1986-1990 (the upset seeded; the fashion follows over 3 years)",
+    "analogOf": "The 1980s strength-and-conditioning revolution \u2014 Mackie Shilstone building the light-heavyweight who took the heavyweight title, and every camp suddenly wanting a man with a stopwatch and a degree",
+    "beats": [
+     "A light-heavyweight moves up and takes the heavyweight title behind a 'physical conditioning consultant' with a clipboard, a college degree, and no scar tissue anywhere on him",
+     "The magazine runs the consultant's regimen as a two-page feature; old trainers are quoted calling it homework",
+     "Within two years every televised camp lists one; the word 'periodization' enters the sport and refuses to leave",
+     "The old conditioners either learn the new numbers or start describing themselves as old-school, which is a price tag falling"
+    ],
+    "worldEffects": [
+     "Conditioner market salaries +40% over 3 years; conditioner applicants under 40 begin generating with trainedSince>=1980 and a 'new school' background flag",
+     "New-school conditioners on a staff with a hardass or old_lion coach add standing feud pressure \u2014 feeds corner-two-chairs at 2x weight for that pairing",
+     "Conditioner specialty effectiveness on stamina +10% era-forward \u2014 the clipboard actually works, which is the part the old men can't forgive"
+    ],
+    "playerFacing": "The feature clipping; a salary letter from your own conditioner inside the month; applicant letters that mention periodization, a word your trainer refuses to say aloud"
+   }
+  ],
+  "triggeredEvents": [
+   {
+    "id": "corner-the-hands",
+    "title": "The Third Try at the Tape",
+    "trigger": "Staff coach specialty trainer|cutman AND age>=63 AND hands<=45 AND a bookedFight within 21 days; once per coach",
+    "story": "You watched him wrap the kid's left this morning. Third try at the tape. He made a joke about the cold and everybody on the floor pretended not to see, which is how you know everybody saw. The hands that wrapped four champions are done wrapping, and he is the only man in the building who hasn't admitted it.",
+    "choices": [
+     "Take him off wraps quietly \u2014 a younger man tapes, he stands there and talks the kid's hands into it",
+     "Say nothing and leave him the tape",
+     "Sit him down about hanging it up"
+    ],
+    "effects": [
+     "Off wraps: loyalty -5 but he stays; his corner and training benefits keep; a recurring gym-log line about the old man supervising with two fingers and a raised eyebrow",
+     "Say nothing: selectable, no lecture \u2014 but each booked fight carries an 8% bad-wrap roll: fighter hand injury (restUntil +45 days, morale -8), the paper never learns why, and if it fires he retires inside the month and the ledger keeps one dry line about who let him keep the tape",
+     "Sit down: retirement conversation \u2014 loyalist or tenure>=5yr converts to partTime (slots -1, salary -40%, stays on the floor); otherwise fires corner-goes-home with loyalty intact"
+    ],
+    "frequency": "Once per qualifying coach"
+   },
+   {
+    "id": "corner-fight-week-raid",
+    "title": "Everybody Wants Him Thursday",
+    "trigger": "Staff cutman tier established|elite AND player bookedFight within 10 days AND (boardwalk-city-opens or desert-city-ascendant has fired)",
+    "story": "A title camp called your cutman at the gym number, which was a courtesy or an insult depending how you read it. Same weekend as your kid's fight, double his month in one night, and a hotel with a pool. He handed you the phone message himself, which is more than most men would have done.",
+    "choices": [
+     "Let him work their corner \u2014 your kid gets the second man Saturday",
+     "Refuse the release",
+     "Match the money for good \u2014 a raise that says he never has to take the call again"
+    ],
+    "effects": [
+     "Release: loyalty +10, a one-time finder's fee to the books ($40 inflated \u2014 camps pay for the introduction), but your bout's corner factor drops to the no-coach rate; if your fighter loses cut-adjacent, the gym log knows exactly what was missing",
+     "Refuse: loyalty -10, poachInterest +15; he works your corner like a professional, which is the worst part",
+     "Match: salary +30% permanent, poachInterest resets to 0, and the next raid call goes unreturned \u2014 the trade notices whose man he is"
+    ],
+    "frequency": "Uncommon, repeatable at 18-month cooldown"
+   },
+   {
+    "id": "corner-free-lessons",
+    "title": "The Light On at Nine",
+    "trigger": "Staff coach personality teacher, tenure>=6 months, AND a roster fighter with tier='chopping' OR lowest potential on roster, morale<=45, focus=null",
+    "story": "The light was on at nine and you went back figuring you'd left it. The kid nobody's paying attention to was in the ring, and the teacher was walking him through the jab again, patient as water on a stone. He's not charging anybody. He didn't hear you come in, or he did and didn't care.",
+    "choices": [
+     "Say nothing and leave the light on",
+     "Make it official \u2014 a real assignment, one of his slots",
+     "Tell him the paying men come first"
+    ],
+    "effects": [
+     "Say nothing: the kid +8 morale, +2 trust, a slow ringIq drip while both remain; the day the coach realizes you knew and let it be, loyalty +4",
+     "Official: consumes a slot, full focused training, chemistry auto-reads Clicking (teacher and a kid nobody wanted is the oldest good pairing in the sport); coach loyalty +8",
+     "Paying men first: loyalty -12; the light goes off; if the kid is lockerless, trialPatience -20 \u2014 the last man who believed in him just got ordered to stop"
+    ],
+    "frequency": "Uncommon, once per coach-fighter pair"
+   },
+   {
+    "id": "corner-cant-watch",
+    "title": "The Fire Door",
+    "trigger": "Staff coach background.exFighter with proBouts>=30 AND a fighter assigned to him (coachId match) loses by KO/TKO taking heavy punishment (FightReport stoppage against), OR the-fog is active on any roster man he trained",
+    "story": "He was gone from the corner before the count finished. You found him by the fire door with his kit still in his hand, looking at the alley like it had an answer in it. Sixty-one fights, he said. I know how it ends. He wasn't asking to be talked out of anything.",
+    "choices": [
+     "Give him the training floor and take him off fight nights",
+     "Talk him back into the corner",
+     "If he offers his resignation, take it with both hands"
+    ],
+    "effects": [
+     "Floor only: keeps all training benefits, loses his corner factor on fight nights; loyalty +8 \u2014 you saw him and didn't make him say it twice",
+     "Talk back: holds if loyalty>=60; the next stoppage loss refires this event at double weight and he retires on the spot. Under 60 loyalty he works one more card and quits inside the month",
+     "Resignation: fires corner-goes-home with a variant line; his fighters take the standard exit hit but his best kid gets one gym-log line about writing the old man letters"
+    ],
+    "frequency": "Rare, per qualifying coach"
+   },
+   {
+    "id": "corner-the-smell",
+    "title": "Mints at Ten in the Morning",
+    "trigger": "Staff coach vice='drink', viceKnown=false, tenure>=3 months; fires on a random advance",
+    "story": "Mints on his breath at ten in the morning, and a carefulness to how he walked the length of the ring apron. He was as good as ever on the mitts. Better, maybe. That's the part they don't tell you about \u2014 some of them are better, for years, right up until the night they aren't.",
+    "choices": [
+     "Let it lie",
+     "Ask him straight"
+    ],
+    "effects": [
+     "Let it lie: 'say nothing' stands, unpunished \u2014 the chain arms corner-the-morning-after on its own clock",
+     "Ask: he denies it with the fluency of practice; viceKnown=true, loyalty -4 (he knows you know); the chain still arms, but the stage-three odds are halved \u2014 being seen early is worth something even when it's denied"
+    ],
+    "frequency": "Once per coach (chain, stage one)"
+   },
+   {
+    "id": "corner-the-morning-after",
+    "title": "Nobody Worked the Left Side",
+    "trigger": "corner-the-smell has fired for this coach, 3-12 months elapsed; escalation lands on a fight-week morning if a bookedFight exists, otherwise a Monday",
+    "story": "He missed the whole morning. Fight week. The kid wrapped his own hands from memory and didn't say a word, which is loyalty, and worse than any complaint. Your coach came in at two with his shirt pressed and a story about his sister's car, told well. It was a good story. It had been used before.",
+    "choices": [
+     "Cover for him \u2014 the gym doesn't need to know what it already knows",
+     "The conversation, and a place upstate \u2014 a month's salary, paid quiet",
+     "Let him go"
+    ],
+    "effects": [
+     "Cover: fighters' trust untouched, ledger keeps one line in your own hand; stage three arms at full weight",
+     "The place upstate: money -1 month of his salary (inflated); 70% it takes \u2014 vice pressure ends, skill intact, loyalty +20 permanent, and years later one no-choice gym-log line about the coffee he drinks now; 30% relapse straight to stage three",
+     "Let him go: standard fire; fighters he trained -4 morale; the paper never learns why and neither does the roster, which costs you nothing and him everything"
+    ],
+    "frequency": "Once per coach (chain, stage two)"
+   },
+   {
+    "id": "corner-the-spit-bucket-night",
+    "title": "The Long Minute",
+    "trigger": "corner-the-morning-after unresolved (covered, or upstate relapse) AND a bookedFight resolves with him in the corner",
+    "story": "You smelled it when he leaned in with the sponge. He gave the kid the wrong round number and the right advice, in that order, and the minute between rounds lasted a year. Whatever happens on the cards tonight, something in the corner already lost.",
+    "choices": [
+     "(No choice on the night \u2014 the night happens)"
+    ],
+    "effects": [
+     "His corner factor runs negative for this bout (-0.03 in resolveFight's corner term)",
+     "Win or lose, he resigns before Monday \u2014 a note, handwritten, no story this time; coachAlumni records 'quit'",
+     "If the bout was lost, his assigned fighter -6 morale but +2 trust toward YOU if you ran the upstate branch earlier \u2014 the kid knows you tried; the ledger's line is the driest in the game: 'Worked his last corner at [venue]. The bucket was clean.'"
+    ],
+    "frequency": "Once per coach (chain, stage three)"
+   },
+   {
+    "id": "corner-two-chairs",
+    "title": "Two Chairs, One Floor",
+    "trigger": "Two staff coaches, each tenure>=6 months, with a clashing pair (hardass vs teacher; technician vs motivator; any old_lion vs a conditioner hired after corner-the-clipboard-men; or two coaches sharing a specialty) AND no active feud (feudWith null on both)",
+    "story": "Nobody threw a punch. Nobody raised a voice. They just split the floor without asking you \u2014 the bags are his, the ring is his, and the kids are learning to pick a country. The gym got quieter and the quiet is the loudest thing in it.",
+    "choices": [
+     "Back the senior man",
+     "Back the better man",
+     "Knock heads \u2014 split the hours formally and make them shake on it",
+     "Let it burn"
+    ],
+    "effects": [
+     "While feuding: combined slots -1, chemistry -0.04 for any fighter under either man, monthly gym-log sniping in two distinct voices",
+     "Back one: feud ends; the other's loyalty -20 and poachInterest +25 \u2014 you just wrote his reference letter for somebody else",
+     "Knock heads: 60% ends it (both loyalty -5, one gym-log line about the handshake that used four total fingers); 40% it simmers and refires in 6 months",
+     "Let it burn: feud persists until one leaves, and whichever exit event fires, it names the feud in its second sentence"
+    ],
+    "frequency": "Uncommon; one active feud maximum per gym"
+   },
+   {
+    "id": "corner-the-funeral",
+    "title": "The Line Around the Block",
+    "trigger": "A staff coach dies (Coach Lifecycle mortality) with tenure>=3 years OR tier>=established",
+    "story": "The line went around the block and halfway up the next one. Men who hadn't spoken in twenty years held the door for each other. Half the sport was inside and the other half sent flowers with their real names on the cards, which for some of them was a first. The kid he trained stood at the back in his good jacket and didn't sit down once.",
+    "choices": [
+     "Close the gym for the day and pay for the funeral",
+     "Attend with the roster",
+     "Send flowers"
+    ],
+    "effects": [
+     "Pay: money -1 month of his salary (inflated); gym-wide +4 trust \u2014 they watched what you did with a dead man's bill nobody would have known about; ledger milestone; pressItem obituary that names your gym in the second paragraph",
+     "Attend: gym-wide +2 trust, ledger milestone, the obituary runs without your gym's name",
+     "Flowers: nothing mechanical, and one gym-log line records who noticed the empty pews from your corner of town",
+     "All branches: his focused fighters -8 morale; a Clicking fighter -12 and one quiet grief line a month for three months; coachAlumni records 'died' with tenure"
+    ],
+    "frequency": "Per qualifying coach death (deaths themselves rare by design)"
+   },
+   {
+    "id": "corner-the-widow",
+    "title": "The Bucket With the Name On It",
+    "trigger": "2-6 weeks after corner-the-funeral",
+    "story": "His wife came by with his kit. The bucket had your gym's name painted on the side in his handwriting \u2014 he'd done it years ago and never mentioned it. She asked if he'd left anything in his locker, and you both understood she was asking something else.",
+    "choices": [
+     "A month's pay, quietly, in an envelope with her name on it",
+     "The kit stays in the corner with his name on it",
+     "Both"
+    ],
+    "effects": [
+     "The pay: money -1 month salary (inflated); one ledger line; no reputation, no press \u2014 nobody knows, which is the point",
+     "The kit: a permanent corkboard fixture; every fight-night report for the next year carries his bucket in its corner line",
+     "Both: both. No branch punishes \u2014 this is grief, not optimization, per the joyful-events ruling's spirit"
+    ],
+    "frequency": "Once per funeral"
+   },
+   {
+    "id": "corner-the-protege",
+    "title": "He Sees It",
+    "trigger": "Staff coach personality teacher|old_lion, tenure>=2 years, skill>=0.6, AND either a roster fighter age>=30 with 20+ total bouts or a corner-night-school apprentice present; protege slot empty",
+    "story": "He's been leaving the mitts out for the kid. Staying past close, saying less each week, which with him means it's going well. He sees it, the old man said, tapping his temple, and went back to the bag. Coaches don't say that about people. In fifty years you hear it maybe four times.",
+    "choices": [
+     "Put them together formally",
+     "Not now"
+    ],
+    "effects": [
+     "Formal: opens the protege track (candidateId set, progress 0); mentor loyalty +10; a monthly gym-log line as the teaching moves from hands to eyes to silence",
+     "Not now: refires in a year if conditions hold; if the mentor dies or retires first, one line about the mitts left out for a kid who never got told"
+    ],
+    "frequency": "Once per mentor coach"
+   },
+   {
+    "id": "corner-diploma-day",
+    "title": "Not One Word the Whole Session",
+    "trigger": "protege.progress>=100",
+    "story": "The old man watched from the apron and didn't say one word the whole session, which from him is a diploma with a wax seal on it. Afterward he told you the kid was ready and then he told you the part you already suspected \u2014 that a gym across town had made the kid an offer, because the trade can smell a corner man coming the way it smells rain.",
+    "choices": [
+     "Give him a corner of his own here \u2014 hire him",
+     "Let him take the job across town",
+     "Keep him as the old man's second a while longer"
+    ],
+    "effects": [
+     "Hire: mints a real Coach \u2014 tier one below mentor, skill = mentor.skill*0.75+0.1, chemistry pre-warmed +0.06 with the whole roster; mentor loyalty +8 AND his retirement roll doubles from here \u2014 his work is done, and that is the true cost of the best coach you will ever employ; lineage records 'hired'",
+     "Across town: pressItem about the new corner man and where he learned it; lineage records 'went-across-town' \u2014 still a legacy credit, the tree grows where it grows; mentor loyalty +4",
+     "Keep as second: progress decays -5/month; 30%/year he leaves bitter (lineage 'left-bitter', mentor loyalty -6, and the mentor's one comment enters the gym log: 'You don't keep a sharpened tool in the drawer.')"
+    ],
+    "frequency": "Once per protege"
+   },
+   {
+    "id": "corner-old-lion-forgets",
+    "title": "A Champion's Name From 1961",
+    "trigger": "Staff coach personality old_lion, age>=68, condition<=40; once per coach",
+    "story": "He called the kid by a champion's name from 1961, twice, and then wrapped the best left hand you have ever seen wrapped. It comes and goes. You have been around long enough to know that it will mostly come.",
+    "choices": [
+     "Say nothing",
+     "Ease him to mornings only",
+     "The conversation"
+    ],
+    "effects": [
+     "Say nothing: selectable and unlectured, per the fog ruling \u2014 but 10%/month a corner-night error fires (the wrong instruction at the wrong minute: corner factor negative for one bout, one gym-log line the roster reads in silence)",
+     "Mornings only: partTime (slots -1, salary -30%); loyalty +6; the decline slows \u2014 structure holds a man together longer than pride does",
+     "The conversation: fires corner-goes-home with honors; if his protege track is live, progress +20 \u2014 urgency teaches fast; if you looked away for a year first, the ledger's retirement line carries one extra clause, and that is the entire punishment"
+    ],
+    "frequency": "Once per qualifying coach"
+   },
+   {
+    "id": "corner-goes-home",
+    "title": "The Stairs Got Long",
+    "trigger": "Coach Lifecycle retirement roll fires, or routed here by corner-the-hands / corner-cant-watch / corner-old-lion-forgets",
+    "story": "Two weeks' notice in an envelope, which he handed over like a man paying a debt. A sister with a porch, three states south. The stairs got long, he said, and that was the whole speech, and it was a better speech than most.",
+    "choices": [
+     "A farewell night \u2014 the gym, the folding chairs, the stories",
+     "A handshake and his last check",
+     "Ask him for one more year"
+    ],
+    "effects": [
+     "Farewell: money -$60 (inflated); gym-wide +3 morale; ledger milestone; pressItem if tier>=established \u2014 the paper likes a man who leaves standing up",
+     "Handshake: clean exit, ledger line, coachAlumni records 'retired'",
+     "One more year: loyalty>=70 he stays 12 months at slots -1, then goes for good, no second ask; under 70 he declines gently \u2014 asking costs nothing but the answer, and the answer is its own gym-log line",
+     "Any branch, tenure>=8 years: he leaves his notebooks \u2014 a permanent flag: the gym's focused-training effectiveness +2%. The notebooks ARE the estate"
+    ],
+    "frequency": "Per retirement"
+   },
+   {
+    "id": "corner-the-offer-he-told-you-about",
+    "title": "A Man Likes to Be Asked",
+    "trigger": "Staff coach personality loyalist AND poachInterest>=70",
+    "story": "He put the letter on your desk looking unopened, but it had been opened and refolded with care. Real letterhead, real money, a camp you've read about. I'm not going, he said, before you could speak. But a man likes to be asked. And then he went back to work, because that is who he is, which is the entire problem with what they're offering.",
+    "choices": [
+     "Raise him to the letter's number",
+     "Thank him, and mean it",
+     "Give him the title \u2014 head trainer of this gym, his name on the office door"
+    ],
+    "effects": [
+     "Raise: salary matched to market, poachInterest to 0",
+     "Thank him: loyalty +5 and poachInterest -30 \u2014 for a loyalist, being seen counts at better than market rates; the letter goes in his drawer, not the trash, and stays there",
+     "Title: loyalty +12, poachInterest -40, one gym-log line about the stencil drying; every mercenary on staff +5 poachInterest \u2014 titles are free and everybody knows it"
+    ],
+    "frequency": "Repeatable, 2-year cooldown per coach"
+   },
+   {
+    "id": "corner-the-note-on-the-door",
+    "title": "Typed",
+    "trigger": "Staff coach personality mercenary AND poachInterest>=90",
+    "story": "He didn't make a speech either. The note thanked you for the opportunity \u2014 typed, both copies, one for your files. By the weekend he was in a camp with a casino's name behind it, wearing a jacket with somebody else's gym on the chest, working exactly as hard as he worked for you, because that was never the question with him.",
+    "choices": [
+     "Wish him well when the paper calls",
+     "Say nothing",
+     "Tell the paper what you actually think"
+    ],
+    "effects": [
+     "Well-wishes: pressItem, gym reputation +1 \u2014 the trade notices class",
+     "Nothing: nothing; the clipping runs without you",
+     "The truth: a livelier clipping, gym reputation -1, and his new camp's offers to your fighters arrive 10% lighter for a year \u2014 small men get small purses",
+     "All branches: fighters he focused -6 morale; his best focused fighter (highest potential) +15 poachInterest; coachAlumni records 'poached' with the destination"
+    ],
+    "frequency": "Per mercenary exit at threshold"
+   },
+   {
+    "id": "corner-the-kit",
+    "title": "Third Bottle From the Left",
+    "trigger": "corner-the-clean-bucket has fired AND staff cutman with background.trainedSince<1968 AND a bookedFight resolves at a commission venue; once per cutman",
+    "story": "The inspector went through the kit like a customs man. Third bottle from the left had no label, because it never needed one \u2014 every cutman his age owns that bottle and every inspector this year is looking for it. The old man watched him hold it up to the light and said nothing, the way you watch someone go through your late father's coat.",
+    "choices": [
+     "Hand it over",
+     "That's mineral oil",
+     "Pay whatever the fine is and keep walking"
+    ],
+    "effects": [
+     "Hand over: his effective skill -0.05 for 6 months while he relearns the fight with legal hands; loyalty -3 \u2014 not at you, but you're the one standing there",
+     "Mineral oil: 70% the inspector moves on (nothing; the bottle retires itself quietly next week anyway); 30% caught \u2014 $100 fine (inflated), gym reputation -2, and a dry commission letter for the corkboard",
+     "The fine: $60 (inflated) on the settlement sheet, no argument, and the old man's one comment enters the gym log: 'Forty years and nobody ever asked what was IN it when it worked.'"
+    ],
+    "frequency": "Once per qualifying cutman"
+   },
+   {
+    "id": "corner-moonlighting",
+    "title": "A Cutman's Hands Go Where the Cuts Are",
+    "trigger": "Staff cutman or corner_strategist tier local|regional, tenure>=1 year; a rival gym's result in the press cycle names your man in their corner",
+    "story": "Nobody hid it, exactly. His name was right there in the paper, fourth paragraph, working the other corner at the Armory on a night you didn't have a card. A cutman's hands go where the cuts are \u2014 that's the trade and it's older than you. Still. It reads a certain way over coffee.",
+    "choices": [
+     "Exclusivity \u2014 a 25% raise and your corner only",
+     "Let it ride",
+     "Make him choose, no raise attached"
+    ],
+    "effects": [
+     "Exclusivity: salary +25%, poachInterest -20, the paper's next mention of him carries your gym's name",
+     "Let it ride: he brings back what he sees \u2014 the next offer involving that rival gym's fighters arrives with full opponent detail (a free scout, and everyone stays friends)",
+     "Choose without money: loyalty -8; 60% he stays and the gym log notes what it cost him; 40% he picks the open road inside three months"
+    ],
+    "frequency": "Uncommon, repeatable at 12-month cooldown"
+   },
+   {
+    "id": "corner-what-he-carried",
+    "title": "The Forty-First Fight",
+    "trigger": "Staff coach background.exFighter, tenure>=1 year, AND a roster fighter of his wins a genuine war (FightReport: 10+ rounds or knockdowns both ways); once per coach",
+    "story": "After everyone went home he told you about his forty-first fight, at midnight, in the empty gym, in the voice men use for weather reports. He never once looked at you while he told it. Then he put the chairs up and said good night, and you understood a number of things about him at once, none of which either of you will mention again.",
+    "choices": [
+     "(No choice \u2014 you were told, that's all)"
+    ],
+    "effects": [
+     "background.sawTooMuch revealed to the player; loyalty +10",
+     "His fighters' restUntil after hard bouts extends 10% under him \u2014 he pads their recovery himself, off the books, and now you know why",
+     "When corner-cant-watch comes for him \u2014 and it will \u2014 the event text acknowledges this night in one clause"
+    ],
+    "frequency": "Once per qualifying coach (witnessed, no options \u2014 per the no-optimization ruling)"
+   },
+   {
+    "id": "corner-a-name-he-knew",
+    "title": "Asked After Him by His First Name",
+    "trigger": "Staff coach vice='gambling', tenure>=6 months, AND a bookedFight within 21 days whose purse exceeds the gym's monthly overhead",
+    "story": "A man you didn't know asked after your coach at the door \u2014 by his first name, pleasantly, the way collection agents and old teammates both do. Your coach has been taking the long way home for a month. These two facts have been introduced to each other.",
+    "choices": [
+     "Pay it quiet",
+     "Tell him it's his to handle",
+     "Move him off the fight \u2014 a leak in the corner is a leak in the game plan"
+    ],
+    "effects": [
+     "Pay: money -(4x his weekly salary, inflated); loyalty +15; the vice sleeps for 12 months and one gym-log line marks the day he found out who paid",
+     "His to handle: 30% the other corner knows your game plan \u2014 corner factor negated for the bout, and the gym log wonders in one sentence how they knew to circle left; 70% he handles it and never says how",
+     "Move him off: the bout runs safe, loyalty -8, the debt is still out there and the event may refire once"
+    ],
+    "frequency": "Rare, maximum twice per coach"
+   },
+   {
+    "id": "corner-hardass-and-the-glass-kid",
+    "title": "Certain Lands the Same as Mean",
+    "trigger": "Staff coach personality hardass assigned (coachId) to a fighter with insecure trait, chemistryRead=Friction, 3+ months on the pairing",
+    "story": "The kid flinches when the old man clears his throat now. He's not mean \u2014 you've known mean, and this isn't it. He's certain, which lands the same on some men, and this kid is one of those men, and neither of them can see it from where they're standing.",
+    "choices": [
+     "Reassign the kid",
+     "Tell the hardass to find a lower gear",
+     "Let it ride \u2014 pressure makes some men"
+    ],
+    "effects": [
+     "Reassign: kid +6 morale; hardass loyalty -4 ('soft' is his whole review of the decision)",
+     "Lower gear: loyalty>=60 \u2014 50% he genuinely eases (chemistry penalty halves permanently for this pairing, one gym-log line about the old man saying 'good' out loud for the first time); under 60 loyalty it's -10 more and no change",
+     "Ride: the Friction continues (kid trust -4/month per the standing chemistry rules); if the kid quits the gym under it, hardass loyalty -6 \u2014 he knew too, and now he owns his half"
+    ],
+    "frequency": "Uncommon, once per pairing"
+   },
+   {
+    "id": "corner-night-school",
+    "title": "The Letter With No Return Address He'd Admit To",
+    "trigger": "Any staff coach tier>=established; a letter arrives from a local man age 24-30 asking to apprentice unpaid; maximum twice per save",
+    "story": "The letter asked to sweep up, carry the bucket, and watch. It named your coach specifically and got two things about his career right that never made the papers, which means the kid did his homework, which is the entire job.",
+    "choices": [
+     "Take him on",
+     "Pass"
+    ],
+    "effects": [
+     "Take: no salary; after 18 months he converts to a coach applicant \u2014 tier local, skill 0.45-0.55, chemistry pre-warmed with your roster, and a valid protege candidate (kind='apprentice') for corner-the-protege",
+     "Pass: nothing; a year later the paper may mention a young corner man across town whose letter you can still find in the desk drawer"
+    ],
+    "frequency": "Rare, twice per save"
+   },
+   {
+    "id": "corner-his-name-in-the-big-paper",
+    "title": "The Last of the Neighborhood Professors",
+    "trigger": "Staff coach tier elite OR (established AND skill>=0.78), age>=55; a world-sim title defense resolves in a division where his generated background places an old pupil",
+    "story": "The magazine's feature called him the last of the neighborhood professors and mentioned your gym by street address. He read it once at his desk, folded it along the columns, and put it in the drawer where he keeps the things he doesn't talk about. The phone started ringing before the issue was fully on the stands.",
+    "choices": [
+     "(No choice \u2014 fame arrives; the follow-ups are yours to handle)"
+    ],
+    "effects": [
+     "Gym reputation +2; coach-applicant quality raised one tier for 6 months (good coaches read the magazine too \u2014 mirrors the Bible's line-1636 texture)",
+     "His poachInterest +20 \u2014 fame travels with a suitcase; the loyalty system decides what happens next, which is the point of the loyalty system",
+     "One framed clipping joins the office wall permanently"
+    ],
+    "frequency": "Once per qualifying coach"
+   },
+   {
+    "id": "corner-the-lifetime-chair",
+    "title": "The Best Money the Gym Spends",
+    "trigger": "Staff coach age>=70 AND tenure>=10 years; weight doubled after corner-last-of-the-handwrap-men",
+    "story": "You stopped paying him to work sometime last year and started paying him to be here, and it is the best money the gym spends. The kids bring him their report cards. He watches three rounds of sparring and says four words and the four words are always right. Fifty years of other men's blood, and what's left is the eye.",
+    "choices": [
+     "(No choice \u2014 some things you just get to have)"
+    ],
+    "effects": [
+     "Gym-wide +2 morale baseline while he lives; ledger milestone",
+     "His hands can hit zero and it no longer matters \u2014 the chair by the ring is a position now, listed at slots 0, salary his to keep",
+     "When the Lifecycle clock finally takes him, corner-the-funeral fires at maximum register"
+    ],
+    "frequency": "Once per qualifying coach (witnessed, no options, no optimization \u2014 per the upheld joyful-events hill)"
+   },
+   {
+    "id": "corner-one-more-camp",
+    "title": "Person-to-Person",
+    "trigger": "coachAlumni contains a coach who retired from your staff 2+ years ago (how='retired', tenure>=3 years) AND old-lion-miracle has fired AND player books a fight against a nationally ranked opponent",
+    "story": "He called person-to-person, which men his age do when it matters. He'd read about your kid's fight in the magazine, three states away, in a house that is too quiet. One camp, he said. I'll wrap, I won't climb the stairs. You could hear the television going behind him, and behind that, nothing.",
+    "choices": [
+     "Bring him back for the camp",
+     "Tell him the truth about the stairs"
+    ],
+    "effects": [
+     "Back: one-time salary (his old rate, inflated); the bout's corner factor +0.02 over your current coach's; gym-wide +3 morale for the camp \u2014 the roster watches how the trade treats its old men and files it away; afterward he goes home on his own steam, and the ledger keeps the date",
+     "The truth: kindly, and final; -0 mechanically; one gym-log line, and the next time his name appears in the save it is in a different typeface"
+    ],
+    "frequency": "Rare, once per save"
+   },
+   {
+    "id": "corner-the-second-chair-ask",
+    "title": "Careful as a Man Borrowing Money",
+    "trigger": "bookedFight within 14 days AND the fighter's assigned coach (coachId) reads Friction while another staff coach would read Clicking for him",
+    "story": "The kid asked, careful as a man borrowing money, whether the other coach could be in his corner Saturday. Just Saturday, he said, twice. He'd clearly rehearsed it on the bus. Both coaches were within earshot of the question, because gyms are built out of earshot and nothing else.",
+    "choices": [
+     "Give him the corner he asked for",
+     "Keep the assignment"
+    ],
+    "effects": [
+     "Give: the bout resolves with the Clicking coach's corner factor; fighter +4 morale going in; the assigned coach loyalty -6 unless personality teacher (teachers know it was never about them)",
+     "Keep: fighter -5 morale going in; if he loses, one gym-log line records the bus-rehearsed question nobody granted",
+     "Either way the pairing question surfaces in the UI's chemistry read afterward \u2014 the ask WAS the information"
+    ],
+    "frequency": "Uncommon, repeatable at 12-month cooldown per fighter"
+   }
+  ]
+ },
+ {
+  "role": "Veteran simulation-game systems designer (Football Manager school) \u2014 Rivalry Memory and Manager Aging & Legacy",
+  "systems": [
+   {
+    "name": "The Rivalry Book",
+    "dataModel": "save.rivalries: Rivalry[]. Rivalry = { id: string ('riv_' + the two party ids in canonical order); kind: 'fighters' | 'gyms'; a, b: RivalryParty ({ fighterId } for a player/world fighter \u2014 world side keyed by WorldFighter.id, which survives promoteToFull \u2014 or { gymId } for the player gym vs a RIVAL_GYMS id); heat: number 0..100; meetings: RivalryMeeting[] ({ day, boutId, outcome (from a's side), method: Method, disputed: boolean, venue, purse }) \u2014 written from the same BoutRecord resolveFight already emits; series: { aWins, bWins, draws }; grudges: GrudgeNote[] ({ day, kind: 'disputed-card' | 'poached-man' | 'quote' | 'weigh-in' | 'clause-lapsed' | 'ducked', text }); clause: RematchClause | null ({ holder: 'a' | 'b' | 'promoter', byDay: number, purseFloor: number, sourceEventId: string }); coined: string | null (the press's name for it, generated once); dormantSince: number | null; settled: boolean }. One new field on nothing else \u2014 the book reads BoutRecord.opponentId, FightReport.method/judgeTotals, the alumni book (below), and departures' poach destination, all of which exist or are already ruled in.",
+    "mechanics": "OPENING THE BOOK. A rivalry object is created when data the game already keeps crosses a line: (1) two men meet a second time (bouts[] already carries opponentId \u2014 the offer generator checks it) \u2192 heat 25; (2) any meeting ends SD or MD, or judgeTotals split with one card for the loser \u2192 that meeting is flagged disputed, heat +20 (a first-meeting robbery opens the book at 45); (3) a man who left the gym (alumni book: how = 'poached' or 'quit') is matched against his old house, or a player fighter faces the gym that poached him \u2192 a gym-kind rivalry at heat 30; (4) fighters of the same two local gyms cross a third time across any pairs \u2192 gym rivalry; (5) a rematch clause is signed anywhere (the opponent-for-hire counter, the strings system's option contracts) \u2192 the clause finally has a home: it is stored on the rivalry, not on the offer. HEAT. +15 per meeting, +10 if disputed, +10 for a stoppage of the local favorite; the existing crosstown-feud event writes its feed-it momentum INTO this heat instead of a private counter; called-out/quote press events +5. Decay \u22122/month with nothing booked; frozen while a clause is live; under 15 for 12 months sets dormantSince (rekindles at half price). Hard cap ~6 open rivalries; the evaluator's weekly surfacing budget allows at most one rivalry item a month. PAYOFF \u2014 wired to the two upheld hills. pursefor() gains rivalryFactor = 1 + min(heat, 80)/100 when the offer's two parties are in an open book (a hot feud pays up to x1.8, stacking under the era multiplier); the journalist's upheld press-context multiplier gains +0.25 for any rivalry bout and +0.5 for a rubber match \u2014 fighters get famous for being written about winning, and nothing gets written about like a grudge. RESOLUTION. A third meeting at 1\u20131 (or fifth at 2\u20132) is a rubber match: biggest purse of either career, winner's repSwing x1.5, settled = true, framed clipping, ledger line, legacy.rivalriesSettled +1. A settled book stops paying and starts being remembered \u2014 the reckoning reads it back. Retirement of either party with the series unsettled writes the grudge 'the question was never answered' into both men's copy forever. CLAUSES. { holder, byDay, purseFloor }: while live, third-party offers for the bound man carry a typed clause line; if the holder exercises, the bout books at max(purseFloor, pursefor); if byDay lapses, heat \u221215 and one dry clipping. Refusing an exercised promoter clause routes through the strings system's quiet refusal costs plus a 'ducked' grudge note (\u22124 publicReputation, heat +10 \u2014 ducking feeds the very fire it flees)."
+   },
+   {
+    "name": "The Manager's Years",
+    "dataModel": "Manager (persistence.ts) extends to { name, age (now advances), appearance, birthDay: number (day-of-year, seeded at new game; MANAGER_START_AGE stays 25), health: number 0..100 (hidden \u2014 never rendered as a number, only as felt reads, same law as moodLabel), healthCeiling: number (starts 100; scares worked-through lower it, like TRUST_HEAL_CAP made flesh), scares: HealthScare[] ({ day, kind, heeded: boolean }), protegeId: string | null (a Coach.id), handedOver: { coachId, day, mode: 'desk' | 'full' } | null }. Coach gains protege?: boolean and protegeSince?: number \u2014 one flag, deferring to the cornerman seat's coach-life model everywhere else.",
+    "mechanics": "THE DECADES. 1975\u20131989 (25\u201339): nothing. Health sits at 100 and the system is invisible for fifteen years \u2014 that silence is the design. 40s: health drifts \u22120.5/yr, plus strain ticks in any 90-day stretch where the manager personally works two or more corners (the 0.02 manager corner term in resolveFight is now HIS, and it costs him). The paper calls him 'the veteran manager' once and moves on. 50s: three concrete, un-gamey effects \u2014 (1) the corner: the manager's 0.02 corner bonus requires health \u2265 50 and no second fight night inside 10 days, otherwise the game quietly books the coach's number only, and the gym log says why in one line; (2) capacity: the manager personally holds 2 focused-training slots (the coachId: null slots) through his 40s, 1 in his 60s, 0 after handover \u2014 the stairs to the office got longer, so somebody else has to climb them, which is what coaches and the protege are FOR; (3) distance: desert and boardwalk cards list travel he may decline \u2014 decline costs nothing but the corner term and one gym-log sentence ('He watched it on the television in the office'). SCARES. Health-scare events (below) each offer heed (a real month lost: open offers expire unanswered, one camp runs without him) or work through it (healthCeiling \u221210 to \u221215, the next scare seeded sooner and worse). Health under 20, or a third unheeded scare, fires the ultimatum. SUCCESSION. Any coach with 5+ years' tenure may be named protege (the old-head promise pipeline pre-qualifies; loyalist and teacher personalities accept at once, a mercenary wants it in writing). A protege gains skill +0.02/yr (he is learning your book) and each big corner worked alone banks handover quality. Handing over with a seasoned protege preserves the gym's reputation and roster trust; handing over cold costs reputation \u221240% over two years and a roster-wide trust hit \u2014 succession cannot be bought at 64, only grown from 50. Desk mode ('the old man at the desk'): the protege runs the day-to-day, the player keeps sign-off on signings, cuts, and title fights \u2014 reduced verbs, same save. THE RECKONING. From age 50 with 20+ years' tenure, one quiet permanent option sits in the office desk drawer: step back. Choosing it (or the ultimatum forcing it) fires the Legacy Reckoning \u2014 which is a READ, not new content: the wall of framed clippings rehung one by one; the alumni book opened (every man who passed through: record, purses, how he left, whole or broken); the rivalry book's settled and unsettled questions; the byline with the most gym stories writes the farewell column (the journalist's upheld byline memory, load-bearing here); the Monthly gives it one paragraph; the ledger totals read out dry \u2014 purses won, dues carried for broke men, benefits thrown, the two-dollar envelopes that came back. No grade, no stars. The summation is a single sentence from the oldest man in the gym, composed from ledger ratios: if debts is empty and menRetiredWhole outnumbers menRetiredBroken \u2014 'He never sent us out short.' If not, a different sentence, and the player earned that one too. Then emeritus (watch the world run) or close the book."
+   },
+   {
+    "name": "The Alumni Book & Legacy Ledger",
+    "dataModel": "save.alumni: AlumnusRecord[] \u2014 written once at any departure, cheap and permanent: { fighterId, name, joinedDay, leftDay, how: 'retired' | 'cut' | 'quit' | 'poached' | 'medical' | 'died', record: WorldRecord, careerEarnings, trustAtExit: number, flags: string[] ('watch', 'benefit', 'the-fog', 'clean-bill', 'title') }. save.legacy: LegacyLedger \u2014 accrues automatically, is never spendable: { menDeveloped (walk-in to 15+ wins in house), champions: string[], titleNights, menRetiredWhole, menRetiredBroken, benefitsThrown, watchesGiven, clippingsFramed: string[], venuesOutlived, rivalriesSettled, refusals (strings refused on principle), debts: string[] (the fuse lines the ledger holds \u2014 the accommodation taken, the 'say nothing' chosen) }.",
+    "mechanics": "Today a departed fighter simply vanishes from the roster array; a 25-year save cannot be summed from what it forgot. The alumni book is the fix and it serves both my gaps: rivalry-old-gym reads how='poached' and trustAtExit to decide how hard the departed man fights his old house (a man who left bitter arrives at condition +0.04 \u2014 he has something to prove and the engine can express it); benefit-night and the-fog already need to find retired men, and now there is somewhere to look. The legacy ledger is write-only during play \u2014 no event may ever read it as a resource, no choice may ever be priced in it (the retired fighter's upheld no-optimization hill extends here). It is read exactly twice: the quarter-century magazine sidebar, and the reckoning. Existing events feed it without modification: the engraved watch sets watchesGiven and the 'watch' flag; benefit-night sets benefitsThrown; the-doctor-said-stop heeded writes menRetiredWhole, dodged writes a debt; sanctioning-invoice refused on principle ticks refusals. 'The men who came back': at the reckoning, alumni with trustAtExit \u2265 70 or a watch/benefit flag are in the room; the men cut off the chopping block are not, and the copy notes the empty chairs without comment."
+   }
+  ],
+  "scriptedEvents": [
+   {
+    "id": "legacy-the-third-fight",
+    "title": "The Third Fight Settles It",
+    "window": "1975-1976, chained to the poet-king's brutal war beat inside poet-kings-last-reign (that war IS this trilogy's third act \u2014 this event is the press layer on it, not a second fight)",
+    "analogOf": "Ali\u2013Frazier III, October 1975 \u2014 the fight that taught the American sports page the words 'trilogy' and 'rubber match', and what a settled score is worth at the gate",
+    "beats": [
+     "The week of the king's war with his generational rival, the paper runs the full anatomy: two fights each way or one apiece, every disputed card relitigated, ten years of quotes laid end to end \u2014 the first time the save's press treats a rivalry as a single continuing story with a ledger of its own",
+     "The purse figures print beside the history: the third fight pays more than the first two combined, and the paper says so in one dry sentence",
+     "After the war, the retrospective closes the book: the series has an answer now, and both men paid the whole price for it \u2014 'the closest thing to death,' the winner is quoted, and the paper lets the line sit",
+     "For a season afterward, the rumor column measures every local feud against it \u2014 two club fighters who split a pair are 'a rubber match waiting on a promoter with nerve'"
+    ],
+    "worldEffects": [
+     "Arms the Rivalry Book's vocabulary and economics save-wide: from this beat on, rivalryFactor applies in pursefor and the +0.25/+0.5 rivalry press-context multiplier is live \u2014 the world has now SEEN what a settled trilogy sells for, so the mechanics have a memory to point at",
+     "The press coining machinery activates: rivalries crossing heat 60 with 2+ meetings get named by the paper, in the style this retrospective established",
+     "One reference purse (the trilogy's closing gate) enters the clipping record as the number all later rivalry purses are measured against in copy"
+    ],
+    "playerFacing": "A week of clippings the player mostly witnesses; the one mechanical tell arrives later and quietly \u2014 the first time two of his own men split a pair with anybody, the promoter's pitch uses the new word: 'People pay to see a thing finished.'"
+   },
+   {
+    "id": "legacy-the-old-teachers",
+    "title": "The Old Teachers Go",
+    "window": "1984-1988 (two deaths, 18-30 months apart, both seeded per save)",
+    "analogOf": "The passing of the great old trainer-managers in the mid-80s \u2014 Cus D'Amato dying in 1985 with his last prodigy not yet champion; Ray Arcel and Eddie Futch working corners into their eighties as the last of a species",
+    "beats": [
+     "A famous old trainer \u2014 a generated name the paper has quoted since the network era, the kind of man who trained champions in three decades \u2014 dies upstate with his last great prospect not yet finished; the obituary is long and the paper gets it right",
+     "Eighteen months to two years later a second one goes, and this obituary is shorter, because the first one used up what the desk had to say \u2014 the paper notices this about itself, in one line",
+     "Between the two, the Monthly runs the feature the era demands: who is learning the corners now? The answer it finds is 'almost nobody', and it names the handful of old lions still working",
+     "If the player employs an old_lion coach, he asks for the day to go to the funeral. There is no mechanical reason to say yes. Say yes."
+    ],
+    "worldEffects": [
+     "old_lion coach applicants become permanently rarer in the market after the second death (rollTier's old-lion 10% weight halves) \u2014 the species is going, which is the point",
+     "The succession question enters the world's vocabulary: from this beat on, rumor items occasionally ask which gyms have 'a second set of keys cut' \u2014 texture that makes the player's own protege decision feel like the era asking, not the UI",
+     "Arms legacy-the-funeral-suit and doubles the arrival weight of legacy-second-keys for 24 months"
+    ],
+    "playerFacing": "Two obituaries a save apart in feel; the Monthly feature; and if the player is past 45 with no protege named, one sentence in the second obituary lands differently than it would have at 30 \u2014 the game changes nothing, the player's own age does the work"
+   },
+   {
+    "id": "legacy-the-quarter-century",
+    "title": "The Century Issue",
+    "window": "January 2000, fixed (the manager turns 50 that year; the world's soft cap begins here)",
+    "analogOf": "The end-of-century retrospectives \u2014 The Ring's fighters-of-the-century issues, every sports desk's hundred-year lists \u2014 arriving just as the sport's structural evolution quiets",
+    "beats": [
+     "The American Boxing Monthly publishes its century issue: the hundred best fighters, the ten best fights, the eras ranked \u2014 the save's own scripted history (the poet-king, the four kings, the teenager, the surrender) read back as settled canon with the per-save generated names in the lists",
+     "The regional sidebar covers the gyms that lasted: any operation past 20 years with legacy thresholds met (menDeveloped >= 5, or a champion, or a rivalry the paper coined) gets its paragraph \u2014 for most players, the first time the save's whole arc is summarized by someone other than the ledger",
+     "The local paper does its smaller version, and the byline with the most player-gym clippings writes it; if that writer is the young replacement from death-of-the-afternoon-paper, he finally writes something the old man would have signed",
+     "The issue closes with the question the endgame runs on, asked about the sport but heard about the player: what's left to want when the history is written?"
+    ],
+    "worldEffects": [
+     "Marks the soft cap in fiction rather than in code: the world keeps generating fighters and fights forever after, and the paper's tone shifts to maintenance \u2014 new names measured against the canon instead of making it",
+     "Unlocks the reckoning's full document set: the century issue's regional sidebar becomes a frameable clipping and the reckoning's opening page if earned",
+     "From 2000 on, the manager's arc IS the drama: legacy-seat triggered events gain surfacing priority in the evaluator's weekly budget"
+    ],
+    "playerFacing": "A thick magazine in the office mail; the sidebar with or without your gym's name in it \u2014 both versions are designed, and the version without it is the quiet argument for one more good decade"
+   }
+  ],
+  "triggeredEvents": [
+   {
+    "id": "the-same-man-twice",
+    "title": "The Same Man Twice",
+    "trigger": "rollFightOffers produces an opponentId already present in the fighter's bouts[] where the prior outcome was 'L', or a 'W' whose meeting is flagged disputed (method SD/MD or split judgeTotals) \u2014 the offer generator gains a deliberate 20% weight toward such opponents when a book is open",
+    "story": "The pitch is one sentence shorter than usual, because the promoter knows he doesn't need it. Your man knows the name. He knew it before you finished saying it \u2014 he's been saying it to the heavy bag for five months.",
+    "choices": [
+     "Take the rematch",
+     "Not yet \u2014 let it cook (decline; heat holds, the book stays open)",
+     "Never \u2014 route around him for good"
+    ],
+    "effects": [
+     "Opens or heats the Rivalry Book entry (heat +15 on booking); the purse already carries rivalryFactor \u2014 the number on the offer card is visibly better than the same opponent cold, and no one says why",
+     "Take + chip_on_shoulder or hot_tempered: morale +8 through camp (his native weather); take + insecure: morale \u22126 (the loss lives in his hands); the gym log notes which, in one line",
+     "Never: heat \u221220, a 'ducked' grudge note if heat was \u2265 50 (\u22123 publicReputation, one dry rumor item) \u2014 routing around a question has a price the paper collects"
+    ],
+    "frequency": "common once any book is open; the backbone verb of the rivalry system"
+   },
+   {
+    "id": "everyone-scored-it-different",
+    "title": "Everyone Scored It Different",
+    "trigger": "A player bout resolves L by SD or MD with judgeTotals split (at least one card for your man); fires 30-60 days after the robbed-on-the-cards clipping runs",
+    "story": "The promoter calls before the swelling's down. He read the same cards everybody read, and he's done the same arithmetic: a disputed decision is the only loss that raises a man's price. He'd like to sell the argument twice.",
+    "choices": [
+     "Take the rematch at his number",
+     "Hold out \u2014 the argument gets more valuable if you let it age (30% the other camp books elsewhere and heat cools \u221215; otherwise the offer returns at purse +20%)",
+     "Let it go \u2014 some robberies you frame, some you forget"
+    ],
+    "effects": [
+     "The meeting is already flagged disputed in the book (heat opened at 45 if this was the first meeting); the rematch purse carries rivalryFactor plus the disputed premium",
+     "Win the rematch: repSwing x1.25 and the paper closes the argument ('the cards were wrong the first time, said so by the man himself'); lose it clean: the argument dies and heat \u221225 \u2014 the world decides the first cards were right",
+     "Hold out + glory_hunter: morale \u22125 while he waits (he wants the man, not the money); hold out + comfort_seeker: morale +3 (no rush)"
+    ],
+    "frequency": "uncommon; reliable after any split-card loss, which the engine produces honestly"
+   },
+   {
+    "id": "paper-in-the-drawer",
+    "title": "Paper in the Drawer",
+    "trigger": "A live RematchClause exists with holder 'promoter' or the opposing camp, and dayCount reaches byDay \u2212 30",
+    "story": "The letter is typed and short and refers to paragraph four. You signed paragraph four in a good month, when the purse in paragraph one made paragraph four look small. It doesn't look small now. He's exercising it.",
+    "choices": [
+     "Honor the clause \u2014 book the rematch at the floor",
+     "Ask for relief \u2014 offer the holder a step-aside piece of the next purse (money for freedom, the strings system's native trade)",
+     "Refuse and let the lawyers write to each other"
+    ],
+    "effects": [
+     "Honor: bout books at max(purseFloor, current pursefor with rivalryFactor); clause clears; heat +10 \u2014 the book always gets its meeting eventually",
+     "Step-aside: \u221215% of the fighter's next purse to the holder as a typed settlement line; clause clears; a dry rumor item ('an accommodation was reached') and heat \u221210",
+     "Refuse: routes through the strings system's quiet refusal costs (this promoter's offers \u221230% frequency 12 months), a 'ducked' grudge note, \u22124 publicReputation, heat +10 \u2014 refusing a rematch is how rivalries get famous without fights"
+    ],
+    "frequency": "fires whenever a clause comes due \u2014 clauses now have exactly one home and one collection agent"
+   },
+   {
+    "id": "the-rubber-match",
+    "title": "The Third Fight",
+    "trigger": "An open fighters-kind rivalry reaches series 1-1 (or 2-2), heat >= 50, both men active and within one weight class",
+    "story": "The promoter doesn't pitch this one at all. He names the number and waits. It's the biggest number anyone has ever said to you on this phone, and both of you know the history did the selling \u2014 two fights, two answers, and a city that can't stand not knowing.",
+    "choices": [
+     "Make the third fight",
+     "Price him \u2014 hold for 15% more (works if heat >= 65; below that the moment can pass, heat \u221210)",
+     "Protect your man \u2014 the first two took years off him (decline; the book stays open forever)"
+    ],
+    "effects": [
+     "The bout books at the largest purse of either man's career (rivalryFactor at full heat plus the +0.5 rubber-match press-context multiplier); the paper coins the series' name now if it never did",
+     "Winner: repSwing x1.5, settled = true, framed clipping, ledger line, legacy.rivalriesSettled +1; loser: morale \u221215 but trust unmoved \u2014 nobody in the gym thinks less of a man who lost a rubber match, and the game says so in the log",
+     "Decline: heat freezes at its value permanently; every future mention of either man carries the unanswered question; at the reckoning, the unsettled book is read out as exactly that"
+    ],
+    "frequency": "rare \u2014 twice, maybe three times in a long save; the biggest purse event the rivalry system can produce"
+   },
+   {
+    "id": "he-knows-where-the-showers-leak",
+    "title": "He Knows Where the Showers Leak",
+    "trigger": "An offer's opponent matches an alumni record with how = 'poached' or 'quit' (the WorldFighter created by worldFighterFromFighter keeps the id), or the opponent's gymId is the rival that poached a player fighter within 3 years",
+    "story": "The name on the offer sheet used to be on a locker twenty feet from your office. He knows your man's habits from four hundred rounds of sparring, he knows which stair creaks, and he knows what you said the day he left \u2014 whichever version of it he's been carrying.",
+    "choices": [
+     "Take it \u2014 the gym settles things in the ring",
+     "Pass \u2014 you don't fight family, even the family that left"
+    ],
+    "effects": [
+     "Take: opens/heats the gym-kind rivalry (+20); the departed man's trustAtExit drives his night \u2014 trustAtExit < 40 grants him condition +0.04 (bitterness is a training camp) and the fight engine gets to say the rest; trustAtExit >= 70: both corners nod at the weigh-in and the paper writes the warm version",
+     "Your man's read: chip_on_shoulder +6 morale in camp (a stablemate who left is a judgment to overturn); family_man \u22124 (he liked the guy)",
+     "Pass: heat \u221210 and a single gym-log line \u2014 the men noticed you wouldn't make it, and the roster's reading of that splits by trait, quietly"
+    ],
+    "frequency": "uncommon; requires the alumni book, which is why the alumni book exists"
+   },
+   {
+    "id": "what-the-east-side-calls-it",
+    "title": "What the East Side Calls It",
+    "trigger": "Any rivalry crosses heat 60 with meetings.length >= 2 and coined === null",
+    "story": "It happened in the paper first, the way these things do. Wednesday's column referred to 'the east-side question' without explaining it, and nobody needed the explanation. A thing with a name is a thing people buy tickets to.",
+    "choices": [],
+    "effects": [
+     "The press generates and stores the coined name (from the venue, the neighborhoods, or the men's styles \u2014 never their real records); all future copy about the pair uses it",
+     "Both parties +2 publicReputation \u2014 being half of a named thing is standing",
+     "A framed-clipping candidate; witnessed, no choices, no optimization angle \u2014 per the upheld joyful-events law, this one is for the shoebox"
+    ],
+    "frequency": "once per rivalry; rare enough to feel like weather"
+   },
+   {
+    "id": "two-dollars-worth-of-shoving",
+    "title": "Two Dollars' Worth of Shoving",
+    "trigger": "A rivalry bout is booked with heat >= 40 and either man carries hot_tempered (visible or hidden \u2014 chemistry is real whether read or not)",
+    "story": "It started at the scales and it was over in four seconds, which was three seconds longer than the commission likes. Nobody landed anything. The photographer landed everything.",
+    "choices": [
+     "Pay the fine and say nothing",
+     "Make him apologize in print (a statement through the writer)"
+    ],
+    "effects": [
+     "Either way: commission fine $50 (inflated) on the settlement sheet; heat +10; the photo runs and the gate feels it \u2014 the promoter's settlement adds a 10% purse bump with a one-line note ('the shoving sold the balcony')",
+     "Say nothing + hot_tempered man: morale +4 (you let him be himself); apologize + hot_tempered: morale \u22126, trust \u22123 (you sided with the scales)",
+     "If the hidden trait was hidden, it isn't now \u2014 the reveal routes through the existing pacing budget, consumed not added"
+    ],
+    "frequency": "uncommon; at most once per rivalry"
+   },
+   {
+    "id": "nobody-asks-about-it-anymore",
+    "title": "Nobody Asks About It Anymore",
+    "trigger": "A rivalry with dormantSince set 24+ months, settled === false, and both parties still active (either side age < 36)",
+    "story": "The writer's Sunday item was three paragraphs of whatever-happened-to, and the last line was the knife: 'The two best men this city produced at the weight went one fight each and then went quiet, and the quiet is the loudest thing either of them ever did.'",
+    "choices": [
+     "Make the call to the other camp yourself",
+     "Let it stay a question"
+    ],
+    "effects": [
+     "Call: 60% an offer generates within 45 days at a nostalgic purse (rivalryFactor at half the frozen heat \u2014 the money remembers less than the men do); rekindled book resumes normal rules",
+     "Let it stay: the writer runs the sour coda ('some fights die of shyness' \u2014 the crosstown event's own line, deliberately reused); \u22121 publicReputation each; the book closes unsettled and waits for the reckoning",
+     "Your fighter + glory_hunter: reading the item costs him \u22125 morale either way \u2014 the question is about him and he knows it"
+    ],
+    "frequency": "rare; once per dormant rivalry"
+   },
+   {
+    "id": "the-other-house",
+    "title": "The Other House",
+    "trigger": "A gyms-kind rivalry reaches heat >= 50 (three cross-gym meetings, or a poach plus two meetings)",
+    "story": "It's not one fight anymore and everybody knows it. The paper runs the two gyms' results in facing columns now. Kids walking in off the street mention the other place unprompted, checking your face when they say it.",
+    "choices": [
+     "Lean into it \u2014 every crosstown card is a statement",
+     "Cool it publicly \u2014 one gracious quote about the other man's operation"
+    ],
+    "effects": [
+     "Lean in: offers pairing the two houses' men +40% frequency and +25% purse while heat holds; walk-in rate +10% (a feud is advertising); hot_tempered roster men each carry a 10% annual chance of a gym-front incident clipping ($75 fine, heat +10)",
+     "Cool it: heat \u221215; the rival manager returns the quote or doesn't \u2014 50/50, generated once, and if he doesn't, the paper notices who was gracious (gym reputation +0.02, the cheap dignity dividend)",
+     "Either way the rivalry persists at gym level even as individual fighters retire \u2014 houses outlive men, which is what makes it a second kind of book"
+    ],
+    "frequency": "uncommon; at most two gym rivalries alive at once"
+   },
+   {
+    "id": "the-night-it-was-over",
+    "title": "The Night It Was Over",
+    "trigger": "A fighters-kind rivalry with settled === true, 6-12 months after the rubber match, both men still living in the region",
+    "story": "Somebody's testimonial dinner, and the photographer caught them at the same table \u2014 the two of them, older, laughing at something nobody else at the table could have understood. Three fights and forty rounds buys a kind of friendship nothing else sells.",
+    "choices": [],
+    "effects": [
+     "Witnessed only, per the joyful-events law: no choices, no reward, no optimization angle",
+     "Your man (winner or loser) +6 morale the week the photo runs; the clipping is frameable",
+     "One gym-log line from the youngest man in the gym, asking how you get to have an enemy like that"
+    ],
+    "frequency": "rare; once per settled rivalry \u2014 the payoff after the payoff"
+   },
+   {
+    "id": "the-fight-nobody-will-make",
+    "title": "The Fight Nobody Will Make",
+    "trigger": "An open rivalry with heat >= 70 and no bookable meeting for 12+ months because the standing gap grew (one party's publicReputation exceeds the other's by 25+, or one holds a nationalRank the other can't reach)",
+    "story": "The money went one way and the question stayed where it was. His people return your calls a day slower each time, and the last time the writer asked them about your man, the quote was two words: 'Who?' Everyone in the city knows exactly who.",
+    "choices": [
+     "Chase it \u2014 a public challenge through the paper (a statement, the era's instrument)",
+     "Bank the heat \u2014 say nothing and let the question do its work"
+    ],
+    "effects": [
+     "Chase: +2 publicReputation for your man (the underdog with the megaphone reads well), heat +10, and a 15% annual chance the other camp needs a comeback opponent someday and remembers the noise \u2014 the long fuse the book holds",
+     "Bank: heat freezes; the question follows both men into every profile written about either, and into the reckoning unsettled",
+     "chip_on_shoulder: chasing it is worth +6 morale regardless of outcome; comfort_seeker: chasing costs \u22124 (he was fine being almost)"
+    ],
+    "frequency": "rare; the historically honest case \u2014 most great rivalries are the ones that never happened"
+   },
+   {
+    "id": "hes-got-his-number",
+    "title": "He's Got His Number",
+    "trigger": "An open rivalry at series 0-2 against your man (two losses, any method, same opponent \u2014 read straight off bouts[])",
+    "story": "Styles make fights and this style makes losses. Twice now, and the second one wasn't closer. The gym has stopped talking about it in front of him, which is how he knows they're talking about it.",
+    "choices": [
+     "The third fight anyway \u2014 some walls you go through",
+     "Route around him \u2014 rebuild the record elsewhere and never say the name again"
+    ],
+    "effects": [
+     "Third fight + win: the great redemption \u2014 repSwing x1.5, +12 morale, settled = true, the best clipping of his career ('the third time, he solved it'); third fight + loss: \u221220 morale, retirement-pressure events at 2x weight for 12 months if age >= 30 \u2014 three losses to one man is a sentence with a period on it",
+     "lionheart or chip_on_shoulder: he wants the third fight and the gym log says so before you decide; insecure: \u22128 morale just from the offer existing",
+     "Route around: heat decays normally, but the writer keeps score \u2014 any title talk for your man draws the dry parenthetical ('unfinished business at home notwithstanding'), \u22121 publicReputation per year while both are active"
+    ],
+    "frequency": "uncommon; the rivalry system's hardest choice, and honest both ways"
+   },
+   {
+    "id": "the-kid-at-the-desk-is-forty",
+    "title": "The Kid at the Desk Is Forty",
+    "trigger": "manager.age reaches 40 (birthday tick, 1990 in a day-one save)",
+    "story": "The anniversary item called you 'the veteran manager' and it wasn't wrong, which was the strange part. Fifteen years of Tuesdays. The kid who signed the lease would not recognize the hands sorting this mail, and the hands don't mind.",
+    "choices": [],
+    "effects": [
+     "Witnessed only: one clipping, one gym-log line, one ledger entry",
+     "The aging system's first surfacing \u2014 deliberately weightless, so that when weight arrives a decade later the player remembers being warned by nothing but a word in the paper",
+     "No mechanical change. Health has not moved. That is the design."
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "the-stairs",
+    "title": "The Stairs",
+    "trigger": "manager.age >= 48 AND manager.health < 85 (first crossing only)",
+    "story": "The kid carrying the spit bucket took the stairs two at a time and you took them the regular way, and somewhere in the middle of them you did the arithmetic you make your fighters do. The office didn't move. The stairs got longer.",
+    "choices": [],
+    "effects": [
+     "Witnessed: a gym-log line only \u2014 the aging system's felt-read voice is established here (health is never a number; it is the stairs, the handwriting, the flight not taken)",
+     "From this crossing on, felt-reads surface roughly quarterly when health bands change, always in objects and never in figures",
+     "Arms nothing-just-winded"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "nothing-just-winded",
+    "title": "Nothing, Just Winded",
+    "trigger": "manager.age >= 50 AND manager.health < 80; probability scales with strain (two or more corners personally worked in the trailing 90 days)",
+    "story": "It happened between the second round and the third, with the stool in your hands \u2014 a tightness that had opinions. You finished the night. You have been finishing the night on it for a while now, if you're honest, and you are famously not.",
+    "choices": [
+     "See the doctor and take the month",
+     "Work through it \u2014 February has fights in it"
+    ],
+    "effects": [
+     "Take the month: open fight offers expire unanswered (the real cost, in the real economy); one booked corner runs coach-only; health stabilizes and the scare is logged heeded \u2014 the next one arrives later and smaller",
+     "Work through: healthCeiling \u221210 permanent (the TRUST_HEAL_CAP of the body); the next scare is seeded 30% sooner and one grade worse; the gym log notes nothing, because you told nobody, and that silence is stored too",
+     "Deliberate echo of the fighter event 'Nothing, Just Banged It' \u2014 the manager has spent 25 years hearing that sentence from other men; the game hands it to him verbatim"
+    ],
+    "frequency": "the first health scare; once, then the escalation chain owns the schedule"
+   },
+   {
+    "id": "the-doctor-said-slow-down",
+    "title": "The Doctor Said Slow Down",
+    "trigger": "Second scare: fires per the escalation seed after nothing-just-winded (later and mild if heeded; sooner and harder if not); manager.age >= 54",
+    "story": "This doctor doesn't do the raised eyebrow. He does numbers on a pad, turned to face you, and a long silence you recognize from your own office \u2014 it's the one you use on managers of fighters who should stop. You never noticed it was a technique until it was aimed at you.",
+    "choices": [
+     "Heed it \u2014 hand off the daily corners and cut the load",
+     "Get a second opinion from a friendlier man across the state line"
+    ],
+    "effects": [
+     "Heed: manager focused-training slots drop from 2 to 1 permanently; the corner term becomes coach-only past one fight night a month; if no protege is named, the second-set-of-keys event fires within 60 days at top priority \u2014 the body just voted on succession",
+     "The dodge: healthCeiling \u221215; a friendlier letter for the drawer; the mirror is exact and intentional \u2014 the-doctor-said-stop's looser-state dodge, aimed at you, and the ledger holds the fuse the same way it holds your fighters'",
+     "Either way the scare becomes public inside the gym: roster men with family_man check on you in the log; an insecure fighter takes \u22124 morale (if the ground under the gym can wobble, anything can)"
+    ],
+    "frequency": "once; the middle of the three-scare architecture"
+   },
+   {
+    "id": "the-second-set-of-keys",
+    "title": "The Second Set of Keys",
+    "trigger": "manager.age >= 45 AND a coach on staff with 5+ years tenure and personality loyalist, teacher, or old_lion (the old-head promise pipeline pre-qualifies its man at 3 years); weight doubles for 24 months after legacy-the-old-teachers",
+    "story": "The locksmith on the corner does two keys for a dollar. You've been walking past him for a month with the question in your pocket. It isn't about the door. Every man in the building knows what a second set of keys is about, which is why nobody has ever asked you for one.",
+    "choices": [
+     "Cut the keys \u2014 name him",
+     "Not yet (the event returns in 18-30 months; the pool may be thinner)",
+     "Never \u2014 this gym has one name on the lease and one in it"
+    ],
+    "effects": [
+     "Name him: Coach.protege = true, protegeSince set; his skill +0.02/yr (he is learning your book); his trust-equivalent locks high; each big corner he works alone banks handover quality against the day",
+     "Not yet: no cost now; each deferral past age 58 costs 20% of eventual handover quality \u2014 succession is grown, not bought, and the compound interest runs backward",
+     "Never: gym-log line, dry; the reckoning will note the keys in one dry sentence; if a mercenary coach of tenure 4+ is on staff, 40% he reads the room and takes other work within a year"
+    ],
+    "frequency": "recurring until answered permanently; the succession system's front door"
+   },
+   {
+    "id": "let-him-work-the-corner",
+    "title": "Let Him Work the Corner",
+    "trigger": "A protege is named AND a bout of 8+ rounds or purse >= 3x gym monthly overhead is booked",
+    "story": "He didn't ask. He just started packing the bag the night before \u2014 the swabs, the iron, the good scissors \u2014 and left it by the door where you'd see it, which in this business is a formal application.",
+    "choices": [
+     "Give him the corner alone",
+     "Work it together one more time",
+     "Take it yourself \u2014 some nights are not for teaching"
+    ],
+    "effects": [
+     "Alone: his corner value applies (skill-scaled, likely below your combined worth \u2014 a real, visible cost); win or lose, handover quality banks a step; the fighter's post-fight log line reads the future ('The kid taped him like you taped him. Exactly like.')",
+     "Together: half a step banked, no risk; available twice before he understands the bag by the door isn't being seen and morale of a loyalist protege dips (-4)",
+     "Yourself: strain ticks (the aging system is watching the workload); the protege banks nothing; his patience is long but it is not a circle"
+    ],
+    "frequency": "recurring while a protege is named; 3-4 solo corners make a full handover"
+   },
+   {
+    "id": "the-man-who-waited",
+    "title": "The Man Who Waited",
+    "trigger": "A protege is named while another coach of tenure 4+ years with personality mercenary or hardass is on staff",
+    "story": "He heard about the keys the way everyone hears everything in a gym \u2014 from the plumbing. He came to the office with his hat actually in his hands, which you had understood to be a figure of speech, and asked one question, straight: was it ever going to be him?",
+    "choices": [
+     "Tell him the truth \u2014 it was never going to be him, and tell him why",
+     "Soften it \u2014 the timing, the fit, the way these things go",
+     "Offer him something real \u2014 first refusal on the head-coach room if the protege ever leaves"
+    ],
+    "effects": [
+     "Truth: 50% he respects it and stays two more years at full effort (hardass: 70% \u2014 his whole personality is respecting the straight answer); otherwise he gives notice with a handshake",
+     "Soften: he stays 6 months and leaves without the handshake; roster fighters he trained take \u22124 morale when he goes (they heard the plumbing too)",
+     "Something real: he stays; the promise is stored; if the protege ever departs, this event's sequel collects the debt with interest",
+     "All branches: one gym-log line, and the protege watches how you handle it \u2014 the succession is learning from this too"
+    ],
+    "frequency": "once per passed-over coach; the cost accounting of the keys"
+   },
+   {
+    "id": "they-passed-the-hat-for-you",
+    "title": "They Passed the Hat for You",
+    "trigger": "A heeded health scare has become neighborhood knowledge (gym tenure >= 15 years, gym reputation >= 0.5), 30-60 days after",
+    "story": "The envelope under the door had no name on it, the way the ones for your broke fighters never had names on them. Inside was more than it should have been and less than it wanted to be, and a note in a hand you half-recognized: 'For the electric. A gym needs its lights on.'",
+    "choices": [],
+    "effects": [
+     "Witnessed, per the joyful-events law \u2014 no choices, no reward loop: cash +$60-150 (inflated), which at this tenure is not money, it is a sentence",
+     "Roster-wide morale +4; one ledger line the manager didn't write, which the reckoning will read back",
+     "The deliberate mirror of sleeps-in-the-gym: the neighborhood has been keeping a ledger on you the whole time, and this is the first time you see your own balance"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "a-young-mans-game",
+    "title": "A Young Man's Game",
+    "trigger": "manager.age >= 60 AND a walk-in arrives with age <= 18",
+    "story": "The kid asked the protege, quietly, whether the old fella by the window was somebody. The protege said yes and didn't elaborate, which was the right answer and also, you noticed from the window, a test he'd just passed.",
+    "choices": [],
+    "effects": [
+     "Witnessed: gym-log only",
+     "If a protege is named, the exchange banks a sliver of handover quality \u2014 the succession is partly the gym learning to answer for you",
+     "If no protege exists, the line lands differently: the kid never gets an answer, and the log's version of the scene is one clause shorter"
+    ],
+    "frequency": "rare, repeatable with long cooldown; the aging system's cheapest and best sentence"
+   },
+   {
+    "id": "the-lease-question",
+    "title": "The Lease Question",
+    "trigger": "manager.age >= 55 AND money >= 24 months of current overhead AND gym tenure >= 20 years",
+    "story": "The landlord's son runs the building now, and the landlord's son doesn't like boxing or believe in it. He offered you the building at a number that made sense to exactly one person in the room, and then he said the thing his father never would have: 'Or the lease runs out when it runs out.'",
+    "choices": [
+     "Buy the building",
+     "Negotiate the long lease instead \u2014 ten years, his terms",
+     "Let it ride \u2014 you've outlived worse landlords"
+    ],
+    "effects": [
+     "Buy: a large one-time cost (seeded to sting: 18-30 months of overhead); the rent line leaves the books forever; the reckoning gains its heaviest object \u2014 'the gym outlived the lease' \u2014 and a handed-over gym cannot be closed out from under the protege",
+     "Long lease: modest cost, rent +15%; the question returns once more in the early soft-cap years, harder",
+     "Ride: nothing now; a 15% chance per 5 years the building sells and the gym must relocate \u2014 the one event that can take the door itself, held by the ledger like every other fuse"
+    ],
+    "frequency": "once, with one possible return; the point where the money the game made you finally buys something the reckoning can hold"
+   },
+   {
+    "id": "the-funeral-suit",
+    "title": "The Funeral Suit",
+    "trigger": "legacy-the-old-teachers fires its second death AND an old_lion coach is on staff (or a coach of tenure 10+ years)",
+    "story": "He asked for the day off in writing, which he has never once done, and the note said only: 'Friday. He trained the man who trained me.' The suit he keeps in the equipment room got brushed Thursday night.",
+    "choices": [
+     "Go with him",
+     "Give him the day and mind the gym"
+    ],
+    "effects": [
+     "Go: the gym runs itself for a day (a training day lost \u2014 a real, tiny cost); his trust-equivalent +10 permanent; on the drive back he tells you one true thing about one of your fighters \u2014 a trait reveal, routed through the existing budget, consumed not added",
+     "Stay: nothing lost, nothing gained; one gym-log line about the suit on its hanger by the door at 6 a.m.",
+     "Either way: the manager's own scares gain a small heed-bias afterward \u2014 a funeral is the most effective doctor's letter ever written"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "the-doctor-said-stop-manager",
+    "title": "The Doctor Said Stop",
+    "trigger": "manager.health < 20, OR a third unheeded scare",
+    "story": "The title of this event is the title of another one. You have sat on the other side of this sentence four times in this office, holding some fighter's file, watching some man decide whether to hear it. Now it's your file. The doctor waits the way you always waited.",
+    "choices": [
+     "Hand over \u2014 the protege takes the day-to-day, you keep the desk (desk mode: sign-off on signings, cuts, and title fights; the rest is his)",
+     "Step back all the way (fires the Legacy Reckoning)",
+     "One more year"
+    ],
+    "effects": [
+     "Hand over: handover quality (banked corners, protege years) sets how much reputation and roster trust survive the transition; the save continues at the desk \u2014 reduced verbs, same world, your name still on the lease",
+     "Step back: the reckoning runs in full; then emeritus (watch the world go) or close the book",
+     "One more year: genuinely available and genuinely fatal \u2014 health continues down; if it reaches 0, the-paper-spells-it-right fires and the save ends as an estate; the game will not blink first, per the owner's 'full' ruling"
+    ],
+    "frequency": "once; the aging system's terminal gate"
+   },
+   {
+    "id": "the-wall-of-clippings",
+    "title": "The Wall of Clippings",
+    "trigger": "The player opens the desk drawer and chooses to step back (available from age 50 with 20+ years tenure), or the-doctor-said-stop-manager routes here",
+    "story": "It takes a full evening to take the frames down, and you do it in order, oldest first, because that's how they went up. The first one still has the misspelled name. Somewhere around 1986 you stop reading them and start remembering them instead, which is faster and worse.",
+    "choices": [
+     "Read it all out (the full reckoning, document by document)",
+     "The short version \u2014 the ledger totals and the last line only"
+    ],
+    "effects": [
+     "The reckoning is a READ of the save, never new content: the framed clippings rehung one by one; the alumni book opened in full (every man, his record, his purses, how he left, whole or broken); the rivalry book's settled series and unanswered questions; the farewell column by the byline with the most gym stories; the Monthly's single paragraph; the ledger totals, dry",
+     "The men who came back: alumni with trustAtExit >= 70 or a watch/benefit flag are in the room that night; the men cut off the chopping block are not, and the copy counts the chairs without comment; legacy.debts (the accommodation, the say-nothing) are read out last, in full, in the paper's flattest voice",
+     "No grade, no score, no stars: the summation is one sentence from the oldest man in the gym, composed from ledger ratios \u2014 if debts is empty and menRetiredWhole > menRetiredBroken: 'He never sent us out short.' Other ledgers earn other sentences, and the game means every one of them; then emeritus or the end, as chosen"
+    ],
+    "frequency": "once; in a soft-cap world, this is the ending \u2014 YOUR ending"
+   },
+   {
+    "id": "the-paper-spells-it-right",
+    "title": "The Paper Spells It Right",
+    "trigger": "One-more-year was chosen at the ultimatum AND manager.health reaches 0 within the seeded fuse (12-20 months)",
+    "story": "The paper spelled the name right, both times it appeared \u2014 the headline and the last line. The writer who drew the assignment was the one with the most bylines on this gym, and he wrote it the way the good ones do: ignored the trophies and interviewed the broom.",
+    "choices": [],
+    "effects": [
+     "The save closes as an estate: the full reckoning documents assemble themselves without the player's hand \u2014 the wall, the alumni book, the rivalry book, the ledger \u2014 presented as what was found in the office",
+     "The obituary is written by the byline with the most player-gym clippings (byline memory, load-bearing); if a protege holds the keys, the last paragraph says the gym opened Monday at six, same as always \u2014 the one consolation the system can honestly offer",
+     "The oldest man's sentence still runs, unchanged in form: the ledger doesn't grade on a curve for dying at the desk. This ending ships, or the aging has no stakes."
+    ],
+    "frequency": "once, and only down the chosen path; the hard edge of the owner's 'full' ruling"
+   }
+  ],
+  "hills": [
+   "HEALTH IS NEVER A NUMBER \u2014 the manager's health surfaces only as felt reads in objects (the stairs, the handwriting, the bag by the door), exactly as moodLabel hides morale; the moment a health bar or percentage renders, the aging system becomes a resource to manage instead of a body to live in, and the whole design dies of system-speak.",
+   "THE RECKONING IS A READ, NOT A REWARD \u2014 every document in the legacy reckoning must be assembled from records the save was already keeping (alumni book, legacy ledger, framed clippings, rivalry book, byline memory); if the reckoning ever needs a fact the save didn't write down at the time, the fix is to start writing it down, never to invent it at the end. Corollary: the legacy ledger is write-only during play \u2014 no event may price a choice in legacy, ever.",
+   "RIVALRIES ARE ONE BOOK, NOT SCATTERED FLAGS \u2014 heat, meetings, clauses, and the coined name live in one persistent Rivalry object wired to pursefor (rivalryFactor) and the upheld press-context multiplier; crosstown-feud, the opponent-for-hire rematch counter, and every promoter clause write INTO this book rather than keeping private counters, or ten years of grudges evaporate into event-local state.",
+   "NO GRADE AT THE END \u2014 the 25-year summation is one dry sentence from the oldest man in the gym, composed from ledger ratios; no score, no letter grade, no achievement chime. The paper's manners hold at the door of the ending or they were never manners.",
+   "ONE MORE YEAR MUST BE FATAL \u2014 the ultimatum's third choice is genuinely available and the obituary ending genuinely ships; soften it to a warning that never collects and the owner's 'full aging' ruling becomes decoration, because stakes that can't be lost aren't stakes.",
+   "SUCCESSION IS GROWN, NOT BOUGHT \u2014 a protege takes years of tenure and banked corners to be worth anything at handover; there is no late-game purchase that substitutes for the decade you didn't spend cutting the second set of keys."
+  ]
+ },
+ {
+  "role": "Cultural Historian of American Sport \u2014 the dignity-first pass: women in the boxing world and the racial texture of the game, 1975\u20131995. People, not issues; the dry sentence over the speech; the paper's manners throughout.",
+  "scriptedEvents": [
+   {
+    "id": "social-press-box-credential",
+    "title": "A Chair of Her Own",
+    "window": "Hired 1976-77 (seeded); credential refused the same season; credential won 1977-79 (per-save: a court order or the commission quietly folding); a working byline for the rest of the save",
+    "analogOf": "The late-70s credential fights of women sportswriters \u2014 the Ludtke-era locker-room and press-row bans falling one lawsuit at a time \u2014 and the first women to hold a boxing beat",
+    "beats": [
+     "The city paper hires a young woman onto the sports desk; her early items run under her initials, which is the desk's idea, not hers",
+     "The commission's press steward refuses her a ringside credential \u2014 the typed reason is 'no accommodations,' and the paper prints the memo without comment, which is the paper at its best",
+     "She works the sport anyway, from the rooms that will have her: gyms, weigh-in hallways, the commission's own public filings \u2014 her copy is better sourced than the men's because it has to be",
+     "The paper appeals; the credential comes through; her first ringside byline runs under her full name and the story is about the fight, because she has been waiting years to write about the fight",
+     "Years on she is simply one of the beat's bylines \u2014 she adopts fighters, argues scorecards, holds grudges, and is eligible to be the young replacement voice when death-of-the-afternoon-paper fires"
+    ],
+    "worldEffects": [
+     "A persistent byline is ADDED to PressState.writers under the Bible's byline-memory model ({name, warmth, clipsByFighter, adoptedFighterId?}) \u2014 she runs on the same fields as every writer, no special case, forever",
+     "During the refusal phase her items cannot be datelined ringside: her clippings source from gyms and offices, and the player's gym is one of the rooms she can report from \u2014 arms triggered event social-reporter-at-the-gym-door",
+     "Credential day fires one clipping in the paper's flattest voice; her warmth carries a permanent +10% favorable framing toward any gym that held its door open during the refusal phase (the open-door flag)",
+     "She participates fully in existing machinery: the-adoption, locker-room-door, the-hit-piece, the farewell column \u2014 including the right to be wrong about your fighters"
+    ],
+    "playerFacing": "Her first call to the gym is staged like any writer's call \u2014 the game never marks her arrival as an occasion. What the player sees: the steward's memo quoted once in a rumor item, a season of her initials, and one morning a ringside byline with a full name on it. The paper never says the word milestone, and neither does the game."
+   },
+   {
+    "id": "social-first-sanctioned-womens-bout",
+    "title": "Six Rounds, Sanctioned",
+    "window": "First state license 1975-77 (a western commission, seeded); first sanctioned women's bout on a local undercard 1978-79; occasional agate through the 80s; a televised women's bout on a circus-era undercard 1993-96",
+    "analogOf": "The 1975 Nevada licensing of a woman professional, the 1977 New York licensing suit, and the first sanctioned women's undercard bouts of the late 70s; the shadow beat is the mid-90s televised undercards that made one woman a draw",
+    "beats": [
+     "A western commission licenses a woman professional; the wire item runs everywhere at two inches, and every gym in the country holds the same argument that week \u2014 yours included, by the spit bucket, at volume",
+     "Your state licenses women after a lawsuit it was going to lose; the first sanctioned women's bout in the state goes four rounds on a local undercard, honest work, and the crowd that came to laugh went quiet by the second",
+     "The sports editor makes the call the design endorses: the result runs in the agate with everyone else's, no feature, no fuss \u2014 a fight is a fight in the type that records fights",
+     "Mid-90s: a woman on a circus-era undercard has the best fight of the night and the paper that ran her license on page nine puts her above the fold; the purse figure prints, and it is small, and the paper says so"
+    ],
+    "worldEffects": [
+     "Women's results enter the local agate as occasional texture (1-2 lines/year, no player mechanics) \u2014 the world in print stops being entirely male, quietly, the way it actually did",
+     "Arms triggered events social-mornings-are-hers (the licensed boxer who rents your floor) and social-the-undercard-above-the-fold (the fifteen-year payoff)",
+     "The roster stays as scoped \u2014 no women's signings; the design surface is the gym as a building, a business, and a room with a door",
+     "The 90s beat reads the save's flags: if the player's gym rented her the mornings in 1978, the 1990s coverage names the gym in the fourth paragraph"
+    ],
+    "playerFacing": "The license item on the corkboard; the old heads' week of opinions in the gym log; the undercard result in agate. The log records who from your gym went to watch and what the oldest coach said when he came back \u2014 'Fastest hands on the card,' and then he rinsed the mouthpieces, which was the whole conversation."
+   }
+  ],
+  "triggeredEvents": [
+   {
+    "id": "social-reporter-at-the-gym-door",
+    "title": "The Notebook at Seven A.M.",
+    "trigger": "social-press-box-credential refusal phase active AND any roster fighter publicReputation >= 15",
+    "story": "The steward won't credential her, so she does the work where the work will have her. She's at the door at seven with a notebook and yesterday's agate already memorized, asking to watch camp. The men on the beat phone the promoter's office for their quotes. She came to the gym.",
+    "choices": [
+     "Give her the run of the place",
+     "Fights and official statements only",
+     "Turn her away"
+    ],
+    "effects": [
+     "Run of the place: her gym-sourced items run through the refusal phase \u2014 ordinary press machinery, +1-2 publicReputation per feature for covered fighters; byline warmth +20 permanent; open-door flag set: her first RINGSIDE feature after credential day is about a fighter of yours (publicReputation +8, a framed clipping)",
+     "Fights only: neutral \u2014 she covers the gym like any writer covers a gym that keeps writers at arm's length",
+     "Turn her away: no cost now; warmth -15 permanent; her credential-day column names the rooms that were open when the arena wasn't, and your gym is not in the sentence",
+     "No trait branches \u2014 this event is about you, not the fighters"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "social-his-mother-reads-the-fine-print",
+    "title": "The Second Physician",
+    "trigger": "Fighter age <= 23 AND open FightOffer with purse >= $400 x inflationFactor(year) AND (family_man OR homeCityId === gym city)",
+    "story": "You gave him the offer sheet to take home and it came back with his mother attached. She sat down in the office, put on the glasses she keeps on a chain, and found in four minutes what you'd missed in two readings: the training expenses billed against the purse twice, once as 'camp' and once as 'preparation.' 'Who is paying for the second physician,' she asked, 'and why is it my son, twice?'",
+    "choices": [
+     "Reopen the deal with her arithmetic in your pocket",
+     "Smooth it over \u2014 the language is standard",
+     "Ask her to look over every sheet from now on"
+    ],
+    "effects": [
+     "Reopen: purse +8-12% \u2014 the matchmaker strikes the line without argument, which tells you what it was; fighter trust +8 (his mother's word travels ahead of yours); this promoter's padded-expense events fire at 0.5x weight for the gym thereafter",
+     "Smooth it over: nothing now; 60% she does the arithmetic aloud at Sunday dinner \u2014 fighter trust -6, morale -4, and she is right",
+     "Standing arrangement: his future bookings carry a 3-day family-review delay; his purses average +5% for his career; glory_hunter: morale -4 (his mother at the table); family_man: morale +6; she becomes a registered civilian NPC the save remembers"
+    ],
+    "frequency": "uncommon, once per fighter"
+   },
+   {
+    "id": "social-the-widow-upstairs",
+    "title": "The Good Coat",
+    "trigger": "Monthly books settle with gym cash < 1 month's overhead AND year >= 1976",
+    "story": "The building has been hers since her husband died \u2014 he bought it off a glove manufacturer in '51 and she has run it better than he did, a fact the whole block knows and nobody says. On the first of the month she came down the back stairs herself, in the good coat, and asked about the rent. Not the money first. Whether the gym was in trouble.",
+    "choices": [
+     "Level with her \u2014 open the ledger on the desk",
+     "Tell her the check is coming (it isn't)",
+     "Pay half now and promise the rest inside the month"
+    ],
+    "effects": [
+     "Level: she carries the month without using the word charity; she enters the civilian registry and the rent stays flat for 3 years while she owns the building; once a year she watches a card from the back row and the gym log notes the coat",
+     "The check is coming: 50% she knows you're lying and says nothing; within a year the building has a management company \u2014 rent +10% and every notice thereafter arrives typed with a reference number",
+     "Half now: the honest middle; terms unchanged, disposition unchanged",
+     "Long fuse: her death is seeded 8-15 years out. A leveled-with gym gets first refusal from the will \u2014 the building at a fair price, the one chance to own your own floor. A gym that dodged gets the estate's realtor and the open market"
+    ],
+    "frequency": "once per save; the follow-ups are the arc"
+   },
+   {
+    "id": "social-the-woman-at-the-federation-desk",
+    "title": "Postmark by Friday",
+    "trigger": "sanctioning-invoice has fired AND a mandatory-defense letter or ratings filing is pending on any player fighter",
+    "story": "You called the federation about the filing and got, as always, the same voice \u2014 the woman who has run that office since it was two rooms and a mimeograph. The chairman signs what she puts in front of him, in the order she puts it there. Everyone who understands the sport understands this. The chairman does not.",
+    "choices": [
+     "Deal with her as the office she is \u2014 exact paperwork, courtesy, her name spelled right",
+     "Go over her head to the chairman, whom you met at the convention"
+    ],
+    "effects": [
+     "Courtesy: filings clear on time; ranking updates land the issue they should; and once, years on, a purse-bid deadline you'd have missed arrives early in a plain envelope with one line \u2014 'Postmark by Friday. \u2014 R.' A saved title shot the ledger records in full",
+     "Over her head: the chairman is warm and useless; your paperwork finds the bottom of a pile that has no top; ranking updates run 1-2 magazine issues late for 24 months; the fee invoices, of course, are never late",
+     "Either way she joins the civilian registry \u2014 every later sanctioning event routes through her disposition"
+    ],
+    "frequency": "once per save (the relationship is permanent)"
+   },
+   {
+    "id": "social-the-daughter-keeps-the-gym",
+    "title": "Open Monday at Six",
+    "trigger": "A rival gym folds or its manager dies in worldSim churn AND that gym's founding_year is 10+ years back",
+    "story": "Everyone in the trade waited for the estate sale. Instead the sign got repainted \u2014 same name \u2014 and his daughter, who has kept the book for him since she was fourteen and knows every four-rounder's purse in the city to the dollar, opened Monday at six like always. The paper gave it a paragraph. The paragraph did not use the word surprising, but you could hear the writer deciding not to.",
+    "choices": [
+     "Send condolences and propose shared sparring between the houses",
+     "Wait, and poach her best man while the estate settles",
+     "Nothing \u2014 competitors are competitors"
+    ],
+    "effects": [
+     "Sparring: the fold is reversed in worldSim \u2014 her gym survives; a standing arrangement gives one player fighter per quarter quality outside sparring (small development bump, gym-log lines); years on, when a promoter squeezes both gyms on one card, she calls you first \u2014 that card's purses +15% because two houses held the line",
+     "Poach: 55% you land the fighter through normal poach machinery; her gym folds for good; the paper runs one dry paragraph about the estate sale and the trade remembers which week you called \u2014 gym reputation -0.02, and her former fighters' camps never work with yours again",
+     "Nothing: worldSim decides on its own (40% she makes it anyway, and remembers nobody called)"
+    ],
+    "frequency": "rare, once per save"
+   },
+   {
+    "id": "social-mornings-are-hers",
+    "title": "Three Mornings a Week",
+    "trigger": "social-first-sanctioned-womens-bout license beat has fired AND year >= 1978 AND gym cash flow negative or neutral last month",
+    "story": "She put the license on your desk before you could ask \u2014 same card your men carry, same commission seal, her photograph unsmiling in the corner. She wants the ring three mornings a week before your men come in, and she can pay, which is more than half your roster can say. The old heads have opinions. The rent also has an opinion.",
+    "choices": [
+     "Rent her the mornings",
+     "The floor is spoken for"
+    ],
+    "effects": [
+     "Rent: +$25/month (inflated) recurring income line; two weeks of gym-log grumbling, then it stops \u2014 the oldest coach watched her double-end work a full minute and said only 'Who taught her that?' and the answer was nobody, which is the most he ever gave anyone; her bouts run in the agate thereafter",
+     "Decline: nothing now; a gym across town takes the rent, and when her name makes the paper the dateline is theirs",
+     "Long fuse: renting sets the flag social-the-undercard-above-the-fold reads fifteen years later; she joins the civilian registry either way"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "social-the-bookkeepers-call",
+    "title": "Before Thursday",
+    "trigger": "Booked fight promoted by the crooked-promoter NPC (era.npcs) OR any booked purse >= $600 x inflationFactor(year) with a promoter carrying a prior bounced-check flag",
+    "story": "A woman who says she has kept the promoter's books for nineteen years calls the gym at closing time, voice level as a ruled line. 'Deposit the check the morning you get it. Before Thursday. I was never on this phone.' Then the dial tone, which in this business counts as a signature.",
+    "choices": [
+     "Bank it first thing",
+     "The check can wait like it always does"
+    ],
+    "effects": [
+     "Bank it: the purse clears; Thursday the promoter's account is a newspaper story; the fighter never learns how close it came, but the ledger does",
+     "Wait: the existing bounced-check machinery fires \u2014 the purse is paper pending recovery",
+     "Either way, months later a typed request arrives: she is applying at a bank \u2014 nineteen years and no letterhead of her own \u2014 and needs a reference. Writing it costs nothing; years later, gym loan or upgrade paperwork at that bank finds your file already marked 'known to us,' one financing at easier terms"
+    ],
+    "frequency": "rare, once per save in full form"
+   },
+   {
+    "id": "social-every-clipping-even-that-one",
+    "title": "The Scrapbook",
+    "trigger": "Fighter with clipsByFighter >= 6 in byline memory, at least one a hostile piece (the-hit-piece or a KO-loss report), AND homeCityId === gym city",
+    "story": "His mother visited the gym on a Tuesday, was shown everything, touched nothing, and at the door opened her handbag to show you the scrapbook: every clipping he ever got, in order, under waxed paper. Including the one that ran under the word EXPOSED. 'He earned that one too,' she said, and closed the bag.",
+    "choices": [
+     "None \u2014 witnessed, not played"
+    ],
+    "effects": [
+     "Fighter morale +8, trust +4 when the gym log reaches him",
+     "insecure: any lingering morale penalty from the hostile piece clears \u2014 it turns out somebody kept it for a different reason than the writer wrote it",
+     "One gym-log line; no reputation change \u2014 nobody important was watching, which was the point"
+    ],
+    "frequency": "rare, once per fighter, joyful"
+   },
+   {
+    "id": "social-the-undercard-above-the-fold",
+    "title": "Fourth Paragraph",
+    "trigger": "year >= 1993 AND social-mornings-are-hers was accepted AND nineties-heavyweight-circus era active",
+    "story": "The circus undercard needed a curiosity and got the best fight of the night. The paper that ran her license on page nine in 1978 put her above the fold \u2014 and in the fourth paragraph, the gym that rented her a ring three mornings a week when nobody else in the city would return her calls.",
+    "choices": [
+     "None \u2014 witnessed, not played"
+    ],
+    "effects": [
+     "Gym reputation +0.05; walk-in rate +20% for 8 weeks",
+     "A framed clipping in the office, permanent set dressing",
+     "Ledger milestone cross-referencing the 1978 entry \u2014 fifteen years between cause and effect, the save remembering",
+     "Any old head still on staff who grumbled in '78 gets one gym-log line, and none of them admits anything"
+    ],
+    "frequency": "once per save"
+   },
+   {
+    "id": "social-a-problem-with-the-reservation",
+    "title": "A Problem With the Reservation",
+    "trigger": "Booked away bout (offer venue not in press.venues) AND fighter heritage african_american or latino AND year <= 1988 (weight halves after 1982, never reaches zero)",
+    "story": "The hotel had the reservation, and then, with the bags on the sidewalk, developed a problem with it. The clerk was very sorry. The manager was very sorry. Nobody looked at anybody. Your fighter stood reading the fight bill on the lobby wall like it was the only thing in the room, because he has seen this desk before and knows exactly how long this takes.",
+    "choices": [
+     "Take the rooms across town, no discussion",
+     "Stand at the desk until it's sorted",
+     "Put it on the promoter \u2014 his town, his fight, his phone call"
+    ],
+    "effects": [
+     "Across town: -$20 travel line (inflated); the far room and the long drive cost -0.02 condition for the bout; trust +3 \u2014 you didn't make him stand there; chip_on_shoulder: he tapes the hotel's matchbook inside his bag, and that is the whole entry",
+     "The desk: 70% a room appears in forty minutes, funny how; fighter morale -6 (he stood in a lobby being a problem), trust +6 (you didn't blink); insecure: morale -10 instead",
+     "The promoter: 80% fixed inside the hour and the dressing room Saturday is better than the contract says; 20% the promoter says the sentence you'll remember longer than the fight, and you're back at the desk anyway",
+     "No reputation mechanics, no press item \u2014 the paper didn't cover these nights and the game won't pretend it did; one flat line in the ledger"
+    ],
+    "frequency": "uncommon, repeatable with long cooldown"
+   },
+   {
+    "id": "social-a-credit-to-the-sport",
+    "title": "A Nice Piece",
+    "trigger": "A feature clipping (hometown-hero-front-page, kitchen-table-profile, or week-in-the-gym) runs on a fighter with heritage african_american and publicReputation >= 25, under a byline with warmth >= 0",
+    "story": "The piece was kind. That was the trouble with it. It counted the ways he was 'articulate' and 'well-spoken' and 'a credit,' with the surprise sitting under every word like a coin under a tablecloth. He read it twice on the ring apron, folded it once, and said it was a nice piece, in the voice you'd use for weather.",
+    "choices": [
+     "Mention it to the writer, once, without heat",
+     "Let it go",
+     "Ask him what he thought of it"
+    ],
+    "effects": [
+     "Mention it: the writer is puzzled, means well, and thinks about it on the drive home; the word stops appearing under that byline; warmth unchanged \u2014 he took it as craft advice, which it also was; nothing else changes, because that is the size of what one conversation does",
+     "Let it go: nothing; the word comes back in about a year under somebody's byline, because it always did",
+     "Ask him: trust +5; the answer runs by trait \u2014 chip_on_shoulder: 'It's fuel'; family_man: 'My mother liked it,' end of subject; insecure: morale -4, he hadn't noticed until you asked, and the game does not warn you of this",
+     "The feature's ordinary rep gain already landed; this event touches no numbers the clipping didn't \u2014 it is about the men, not the arithmetic"
+    ],
+    "frequency": "uncommon, once per fighter"
+   },
+   {
+    "id": "social-carrying-the-block",
+    "title": "Eleven Tickets",
+    "trigger": "Fighter homeCityId === gym city AND publicReputation crosses 30 AND a booked bout at a local venue (extends hometown-hero-front-page: that event is the Sunday feature, this is the fight)",
+    "story": "The barber put the fight bill in the window, between the two photographs that are always in the window. Men who never knew his name before the paper did now call him 'our boy' on the corner and mean it, which is a gift and a weight in the same envelope. He bought eleven tickets with his own money for people who cannot know he paid. He asked you not to mention it.",
+    "choices": [
+     "Get the block its section \u2014 comps and a word with the box office",
+     "Close camp and keep the week ordinary",
+     "Let him carry it however he carries it"
+    ],
+    "effects": [
+     "The section: gate/purse +10% (the block buys the rows around the comps); a WIN in front of the block: morale +14 and a permanent +2 morale baseline \u2014 some walks home a man keeps; a LOSS: morale -16, double the ordinary, and the gym log says only that he took the long way; insecure: the section is a mistake the game does not flag",
+     "Close camp: purse unchanged; morale -4 \u2014 he hears the door close on his people even though you closed it for him",
+     "Let him: trait decides \u2014 chip_on_shoulder or lionheart carry it fine (+small condition); insecure: -0.03 condition, the noise gets in; family_man: his mother runs the tickets better than the box office does, and that line goes on the cork"
+    ],
+    "frequency": "uncommon, once per fighter \u2014 the block only claims a man once"
+   },
+   {
+    "id": "social-money-orders-home",
+    "title": "Half of Every Purse",
+    "trigger": "Fighter homeCityId !== gym city AND careerEarnings >= $800 x inflationFactor(year) AND baseDues === 0",
+    "story": "You found out why he's broke. Money-order receipts in the bottom of his bag going back two years \u2014 half of every purse, the same name, the same town, the week after every fight including the ones he lost. He has never mentioned it. Men who talk about it are not usually the ones doing it.",
+    "choices": [
+     "Keep carrying his dues and never say a word",
+     "Tell him the gym is proud of him"
+    ],
+    "effects": [
+     "The reveal recolors the save: his broke flag stops reading as trouble \u2014 the-camel-coat fires at 0.5x weight for him from now on (the sharks read him wrong too)",
+     "Say nothing: trust +6, landing two weeks later without explanation \u2014 he noticed the dues never came up again and understood what that meant",
+     "Tell him: morale +4, but he'd rather you hadn't; family_man exception: morale +8, he shows you the school photograph the money buys",
+     "If he ever wins a purse >= $2,000 (inflated): one gym-log line \u2014 the receipt that week was for the whole thing, and he kept back bus fare"
+    ],
+    "frequency": "uncommon, once per fighter"
+   },
+   {
+    "id": "social-the-angle-they-didnt-buy",
+    "title": "Gas Is Gas",
+    "trigger": "sold-on-the-wrong-angle has fired on a booked bout AND opponent WorldFighter.cityId === fighter.homeCityId (they came up through the same circuit) \u2014 extends the parent event, never replaces it",
+    "story": "The two of them came up through the same church-basement smokers; they have held pads for each other. The promoter's posters have them ready to burn each other's neighborhoods down, and the papers are running with it. Thursday your kid asked if they could share the ride to the commission physical \u2014 same office, same morning, and gas is gas.",
+    "choices": [
+     "Let them share the ride",
+     "Keep them apart until the bell \u2014 the promoter is paying for a war"
+    ],
+    "effects": [
+     "Share: a photographer catches them outside the physical laughing at something neither will ever repeat; it runs; the angle deflates \u2014 gate -10% off the angle's +30%, but both kids fight loose: +0.03 condition for your man, and win or lose the post-fight photograph is the two of them with a towel apiece \u2014 publicReputation +3 each, the rare clipping both mothers keep; the promoter is furious in a way that costs nothing, since the fight sold anyway and he will never admit relief",
+     "Keep apart: the parent event's machinery runs untouched \u2014 the angle, the money, and whatever it does to the men, per the original design"
+    ],
+    "frequency": "rare (requires the parent event), repeatable with different pairs"
+   },
+   {
+    "id": "social-weight-classes-only",
+    "title": "They Go by Weight in Here",
+    "trigger": "Roster spans 3+ name-pool heritages AND roster size >= 8 AND any roster fighter returned from an away bout in the last 45 days",
+    "story": "Whatever the front page was selling this week, Tuesday in the gym was Tuesday. The sparring wheel took men in the order the sparring wheel takes them. A visiting writer, fishing, asked the old coach what he made of everything going on out there, and the old coach nodded at the ring and said they go by weight in here, and went back to taping hands.",
+    "choices": [
+     "None \u2014 witnessed, not played"
+    ],
+    "effects": [
+     "Gym-wide morale +2; one ledger line",
+     "If a byline with warmth > 0 is covering the gym that month, a short color item runs \u2014 gym reputation +0.02",
+     "No other mechanics, and the event never names what was on the front page. The restraint is the design: the gym doesn't make speeches, it makes Tuesdays"
+    ],
+    "frequency": "rare, at most twice per save"
+   },
+   {
+    "id": "social-the-house-fighter-question",
+    "title": "It's a Gate Thing",
+    "trigger": "Fighter heritage african_american or latino AND publicReputation >= 40 AND record.wins >= 12 AND his bouts ledger shows no 10-round main event at a local venue while a lower-reputation local WorldFighter has held one there",
+    "story": "The matchmaker likes him fine. Everyone likes him fine. But the ten-round slot at the hall keeps going to the kid who 'sells to the regulars,' and when you finally ask the question straight, the matchmaker explains it without ever finishing a sentence: 'You know how the crowd is, is all. It's a gate thing. It's not a \u2014 you know it's not a \u2014 it's a gate thing.'",
+    "choices": [
+     "Take the co-feature and steal the show",
+     "Press for the main event at a shorter purse and let the gate testify",
+     "Take it to the paper"
+    ],
+    "effects": [
+     "Steal the show: if the co-feature outshines the main event (KO or high-action win), the next local offer is the ten-round slot at full terms and the crowd is never mentioned again \u2014 the honest path and the slowest",
+     "Press: main event at purse x0.85; a WIN with a good house ends the question permanently \u2014 main-event terms restored, local purse floor +10%; a thin house proves nothing to a man who decided years ago, and it's co-features for 12 months",
+     "The paper: requires a byline with warmth > 0; one uncomfortable column runs; the hall gives him the slot next card at full purse and books your gym coldly ever after \u2014 that venue's offer frequency -20% permanently; chip_on_shoulder: morale +8 regardless, because somebody finally said it in print",
+     "The matchmaker is never written as a villain \u2014 he is written as a man doing arithmetic on numbers somebody else wrote down, which is worse, and truer"
+    ],
+    "frequency": "uncommon, once per fighter"
+   },
+   {
+    "id": "social-what-the-crowd-yelled",
+    "title": "The Sixth Round",
+    "trigger": "Away bout (venue not in press.venues) against an opponent whose cityId matches the venue's city AND fighter heritage african_american or latino AND year <= 1988",
+    "story": "The local paper's write-up the next day was polite. The room was not. What came over the ropes in the sixth you could not have printed then and the game will not print now; the referee heard it too and found nothing about it in his rulebook. Your man fought the last four rounds like the town owed him money.",
+    "choices": [
+     "Afterward: give what was yelled to a friendly byline back home",
+     "Leave it in the room"
+    ],
+    "effects": [
+     "A WIN in that room: publicReputation +4 extra and a permanent travels-well flag \u2014 matchmakers know what winning there costs, and his away offers carry +10% purse from now on",
+     "A LOSS there: no extra reputation loss (even the Monthly scores that room with an asterisk); morale -6",
+     "Traits: lionheart or chip_on_shoulder bank it \u2014 +0.03 condition next bout; insecure: double the morale swing either way",
+     "Print it: the column runs, one venue's matchmaker is embarrassed, and that venue offers nothing to any of your fighters for 12 months; ask the fighter first and he says print it or don't, it's Tuesday to him \u2014 trust +4 for asking, either answer"
+    ],
+    "frequency": "uncommon, repeatable across different venues"
+   },
+   {
+    "id": "social-a-night-for-the-rec-center",
+    "title": "Where He First Put on Gloves",
+    "trigger": "Fighter homeCityId === gym city AND publicReputation >= 35 AND the seeded neighborhood-loss roll fires (the rec center where he started loses its roof \u2014 fire or city budget, per save)",
+    "story": "The deacon came with two of the rec center's coaches, hats in hands the way men hold hats when the ask is bigger than the words. The place where your fighter first put on gloves is closed \u2014 the roof, the budget, the usual. They want one exhibition night with his name on it. There is no purse in it for anyone.",
+    "choices": [
+     "Do the night",
+     "Send money quietly instead ($100, inflated)",
+     "Decline"
+    ],
+    "effects": [
+     "Do the night: no purse; fighter morale +10; the block's kids at the door for 8 weeks \u2014 walk-in wave skewed young, raw, and broke; gym reputation +0.03; the paper gives it two paragraphs, which is enough",
+     "Send money: the center reopens eventually; nothing prints; trust +4 when he finds out anyway, because that block keeps no secrets from its own",
+     "Decline: nothing now; if he learns of the ask (60%), family_man or chip_on_shoulder: morale -6 \u2014 he'd have wanted the night"
+    ],
+    "frequency": "rare, once per fighter"
+   },
+   {
+    "id": "social-the-old-heads-circuit",
+    "title": "Three Towns, Three Names",
+    "trigger": "Coach with personality old_lion AND age >= 58 on staff AND any roster fighter age <= 21 AND a rained-out roadwork morning (weather roll)",
+    "story": "Roadwork rained out, the young ones on the apron with nowhere to be, and the old coach got talking about the circuit that never made the record books \u2014 how he fought the same man in three towns in one month under three different names, because those were the bookings there were for men like them; about the champion of his day who couldn't buy a title shot for nine years and tended bar famous and broke. Nobody moved for an hour. The rain kept on.",
+    "choices": [
+     "Let the morning go long",
+     "Get them back to work"
+    ],
+    "effects": [
+     "Let it go: roster fighters age <= 21 gain ringIq +1 \u2014 it was an education; morale +4 among them; one line of it survives to the gym log; if a byline with warmth > 0 hears about the morning, the paper's best piece of the year runs \u2014 gym reputation +0.03, and for a month the old man gets letters from men he fought under other names",
+     "Back to work: nothing lost; he has told these stories for forty years and will tell them again; the young ones heard the first ten minutes anyway, which were the ten minutes that mattered",
+     "No world mechanics \u2014 the history arrives as one man remembering, which is how it actually survived"
+    ],
+    "frequency": "rare, once per save"
+   }
+  ],
+  "systems": [
+   {
+    "name": "Quiet Demographics (heritage as event-selector, never a stat)",
+    "dataModel": "Fighter.heritage: the existing name-subpool key ('african_american' | 'latino' | 'italian' | 'jewish' | 'irish' | ...) persisted at generation time (fighters.ts already selects it to drive appearance; it is currently discarded). Migration backfills existing fighters by re-inferring from surname subpool. Never rendered in any UI, tooltip, or clipping variable.",
+    "mechanics": "Read by exactly one consumer: event trigger evaluation in this pass, to decide which humane events CAN fire for which men. Hard-guarded by code review rule: heritage is never an input to attributes, ratings, purse math, offer generation, walk-in quality, AI matchmaking, or morale/trust formulas. The era's discrimination reaches the player only as authored moments with specific people in them \u2014 a desk clerk, a word in a column, a matchmaker's unfinished sentence \u2014 never as a systemic tax the player learns to optimize around."
+   },
+   {
+    "name": "People Who Aren't in the Business (civilian NPC registry)",
+    "dataModel": "Extend era.npcs (already specified in Integration Notes for business characters) with era.npcs.civilians: Array<{ id: string; role: 'woman_beat_writer' | 'landlady' | 'federation_desk' | 'bookkeeper' | 'rival_daughter' | 'licensed_boxer_w' | 'fighter_mother:<fighterId>'; name: string; disposition: number (-100..100); flags: Record<string, number | boolean>; firstSeenDay: number; exitDay?: number (seeded death/departure where the arc needs one) }>",
+    "mechanics": "Created lazily by the first event that needs them, then referenced by id forever \u2014 the mother who reviewed one contract reviews the next one too. Disposition moves only through player choices, never ambiently. They surface exclusively through the period channels: letters, phone slips, notes on cork, one line in somebody else's clipping \u2014 no character screen, no portrait, no stat block. Long-fuse payoffs (the widow's will, the bank reference, the 1993 fourth paragraph) read flags set 5-15 game-years earlier; the registry is what lets the save remember people instead of issues."
+   }
+  ],
+  "hills": [
+   "HERITAGE IS A SELECTOR, NOT A STAT \u2014 the heritage field may never touch a number: no attribute, purse, offer-frequency, or AI input, ever, in this pass or any future one. The era's racism arrives only as specific people on specific nights, each an event with a person in it and a choice in front of the player. The moment a 'realism' pass proposes a systemic penalty, this seat's answer is no: the game models what it was like to stand at the desk, not the actuarial tables of it.",
+   "THE REPORTER IS A WRITER, NOT A MONUMENT \u2014 she enters the existing byline-memory system whole: warmth, adoption, feuds, the hit piece, the buyout. One scripted fight for the credential, and after credential day the game never marks her gender again. If she can't be wrong about your fighter, hold a grudge, or write the coldest column of the decade, she isn't a character \u2014 and I would rather cut her than ship her as a statue.",
+   "SAY NOTHING STAYS FREE \u2014 in every event of this pass, 'let it go' / 'leave it in the room' / 'say nothing' is selectable and never scored as moral failure: no hidden reputation tax, no punitive fuse, at most the world quietly continuing as it was (the word comes back in a year; the dateline is another gym's). The events trust the player to feel the size of small things; the first hidden penalty on silence turns the whole pass into a lecture, and then the Creative Lead should veto all of it.",
+   "THE FIFTEEN-YEAR FUSE SHIPS WHOLE \u2014 social-the-undercard-above-the-fold and the widow's will are the pass's proof of concept: payoffs that read flags set ten to fifteen game-years earlier and arrive as one clipping and one envelope. If scope pressure comes, cut two events before shortening either fuse \u2014 the dignity pass earns its place by demonstrating that the save remembers people the way the ledger remembers money."
+  ]
+ }
+]

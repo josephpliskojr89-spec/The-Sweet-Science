@@ -1,0 +1,789 @@
+{
+ "vision": "The Bible gave the sport a memory; this addendum gives the gym one. The corner ages and dies on the same clock as the men it wraps; abroad stays a dateline that occasionally mails you a challenger; the divisions arrive crooked and become real under your tweener's feet; grudges live in one book that pays like a gate and reads like a will; the era's women and its color lines arrive as specific people at the door, in the paper's manners; and when the world goes quiet after the century issue, the remaining drama is the one the save has been writing all along \u2014 the manager's stairs, the second set of keys, the wall of clippings coming down one frame at a time. Ninety-eight submissions: one merge, five reshapes, no vetoes. The seats wrote to the house style, and the house is now complete enough to end.",
+ "hillRulings": [
+  {
+   "seat": "Retired cornerman",
+   "hill": "corner-mortality-no-grace",
+   "ruling": "UPHELD",
+   "reason": "Death lands on the world's clock, fight week included; the funeral and the widow are the payoff and the ledger keeps both lines forever."
+  },
+  {
+   "seat": "Retired cornerman",
+   "hill": "corner-hands-vs-craft",
+   "ruling": "UPHELD",
+   "reason": "Skill compounds while hands and body quit \u2014 both hidden, surfacing only as felt reads (the third try at the tape), or the seat is sentimental furniture as charged."
+  },
+  {
+   "seat": "Retired cornerman",
+   "hill": "corner-say-nothing-stays",
+   "ruling": "UPHELD",
+   "reason": "The upheld dementia ruling crosses the ring apron intact: consequences, never a meter, and the drink chain's silence is selectable to the end."
+  },
+  {
+   "seat": "Retired cornerman",
+   "hill": "corner-the-lineage-reads-forward",
+   "ruling": "UPHELD-WITH-CONDITIONS",
+   "reason": "The hook ships and the reckoning must read it; conditions: lineage lives inside the single LegacyLedger (legacy.corner.lineage), and Coach.protege stays the coach's apprentice while the manager-succession flag renames to Coach.successor \u2014 two relationships, two fields."
+  },
+  {
+   "seat": "Retired cornerman",
+   "hill": "corner-loyalty-not-dice",
+   "ruling": "UPHELD",
+   "reason": "Thresholds, not rolls; a loyalist at 80 is a wall, the mercenary's note is typed, and personality is destiny on both sides of the apron."
+  },
+  {
+   "seat": "Boxing Historian (second session)",
+   "hill": "ABROAD STAYS A DATELINE",
+   "ruling": "UPHELD",
+   "reason": "Five doors, no foreign gyms or venues ever, matchmake() stays closed; every future request to flesh out London is answered with a clipping, by name, per this ruling."
+  },
+  {
+   "seat": "Boxing Historian (second session)",
+   "hill": "EVERY BELT IS BORN CROOKED",
+   "ruling": "UPHELD",
+   "reason": "The shallow book is the player's opportunity and the crony champion is beatable by design; implementation that balances the arrivals neutral deletes the history and the opportunity with it."
+  },
+  {
+   "seat": "Boxing Historian (second session)",
+   "hill": "NEW DIVISIONS ARE REAL FURNITURE, NOT LABELS",
+   "ruling": "UPHELD",
+   "reason": "deriveWeightClass changes mid-save, generation renormalizes, titleClaims and fees extend, and the 148-pound man's morning is the acceptance test; 154's arrival is seeded to resolve before the four kings' first collision."
+  },
+  {
+   "seat": "Boxing Historian (second session)",
+   "hill": "THE SOFT CAP IS NEVER ANNOUNCED",
+   "ruling": "UPHELD",
+   "reason": "The century issue observes closed doors and closes none; post-2000 the world only recombines existing structures, and the silence is the handover of the drama budget to the manager."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "HEALTH IS NEVER A NUMBER",
+   "ruling": "UPHELD",
+   "reason": "Felt reads in objects only, same law as moodLabel \u2014 and this ruling extends it to coach condition and hands; the first rendered bar kills the design."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "THE RECKONING IS A READ, NOT A REWARD",
+   "ruling": "UPHELD",
+   "reason": "Every reckoning document assembles from records kept at the time; if a fact is missing the fix is to start recording it, and the legacy ledger stays write-only in play."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "RIVALRIES ARE ONE BOOK, NOT SCATTERED FLAGS",
+   "ruling": "UPHELD",
+   "reason": "Heat, meetings, clauses, and the coined name in one persistent object wired to pursefor and the upheld press multiplier; crosstown-feud and the opponent-for-hire counter write INTO it or ten years of grudges evaporate."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "NO GRADE AT THE END",
+   "ruling": "UPHELD",
+   "reason": "One dry sentence from the oldest man, composed from ledger ratios; the paper's manners hold at the door of the ending or they were never manners."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "ONE MORE YEAR MUST BE FATAL",
+   "ruling": "UPHELD",
+   "reason": "the-paper-spells-it-right ships unsoftened; stakes that can't be lost aren't stakes, per the owner's full-aging decision."
+  },
+  {
+   "seat": "Veteran simulation-game systems designer",
+   "hill": "SUCCESSION IS GROWN, NOT BOUGHT",
+   "ruling": "UPHELD",
+   "reason": "Years of tenure and banked solo corners set handover quality, deferral compounds backward, and no late purchase substitutes for the decade you didn't spend cutting keys."
+  },
+  {
+   "seat": "Cultural Historian of American Sport",
+   "hill": "HERITAGE IS A SELECTOR, NOT A STAT",
+   "ruling": "UPHELD",
+   "reason": "Verified against fighters.ts (the subpool exists and is discarded today); heritage gates which authored moments can fire and may never touch a number \u2014 event-earned flags like travels-well price a ledgered night the player watched, never an identity, and the ambient-tax ban is permanent."
+  },
+  {
+   "seat": "Cultural Historian of American Sport",
+   "hill": "THE REPORTER IS A WRITER, NOT A MONUMENT",
+   "ruling": "UPHELD",
+   "reason": "She enters byline memory whole \u2014 warmth, adoption, feuds, the hit piece, the right to be wrong \u2014 and after credential day the game never marks her gender again."
+  },
+  {
+   "seat": "Cultural Historian of American Sport",
+   "hill": "SAY NOTHING STAYS FREE",
+   "ruling": "UPHELD",
+   "reason": "Silence is never scored; at most the world continues as it was, and the first hidden penalty would turn the whole pass into the lecture it refuses to be."
+  },
+  {
+   "seat": "Cultural Historian of American Sport",
+   "hill": "THE FIFTEEN-YEAR FUSE SHIPS WHOLE",
+   "ruling": "UPHELD",
+   "reason": "Cut events before fuses; the undercard's fourth paragraph and the widow's will are the proof that the save remembers people the way the ledger remembers money."
+  }
+ ],
+ "verdicts": [
+  {
+   "id": "corner-last-of-the-handwrap-men",
+   "verdict": "KEEP",
+   "reason": "The species running out is the coach seat's era spine; completes the trainer-mortality schedule set by legacy-the-old-teachers (old-lion rate steps 10%\u21925%\u21922%)."
+  },
+  {
+   "id": "corner-the-clean-bucket",
+   "verdict": "KEEP",
+   "reason": "The commission circular indicts itself in period voice and arms corner-the-kit with one era flag."
+  },
+  {
+   "id": "corner-the-clipboard-men",
+   "verdict": "KEEP",
+   "reason": "The stopwatch-and-degree revolution priced in salaries and feuds, not lectures; feeds two-chairs honestly."
+  },
+  {
+   "id": "corner-the-hands",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The hands-vs-craft hill made a scene; say-nothing carries a real 8% roll instead of a sermon."
+  },
+  {
+   "id": "corner-fight-week-raid",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Loyalty priced against a title camp's phone call, with the no-coach corner rate as the honest cost."
+  },
+  {
+   "id": "corner-free-lessons",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The light on at nine; the official branch uses the same pair-bonus mechanism diploma-day pre-warms, not a chemistry override."
+  },
+  {
+   "id": "corner-cant-watch",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "An ex-fighter's limit expressed in slots and fight nights, grounded in the proBouts his background carries."
+  },
+  {
+   "id": "corner-the-smell",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Stage one of the drink chain keeps say-nothing selectable and unpunished, per the fog ruling."
+  },
+  {
+   "id": "corner-the-morning-after",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The place upstate is the era's real mercy, priced in a month's salary and a 30% relapse."
+  },
+  {
+   "id": "corner-the-spit-bucket-night",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The chain's collection notice; 'The bucket was clean' is the driest line in the addendum and earns its place."
+  },
+  {
+   "id": "corner-two-chairs",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "One feud maximum, paid in slots and chemistry \u2014 gym politics in numbers the game already keeps."
+  },
+  {
+   "id": "corner-the-funeral",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The mortality hill's payoff; paying a dead man's bill nobody would have known about is this game's kind of choice."
+  },
+  {
+   "id": "corner-the-widow",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Grief without optimization, correctly unpunishing on every branch."
+  },
+  {
+   "id": "corner-the-protege",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Absorbs the old-head promise into one succession track instead of duplicating it."
+  },
+  {
+   "id": "corner-diploma-day",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The mentor's doubled retirement roll is the true cost of the best coach you will ever mint."
+  },
+  {
+   "id": "corner-old-lion-forgets",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The fog crosses the apron under the same rules the fighters got \u2014 one extra ledger clause is the entire punishment."
+  },
+  {
+   "id": "corner-goes-home",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The notebooks-as-estate flag is the right inheritance: +2% effectiveness and no gold."
+  },
+  {
+   "id": "corner-the-offer-he-told-you-about",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Being seen priced above market for loyalists \u2014 the loyalty hill mechanized."
+  },
+  {
+   "id": "corner-the-note-on-the-door",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The typed goodbye, both copies; personality-as-destiny at the exit door."
+  },
+  {
+   "id": "corner-the-kit",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The unlabeled bottle held to the light, chained correctly off the clean-bucket flag."
+  },
+  {
+   "id": "corner-moonlighting",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Let-it-ride paying in scouting information is the rare option that buys with knowledge instead of cash."
+  },
+  {
+   "id": "corner-what-he-carried",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Witnessed, no options, and it pre-loads cant-watch with one clause \u2014 memory composing forward."
+  },
+  {
+   "id": "corner-a-name-he-knew",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The gambling vice reaches the game plan, not a morality meter."
+  },
+  {
+   "id": "corner-hardass-and-the-glass-kid",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Chemistry's Friction read given a scene, with certainty landing the same as mean \u2014 three fair roads out."
+  },
+  {
+   "id": "corner-night-school",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The unpaid apprentice is the protege track's second door and costs only patience."
+  },
+  {
+   "id": "corner-his-name-in-the-big-paper",
+   "verdict": "RESHAPE",
+   "category": "coach",
+   "reshape": "Trigger drops the untracked 'old pupil' placement; fires on tier/skill/age during any save-wide title week.",
+   "reason": "The fame-raises-poachInterest loop is right, but the trigger reads pupil data the game does not keep."
+  },
+  {
+   "id": "corner-the-lifetime-chair",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The chair by the ring at slots 0 is the joyful-events law applied to staff."
+  },
+  {
+   "id": "corner-one-more-camp",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "Person-to-person off the alumni book \u2014 the reason coachAlumni exists."
+  },
+  {
+   "id": "corner-the-second-chair-ask",
+   "verdict": "KEEP",
+   "category": "coach",
+   "reason": "The ask IS the information; a bus-rehearsed question surfacing chemistry is the house voice."
+  },
+  {
+   "id": "intl-wire-from-across-the-water",
+   "verdict": "KEEP",
+   "reason": "The foreign pool live from the first ratings page, thin by design, supplying the ring-death challenger the canon already requires."
+  },
+  {
+   "id": "intl-saint-of-the-republic",
+   "verdict": "KEEP",
+   "reason": "Trait-seeded per the reputation-is-rented hill; the printed gap between home sainthood and a US rep capped near 70 is the point."
+  },
+  {
+   "id": "intl-the-defector-wave",
+   "verdict": "KEEP",
+   "reason": "The widest rating-to-reputation gap the model ever shows, restocking the hollowed heavyweight book honestly."
+  },
+  {
+   "id": "intl-folding-chairs",
+   "verdict": "KEEP",
+   "reason": "Retroactively claims the poet-king's foreign farewell without re-emitting it, and the circuit-fights dementia weighting keeps what the agate hides."
+  },
+  {
+   "id": "div-the-belt-between",
+   "verdict": "KEEP",
+   "reason": "Load-bearing: repairs the flagged 147/154/160 contradiction, and its seeding must resolve before the four kings' first collision."
+  },
+  {
+   "id": "div-a-division-for-the-doorman",
+   "verdict": "KEEP",
+   "reason": "The only under-par division, legitimized by one seeded war \u2014 the joke quietly stopping is the beat."
+  },
+  {
+   "id": "div-the-in-between-age",
+   "verdict": "KEEP",
+   "reason": "The ritual repeating until the player reads arrivals like zoning notices; 168 chained to the four-kings verdict is right."
+  },
+  {
+   "id": "legacy-century-issue",
+   "verdict": "KEEP",
+   "reason": "The last dated beat and the governor's switch; absorbs legacy-the-quarter-century's regional gym sidebar, replacement-byline authorship, reckoning-document unlock, and the manager-at-fifty line."
+  },
+  {
+   "id": "legacy-every-fourth-summer",
+   "verdict": "KEEP",
+   "reason": "The one clock that never stops, run entirely on existing Olympic machinery with class strength as the story."
+  },
+  {
+   "id": "legacy-the-next-one",
+   "verdict": "KEEP",
+   "reason": "Best-since-somebody quoting the save's own archive is the endgame's longest-fused reward."
+  },
+  {
+   "id": "legacy-briefly-whole",
+   "verdict": "KEEP",
+   "reason": "Undisputed as weather \u2014 pure recombination, legible as a cycle by the third occurrence."
+  },
+  {
+   "id": "legacy-the-old-names",
+   "verdict": "KEEP",
+   "reason": "Obituaries composed only from stored clippings and ledger lines \u2014 old history completing, never new history claimed."
+  },
+  {
+   "id": "intl-away-corner",
+   "verdict": "KEEP",
+   "category": "international",
+   "reason": "The house-judges skew with KO immunity is the away corner's whole truth in one number."
+  },
+  {
+   "id": "intl-boy-off-the-boat",
+   "verdict": "KEEP",
+   "category": "international",
+   "reason": "The folder nobody can read prices reputation against rating exactly as the model teaches."
+  },
+  {
+   "id": "intl-one-more-somewhere-warm",
+   "verdict": "RESHAPE",
+   "category": "international",
+   "reshape": "Fires for roster men only; retired names route through era.intl.farewellBookings and comeback-itch.",
+   "reason": "The roster holds no retired men, so the trigger's retired branch reads state that isn't there."
+  },
+  {
+   "id": "div-a-natural-home",
+   "verdict": "KEEP",
+   "category": "divisions",
+   "reason": "The one door into a new division is the man's own weight moving \u2014 the furniture hill's acceptance test, breakfast in fight week and all."
+  },
+  {
+   "id": "div-first-of-his-kind",
+   "verdict": "KEEP",
+   "category": "divisions",
+   "reason": "The quotation-marks discount and the eight-year First Ones fuse are the cost and the payoff in the right order."
+  },
+  {
+   "id": "legacy-as-told-to",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The first press relationship the manager owns personally, sourced from real ledger entries with the old fuses as its sources."
+  },
+  {
+   "id": "legacy-we-had-one-of-those",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "Witnessed, quarterly-capped, and it pays again when the obituary quotes the corkboard across decades."
+  },
+  {
+   "id": "legacy-the-third-fight",
+   "verdict": "KEEP",
+   "reason": "A press layer on the existing war beat that arms rivalry economics with a memory instead of scripting a second fight."
+  },
+  {
+   "id": "legacy-the-old-teachers",
+   "verdict": "RESHAPE",
+   "reshape": "Seeds compose with corner-last-of-the-handwrap-men and the teen arc's trainer death into one trainer-mortality calendar of distinct men (old-lion generation rate steps 10%\u21925%\u21922%); the shorter-second-obituary observation carries across the pair.",
+   "reason": "Right beat, but three seats' famous-trainer deaths must share one schedule or the desk buries the same man twice."
+  },
+  {
+   "id": "legacy-the-quarter-century",
+   "verdict": "MERGE",
+   "mergeInto": "legacy-century-issue",
+   "reason": "Same century issue from two seats \u2014 the sidebar, the young byline, and the manager-at-fifty reading carry into the survivor, Bible merge precedent."
+  },
+  {
+   "id": "the-same-man-twice",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "The rivalry system's backbone verb, priced visibly on the offer card with nobody saying why."
+  },
+  {
+   "id": "everyone-scored-it-different",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "A disputed decision as the only loss that raises a man's price \u2014 honest arithmetic read straight off judgeTotals."
+  },
+  {
+   "id": "paper-in-the-drawer",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "Clauses finally have one home and one collection agent, routed through the strings system's quiet refusal costs."
+  },
+  {
+   "id": "the-rubber-match",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "The biggest purse the system can produce, and the loser's trust unmoved is exactly the right grace note."
+  },
+  {
+   "id": "he-knows-where-the-showers-leak",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "trustAtExit driving the departed man's night is the alumni book earning its bytes."
+  },
+  {
+   "id": "what-the-east-side-calls-it",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "The coined name, witnessed, for the shoebox \u2014 a thing with a name is a thing people buy tickets to."
+  },
+  {
+   "id": "two-dollars-worth-of-shoving",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "Four seconds at the scales, one fine, one gate bump \u2014 period-perfect, and the hidden-trait reveal consumes budget rather than adding it."
+  },
+  {
+   "id": "nobody-asks-about-it-anymore",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "Dormant books rekindling at half price, with the crosstown line deliberately reused \u2014 the paper remembering its own sentences."
+  },
+  {
+   "id": "the-other-house",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "Houses outliving men is what makes the gym-kind book a second book."
+  },
+  {
+   "id": "the-night-it-was-over",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "The payoff after the payoff, witnessed only \u2014 forty rounds buying a friendship nothing else sells."
+  },
+  {
+   "id": "the-fight-nobody-will-make",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "The historically honest case \u2014 most great rivalries never happened \u2014 held open by a 15% long fuse."
+  },
+  {
+   "id": "hes-got-his-number",
+   "verdict": "KEEP",
+   "category": "rivalry",
+   "reason": "0-2 is the system's hardest choice and both answers cost truthfully."
+  },
+  {
+   "id": "the-kid-at-the-desk-is-forty",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "Deliberately weightless first surfacing \u2014 the warning is one word in the paper, and health has not moved."
+  },
+  {
+   "id": "the-stairs",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "Establishes the felt-read voice: health in objects, never figures, quarterly at most."
+  },
+  {
+   "id": "nothing-just-winded",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The fighters' sentence handed to the manager verbatim, with healthCeiling as TRUST_HEAL_CAP made flesh."
+  },
+  {
+   "id": "the-doctor-said-slow-down",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The looser-state dodge aimed back at you, and the body voting on succession within 60 days is the design."
+  },
+  {
+   "id": "the-second-set-of-keys",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "Succession's front door on the renamed successor flag; deferral compounding backward enforces grown-not-bought."
+  },
+  {
+   "id": "let-him-work-the-corner",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The bag by the door as a formal application; solo corners banking handover quality is the right currency."
+  },
+  {
+   "id": "the-man-who-waited",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The cost accounting of the keys, with the hardass respecting the straight answer at 70% \u2014 personality as destiny."
+  },
+  {
+   "id": "they-passed-the-hat-for-you",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The neighborhood's ledger on YOU, witnessed, the deliberate mirror of sleeps-in-the-gym."
+  },
+  {
+   "id": "a-young-mans-game",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The succession partly being the gym learning to answer for you \u2014 the aging system's cheapest best sentence."
+  },
+  {
+   "id": "the-lease-question",
+   "verdict": "RESHAPE",
+   "category": "legacy",
+   "reshape": "Counterparty reads the civilian registry: if the leveled-with landlady's will fired, her estate's first refusal IS this event; the landlord's son exists only in saves without her arc.",
+   "reason": "Two ownership fictions for one building otherwise \u2014 the widow arc and this event must compose, not collide."
+  },
+  {
+   "id": "the-funeral-suit",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "A training day traded for a trait reveal and a heed-bias \u2014 the funeral as the most effective doctor's letter ever written."
+  },
+  {
+   "id": "the-doctor-said-stop-manager",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The title reused on purpose, the desk turned around, and one-more-year genuinely on the table."
+  },
+  {
+   "id": "the-wall-of-clippings",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The reckoning as a read of records the save already keeps, ending in one earned sentence and no grade."
+  },
+  {
+   "id": "the-paper-spells-it-right",
+   "verdict": "KEEP",
+   "category": "legacy",
+   "reason": "The estate ending ships unsoftened per the fatal hill; the gym opening Monday at six is the only consolation the system can honestly offer."
+  },
+  {
+   "id": "social-press-box-credential",
+   "verdict": "KEEP",
+   "reason": "She enters the byline system whole, wins the credential in the paper's flattest voice, and is never marked as an occasion again."
+  },
+  {
+   "id": "social-first-sanctioned-womens-bout",
+   "verdict": "KEEP",
+   "reason": "Agate first, feature never, roster scope held \u2014 the world in print stops being entirely male the way it actually did."
+  },
+  {
+   "id": "social-reporter-at-the-gym-door",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The open door priced like any press access; her credential-day column remembering rooms is byline memory working, not a virtue tax."
+  },
+  {
+   "id": "social-his-mother-reads-the-fine-print",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The double-billed physician found in four minutes \u2014 a person with arithmetic, and she is right."
+  },
+  {
+   "id": "social-the-widow-upstairs",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The leveled-with month and the will's first refusal are the fifteen-year fuse in brick; composes with the-lease-question per its reshape."
+  },
+  {
+   "id": "social-the-woman-at-the-federation-desk",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Competence, not cause; 'Postmark by Friday. \u2014 R.' is a saved title shot the ledger records in full."
+  },
+  {
+   "id": "social-the-daughter-keeps-the-gym",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Rides the era's gym-fold machinery; poaching during the estate stays available and remembered, which is the honest version."
+  },
+  {
+   "id": "social-mornings-are-hers",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Dignity arrives as rent; 'Who taught her that?' is the pass's best sentence and the fifteen-year fuse-setter."
+  },
+  {
+   "id": "social-the-bookkeepers-call",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Nineteen years and no letterhead of her own; the reference letter costing nothing and paying later is the registry doing its work."
+  },
+  {
+   "id": "social-every-clipping-even-that-one",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The scrapbook clears the hit piece's residue for the one trait that needed it \u2014 joyful, witnessed, nobody important watching."
+  },
+  {
+   "id": "social-the-undercard-above-the-fold",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The fifteen-year fuse ships whole, fourth paragraph and unadmitting old heads included."
+  },
+  {
+   "id": "social-a-problem-with-the-reservation",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The desk on the sidewalk with no press item because the paper didn't cover those nights \u2014 the era landed with dignity and one flat ledger line."
+  },
+  {
+   "id": "social-a-credit-to-the-sport",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The coin under the tablecloth; the smallness of what one conversation does is the anti-lecture, and even asking can hurt."
+  },
+  {
+   "id": "social-carrying-the-block",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Eleven tickets he paid for himself \u2014 the gift and the weight in one envelope, trait-honest in both directions."
+  },
+  {
+   "id": "social-money-orders-home",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Half of every purse, never mentioned; recoloring the broke flag is the save learning to read a man right."
+  },
+  {
+   "id": "social-the-angle-they-didnt-buy",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Two kids sharing a ride deflates the promoter's ugliness at a printed cost \u2014 extends the parent event, never replaces it."
+  },
+  {
+   "id": "social-weight-classes-only",
+   "verdict": "RESHAPE",
+   "category": "social",
+   "reshape": "Add a 60-day quarantine from every other social-category event so the Tuesday never reads as the game answering an incident it staged.",
+   "reason": "The restraint is the design; the quarantine keeps the gym's best line from becoming a rejoinder."
+  },
+  {
+   "id": "social-the-house-fighter-question",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The unfinished sentence \u2014 arithmetic on numbers somebody else wrote down \u2014 with three honest roads out and no villain drawn."
+  },
+  {
+   "id": "social-what-the-crowd-yelled",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "The game refuses to print it, and travels-well is priced as an earned, ledgered night \u2014 matchmaker economics, not identity math."
+  },
+  {
+   "id": "social-a-night-for-the-rec-center",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "No purse in it for anyone; the walk-in wave skewed young, raw, and broke is the true payment."
+  },
+  {
+   "id": "social-the-old-heads-circuit",
+   "verdict": "KEEP",
+   "category": "social",
+   "reason": "Three towns, three names \u2014 the pre-integration circuit entering as one man remembering on a rained-out morning, which is how it actually survived."
+  }
+ ],
+ "systemVerdicts": [
+  {
+   "name": "Coach Lifecycle (aging, decline, retirement, death)",
+   "verdict": "KEEP",
+   "reshape": "condition and hands are hidden and surface only as felt reads under the health-is-never-a-number law (extended to staff by this ruling); applicant and market aging rides the existing patience clock; mercenaries never retiring stands \u2014 poachInterest guarantees their exit.",
+   "reason": "Craft compounding while the hands quit is the seat's whole truth, the drift caps match the existing skill model, and every field is consumed by a kept event \u2014 minimal and honest."
+  },
+  {
+   "name": "Loyalty & Poaching (the other side of trust)",
+   "verdict": "KEEP",
+   "reason": "Personality-as-destiny applied to the apron: thresholds not dice, warnings at 40/70/90, and exits with destinations era.npcs can name so the paper has somewhere to send him."
+  },
+  {
+   "name": "The Protege Line (succession)",
+   "verdict": "KEEP",
+   "reshape": "lineage folds into the single LegacyLedger as legacy.corner.lineage; Coach.protege remains the coach's apprentice while the manager-succession flag renames to Coach.successor/successorSince \u2014 the field collision between seats is resolved by this ruling.",
+   "reason": "Diploma-day minting a coach whose numbers the player helped write is the best pipeline the game can offer, and a lineage coach on staff at the succession question is the designed answer."
+  },
+  {
+   "name": "The Foreign Book (foreign-elite pool)",
+   "verdict": "KEEP",
+   "reshape": "'abroad' ships as one real pseudo-city row in the cities table (getCity-safe, region sentinel) rather than a union sentinel guarded at every call site; everything else as submitted.",
+   "reason": "A pool and a wire, never a simulation \u2014 the five doors hold, matchmake() stays closed, and national lineages give the ratings page decades of quiet continuity."
+  },
+  {
+   "name": "The Division Ledger (weight classes that expand at runtime)",
+   "verdict": "KEEP",
+   "reshape": "deriveWeightClass and WEIGHT_CLASS_ORDER become functions of era.activeClasses with a five-class default for legacy callers; migration synthesizes the field and past activations apply silently \u2014 class derives from weight, so no fighter moves on load.",
+   "reason": "The strongest system submitted: runtime divisions as real furniture, honoring the class-derives-from-weight invariant, and it repairs Part V's flagged contradiction on schedule."
+  },
+  {
+   "name": "The Long Now (soft-cap governor)",
+   "verdict": "KEEP",
+   "reason": "Frozen multipliers, fixed tiers, recombination-only cycles, and an anniversary desk sourced from the save's own archive \u2014 the owner's endgame ruling made mechanical, with the paper's settled tone doing the announcing that no clipping is allowed to do."
+  },
+  {
+   "name": "The Rivalry Book",
+   "verdict": "KEEP",
+   "reshape": "crosstown-feud momentum, opponent-for-hire's rematch counter, and every strings-system clause migrate into save.rivalries at integration \u2014 no private counters survive; rivalryFactor caps at x1.8 and the surfacing budget allows one rivalry item a month, hard.",
+   "reason": "One persistent book wired to pursefor and the upheld press-context multiplier turns ten years of grudges into money, copy, and a page the reckoning can read back."
+  },
+  {
+   "name": "The Manager's Years",
+   "verdict": "KEEP",
+   "reshape": "manager.protegeId renames successorCoachId; the manager's 0.02 corner term is formalized in resolveFight as part of this work; health is never rendered \u2014 felt reads only, on the bands.",
+   "reason": "Fifteen silent years, then three concrete un-gamey costs (the corner, the slots, the distance), a three-scare architecture with a genuinely fatal third answer \u2014 full aging exactly as the owner ruled it."
+  },
+  {
+   "name": "The Alumni Book & Legacy Ledger",
+   "verdict": "KEEP",
+   "reshape": "coachAlumni joins as a sibling array; legacy stays write-only during play and is read exactly twice \u2014 the century sidebar and the reckoning; existing events feed it without modification, as submitted.",
+   "reason": "A 25-year save cannot be summed from what it forgot; cheap, permanent, and it serves rivalry, benefit-night, the-fog, and the reckoning from one shelf."
+  },
+  {
+   "name": "Quiet Demographics (heritage as event-selector)",
+   "verdict": "KEEP",
+   "reason": "Verified honest: fighters.ts already rolls the surname subpool and discards it \u2014 persisting it as a trigger-only selector with the hard no-numbers guard is the minimal true model, and the code-review rule ships with it."
+  },
+  {
+   "name": "People Who Aren't in the Business (civilian NPC registry)",
+   "verdict": "KEEP",
+   "reason": "Created lazily, referenced forever, surfacing only through period channels \u2014 the registry is what lets the save remember people instead of issues, and the-lease-question now reads it too."
+  }
+ ],
+ "timelineInserts": [
+  "start intl-wire-from-across-the-water",
+  "after:poet-kings-last-reign legacy-the-third-fight",
+  "after:poet-kings-last-reign social-first-sanctioned-womens-bout",
+  "after:bicentennial-olympic-class social-press-box-credential",
+  "after:bicentennial-olympic-class intl-folding-chairs",
+  "after:poet-king-upset-and-redemption div-the-belt-between",
+  "after:alphabet-fracture-one intl-saint-of-the-republic",
+  "after:alphabet-fracture-one corner-the-clean-bucket",
+  "after:four-kings-era div-the-in-between-age",
+  "after:desert-city-ascendant div-a-division-for-the-doorman",
+  "after:teen-wrecking-ball-rise legacy-the-old-teachers",
+  "after:teen-unification corner-the-clipboard-men",
+  "after:teen-implosion intl-the-defector-wave",
+  "after:olympic-class-92-golden-boy corner-last-of-the-handwrap-men",
+  "after:lighter-weights-inherit legacy-century-issue",
+  "after:lighter-weights-inherit legacy-every-fourth-summer",
+  "after:lighter-weights-inherit legacy-the-next-one",
+  "after:lighter-weights-inherit legacy-briefly-whole",
+  "after:lighter-weights-inherit legacy-the-old-names"
+ ],
+ "integrationDeltas": "SAVE SHAPE. Coach gains hiredDayCount, fractional age, hidden condition and hands, loyalty, poachInterest, vice/viceKnown, background, partTime, feudWith, flags, protege (his own apprentice line), and successor/successorSince (the manager-succession flag, renamed from the systems seat's protege to resolve the field collision). Manager gains birthDay, hidden health, healthCeiling, scares[], successorCoachId, handedOver; age now advances. GameSave gains coachAlumni[], alumni[] (fighter departures, written once, permanent), legacy (the write-only LegacyLedger with corner.lineage folded in), and rivalries[] (the one book \u2014 crosstown-feud momentum, opponent-for-hire rematch counters, and strings clauses all migrate into it). Fighter persists heritage (the surname subpool fighters.ts already rolls and discards); RosterEntry gains scaleTroubleFlag. era (per the standing Integration Notes) additionally carries intl { countries, saintId, relocatedIds, farewellBookings }, activeClasses, softCap { frozenMultipliers, cycles, mortuary, anniversaries }, and npcs.civilians[]. weightClasses.ts splits BASE_CLASSES/LATENT_CLASSES; deriveWeightClass and WEIGHT_CLASS_ORDER become functions of era.activeClasses. cities gains one 'abroad' pseudo-row so getCity never throws on a foreign man.\n\nEVALUATOR. advanceTime order becomes: worldSim \u2192 coach lifecycle tick (age, skill drift, hands/condition decay, retirement and actuarial death rolls \u2014 deaths land any advance, fight week included) \u2192 manager tick (birthday, health, strain) \u2192 scripted sub-beats (now including division activations, which renormalize pickWeightClass CLASS_WEIGHTS and re-derive classes mid-save) \u2192 soft-cap cycles once legacy-century-issue resolves \u2192 triggered evaluation \u2192 press cycle. resolveFight's BoutRecord feeds the rivalry book every bout; pursefor gains rivalryFactor (cap x1.8) under the era multiplier; the upheld press-context multiplier gains +0.25 rivalry / +0.5 rubber-match. Surfacing budgets extend, never widen: one rivalry item a month, coach and social events inside the standing one-choice-per-advance cap, quarterly cap on we-had-one-of-those, social-weight-classes-only quarantined 60 days from other social events. resolveFight formalizes the manager's 0.02 corner term (health- and schedule-gated from his 50s) and the coach corner factors the corner events price. The three famous-trainer deaths (old-teachers x2, handwrap-men) seed as one calendar of distinct men, stepping the old-lion generation rate 10%\u21925%\u21922%.\n\nMIGRATION. Bump SAVE_VERSION. Old saves synthesize: era.activeClasses from the year (past activations apply state silently \u2014 class derives from weight, so no roster man moves on load; a mid-90s save just sees ten columns); coaches backfilled (fractional age, loyalty seeded by personality, hiredDayCount approximated from save age, vice and hands rolled off age); manager backfilled (birthDay rolled, health interpolated from age with a clean scare history); empty rivalries/alumni/coachAlumni/legacy; heritage re-inferred from surname subpool; the credential byline joins PressState.writers only in saves young enough for her window, else she exists as an established working byline. The ring-death silent-fire rule extends to every new scripted beat.",
+ "sensitivityNotes": "Everything the cultural seat submitted ships \u2014 nineteen triggered events, two scripted arcs \u2014 with one reshape: social-weight-classes-only gains a 60-day quarantine from other social events so the gym's Tuesday never reads as the game answering an incident it staged. The standard applied, event by event: (1) specificity \u2014 every event is one person on one night with a choice in front of the player, never a category with a caption; (2) the game never prints the slur and never writes the player a speech \u2014 the memo, the unfinished sentence, and the folded clipping indict themselves; (3) silence stays free everywhere, costing at most the world continuing as it was; (4) heritage never touches a number ambiently \u2014 verified in fighters.ts that the selector already exists and is discarded, so persisting it is honest, and the one purse-adjacent flag (travels-well) prices a ledgered night the player watched, not an identity; (5) the kindest choice can be wrong \u2014 asking the insecure man about the 'credit' piece hurts him, the block's section is a mistake for the wrong temperament \u2014 and that asymmetry is what keeps the pass from lecturing. The reservation and crowd events carry no press items by design: the paper didn't cover those nights, and retro-covering them would be the exploitation the hill bans. The women of the pass \u2014 writer, licensed boxer, landlady, federation desk, bookkeeper, owner's daughter, the mothers \u2014 are professionals and neighbors running on existing machinery (byline memory, rent lines, the civilian registry), never monuments; the reporter keeps the right to be wrong. Nothing died. These nineteen set the bar any future social content must clear: the era arriving as people, at the door, in the paper's manners.",
+ "gaps": [
+  "Amateur pipeline (Golden Gloves, gym amateur nights) still unmodeled \u2014 carried forward from Part V.",
+  "Gym relocation / the desert as a player destination still has no event path \u2014 carried forward from Part V.",
+  "The Part V pacing dry-run harness must now also prove coach-lifecycle, rivalry, manager-aging, and social densities (98 new events) quiet enough before ship.",
+  "FightResult structured knockdown counts (Part V) remain pending and now also serve rivalry disputed-card detection beyond judgeTotals.",
+  "Emeritus mode's reduced verb set (watch the world run after the reckoning) needs one small definition pass."
+ ]
+}
