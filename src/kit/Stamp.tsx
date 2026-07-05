@@ -19,9 +19,11 @@ const CATEGORIES = {
   /** mood/state — blue-black, 0° */
   mood: { ink: 'var(--ink-ribbon)', angle: 0 },
   /** scouting/assessment — violet (mimeograph), +1.5° */
-  scouting: { ink: 'var(--ink-stamp-violet)', angle: 1.5 },
+  scouting: { ink: 'var(--ink-scout)', angle: 1.5 },
   /** money — red, −2° (PAID, PAST DUE, OVERDRAWN) */
   money: { ink: 'var(--ink-stamp-red)', angle: -2 },
+  /** graphite — pencil-grey stamp voice (WATCH, KEEP) */
+  pencil: { ink: 'var(--ink-graphite)', angle: 0 },
 } as const;
 
 export type StampCategory = keyof typeof CATEGORIES;
