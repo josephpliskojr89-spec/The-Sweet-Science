@@ -15,8 +15,10 @@
   dollars, bookings, names. Moods, ceilings, and legs stay reads, earned
   in the rooms. No ratings, no bars, no numbers the world wouldn't give.
 
-  The painted floor survives as THE FLOOR — a view you visit; its doors
-  still work. Fight night still stops the clock and takes the button row.
+  The gym-as-place UI is gone: no doors, no hotspots, no rooms-as-rooms.
+  The art is a backdrop (placeholder until the bespoke desk image lands),
+  the paperwork leans and looks handwritten, and every surface is one
+  click from here. Fight night still stops the clock and takes the row.
 */
 
 import { useState } from 'react';
@@ -37,13 +39,11 @@ import { Toast } from '../components/Toast';
 import { WalkInViewer } from './WalkInViewer';
 import { FighterProfile } from './FighterProfile';
 import { FightNight } from './FightNight';
-import { FloorView } from './FloorView';
 import './GameScreen.css';
 
 export function GameScreen() {
   const { save, openRoom, openWalkIns, goHome, advanceTime, liveBout } = useGame();
   const [fightOpen, setFightOpen] = useState(false);
-  const [floorOpen, setFloorOpen] = useState(false);
   if (!save) return null;
 
   const date = formatDate(save.dayCount);
@@ -83,7 +83,7 @@ export function GameScreen() {
       {/* the paperwork */}
       <main className="deskgrid">
         {/* ON THE BOOK */}
-        <section className="panel panel--book" aria-label="On the book — booked bouts">
+        <section className="panel panel--book" style={paperTilt('panel-book', 0.5, 0.9)} aria-label="On the book — booked bouts">
           <h2 className="panel__head">ON THE BOOK</h2>
           {booked.length === 0 ? (
             <p className="panel__quiet">nothing signed. a gym eats on purses.</p>
@@ -121,7 +121,7 @@ export function GameScreen() {
         </section>
 
         {/* WHILE YOU WERE OUT */}
-        <section className="panel panel--calls" aria-label="While you were out — promoter calls">
+        <section className="panel panel--calls" style={paperTilt('panel-calls', 0.6, 1.1)} aria-label="While you were out — promoter calls">
           <h2 className="panel__head">WHILE YOU WERE OUT</h2>
           {save.fightOffers.length === 0 ? (
             <p className="panel__quiet">no calls waiting.</p>
@@ -160,12 +160,12 @@ export function GameScreen() {
         </section>
 
         {/* THE CORKBOARD */}
-        <section className="panel panel--cork" aria-label="The corkboard — gym log">
+        <section className="panel panel--cork" style={paperTilt('panel-cork', 0.3, 0.6)} aria-label="The corkboard — gym log">
           <GymLogBoard />
         </section>
 
         {/* THE TRAINER'S WORD — knowable facts only */}
-        <section className="panel panel--word" aria-label="The trainer's word">
+        <section className="panel panel--word" style={paperTilt('panel-word', 0.5, 1)} aria-label="The trainer's word">
           <h2 className="panel__head">THE TRAINER’S WORD</h2>
           <ul className="wordlist">
             {resting.map((e) => {
@@ -216,7 +216,7 @@ export function GameScreen() {
         </section>
 
         {/* THE BOTTOM LINE */}
-        <section className="panel panel--money" aria-label="The bottom line">
+        <section className="panel panel--money" style={paperTilt('panel-money', 0.5, 0.9)} aria-label="The bottom line">
           <h2 className="panel__head">THE BOTTOM LINE</h2>
           <p className={'money__balance' + (save.money < 0 ? ' money__balance--red' : '')}>
             {save.money < 0
@@ -239,9 +239,6 @@ export function GameScreen() {
 
       {/* the button row: places + the clock */}
       <nav className="deskbar">
-        <button className="deskbar__btn" onClick={() => setFloorOpen(true)}>
-          THE FLOOR
-        </button>
         <button className="deskbar__btn" onClick={() => openRoom('locker')}>
           LOCKER ROOM
         </button>
@@ -279,7 +276,6 @@ export function GameScreen() {
       </nav>
 
       {/* overlays */}
-      {floorOpen && <FloorView onClose={() => setFloorOpen(false)} />}
       {fightOpen && liveBout && <FightNight onClose={() => setFightOpen(false)} />}
       <ArrivalNotice />
       <RoomRouter />
