@@ -1,5 +1,7 @@
 /*
-  FightNight — the arena at night, one typed bill under a hard lamp.
+  FightNight — the arena at night. The management system goes to the fight:
+  one charcoal sheet under the lamp, the round report typed onto it, the
+  corner decisions as clean controls. Same materials as every surface.
 */
 
 .fnight {
@@ -10,28 +12,28 @@
   place-items: center;
   padding: 24px;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(217, 154, 78, 0.14), transparent 70%),
-    var(--ink-black);
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(201, 165, 92, 0.1), transparent 70%),
+    rgba(10, 9, 8, 0.9);
 }
 
 .fnight__bill {
-  width: min(680px, 94vw);
+  width: min(720px, 94vw);
   max-height: 92vh;
   overflow-y: auto;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  color: var(--ink-news);
-  padding: 22px 26px 18px;
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.35);
+  background: var(--steel-solid);
+  border: 1px solid var(--steel-edge);
+  color: var(--cream);
+  padding: 0 0 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8);
 }
 
 /* --- the tape ---------------------------------------------------------- */
 
 .fnight__tape {
-  border-bottom: 3px double var(--ink-news);
-  padding-bottom: 10px;
-  margin-bottom: 12px;
+  background: linear-gradient(180deg, var(--plate), #c9c0a6);
+  padding: 14px 22px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  margin-bottom: 14px;
 }
 
 .fnight__names {
@@ -52,45 +54,49 @@
 }
 
 .fnight__name {
-  font-family: var(--type-fatface);
-  font-size: clamp(16px, 2.6vw, 24px);
-  letter-spacing: 0.02em;
+  font-family: var(--type-poster);
+  font-size: clamp(15px, 2.4vw, 22px);
+  letter-spacing: 0.04em;
   line-height: 1.1;
+  color: var(--plate-ink);
 }
 
 .fnight__vs {
   font-family: var(--type-poster);
-  font-size: 14px;
-  opacity: 0.7;
+  font-size: 13px;
+  color: rgba(38, 35, 31, 0.55);
   flex: none;
 }
 
 .fnight__rec {
   font-family: var(--type-machine);
-  font-size: 13px;
+  font-size: 12.5px;
+  color: rgba(38, 35, 31, 0.85);
   margin-top: 2px;
 }
 
 .fnight__camp {
   font-family: var(--type-form);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  opacity: 0.75;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(38, 35, 31, 0.6);
 }
 
 .fnight__where {
   font-family: var(--type-form);
-  font-size: 12px;
-  letter-spacing: 0.1em;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
   text-align: center;
-  margin: 10px 0 4px;
+  color: var(--plate-ink);
+  margin: 10px 0 3px;
 }
 
 .fnight__corner {
-  font-family: var(--type-typewriter);
-  font-size: 12px;
+  font-family: var(--type-form);
+  font-size: 10px;
+  letter-spacing: 0.04em;
   text-align: center;
-  color: var(--ink-ribbon);
+  color: rgba(38, 35, 31, 0.65);
   margin: 0;
 }
 
@@ -100,7 +106,8 @@
   font-family: var(--type-typewriter);
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--ink-ribbon);
+  color: var(--cream);
+  padding: 0 22px;
   margin-bottom: 12px;
 }
 
@@ -111,20 +118,21 @@
 /* --- the stool ---------------------------------------------------------- */
 
 .fnight__stool {
-  border-top: 1px solid rgba(0, 0, 0, 0.25);
-  padding-top: 10px;
+  border-top: 1px solid var(--steel-edge);
+  padding: 10px 22px 0;
   margin-bottom: 10px;
 }
 
 .fnight__reads {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .fnight__read {
-  font-family: var(--type-hand);
-  font-size: 16px;
-  color: var(--ink-graphite);
-  margin: 0 0 3px;
+  font-family: var(--type-form);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--cream-dim);
+  margin: 0 0 4px;
 }
 
 .fnight__job {
@@ -132,65 +140,74 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  margin: 6px 0;
+  margin: 8px 0;
 }
 
 .fnight__job-label {
   font-family: var(--type-form);
-  font-size: 10.5px;
-  letter-spacing: 0.12em;
-  opacity: 0.7;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
   flex: none;
+  width: 84px;
 }
 
 .fnight__chip {
   font-family: var(--type-form);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  padding: 4px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
   background: transparent;
-  border: 1.5px solid var(--ink-news);
-  color: var(--ink-news);
+  border: 1px solid var(--steel-edge);
+  color: var(--cream-dim);
   cursor: pointer;
-  opacity: 0.65;
+}
+
+.fnight__chip:hover {
+  color: var(--cream);
+  border-color: var(--cream-dim);
 }
 
 .fnight__chip--on {
-  opacity: 1;
-  background: var(--ink-news);
-  color: var(--newsprint);
+  background: var(--plate);
+  border-color: var(--plate);
+  color: var(--plate-ink);
 }
 
 /* --- the end ------------------------------------------------------------ */
 
 .fnight__end {
   text-align: center;
-  border-top: 3px double var(--ink-news);
-  padding-top: 12px;
+  border-top: 1px solid var(--steel-edge);
+  padding: 14px 22px 0;
   margin-bottom: 8px;
 }
 
 .fnight__verdict {
-  font-family: var(--type-fatface);
-  font-size: clamp(18px, 3vw, 26px);
+  font-family: var(--type-poster);
+  font-size: clamp(17px, 2.8vw, 24px);
+  letter-spacing: 0.08em;
   margin: 0 0 6px;
-  color: var(--ink-stamp-red);
+  color: var(--signal-red);
 }
 
 .fnight__verdict--won {
-  color: var(--ink-news);
+  color: var(--gold);
 }
 
 .fnight__cards {
   font-family: var(--type-machine);
   font-size: 13px;
+  color: var(--cream);
   margin: 0 0 4px;
 }
 
 .fnight__purse {
-  font-family: var(--type-typewriter);
-  font-size: 12.5px;
-  color: var(--ink-ribbon);
+  font-family: var(--type-machine);
+  font-size: 12px;
+  color: var(--cream-dim);
   margin: 0;
 }
 
@@ -200,37 +217,41 @@
   display: flex;
   gap: 10px;
   justify-content: center;
-  padding-top: 6px;
+  padding: 10px 22px 0;
 }
 
 .fnight__btn {
-  font-family: var(--type-poster);
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  padding: 9px 18px;
+  font-family: var(--type-form);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 9px 20px;
   cursor: pointer;
-  border: 2px solid var(--ink-news);
-  background: var(--ink-news);
-  color: var(--newsprint);
+  border: 1px solid rgba(201, 165, 92, 0.5);
+  background: rgba(201, 165, 92, 0.12);
+  color: var(--gold);
 }
 
 .fnight__btn--bell:hover {
-  background: var(--ink-ribbon);
+  border-color: var(--gold);
+  background: rgba(201, 165, 92, 0.2);
 }
 
 .fnight__btn--towel {
   background: transparent;
-  color: var(--ink-stamp-red);
-  border-color: var(--ink-stamp-red);
+  color: var(--signal-red);
+  border-color: rgba(168, 80, 63, 0.6);
 }
 
 .fnight__btn--towel:hover {
-  background: var(--ink-stamp-red);
-  color: var(--newsprint);
+  background: rgba(168, 80, 63, 0.15);
+  border-color: var(--signal-red);
 }
 
 .fnight__fallthrough {
-  font-family: var(--type-typewriter);
+  font-family: var(--type-form);
   font-size: 13px;
+  color: var(--cream);
   text-align: center;
+  padding: 20px 22px 0;
 }

@@ -1,21 +1,20 @@
 /*
-  PressRoom — The Press (Phase 6C)
+  PRESS — the paper and the magazine, as a management surface.
   --------------------------------------------------------------------------
-  A top-level room, not a corner of the office: your window on the sport. Two
-  publications share it —
+  Two tabs. The reading matter keeps its print voice — a newspaper column
+  and a ratings page ARE period-professional documents — inside the same
+  charcoal frame as everything else.
 
-    The Paper    — the local sporting page. Results, rumor, and, more and more,
-                   your own gym in print. The world's weekly voice.
-    The Magazine — the national authority, home of the official rankings,
-                   division by division. The state of the whole sport.
+    THE PAPER    — the local sporting page: clippings, newest first
+    THE MAGAZINE — the national authority's official ratings by division
 
-  Both read straight from live data — press clippings and the competitive-world
-  population — so no two saves read the same page. The Office keeps "your
-  competition" (the Rival Gyms tab); the world's story lives here.
+  The magazine prints the OFFICIAL order — public rank, reputation as the
+  tiebreak, never the hidden rating. A hedged world stays hedged.
 */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useGame } from '../state/GameContext';
+import { Surface } from '../components/Surface';
 import { formatDate } from '../game/time';
 import { WEIGHT_CLASSES, type WeightClassKey } from '../game/weightClasses';
 import { rankedElite, worldFighterName, campOf, type WorldFighter } from '../game/world/population';
@@ -39,60 +38,28 @@ function recordStr(wf: WorldFighter): string {
   return kos > 0 ? `${base} · ${kos} KO` : base;
 }
 
+const TABS = [
+  { key: 'paper', label: 'THE PAPER' },
+  { key: 'magazine', label: 'THE MAGAZINE' },
+];
+
 export function PressRoom() {
-  const { save, closeRoom, profileId, viewerIds } = useGame();
+  const { save, closeRoom } = useGame();
   const [view, setView] = useState<PressView>('paper');
-
-  const overlayOpen = profileId !== null || viewerIds !== null;
-  useEffect(() => {
-    if (overlayOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeRoom();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [closeRoom, overlayOpen]);
-
   if (!save) return null;
 
   return (
-    <div className="room-screen worn" role="dialog" aria-label="The Press">
-      <div className="room-screen__backdrop" aria-hidden="true" />
-
-      <header className="room-screen__chrome">
-        <button className="room-screen__back" onClick={closeRoom} title="Back to the floor (Esc)">
-          ← Back to the floor
-        </button>
-        <span className="room-screen__breadcrumb">Your Gym · The Press</span>
-
-        <nav className="press__tabs" aria-label="Publications">
-          {(
-            [
-              ['paper', 'The Paper'],
-              ['magazine', 'The Magazine'],
-            ] as Array<[PressView, string]>
-          ).map(([key, label]) => (
-            <button
-              key={key}
-              className={'press__tab' + (view === key ? ' press__tab--on' : '')}
-              onClick={() => setView(key)}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
-      </header>
-
-      <div className="room-screen__body press__body">
-        {view === 'paper' ? <PaperView /> : <MagazineView />}
-      </div>
-    </div>
+    <Surface
+      title="PRESS"
+      tabs={TABS}
+      activeTab={view}
+      onTab={(k) => setView(k as PressView)}
+      onClose={closeRoom}
+    >
+      {view === 'paper' ? <PaperView /> : <MagazineView />}
+    </Surface>
   );
 }
-
-/* Publication views at module scope for stable component identity — nested in
-   the body, each PressRoom re-render remounted the open publication and
-   replayed its entrance animation mid-read. */
 
 function PaperView() {
   const { save } = useGame();
@@ -101,14 +68,14 @@ function PaperView() {
   return (
     <div className="paper">
       <header className="paper__masthead">
-        <h2 className="paper__name">{paperName}</h2>
-        <p className="paper__tagline">Sporting Pages · {formatDate(save.dayCount).full}</p>
+        <h3 className="paper__name">{paperName}</h3>
+        <p className="paper__tagline">SPORTING PAGES · {formatDate(save.dayCount).full.toUpperCase()}</p>
       </header>
 
       {clippings.length === 0 ? (
-        <p className="paper__empty">
-          Nothing on the local fight scene this week. Slow news is still news —
-          check back after some time passes.
+        <p className="surface__note">
+          Nothing on the local fight scene this week. Slow news is still news — check back after
+          some time passes.
         </p>
       ) : (
         <div className="paper__columns">
@@ -132,40 +99,42 @@ function MagazineView() {
   const { year } = formatDate(save.dayCount);
   return (
     <div className="magazine">
-      <header className="magazine__masthead">
-        <h2 className="magazine__name">{MAGAZINE_NAME}</h2>
-        <p className="magazine__tagline">{MAGAZINE_TAGLINE}</p>
-        <p className="magazine__issue">Official Ratings · {year}</p>
+      <header className="paper__masthead">
+        <h3 className="paper__name">{MAGAZINE_NAME}</h3>
+        <p className="paper__tagline">
+          {MAGAZINE_TAGLINE.toUpperCase()} · OFFICIAL RATINGS · {year}
+        </p>
       </header>
 
-      {DIVISIONS.map((wc) => {
-        // The magazine prints the OFFICIAL order — public rank, reputation as
-        // the tiebreak. Never the hidden rating: the ratings page must agree
-        // with the "Ranked #N" chips elsewhere, and a hedged world stays hedged.
-        const inDiv = elite
-          .filter((f) => f.weightClass === wc)
-          .sort(
-            (a, b) =>
-              (a.nationalRank ?? 99) - (b.nationalRank ?? 99) ||
-              b.publicReputation - a.publicReputation,
+      <div className="magazine__grid">
+        {DIVISIONS.map((wc) => {
+          const inDiv = elite
+            .filter((f) => f.weightClass === wc)
+            .sort(
+              (a, b) =>
+                (a.nationalRank ?? 99) - (b.nationalRank ?? 99) ||
+                b.publicReputation - a.publicReputation,
+            );
+          if (inDiv.length === 0) return null;
+          return (
+            <section key={wc} aria-label={WEIGHT_CLASSES[wc].name}>
+              <h4 className="surface__section">{WEIGHT_CLASSES[wc].name.toUpperCase()}</h4>
+              <table className="mtable">
+                <tbody>
+                  {inDiv.map((wf, i) => (
+                    <tr key={wf.id}>
+                      <td className="mtable__gold rank__num">#{i + 1}</td>
+                      <td>{worldFighterName(wf)}</td>
+                      <td className="mtable__dim">{campOf(wf)}</td>
+                      <td className="mtable__dim">{recordStr(wf)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
           );
-        if (inDiv.length === 0) return null;
-        return (
-          <section className="magazine__division" key={wc}>
-            <h3 className="magazine__divname">{WEIGHT_CLASSES[wc].name}</h3>
-            <ul className="rankings">
-              {inDiv.map((wf, i) => (
-                <li className="rankrow" key={wf.id}>
-                  <span className="rankrow__rank">#{i + 1}</span>
-                  <span className="rankrow__name">{worldFighterName(wf)}</span>
-                  <span className="rankrow__camp">{campOf(wf)}</span>
-                  <span className="rankrow__record">{recordStr(wf)}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
+        })}
+      </div>
     </div>
   );
 }

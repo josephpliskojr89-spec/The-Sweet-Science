@@ -1,526 +1,60 @@
-/*
-  THE WALK-IN MOMENT — office doorway object shot.
-  The clipboard dominates center-left; the decision column hangs on the
-  right rail with deliberate un-alignment: keys highest (the best offer,
-  nearest the light), chit pad below, stamp where a right hand rests, the
-  PENDING tray breaking the bottom edge. One tungsten key upper-left.
-*/
+/* AT THE DOOR — surface-specific pieces (shared vocabulary in styles/mgmt.css) */
+
+.wiv .surface__sheet {
+  z-index: 55;
+}
 
 .wiv {
-  position: absolute;
-  inset: 0;
-  z-index: 60;
-  overflow: hidden;
-  --shadow-dx: 3px;
-  --shadow-dy: 5px;
-  background:
-    radial-gradient(ellipse 640px 520px at 24% 20%, rgba(232, 181, 102, 0.2), transparent 72%),
-    radial-gradient(ellipse 120% 115% at 30% 20%, rgba(28, 20, 12, 0.2), rgba(8, 6, 4, 0.78)),
-    var(--gym-green);
-  animation: wiv-enter 260ms var(--ease-paper) 1;
-}
-@keyframes wiv-enter {
-  from {
-    transform: translateY(10%);
-    opacity: 0.4;
-  }
+  z-index: 55;
 }
 
-/* ---------------------------------------------------------------- */
-/* THE DOORWAY — the man waits beyond the glass                      */
-/* ---------------------------------------------------------------- */
-.wiv__doorway {
-  position: absolute;
-  left: 16%;
-  top: 0;
-  width: 34%;
-  height: 19%;
-  border-bottom: 8px solid var(--oak);
-  background: radial-gradient(ellipse at 50% 100%, #cbb076 0%, #a8895a 55%, #7c6236 100%);
-  overflow: hidden;
-}
-.wiv__doorway::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--tex-paper);
-  background-size: 80px;
-  mix-blend-mode: multiply;
-  opacity: 0.7;
-}
-.wiv__doorglass {
-  position: absolute;
-  inset: 0;
-}
-/* the silhouette — he shifts his weight while you read */
-.wiv__silhouette {
-  position: absolute;
-  left: 42%;
-  bottom: -6%;
-  width: 34%;
-  height: 88%;
-  background: radial-gradient(
-    ellipse 50% 38% at 50% 12%,
-    rgba(30, 24, 16, 0.85) 0 60%,
-    transparent 70%
-  ),
-  linear-gradient(180deg, transparent 16%, rgba(30, 24, 16, 0.8) 30%);
-  filter: blur(6px);
-  animation: silhouette-shift 4s steps(2, jump-none) infinite;
-  transition: transform 400ms var(--ease-paper), opacity 400ms var(--ease-paper);
-}
-@keyframes silhouette-shift {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-7px);
-  }
-}
-/* stamped NOT FOR US: he turns and goes */
-.wiv__silhouette--gone {
-  transform: translateX(-70px);
-  opacity: 0;
+.wiv__man {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
 }
 
-/* ---------------------------------------------------------------- */
-/* THE CLIPBOARD                                                     */
-/* ---------------------------------------------------------------- */
-.wiv__board {
-  position: absolute;
-  left: 12%;
-  top: 13%;
-  bottom: 4%;
-  width: min(560px, 46%);
-  z-index: 2;
-  background-color: #4a3a26;
-  background-image: var(--tex-steel);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  box-shadow: 6px 10px 30px rgba(0, 0, 0, 0.6);
-  padding: 34px 18px 18px;
-  animation: board-deal 260ms var(--ease-paper) 1;
-}
-@keyframes board-deal {
-  from {
-    transform: translateY(24%) rotate(1.4deg);
-    opacity: 0.5;
-  }
-}
-.wiv__boardclip {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92px;
-  height: 22px;
-  background: linear-gradient(180deg, #9aa096, #5f665c);
-  border: 1px solid #2c322a;
-  z-index: 3;
-}
-
-/* THE DECIDING PHASE — the card lands somewhere (CD ruling 11) */
-.wiv__board--right {
-  animation: file-right 350ms var(--ease-steel) forwards;
-}
-@keyframes file-right {
-  30% {
-    transform: rotate(1.2deg);
-  }
-  100% {
-    transform: translateX(130%) rotate(5deg);
-    opacity: 0.4;
-  }
-}
-.wiv__board--left {
-  animation: slide-left 350ms var(--ease-steel) forwards;
-}
-@keyframes slide-left {
-  25% {
-    transform: rotate(-1deg);
-  }
-  100% {
-    transform: translateX(-140%) rotate(-6deg);
-    opacity: 0.4;
-  }
-}
-.wiv__board--tuck {
-  animation: tuck-away 300ms var(--ease-paper) forwards;
-}
-@keyframes tuck-away {
-  100% {
-    transform: translate(40%, 90%) rotate(4deg) scale(0.8);
-    opacity: 0.3;
-  }
-}
-
-/* the waiting stack under the board */
-.wiv__stack {
-  position: absolute;
-  inset: 34px 18px 18px;
-  z-index: -1;
-}
-.wiv__stackcard {
-  position: absolute;
-  right: -10px;
-  bottom: -10px;
-  width: 100%;
-  height: 100%;
-  background: #d8cfb4;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35);
-}
-.wiv__stackband {
-  position: absolute;
-  bottom: -12px;
-  left: 24px;
-  padding: 3px 9px 4px;
-  background-color: var(--pulp);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.45);
-  transform: rotate(-1.6deg);
-}
-
-/* ---------------------------------------------------------------- */
-/* THE RIGHT RAIL — your tools                                       */
-/* ---------------------------------------------------------------- */
-.wiv__rail {
-  position: absolute;
-  right: 4%;
-  top: 8%;
-  bottom: 2%;
-  width: clamp(240px, 24%, 330px);
-  z-index: 2;
+.wiv__facts {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
-.wiv__rail button:disabled {
-  cursor: not-allowed;
+  gap: 10px;
+  min-width: 0;
 }
 
-/* the key board — the best offer, nearest the light */
-.railkeys {
-  position: relative;
-  padding: 0 0 16px;
-  text-align: center;
+.wiv__facts .fp__name {
+  text-align: left;
 }
-.railkeys__board {
+
+.wiv__impression {
+  font-family: var(--type-typewriter);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--cream);
+  margin: 0;
+}
+
+.wiv__decide {
   display: flex;
-  gap: 8px;
-  justify-content: center;
-  padding: 14px 12px 26px;
-  background-color: var(--oak);
-  background-image: var(--tex-steel);
-  background-blend-mode: multiply;
-  border: 3px solid #4a3722;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
-}
-.railkeys:hover:not(:disabled) .railkeys__board {
-  filter: brightness(1.08);
-}
-/* dusty when all out — never grayed */
-.railkeys:disabled .railkeys__board {
-  filter: saturate(0.55) brightness(0.88);
-}
-.railkeys__hook {
-  position: relative;
-  width: 9px;
-  height: 32px;
-}
-.railkeys__hook::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 4px;
-  height: 9px;
-  background: linear-gradient(180deg, var(--brass-polished), var(--brass-oxidized));
-  border-radius: 0 0 3px 3px;
-}
-.railkeys__key {
-  position: absolute;
-  top: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 18px;
-  background: linear-gradient(180deg, var(--brass-polished) 0 34%, var(--brass-oxidized) 34%);
-  clip-path: polygon(
-    20% 0,
-    80% 0,
-    80% 40%,
-    100% 46%,
-    100% 62%,
-    80% 58%,
-    80% 100%,
-    20% 100%,
-    20% 58%,
-    0 62%,
-    0 46%,
-    20% 40%
-  );
-}
-.railkeys__key::after {
-  content: '';
-  position: absolute;
-  top: 16px;
-  left: -3px;
-  width: 13px;
-  height: 9px;
-  background: #e4ddc8;
-}
-.railkeys__strip {
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-0.8deg);
-  padding: 3px 8px 4px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  white-space: nowrap;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* the floor-pass chit pad */
-.railchits {
-  position: relative;
-  margin-left: -8%;
-  align-self: flex-start;
-  padding: 0 0 14px;
-  width: 74%;
+.wiv__btn {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 14px;
 }
-.railchits__pad {
-  display: block;
-  padding: 10px 12px 14px;
-  background-color: var(--pulp);
-  background-image:
-    linear-gradient(180deg, rgba(20, 14, 8, 0.14) 0 3px, transparent 3px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-bottom: 5px solid #8a733f;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 8px var(--shadow-cast);
-  transition: transform var(--t-paper) var(--ease-paper);
-}
-.railchits:hover:not(:disabled) .railchits__pad {
-  transform: translateY(-2px);
-}
-.railchits:disabled .railchits__pad {
-  filter: saturate(0.5) brightness(0.9);
-}
-.railchits__chit {
-  display: block;
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
+
+.wiv__cap {
+  font-family: var(--type-machine);
+  font-size: 9.5px;
   letter-spacing: 0.04em;
-  line-height: 1.5;
-  color: var(--ink-news);
-  border: 1.5px dashed rgba(46, 43, 38, 0.5);
-  padding: 8px 6px;
-}
-.railchits__band {
-  position: absolute;
-  bottom: 0;
-  left: 8%;
-  padding: 3px 8px 4px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  white-space: nowrap;
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
-  transform: rotate(1deg);
-}
-.railchits__noroom {
-  font-family: var(--type-hand);
-  font-weight: 600;
-  font-size: 14px;
-  color: var(--ink-graphite);
+  color: var(--cream-dim);
 }
 
-/* the red stamp on its ink tin */
-.railstamp {
-  position: relative;
-  align-self: flex-end;
-  margin-right: 12%;
-  width: 130px;
-  height: 110px;
-  padding: 0;
-}
-.railstamp__tin {
-  position: absolute;
-  bottom: 0;
-  left: 8px;
-  right: 8px;
-  height: 26px;
-  background: linear-gradient(180deg, #6d6a5f 0 22%, #4c4a42 22%);
-  border: 1px solid #2c2a24;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-}
-/* the red pad inside */
-.railstamp__tin::after {
-  content: '';
-  position: absolute;
-  inset: 6px 8px 4px;
-  background: rgba(143, 59, 46, 0.7);
-}
-.railstamp__handle {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 26px;
-  height: 52px;
-  background:
-    radial-gradient(ellipse 60% 22% at 50% 6%, #8a6d45 0 62%, transparent 68%),
-    linear-gradient(90deg, #55401f, #8a6d45 45%, #55401f);
-  border-radius: 8px 8px 3px 3px;
-  transition: transform 100ms var(--ease-stamp);
-}
-.railstamp:hover:not(:disabled) .railstamp__handle {
-  filter: brightness(1.12);
-}
-.railstamp:active:not(:disabled) .railstamp__handle {
-  transform: translateX(-50%) translateY(8px);
-}
-.railstamp__label {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  padding: 2px 7px;
-  background: rgba(222, 214, 194, 0.92);
-  font-family: var(--type-marker);
-  font-size: 11px;
-  color: #7c2318;
-  white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-/* the PENDING tray, breaking the frame's bottom edge */
-.railtray {
-  position: relative;
-  margin-top: auto;
-  margin-bottom: -12px;
-  height: 86px;
-  padding: 0;
-}
-.railtray__wire {
-  position: absolute;
-  inset: 18px 6% 0;
-  border: 2.5px solid #9aa096;
-  border-bottom-width: 4px;
-  background: rgba(10, 8, 6, 0.25);
-}
-.railtray:hover:not(:disabled) .railtray__wire {
-  filter: brightness(1.15);
-}
-.railtray__pending {
-  position: absolute;
-  bottom: 4px;
-  width: 40px;
-  height: 44px;
-  background: #d8cfb4;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  transform: rotate(-4deg);
-}
-.railtray__pending + .railtray__pending {
-  transform: rotate(3deg);
-}
-.railtray__card {
-  position: absolute;
-  top: 2px;
-  left: 12%;
-  padding: 3px 8px 4px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 10px;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
-  transform: rotate(-1.2deg);
-  z-index: 2;
-}
-
-/* the desk pad corner: BANK BAL. at the moment of decision */
-.wiv__deskpad {
-  position: absolute;
-  left: -6px;
-  bottom: -4px;
-  z-index: 3;
-  padding: 10px 16px 12px 14px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
-  transform: rotate(1.4deg);
-}
-.wiv__deskpad .bankbal__line {
-  font-size: 14px;
-}
-
-/* ---------------------------------------------------------------- */
-/* REFLOW below 900px                                                 */
-/* ---------------------------------------------------------------- */
-@media (max-width: 900px) {
-  .wiv {
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding: 14px 12px 80px;
-  }
-  .wiv__doorway {
-    display: none;
-  }
-  .wiv__board {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    order: 0;
-  }
-  .wiv__rail {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    order: 1;
-    gap: 20px;
-  }
-  .railchits {
-    margin-left: 0;
-    width: 100%;
-  }
-  .railstamp {
-    align-self: flex-start;
-    margin-right: 0;
-  }
-  .railtray {
-    margin-bottom: 0;
-  }
-  .wiv__deskpad {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-  }
+.wiv__more {
+  margin-top: 10px;
 }

@@ -10,7 +10,6 @@ import { HomeScreen } from './screens/HomeScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { NewGameScreen } from './screens/newgame/NewGameScreen';
 import { GameScreen } from './screens/GameScreen';
-import { PropDefs } from './kit/PropDefs';
 
 export function App() {
   const { screen } = useGame();
@@ -31,7 +30,6 @@ export function App() {
 
   return (
     <>
-      <PropDefs />
       {view}
     </>
   );
