@@ -1,0 +1,75 @@
+/* The phone as a standalone overlay — same sheets, no desk required. */
+
+.phone-room {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 4vh 4vw;
+  background: rgba(8, 6, 4, 0.78);
+}
+
+.phone-room__sheet {
+  width: min(980px, 94vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--newsprint);
+  background-image: var(--tex-paper);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.phone-room__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 8px;
+  border-bottom: 3px double var(--ink-news);
+}
+
+.phone-room__title {
+  font-family: var(--type-poster);
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  color: var(--ink-news);
+  margin: 0;
+}
+
+.phone-room__close {
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  border: 1.5px solid var(--ink-news);
+  background: transparent;
+  color: var(--ink-news);
+  cursor: pointer;
+}
+
+.phone-room__close:hover {
+  background: var(--ink-news);
+  color: var(--newsprint);
+}
+
+.phone-room__esc {
+  opacity: 0.6;
+  margin-left: 6px;
+}
+
+/* the sheets fill the standalone frame (the office held version supplies
+   its own chrome via .held--phonedesk) */
+.phone-room__sheet .phonedesk {
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 16px 20px 24px;
+}
+
+@media (max-width: 860px) {
+  .phone-room__sheet .phonedesk {
+    grid-template-columns: 1fr;
+  }
+}

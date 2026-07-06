@@ -12,6 +12,7 @@ import { OfficeRoom } from './OfficeRoom';
 import { LockerRoom } from './LockerRoom';
 import { MyGymRoom } from './MyGymRoom';
 import { PressRoom } from './PressRoom';
+import { PhoneRoom } from './PhoneRoom';
 
 export function RoomRouter() {
   const { activeRoom, save } = useGame();
@@ -26,6 +27,8 @@ export function RoomRouter() {
       return <MyGymRoom />;
     case 'press':
       return <PressRoom />;
+    case 'phone':
+      return <PhoneRoom />;
     case 'calendar':
       return <RoomPlaceholder roomKey="calendar" />;
   }

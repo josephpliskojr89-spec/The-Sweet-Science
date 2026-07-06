@@ -78,7 +78,7 @@ it.skipIf(!process.env.E2E_FIXTURES)('builds e2e fixture saves', () => {
             opponentId: opp.id,
             weightClass: entry.fighter.weightClass,
             rounds: 6,
-            venue: 'the Armory',
+            venue: 'Armory',
             purse: 350,
             onDay: save.dayCount, // due today
             corner: { mode: 'self', chiefSecondId: null, cutmanId: null },
@@ -102,7 +102,7 @@ it.skipIf(!process.env.E2E_FIXTURES)('builds e2e fixture saves', () => {
             opponentId: opp.id,
             weightClass: entry.fighter.weightClass,
             rounds: 6,
-            venue: 'the Armory',
+            venue: 'Armory',
             purse: 300,
             onDay: save.dayCount + 12,
             expiresDay: save.dayCount + 8,

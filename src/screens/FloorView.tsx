@@ -1,33 +1,17 @@
 /*
-  GymScreen — the gym floor, as one piece of art
+  FloorView — the painted gym, as a place you VISIT.
   --------------------------------------------------------------------------
-  The room is a single image (public/floor/gym-floor.jpg) scaled like
-  background-size: cover. The game hangs its interactive objects on it at
-  percentage coordinates from src/assets/floorScene.ts:
-
-    OFFICE door        → the office (which also holds the press and staff)
-    LOCKER ROOM door   → the roster
-    corkboard          → the gym log (slips pinned over the painted cork)
-    calendar           → filled in live: month, X's through spent days,
-                         rent circled on the 1st; click opens the schedule
-    office threshold   → pink slips collect when walk-ins wait
-
-  Time and money live in a quiet strip along the bottom: typed date, bank
-  balance, and plain Advance Day / Advance Week buttons.
+  The desk (GameScreen) is where the game is played; this is where it
+  breathes. The art keeps its hotspots — the doors still work, the cork
+  still reads, the calendar still fills in — for anyone who'd rather walk
+  the floor than read the blotter. Esc or the strip button goes back.
 */
 
-import { useState, type CSSProperties } from 'react';
+import { useEffect, type CSSProperties } from 'react';
 import { useGame } from '../state/GameContext';
-import { FightNight } from './FightNight';
 import { formatDate } from '../game/time';
-import { formatMoney } from '../game/economy';
 import { FLOOR_SCENE, type SceneRect } from '../assets/floorScene';
-import { RoomRouter } from '../rooms/RoomRouter';
-import { ArrivalNotice } from '../components/ArrivalNotice';
 import { GymLogBoard } from '../components/GymLogBoard';
-import { Toast } from '../components/Toast';
-import { WalkInViewer } from './WalkInViewer';
-import { FighterProfile } from './FighterProfile';
 import { seedRange } from '../kit/seed';
 import './GymScreen.css';
 
@@ -47,20 +31,29 @@ function monthGrid(dayCount: number) {
   return { d, daysInMonth, lead };
 }
 
-export function GymScreen() {
-  const { save, openRoom, goHome, advanceTime, liveBout } = useGame();
-  const [fightOpen, setFightOpen] = useState(false);
+export function FloorView({ onClose }: { onClose: () => void }) {
+  const { save, openRoom, activeRoom, profileId, viewerIds } = useGame();
+
+  // Esc leaves the floor — unless a room/overlay is open above it
+  const overlayOpen = activeRoom !== null || profileId !== null || viewerIds !== null;
+  useEffect(() => {
+    if (overlayOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose, overlayOpen]);
+
   if (!save) return null;
-  const liveMan = liveBout ? save.roster.find((e) => e.fighter.id === liveBout.fighterId) : null;
 
   const walkIns = save.walkIns.length;
   const roster = save.roster.length;
-  const date = formatDate(save.dayCount);
   const { d, daysInMonth, lead } = monthGrid(save.dayCount);
   const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
   return (
-    <div className="floor">
+    <div className="floor floor--view">
       <div className="scene">
         <img className="scene__art" src={FLOOR_SCENE.src} alt="" draggable={false} />
 
@@ -139,43 +132,13 @@ export function GymScreen() {
         </button>
       </div>
 
-      {/* the quiet strip: date, money, time controls */}
       <div className="stripbar">
-        <span className="stripbar__date">{date.full}</span>
-        <span className="stripbar__cash" title="Bank balance">
-          {formatMoney(save.money)}
-        </span>
+        <span className="stripbar__date">{formatDate(save.dayCount).full}</span>
         <span className="stripbar__gap" />
-        {liveBout ? (
-          <button
-            className="stripbar__btn stripbar__btn--fight"
-            onClick={() => setFightOpen(true)}
-          >
-            FIGHT NIGHT — {liveMan ? liveMan.fighter.lastName.toUpperCase() : 'THE BOUT'} AT THE{' '}
-            {liveBout.venue.toUpperCase()}
-          </button>
-        ) : (
-          <>
-            <button className="stripbar__btn" onClick={() => advanceTime('day')}>
-              Advance Day
-            </button>
-            <button className="stripbar__btn stripbar__btn--week" onClick={() => advanceTime('week')}>
-              Advance Week
-            </button>
-          </>
-        )}
-        <button className="stripbar__btn stripbar__btn--home" onClick={goHome} title="Leave for the home screen">
-          Home
+        <button className="stripbar__btn" onClick={onClose}>
+          Back to the Desk
         </button>
       </div>
-
-      {/* overlays */}
-      {fightOpen && liveBout && <FightNight onClose={() => setFightOpen(false)} />}
-      <ArrivalNotice />
-      <RoomRouter />
-      <FighterProfile />
-      <WalkInViewer />
-      <Toast />
     </div>
   );
 }

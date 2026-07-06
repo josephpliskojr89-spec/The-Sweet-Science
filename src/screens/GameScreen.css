@@ -1,0 +1,398 @@
+/*
+  GameScreen — the manager's desk. Paper objects over the darkened gym.
+*/
+
+.desk-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ink-black);
+}
+
+.desk-screen__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7) saturate(0.9);
+}
+
+.desk-screen__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 30%, transparent, rgba(8, 6, 4, 0.45) 85%),
+    linear-gradient(180deg, rgba(8, 6, 4, 0.5), rgba(8, 6, 4, 0.12) 30%, rgba(8, 6, 4, 0.5));
+}
+
+/* --- masthead ----------------------------------------------------------- */
+
+.masthead {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 22px 10px;
+  border-bottom: 1px solid rgba(201, 165, 92, 0.28);
+}
+
+.masthead__name {
+  font-family: var(--type-poster);
+  font-size: clamp(18px, 2.6vw, 28px);
+  letter-spacing: 0.06em;
+  color: #e8ddc0;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.masthead__sub {
+  font-family: var(--type-form);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: rgba(232, 221, 192, 0.75);
+  margin: 2px 0 0;
+}
+
+.masthead__facts {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+}
+
+.masthead__date {
+  font-family: var(--type-typewriter);
+  font-size: 13px;
+  color: rgba(232, 221, 192, 0.85);
+}
+
+.masthead__cash {
+  font-family: var(--type-machine);
+  font-size: 16px;
+  color: var(--brass-polished);
+}
+
+/* --- the paperwork grid --------------------------------------------------- */
+
+.deskgrid {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1.15fr;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    'book cork word'
+    'calls cork money'
+    '. cork .';
+  align-items: start;
+  gap: 18px;
+  padding: 20px 26px;
+  overflow-y: auto;
+}
+
+.panel {
+  min-height: 0;
+  max-height: 40vh;
+  padding: 12px 14px;
+  background-color: var(--newsprint);
+  background-image: var(--tex-paper);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel--book { grid-area: book; }
+.panel--calls { grid-area: calls; background-color: var(--memo-pink); }
+.panel--word { grid-area: word; background-color: var(--index-card); }
+.panel--money { grid-area: money; }
+
+.panel--cork {
+  grid-area: cork;
+  align-self: stretch;
+  max-height: none;
+  min-height: 360px;
+  background-color: var(--tobacco);
+  background-image: var(--tex-cork);
+  border: 6px solid var(--leather-dark);
+  padding: 8px;
+  position: relative;
+}
+
+.panel__head {
+  font-family: var(--type-form);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ink-news);
+  border-bottom: 2px solid var(--ink-news);
+  padding-bottom: 5px;
+  margin: 0 0 8px;
+}
+
+.panel__quiet {
+  font-family: var(--type-hand);
+  font-size: 15px;
+  color: var(--ink-graphite);
+  margin: 4px 0;
+}
+
+.panel__cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.panel__go {
+  margin-top: auto;
+  align-self: flex-start;
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border: 1.5px solid var(--ink-news);
+  background: transparent;
+  color: var(--ink-news);
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.panel__go:hover {
+  background: var(--ink-news);
+  color: var(--newsprint);
+}
+
+.panel__count {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  background: var(--ink-stamp-red);
+  color: var(--newsprint);
+  font-weight: 700;
+}
+
+/* booked-bout index card */
+.bookcard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  background: var(--index-card);
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 20px, var(--index-card-rule) 20px 21px),
+    var(--tex-paper);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.bookcard__who {
+  font-family: var(--type-machine);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-news);
+}
+
+.bookcard__when {
+  font-family: var(--type-typewriter);
+  font-size: 11.5px;
+  color: var(--ink-ribbon);
+}
+
+.bookcard__corner {
+  font-family: var(--type-form);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-stamp-red);
+}
+
+/* call memo */
+.callcard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.callcard__who {
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  color: var(--ink-news);
+}
+
+.callcard__terms {
+  font-family: var(--type-typewriter);
+  font-size: 11.5px;
+  color: var(--ink-ribbon);
+}
+
+/* the trainer's word */
+.wordlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wordlist__line {
+  font-family: var(--type-typewriter);
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-ribbon);
+}
+
+.wordlist__line--mark {
+  color: var(--ink-stamp-red);
+}
+
+.wordlist__line--quiet {
+  font-family: var(--type-hand);
+  font-size: 15px;
+  color: var(--ink-graphite);
+}
+
+.wordlist__act {
+  font: inherit;
+  color: var(--ink-ballpoint);
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* the bottom line */
+.money__balance {
+  font-family: var(--type-machine);
+  font-size: clamp(22px, 2.6vw, 30px);
+  color: var(--ink-news);
+  margin: 4px 0 2px;
+}
+
+.money__balance--red {
+  color: var(--ink-stamp-red);
+}
+
+.money__note {
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  color: var(--ink-ribbon);
+  margin: 0;
+}
+
+/* --- the button row -------------------------------------------------------- */
+
+.deskbar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px 14px;
+  border-top: 1px solid rgba(201, 165, 92, 0.28);
+  flex-wrap: wrap;
+}
+
+.deskbar__btn {
+  min-height: 38px;
+  padding: 6px 14px;
+  font-family: var(--type-form);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #e4dcc2;
+  background: rgba(20, 16, 12, 0.55);
+  border: 1px solid rgba(228, 220, 194, 0.4);
+  border-radius: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.deskbar__btn:hover {
+  border-color: rgba(228, 220, 194, 0.85);
+  background: rgba(228, 220, 194, 0.1);
+}
+
+.deskbar__gap {
+  flex: 1;
+}
+
+.deskbar__btn--advance {
+  border-width: 2px;
+}
+
+.deskbar__btn--week {
+  border-color: var(--brass-polished);
+  color: #f0d9a8;
+}
+
+.deskbar__btn--fight {
+  font-family: var(--type-poster);
+  font-size: 13px;
+  letter-spacing: 0.09em;
+  color: #f0d9a8;
+  border: 2px solid var(--paint-red-faded);
+  background: rgba(143, 68, 56, 0.35);
+}
+
+.deskbar__btn--fight:hover {
+  background: rgba(143, 68, 56, 0.55);
+}
+
+.deskbar__btn--home {
+  border-color: rgba(228, 220, 194, 0.2);
+  color: rgba(228, 220, 194, 0.7);
+}
+
+/* the floor view sits above the desk */
+.floor--view {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+}
+
+/* --- small screens ----------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .deskgrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-template-areas: 'book' 'calls' 'word' 'cork' 'money';
+  }
+  .panel--cork {
+    min-height: 220px;
+  }
+}
+
+
+/* the desk's cork is wide — slips read in place instead of truncating */
+.panel--cork .logslip__text {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}

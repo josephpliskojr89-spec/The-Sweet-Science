@@ -10,11 +10,12 @@ const browser = await chromium.launch();
 try {
   const page = await pageWithSave(browser, fixture('open-offer.json'));
 
-  await page.getByRole('button', { name: /Office —/i }).click();
-  await page.waitForTimeout(400);
-  const phone = page.getByRole('button', { name: /The phone/i });
-  ok('phone label', await phone.getAttribute('aria-label'));
-  await phone.click();
+  // the desk shows the call; THE PHONE is one click away
+  must(
+    await page.getByText(/A PROMOTER WANTS/i).first().isVisible(),
+    'call visible on the desk',
+  );
+  await page.getByRole('button', { name: /^THE PHONE/ }).click();
   await page.waitForTimeout(300);
   await page.screenshot({ path: join(TMP, 'phone-offer.png') });
 
@@ -24,9 +25,10 @@ try {
   await page.waitForTimeout(200);
   await page.screenshot({ path: join(TMP, 'phone-booked.png') });
 
-  await page.keyboard.press('Escape'); // put the phone down
-  await page.keyboard.press('Escape'); // leave the office
+  await page.getByRole('button', { name: /HANG UP/i }).click();
   await page.waitForTimeout(300);
+  // the booking shows on the desk
+  must(await page.getByText(/YOU WORK THE CORNER/i).isVisible(), 'corner plan on the desk');
 
   await page.getByRole('button', { name: 'Advance Week' }).click();
   await page.waitForTimeout(600);

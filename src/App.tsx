@@ -9,7 +9,7 @@ import { useGame } from './state/GameContext';
 import { HomeScreen } from './screens/HomeScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { NewGameScreen } from './screens/newgame/NewGameScreen';
-import { GymScreen } from './screens/GymScreen';
+import { GameScreen } from './screens/GameScreen';
 import { PropDefs } from './kit/PropDefs';
 
 export function App() {
@@ -22,7 +22,7 @@ export function App() {
       case 'newgame':
         return <NewGameScreen />;
       case 'game':
-        return <GymScreen />;
+        return <GameScreen />;
       case 'home':
       default:
         return <HomeScreen />;

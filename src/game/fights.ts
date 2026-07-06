@@ -298,7 +298,7 @@ export function rollFightOffers(args: RollOffersArgs): FightOffer[] {
     opponentId: opp.id,
     weightClass: e.fighter.weightClass,
     rounds,
-    venue: venues.length ? pick(venues) : 'the Armory',
+    venue: venues.length ? pick(venues) : 'Armory',
     purse: Math.round((pursefor(rounds, opp.publicReputation, risk, year) * weather) / 25) * 25,
     onDay: dayCount + randInt(10, 24),
     expiresDay: dayCount + randInt(5, 9),
