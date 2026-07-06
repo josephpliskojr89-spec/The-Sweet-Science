@@ -48,6 +48,9 @@ function expectSound(save: GameSave, source: Record<string, unknown>) {
     expect(b.corner).toBeDefined();
     expect(['self', 'staff']).toContain(b.corner.mode);
   }
+  // v24: the identity seed exists and derives deterministically
+  expect(save.seed).toBeDefined();
+  expect(migrate(source)!.seed).toBe(save.seed);
   // era: present, seeded, schedule intact
   expect(save.era).toBeDefined();
   expect(save.era.schedule.length).toBeGreaterThan(5);

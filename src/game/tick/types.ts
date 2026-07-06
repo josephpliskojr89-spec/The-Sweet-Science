@@ -19,6 +19,7 @@ import type { EraState } from '../era/eraState';
 import type { FightOffer, BookedFight, FightReport } from '../fights';
 import type { FinanceEntry } from '../economy';
 import type { CoachApplicant } from '../coaches';
+import type { Rng } from '../engine/fightEngine';
 
 /** A walk-in you didn't sign, taken by a named rival gym. */
 export interface PoachEvent {
@@ -51,8 +52,12 @@ export interface TickCtx {
   prev: GameSave;
   fromDay: number;
   toDay: number;
+  /** always 1 — the tick runs one day at a time; kept for stage formulas */
   days: number;
   crossesMonth: boolean;
+  /** the day's seeded stream, derived from (save.seed, day) — new systems
+      draw from THIS, never Math.random, so a day can be replayed */
+  rng: Rng;
 
   // --- save fields being rewritten, threaded stage to stage ---------------
   roster: RosterEntry[];

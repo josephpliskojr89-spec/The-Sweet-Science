@@ -146,6 +146,36 @@ describe('advanceTick', () => {
     expect(save.roster[0].bouts).toHaveLength(1);
   });
 
+
+  it('lands events on their true dates — a mid-week bout resolves ON its day', () => {
+    const base = freshSave();
+    const entry = entryFor(0.5);
+    const opp = base.world.fighters.find((f) => f.weightClass === entry.fighter.weightClass)!;
+    let save: GameSave = {
+      ...base,
+      roster: [entry],
+      bookedFights: [
+        {
+          id: 'bf_dates',
+          fighterId: entry.fighter.id,
+          opponentId: opp.id,
+          weightClass: entry.fighter.weightClass,
+          rounds: 6,
+          venue: 'the Armory',
+          purse: 300,
+          onDay: 3, // mid-week
+          corner: { mode: 'staff', chiefSecondId: null, cutmanId: null },
+        },
+      ],
+    };
+    save = advanceTick(save, 'week')!.next;
+    expect(save.dayCount).toBe(7);
+    expect(save.bookedFights).toHaveLength(0);
+    // the record shows the day the bell actually rang, not the end of the span
+    expect(save.roster[0].bouts[0].dayCount).toBe(3);
+    expect(save.recentFights[0].dayCount).toBe(3);
+  });
+
   it('reports arrivals and departures through the notice, not the save alone', () => {
     let save: GameSave = freshSave();
     let sawNotice = false;

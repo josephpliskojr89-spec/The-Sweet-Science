@@ -21,6 +21,7 @@ import { initPressState, type PressState } from '../game/press';
 import { generateWorld, type WorldState } from '../game/world/population';
 import type { FightOffer, BookedFight, FightReport } from '../game/fights';
 import { generateEra, type EraState } from '../game/era/eraState';
+import { seedFrom } from '../game/engine/fightEngine';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
 import {
@@ -34,7 +35,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 23;
+export const SAVE_VERSION = 24;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -58,6 +59,9 @@ export interface GameSave {
   cityId: CityId;
   /** Day-count since the 1975 epoch (see game/time.ts). */
   dayCount: number;
+  /** The save's identity seed (v24) — the tick derives a per-day stream from
+      it, so new systems are reproducible by construction. */
+  seed: number;
   /** Cash on hand, in current (inflated) dollars. */
   money: number;
   /** Reputation penalty (≤0) from ruthless cuts; decays toward 0 (6C-4). */
@@ -109,6 +113,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     manager: draft.manager,
     cityId: draft.cityId,
     dayCount: 0,
+    seed: seedFrom(`${draft.gymName}:${draft.cityId}:${now}`),
     money: STARTING_MONEY,
     reputationMod: 0,
     finances: [],
@@ -252,6 +257,9 @@ export function migrate(raw: unknown): GameSave | null {
       manager: data.manager,
       cityId: data.cityId as CityId,
       dayCount: data.dayCount,
+      // v24 — the identity seed; older saves derive it from stable identity
+      seed:
+        data.seed ?? seedFrom(`${data.gymName}:${data.cityId}:${data.createdAt ?? 0}`),
       money: typeof data.money === 'number' ? data.money : STARTING_MONEY,
       reputationMod: typeof data.reputationMod === 'number' ? data.reputationMod : 0,
       finances: Array.isArray(data.finances) ? data.finances : [],

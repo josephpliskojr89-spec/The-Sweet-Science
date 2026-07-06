@@ -1,19 +1,23 @@
 /*
   advanceTick — the day advance, as one pure function.
   --------------------------------------------------------------------------
-  Everything that happens when time passes, in its fixed order:
+  Time passes ONE DAY AT A TIME: a week's advance is seven daily ticks, so
+  everything lands on its true date — bouts resolve on fight day, the books
+  settle on the first, the paper prints on its own Monday, era beats fire
+  the day history says they did. Each day runs the fixed pipeline:
 
     walk-ins → the floor (train/observe/life) → rival interest & departures
     → the help-wanted ad → the paper & the world → the books → fight night
     → the era
 
-  Stages mutate a shared TickCtx; this file owns the clamp (fight night
-  stops the clock), the ordering, and the final assembly of the next save,
-  the post-advance notice, and events for the caller to emit.
+  Stages mutate a shared TickCtx; this file owns the loop (fight night
+  stops the clock mid-span), the ordering, and the assembly of the next
+  save, the aggregated post-advance notice, and events for the caller to
+  emit.
 
-  PURE over its inputs — no React, no storage, no emit. The one impurity is
-  Math.random inside the stage modules (the historical convention); the
-  save-level seed replaces it stage by stage (see the roadmap).
+  PURE over its inputs — no React, no storage, no emit. Each day's ctx
+  carries an rng derived from (save.seed, day): stages migrating off
+  Math.random draw from it and become replayable by construction.
 */
 
 import type { GameSave } from '../../state/persistence';
@@ -21,8 +25,11 @@ import type { TimeStep } from '../time';
 import { advance, formatDate } from '../time';
 import { fighterFullName } from '../fighters';
 import { WEIGHT_CLASSES } from '../weightClasses';
+import { makeRng, seedFrom } from '../engine/fightEngine';
 import type { LogLine } from '../gymLog';
-import type { TickCtx, TickResult, TickEvent } from './types';
+import type { TickCtx, TickResult, TickEvent, AdvanceNotice, PoachEvent } from './types';
+import type { WalkIn } from '../walkins';
+import type { Departure } from '../departures';
 import { walkInsStage } from './stages/walkIns';
 import { gymLifeStage } from './stages/gymLife';
 import { departuresStage } from './stages/departures';
@@ -38,24 +45,28 @@ export function fightNightBlocks(save: GameSave): boolean {
   return save.bookedFights.some((b) => b.corner.mode === 'self' && b.onDay <= save.dayCount);
 }
 
-export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
-  if (fightNightBlocks(prev)) return null;
+interface DayOutcome {
+  next: GameSave;
+  arrived: WalkIn[];
+  gaveUp: WalkIn[];
+  departed: Departure[];
+  poached: PoachEvent[];
+  newIssue: boolean;
+  events: TickEvent[];
+}
 
+/** One day of the world, in pipeline order. */
+function tickOneDay(prev: GameSave): DayOutcome {
   const fromDay = prev.dayCount;
-  // fight night stops the clock: the advance lands ON a self-cornered
-  // bout's day and goes no further
-  let toDay = advance(fromDay, step);
-  const nextCornered = prev.bookedFights
-    .filter((b) => b.corner.mode === 'self' && b.onDay > fromDay && b.onDay <= toDay)
-    .sort((x, y) => x.onDay - y.onDay)[0];
-  if (nextCornered) toDay = nextCornered.onDay;
+  const toDay = fromDay + 1;
 
   const ctx: TickCtx = {
     prev,
     fromDay,
     toDay,
-    days: toDay - fromDay,
+    days: 1,
     crossesMonth: formatDate(fromDay).month !== formatDate(toDay).month,
+    rng: makeRng(seedFrom(`${prev.seed}:${toDay}`)),
     roster: prev.roster,
     world: prev.world,
     press: prev.press,
@@ -156,29 +167,66 @@ export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
     ].slice(0, 12),
   };
 
-  const events: TickEvent[] = ctx.departed.map((d) => ({
-    type: d.reason === 'left_for_opportunity' ? 'fighter_left_for_opportunity' : 'fighter_quit',
-    fighterId: d.entry.fighter.id,
-  }));
+  return {
+    next,
+    arrived: ctx.freshWalkIns,
+    gaveUp: ctx.gaveUp,
+    departed: ctx.departed,
+    poached: ctx.poached,
+    newIssue: ctx.pressCycles >= 1,
+    events: ctx.departed.map((d) => ({
+      type:
+        d.reason === 'left_for_opportunity'
+          ? ('fighter_left_for_opportunity' as const)
+          : ('fighter_quit' as const),
+      fighterId: d.entry.fighter.id,
+    })),
+  };
+}
 
-  const newIssue = ctx.pressCycles >= 1;
-  const notice =
-    newIssue ||
-    ctx.freshWalkIns.length ||
-    ctx.gaveUp.length ||
-    ctx.departed.length ||
-    ctx.poached.length
+export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
+  if (fightNightBlocks(prev)) return null;
+
+  const startDay = prev.dayCount;
+  const targetDay = advance(startDay, step);
+
+  let save = prev;
+  const arrived: WalkIn[] = [];
+  const gaveUp: WalkIn[] = [];
+  const departed: Departure[] = [];
+  const poached: PoachEvent[] = [];
+  const events: TickEvent[] = [];
+  let newIssue = false;
+
+  while (save.dayCount < targetDay) {
+    const day = tickOneDay(save);
+    save = day.next;
+    arrived.push(...day.arrived);
+    gaveUp.push(...day.gaveUp);
+    departed.push(...day.departed);
+    poached.push(...day.poached);
+    events.push(...day.events);
+    newIssue = newIssue || day.newIssue;
+    // fight night stops the clock: the advance lands ON a self-cornered
+    // bout's day and goes no further
+    if (fightNightBlocks(save)) break;
+  }
+
+  const notice: AdvanceNotice | null =
+    newIssue || arrived.length || gaveUp.length || departed.length || poached.length
       ? {
-          arrived: ctx.freshWalkIns.map((w) => w.fighter),
-          expired: ctx.gaveUp.map((w) => w.fighter),
-          departed: ctx.departed,
-          poached: ctx.poached,
-          headlines: ctx.press.clippings.filter((c) => c.dayCount === toDay),
-          paperName: ctx.press.paperName,
-          dateLabel: formatDate(toDay).full,
+          arrived: arrived.map((w) => w.fighter),
+          expired: gaveUp.map((w) => w.fighter),
+          departed,
+          poached,
+          headlines: save.press.clippings.filter(
+            (c) => c.dayCount > startDay && c.dayCount <= save.dayCount,
+          ),
+          paperName: save.press.paperName,
+          dateLabel: formatDate(save.dayCount).full,
           newIssue,
         }
       : null;
 
-  return { next, notice, events };
+  return { next: save, notice, events };
 }
