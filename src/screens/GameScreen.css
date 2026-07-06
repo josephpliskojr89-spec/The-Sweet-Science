@@ -143,9 +143,13 @@
   grid-area: right;
 }
 
-.mgmt__log {
+.mgmt__band {
   grid-area: log;
   align-self: end;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  min-height: 0;
 }
 
 /* --- a unit: charcoal panel, cream label plate ------------------------------ */
@@ -375,9 +379,9 @@
   color: var(--signal-red);
 }
 
-/* --- gym log: a low, wide band over the floorboards ---------------------------- */
+/* --- the bottom band: headlines and the log over the floorboards --------------- */
 
-.mgmt__log .unit__body {
+.mgmt__band .unit__body {
   padding: 8px 12px 10px;
 }
 
@@ -385,8 +389,6 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  columns: 2;
-  column-gap: 28px;
 }
 
 .log__line {
@@ -409,6 +411,39 @@
   font-size: 12px;
   line-height: 1.45;
   color: var(--cream);
+}
+
+.log__link {
+  font-family: var(--type-form);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--cream);
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.log__link:hover {
+  color: var(--gold);
+}
+
+/* rank digit and growth figure */
+.row__rank {
+  display: inline-block;
+  width: 16px;
+  font-family: var(--type-machine);
+  color: var(--cream-dim);
+}
+
+.row__delta {
+  color: var(--gold);
+  font-weight: 700;
 }
 
 /* --- the console ------------------------------------------------------------------ */
@@ -504,7 +539,8 @@
     grid-template-columns: 1fr;
     grid-template-areas: 'left' 'right' 'log';
   }
-  .log {
-    columns: 1;
+  .mgmt__band {
+    grid-template-columns: 1fr;
   }
+
 }

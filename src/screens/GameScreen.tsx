@@ -30,6 +30,9 @@ import { fighterFullName } from '../game/fighters';
 import { worldFighterName } from '../game/world/population';
 import { gymReputation, reputationLabel } from '../game/reputation';
 import { getCity } from '../game/cities';
+import { WEIGHT_CLASSES } from '../game/weightClasses';
+import { recordLine } from '../game/fights';
+import type { Attributes } from '../game/fighters';
 import { REGIONS } from '../game/regions';
 import { RoomRouter } from '../rooms/RoomRouter';
 import { ArrivalNotice } from '../components/ArrivalNotice';
@@ -42,7 +45,7 @@ import './GameScreen.css';
 const BACKDROP = '/dashboard/gym.jpg';
 
 export function GameScreen() {
-  const { save, openRoom, openWalkIns, goHome, advanceTime, liveBout } = useGame();
+  const { save, openRoom, openWalkIns, openProfile, goHome, advanceTime, liveBout } = useGame();
   const [fightOpen, setFightOpen] = useState(false);
   if (!save) return null;
 
@@ -57,6 +60,28 @@ export function GameScreen() {
     .sort((a, b) => a.restUntil - b.restUntil);
   const requests = save.roster.filter((e) => e.lockerRequested && !e.hasLocker);
   const lastMonth = save.finances[0] ?? null;
+
+  // locker room at a glance: the three strongest men by total attributes
+  const attrTotal = (a: Attributes) => Object.values(a).reduce((sum, v) => sum + v, 0);
+  const topMen = [...save.roster]
+    .sort((a, b) => attrTotal(b.fighter.attributes) - attrTotal(a.fighter.attributes))
+    .slice(0, 3);
+
+  // development: who's grown the most against a snapshot at least a month old
+  const improvers = save.roster
+    .flatMap((e) => {
+      const aged = e.history.filter((snap) => save.dayCount - snap.day >= 28);
+      const base = aged[aged.length - 1];
+      if (!base) return [];
+      const delta =
+        attrTotal(e.fighter.attributes) -
+        Object.values(base.attrs).reduce((sum, v) => sum + v, 0);
+      return delta > 0.4 ? [{ e, delta, since: base.day }] : [];
+    })
+    .sort((a, b) => b.delta - a.delta)
+    .slice(0, 3);
+
+  const headlines = save.press.clippings.slice(0, 3);
   const quietReport =
     resting.length === 0 &&
     requests.length === 0 &&
@@ -171,6 +196,34 @@ export function GameScreen() {
               </button>
             </div>
           </section>
+
+          <section className="unit" aria-label="Ledger">
+            <header className="unit__plate">
+              <h2 className="unit__title">LEDGER</h2>
+            </header>
+            <div className="unit__body">
+              <div className="ledger__line">
+                <span className="ledger__label">BALANCE</span>
+                <span className={'ledger__figure' + (save.money < 0 ? ' ledger__figure--red' : '')}>
+                  {save.money < 0
+                    ? `($${Math.abs(Math.round(save.money)).toLocaleString('en-US')})`
+                    : formatMoney(save.money)}
+                </span>
+              </div>
+              {lastMonth && (
+                <div className="ledger__line">
+                  <span className="ledger__label">{lastMonth.label.toUpperCase()}</span>
+                  <span className={'ledger__figure ledger__figure--sm' + (lastMonth.net < 0 ? ' ledger__figure--red' : '')}>
+                    {lastMonth.net >= 0 ? '+' : '−'}
+                    {formatMoney(Math.abs(lastMonth.net))}
+                  </span>
+                </div>
+              )}
+              <button className="unit__action" onClick={() => openRoom('office')}>
+                THE ACCOUNTS →
+              </button>
+            </div>
+          </section>
         </div>
 
         {/* right rail — the gym's condition */}
@@ -232,37 +285,96 @@ export function GameScreen() {
             </div>
           </section>
 
-          <section className="unit" aria-label="Ledger">
+          <section className="unit" aria-label="Locker room at a glance">
             <header className="unit__plate">
-              <h2 className="unit__title">LEDGER</h2>
+              <h2 className="unit__title">LOCKER ROOM</h2>
+              {save.roster.length > 0 && <span className="unit__tally">{save.roster.length}</span>}
             </header>
             <div className="unit__body">
-              <div className="ledger__line">
-                <span className="ledger__label">BALANCE</span>
-                <span className={'ledger__figure' + (save.money < 0 ? ' ledger__figure--red' : '')}>
-                  {save.money < 0
-                    ? `($${Math.abs(Math.round(save.money)).toLocaleString('en-US')})`
-                    : formatMoney(save.money)}
-                </span>
-              </div>
-              {lastMonth && (
-                <div className="ledger__line">
-                  <span className="ledger__label">{lastMonth.label.toUpperCase()}</span>
-                  <span className={'ledger__figure ledger__figure--sm' + (lastMonth.net < 0 ? ' ledger__figure--red' : '')}>
-                    {lastMonth.net >= 0 ? '+' : '−'}
-                    {formatMoney(Math.abs(lastMonth.net))}
-                  </span>
-                </div>
+              {topMen.length === 0 ? (
+                <p className="unit__empty">Nobody in camp. The door is open.</p>
+              ) : (
+                <ul className="rows">
+                  {topMen.map((e, i) => (
+                    <li key={e.fighter.id}>
+                      <button className="row" onClick={() => openProfile(e.fighter.id)}>
+                        <span className="row__main">
+                          <span className="row__rank">{i + 1}</span>
+                          {fighterFullName(e.fighter).toUpperCase()}
+                        </span>
+                        <span className="row__detail">
+                          {WEIGHT_CLASSES[e.fighter.weightClass].name.toUpperCase()} ·{' '}
+                          {recordLine(e.record)}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               )}
-              <button className="unit__action" onClick={() => openRoom('office')}>
-                THE ACCOUNTS →
+              <button className="unit__action" onClick={() => openRoom('locker')}>
+                FULL ROSTER →
               </button>
             </div>
           </section>
+
+          <section className="unit" aria-label="Development — who's been improving">
+            <header className="unit__plate">
+              <h2 className="unit__title">DEVELOPMENT</h2>
+            </header>
+            <div className="unit__body">
+              {improvers.length === 0 ? (
+                <p className="unit__empty">Too early to say. Give the floor a month.</p>
+              ) : (
+                <ul className="rows">
+                  {improvers.map(({ e, delta, since }) => (
+                    <li key={e.fighter.id}>
+                      <button className="row" onClick={() => openProfile(e.fighter.id)}>
+                        <span className="row__main">{fighterFullName(e.fighter).toUpperCase()}</span>
+                        <span className="row__detail">
+                          <span className="row__delta">+{delta.toFixed(1)}</span> SINCE{' '}
+                          {formatDate(since).month.slice(0, 3).toUpperCase()}{' '}
+                          {formatDate(since).year}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </section>
+
         </div>
 
-        {/* bottom band — the floor speaks, over the empty boards */}
-        <section className="unit mgmt__log" aria-label="Gym log">
+        {/* bottom band — the paper and the floor, over the empty boards */}
+        <div className="mgmt__band">
+          <section className="unit" aria-label="Headlines">
+            <header className="unit__plate">
+              <h2 className="unit__title">HEADLINES</h2>
+            </header>
+            <div className="unit__body">
+              {headlines.length === 0 ? (
+                <p className="unit__empty">The paper has nothing on you yet.</p>
+              ) : (
+                <ul className="log">
+                  {headlines.map((c, i) => {
+                    const d = formatDate(c.dayCount);
+                    return (
+                      <li className="log__line" key={`${c.dayCount}-${i}`}>
+                        <span className="log__date">
+                          {d.month.slice(0, 3).toUpperCase()} {d.day}
+                        </span>
+                        <button className="log__link" onClick={() => openRoom('press')}>
+                          {c.text}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          </section>
+
+          <section className="unit" aria-label="Gym log">
           <header className="unit__plate">
             <h2 className="unit__title">GYM LOG</h2>
           </header>
@@ -285,7 +397,8 @@ export function GameScreen() {
               </ul>
             )}
           </div>
-        </section>
+          </section>
+        </div>
       </main>
 
       {/* the console — every destination, one row */}

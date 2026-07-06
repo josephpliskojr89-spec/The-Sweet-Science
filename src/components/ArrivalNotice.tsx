@@ -105,7 +105,7 @@ export function ArrivalNotice() {
               Read the full paper →
             </button>
             <button className="fp-news__btn" onClick={dismissArrival}>
-              To the floor
+              Back to work
             </button>
           </div>
         </div>
