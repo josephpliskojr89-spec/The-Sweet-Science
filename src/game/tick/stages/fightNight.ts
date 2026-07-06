@@ -8,12 +8,12 @@
 import type { TickCtx } from '../types';
 import { fighterFullName } from '../../fighters';
 import { formatDate } from '../../time';
-import { pressItem } from '../../press';
 import {
   ageOffers,
   resolveFight,
   rollFightOffers,
   cornerQualityFor,
+  applyResolvedFight,
 } from '../../fights';
 import { qualityFor } from '../derive';
 
@@ -50,16 +50,25 @@ export function fightNightStage(ctx: TickCtx): void {
         cornerQuality: cornerQualityFor(bout.corner, prev.coaches),
         dayCount: toDay,
       });
-      ctx.roster = ctx.roster.map((e, i) => (i === idx ? resolved.entry : e));
-      ctx.world = {
-        ...ctx.world,
-        fighters: ctx.world.fighters.map((f) => (f.id === opp.id ? resolved.opponent : f)),
-      };
-      ctx.money += resolved.purse;
-      ctx.press = pressItem(ctx.press, toDay, resolved.headline);
+      const applied = applyResolvedFight(
+        {
+          roster: ctx.roster,
+          world: ctx.world,
+          money: ctx.money,
+          press: ctx.press,
+          history: ctx.history,
+          recentFights: ctx.recentFights,
+        },
+        resolved,
+        toDay,
+      );
+      ctx.roster = applied.roster;
+      ctx.world = applied.world;
+      ctx.money = applied.money;
+      ctx.press = applied.press;
+      ctx.history = applied.history;
+      ctx.recentFights = applied.recentFights;
       ctx.fightNotes.push(resolved.logLine);
-      ctx.history = [...ctx.history, { dayCount: toDay, text: resolved.memory }].slice(-250);
-      ctx.recentFights = [resolved.report, ...ctx.recentFights].slice(0, 10);
     }
   }
 

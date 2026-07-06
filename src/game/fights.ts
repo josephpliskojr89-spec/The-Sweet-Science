@@ -18,6 +18,7 @@ import type { Coach, CoachTier } from './coaches';
 import { fighterFullName, type Fighter } from './fighters';
 import { type WeightClassKey } from './weightClasses';
 import { inflationFactor } from './economy';
+import { pressItem, type PressState } from './press';
 import {
   matchmake,
   promoteToFull,
@@ -552,6 +553,44 @@ export function applyFightResult(args: ResolveArgs, oppFull: Fighter, result: Fi
     headline,
     logLine,
     memory,
+  };
+}
+
+/**
+ * Where a finished fight's consequences land — the same six fields whether
+ * the merge target is the tick's working context or the save itself. ONE
+ * applier for both paths: a consequence added here reaches the off-screen
+ * sim and the live-cornered fight alike, and can never drift between them.
+ */
+export interface FightConsequenceTarget {
+  roster: RosterEntry[];
+  world: WorldState;
+  money: number;
+  press: PressState;
+  history: Array<{ dayCount: number; text: string }>;
+  recentFights: FightReport[];
+}
+
+export function applyResolvedFight<T extends FightConsequenceTarget>(
+  target: T,
+  resolved: ResolvedFight,
+  dayCount: number,
+): T {
+  return {
+    ...target,
+    roster: target.roster.map((e) =>
+      e.fighter.id === resolved.entry.fighter.id ? resolved.entry : e,
+    ),
+    world: {
+      ...target.world,
+      fighters: target.world.fighters.map((f) =>
+        f.id === resolved.opponent.id ? resolved.opponent : f,
+      ),
+    },
+    money: target.money + resolved.purse,
+    press: pressItem(target.press, dayCount, resolved.headline),
+    history: [...target.history, { dayCount, text: resolved.memory }].slice(-250),
+    recentFights: [resolved.report, ...target.recentFights].slice(0, 10),
   };
 }
 

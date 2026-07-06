@@ -24,7 +24,6 @@ import {
 import { formatDate, type TimeStep } from '../game/time';
 import { emitGameEvent } from '../game/events';
 import { type Fighter, fighterFullName } from '../game/fighters';
-import { pressItem } from '../game/press';
 import {
   snapshotAttrs,
   FOCUS_SLOTS_BASE,
@@ -74,6 +73,7 @@ import {
 } from './persistence';
 import {
   applyFightResult,
+  applyResolvedFight,
   bookFromOffer,
   defaultCornerPlan,
   cornerQualityFor,
@@ -430,18 +430,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
         oppFull,
         result,
       );
+      // same applier as the off-screen sim (game/fights) — consequences
+      // can never drift between the two paths
       commit({
-        ...prev,
+        ...applyResolvedFight(prev, resolved, prev.dayCount),
         bookedFights: remaining,
-        roster: prev.roster.map((e) => (e.fighter.id === entry.fighter.id ? resolved.entry : e)),
-        world: {
-          ...prev.world,
-          fighters: prev.world.fighters.map((f) => (f.id === opp.id ? resolved.opponent : f)),
-        },
-        money: prev.money + resolved.purse,
-        press: pressItem(prev.press, prev.dayCount, resolved.headline),
-        history: [...prev.history, { dayCount: prev.dayCount, text: resolved.memory }].slice(-250),
-        recentFights: [resolved.report, ...prev.recentFights].slice(0, 10),
         recentLog: [{ dayCount: prev.dayCount, text: resolved.logLine }, ...prev.recentLog].slice(0, 12),
       });
     },

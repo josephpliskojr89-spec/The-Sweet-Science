@@ -4,9 +4,18 @@
 */
 
 import { describe, it, expect } from 'vitest';
-import { pursefor, ageOffers, bookFromOffer, resolveFight, ringRating, type FightOffer } from './fights';
+import {
+  pursefor,
+  ageOffers,
+  bookFromOffer,
+  resolveFight,
+  ringRating,
+  applyResolvedFight,
+  type FightOffer,
+} from './fights';
 import { generateFighter } from './fighters';
 import { generateWorld, matchmake, promoteToFull } from './world/population';
+import { initPressState } from './press';
 import type { RosterEntry } from './roster';
 
 function entryFor(quality: number): RosterEntry {
@@ -164,5 +173,50 @@ describe('resolveFight', () => {
     expect(r1.report.narrative).toEqual(r2.report.narrative);
     // and the promotion is cached forward on the patched opponent
     expect(r1.opponent.full).not.toBeNull();
+  });
+});
+
+
+describe('applyResolvedFight', () => {
+  it('fans every consequence into any target with the six fields', () => {
+    const world = generateWorld('new_york', 0);
+    const entry = entryFor(0.5);
+    const opp = matchmake(world, {
+      weightClass: entry.fighter.weightClass,
+      minRating: ringRating(entry.fighter) * 0.6,
+      maxRating: ringRating(entry.fighter) * 1.2,
+      n: 4,
+    })[0];
+    const booked = {
+      id: 'bf_apply',
+      fighterId: entry.fighter.id,
+      opponentId: opp.id,
+      weightClass: entry.fighter.weightClass,
+      rounds: 6,
+      venue: 'the Armory',
+      purse: 275,
+      onDay: 30,
+      corner: { mode: 'staff' as const, chiefSecondId: null, cutmanId: null },
+    };
+    const resolved = resolveFight({ booked, entry, opponent: opp, cornerQuality: 0.02, dayCount: 30 });
+    const target = {
+      roster: [entry],
+      world,
+      money: 100,
+      press: initPressState('new_york'),
+      history: [] as Array<{ dayCount: number; text: string }>,
+      recentFights: [],
+      somethingElse: 'preserved',
+    };
+    const after = applyResolvedFight(target, resolved, 30);
+    expect(after.money).toBe(375);
+    expect(after.roster[0].bouts).toHaveLength(1);
+    expect(after.world.fighters.find((f) => f.id === opp.id)?.record).toEqual(
+      resolved.opponent.record,
+    );
+    expect(after.history.at(-1)?.text).toBe(resolved.memory);
+    expect(after.recentFights[0]).toBe(resolved.report);
+    expect(after.press.clippings.some((c) => c.text === resolved.headline)).toBe(true);
+    expect(after.somethingElse).toBe('preserved'); // generic over the target
   });
 });
