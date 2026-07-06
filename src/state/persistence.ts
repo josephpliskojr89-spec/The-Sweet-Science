@@ -199,7 +199,10 @@ function migrateFighter<
     v19 the fighter ceiling read; v20 world-fighter normalization (cached full
     fighters backfilled, local-indie ranks cleared). Pre-v2 shell saves can't be
     resumed — drop them. */
-function migrate(raw: unknown): GameSave | null {
+/** Bring any historical save shape forward to the current version.
+    Exported for the migration fixture tests — the UI goes through
+    loadSaveOutcome(). */
+export function migrate(raw: unknown): GameSave | null {
   if (!raw || typeof raw !== 'object') return null;
   const data = raw as Partial<GameSave>;
 
@@ -308,18 +311,78 @@ function migrate(raw: unknown): GameSave | null {
   return null;
 }
 
+/** The raw pre-migration save, kept whenever a version bump rewrites it. */
+const BACKUP_KEY = `${STORAGE_KEY}:backup`;
+/** A save that failed to load, preserved before anything overwrites it. */
+const CORRUPT_KEY = `${STORAGE_KEY}:corrupt`;
+
+export type LoadOutcome =
+  /** a playable save; upgradedFrom set when migration bumped its version */
+  | { kind: 'ok'; save: GameSave; upgradedFrom?: number }
+  /** nothing saved */
+  | { kind: 'none' }
+  /** something is saved but can't be read — it is NOT cleared */
+  | { kind: 'corrupt' };
+
+/**
+ * Load with the failure modes kept apart: "no save" and "broken save" are
+ * different situations and must never look the same to the shell. On a
+ * version upgrade the raw pre-migration text is copied to BACKUP_KEY first,
+ * so one bad migration can never be the end of a career.
+ */
+export function loadSaveOutcome(): LoadOutcome {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return { kind: 'none' }; // storage unavailable entirely
+  }
+  if (!raw) return { kind: 'none' };
+  try {
+    const data = JSON.parse(raw) as Partial<GameSave>;
+    const fromVersion = typeof data?.version === 'number' ? data.version : undefined;
+    const save = migrate(data);
+    if (!save) return { kind: 'corrupt' };
+    if (fromVersion !== undefined && fromVersion < SAVE_VERSION) {
+      try {
+        localStorage.setItem(BACKUP_KEY, raw);
+      } catch {
+        /* quota — the backup is best-effort */
+      }
+      return { kind: 'ok', save, upgradedFrom: fromVersion };
+    }
+    return { kind: 'ok', save };
+  } catch {
+    return { kind: 'corrupt' };
+  }
+}
+
 export function loadSave(): GameSave | null {
+  const outcome = loadSaveOutcome();
+  return outcome.kind === 'ok' ? outcome.save : null;
+}
+
+/** Once per session, before the first write: if whatever is already stored
+    can't be read, preserve it under CORRUPT_KEY so a New Game can't destroy
+    the evidence (or the career). */
+let firstWriteGuardDone = false;
+function preserveCorruptOnFirstWrite(): void {
+  if (firstWriteGuardDone) return;
+  firstWriteGuardDone = true;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return migrate(JSON.parse(raw));
+    if (!raw) return;
+    if (loadSaveOutcome().kind === 'corrupt') {
+      localStorage.setItem(CORRUPT_KEY, raw);
+    }
   } catch {
-    return null;
+    /* ignore */
   }
 }
 
 export function writeSave(save: GameSave): void {
   try {
+    preserveCorruptOnFirstWrite();
     const next: GameSave = { ...save, updatedAt: Date.now() };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
