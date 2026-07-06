@@ -102,7 +102,8 @@ export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
 export type { AdvanceNotice, PoachEvent } from '../game/tick/types';
 
-interface GameContextValue {
+/** Everything that CHANGES as the game runs — consumers re-render on commits. */
+interface GameStateValue {
   screen: Screen;
   activeRoom: RoomKey | null;
   save: GameSave | null;
@@ -113,6 +114,21 @@ interface GameContextValue {
   viewerIndex: number;
   profileId: string | null;
   flash: string | null;
+  /** Signal a lockerless trialist you won't be offering a spot — collapses his
+      patience so he moves on, without ejecting him outright. */
+  /** The bout waiting on you tonight — set when a self-cornered fight is due. */
+  liveBout: BookedFight | null;
+
+  lockerCap: number;
+  noLockerCap: number;
+  /** Focused-training slots available — the manager plus coaches. */
+  focusCapacity: number;
+}
+
+/** The stable action surface — one object for the whole session. Consumers
+    that only dispatch (buttons, controls) should read THIS context and
+    never re-render on state commits. */
+interface GameActionsValue {
 
   goHome: () => void;
   openSettings: () => void;
@@ -139,8 +155,6 @@ interface GameContextValue {
   setFocus: (id: string, focus: TrainingFocus | null) => void;
   setTrainer: (id: string, coachId: string | null) => void;
   cutFighter: (id: string) => void;
-  /** Signal a lockerless trialist you won't be offering a spot — collapses his
-      patience so he moves on, without ejecting him outright. */
   stopConsidering: (id: string) => void;
   /** Answer a lockerless man who's asked you for a locker. */
   respondLockerRequest: (id: string, choice: 'grant' | 'wait' | 'honest') => void;
@@ -151,8 +165,6 @@ interface GameContextValue {
   declineFightOffer: (offerId: string) => void;
   /** Change who works a booked bout's corner (any time before the bell). */
   setCornerPlan: (boutId: string, corner: CornerPlan) => void;
-  /** The bout waiting on you tonight — set when a self-cornered fight is due. */
-  liveBout: BookedFight | null;
   /** Commit a live-cornered fight's result into the save. */
   settleLiveFight: (boutId: string, result: FightResult, oppFull: Fighter) => void;
   postCoachJob: (posting: CoachPosting) => void;
@@ -161,14 +173,12 @@ interface GameContextValue {
   passApplicant: (id: string) => void;
   fireCoach: (id: string) => void;
   clearFlash: () => void;
-
-  lockerCap: number;
-  noLockerCap: number;
-  /** Focused-training slots available — the manager plus coaches. */
-  focusCapacity: number;
 }
 
-const GameContext = createContext<GameContextValue | null>(null);
+type GameContextValue = GameStateValue & GameActionsValue;
+
+const GameStateContext = createContext<GameStateValue | null>(null);
+const GameActionsContext = createContext<GameActionsValue | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>('home');
@@ -843,7 +853,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [save],
   );
 
-  const value = useMemo<GameContextValue>(
+  const stateValue = useMemo<GameStateValue>(
     () => ({
       screen,
       activeRoom,
@@ -854,55 +864,19 @@ export function GameProvider({ children }: { children: ReactNode }) {
       viewerIndex,
       profileId,
       flash,
-      goHome,
-      openSettings,
-      openNewGame,
-      startGame,
-      continueGame,
-      openRoom,
-      closeRoom,
-      advanceTime,
-      viewArrivalsNow,
-      dismissArrival,
-      openWalkIns,
-      closeWalkInViewer,
-      decideWalkIn,
-      openProfile,
-      closeProfile,
-      setLocker,
-      setTier,
-      setFocus,
-      setTrainer,
-      cutFighter,
-      stopConsidering,
-      respondLockerRequest,
-      purchaseUpgrade,
-      bookFight,
-      declineFightOffer,
-      setCornerPlan,
       liveBout,
-      settleLiveFight,
-      postCoachJob,
-      cancelCoachJob,
-      hireApplicant,
-      passApplicant,
-      fireCoach,
-      clearFlash,
       lockerCap: save ? lockerCapacity(save) : 0,
       noLockerCap: save ? noLockerCapacity(save) : 0,
       focusCapacity:
         FOCUS_SLOTS_BASE + (save ? save.coaches.reduce((s, c) => s + c.slots, 0) : 0),
     }),
-    [
-      screen,
-      activeRoom,
-      save,
-      canContinue,
-      arrival,
-      viewerIds,
-      viewerIndex,
-      profileId,
-      flash,
+    [screen, activeRoom, save, canContinue, arrival, viewerIds, viewerIndex, profileId, flash, liveBout],
+  );
+
+  // Every member is a stable useCallback, so this object is created once per
+  // session — action-only consumers never re-render on commits.
+  const actionsValue = useMemo<GameActionsValue>(
+    () => ({
       goHome,
       openSettings,
       openNewGame,
@@ -929,7 +903,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
       bookFight,
       declineFightOffer,
       setCornerPlan,
-      liveBout,
       settleLiveFight,
       postCoachJob,
       cancelCoachJob,
@@ -937,17 +910,40 @@ export function GameProvider({ children }: { children: ReactNode }) {
       passApplicant,
       fireCoach,
       clearFlash,
-    ],
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
-  return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
+  return (
+    <GameActionsContext.Provider value={actionsValue}>
+      <GameStateContext.Provider value={stateValue}>{children}</GameStateContext.Provider>
+    </GameActionsContext.Provider>
+  );
+}
+
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useGameState(): GameStateValue {
+  const ctx = useContext(GameStateContext);
+  if (!ctx) throw new Error('useGameState must be used within a GameProvider');
+  return ctx;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useGame(): GameContextValue {
-  const ctx = useContext(GameContext);
-  if (!ctx) throw new Error('useGame must be used within a GameProvider');
+export function useGameActions(): GameActionsValue {
+  const ctx = useContext(GameActionsContext);
+  if (!ctx) throw new Error('useGameActions must be used within a GameProvider');
   return ctx;
+}
+
+/** Compatibility hook: state + actions in one object. Prefer useGameState /
+    useGameActions in new code — action-only consumers skip commit re-renders. */
+// eslint-disable-next-line react-refresh/only-export-components
+export function useGame(): GameContextValue {
+  const state = useGameState();
+  const actions = useGameActions();
+  return useMemo(() => ({ ...state, ...actions }), [state, actions]);
 }
 
 export { clearSave, lockersUsed, noLockerUsed };
