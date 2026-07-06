@@ -34,7 +34,7 @@ import type { LogLine } from '../game/gymLog';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 22;
+export const SAVE_VERSION = 23;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -286,7 +286,13 @@ function migrate(raw: unknown): GameSave | null {
           data.dayCount,
         ),
       fightOffers: Array.isArray(data.fightOffers) ? data.fightOffers : [],
-      bookedFights: Array.isArray(data.bookedFights) ? data.bookedFights : [],
+      bookedFights: (Array.isArray(data.bookedFights) ? data.bookedFights : []).map(
+        (b: BookedFight & { corner?: BookedFight['corner'] }) => ({
+          ...b,
+          // pre-v23 bouts: the staff worked every corner
+          corner: b.corner ?? { mode: 'staff' as const, chiefSecondId: null, cutmanId: null },
+        }),
+      ),
       recentFights: Array.isArray(data.recentFights) ? data.recentFights : [],
       roster,
       walkIns,

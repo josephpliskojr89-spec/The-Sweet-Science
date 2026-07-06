@@ -83,7 +83,7 @@ describe('ageOffers', () => {
   it('drops offers for men who are gone or already booked', () => {
     const gone = ageOffers([base], [], [], 10);
     expect(gone.keep).toHaveLength(0);
-    const booked = ageOffers([base], roster, [bookFromOffer(base)], 10);
+    const booked = ageOffers([base], roster, [bookFromOffer(base, { mode: 'staff', chiefSecondId: null, cutmanId: null })], 10);
     expect(booked.keep).toHaveLength(0);
   });
 });
@@ -110,8 +110,9 @@ describe('resolveFight', () => {
       venue: 'the Armory',
       purse: 325,
       onDay: 20,
+      corner: { mode: 'staff' as const, chiefSecondId: null, cutmanId: null },
     };
-    const r = resolveFight({ booked, entry, opponent: opp, coach: null, dayCount: 20 });
+    const r = resolveFight({ booked, entry, opponent: opp, cornerQuality: 0.02, dayCount: 20 });
 
     const fights = r.entry.record.wins + r.entry.record.losses + r.entry.record.draws;
     expect(fights).toBe(1);
@@ -154,9 +155,10 @@ describe('resolveFight', () => {
       venue: 'the Armory',
       purse: 300,
       onDay: 12,
+      corner: { mode: 'staff' as const, chiefSecondId: null, cutmanId: null },
     };
-    const r1 = resolveFight({ booked, entry, opponent: opp, coach: null, dayCount: 12 });
-    const r2 = resolveFight({ booked, entry, opponent: opp, coach: null, dayCount: 12 });
+    const r1 = resolveFight({ booked, entry, opponent: opp, cornerQuality: 0.02, dayCount: 12 });
+    const r2 = resolveFight({ booked, entry, opponent: opp, cornerQuality: 0.02, dayCount: 12 });
     expect(r1.report.outcome).toBe(r2.report.outcome);
     expect(r1.report.method).toBe(r2.report.method);
     expect(r1.report.narrative).toEqual(r2.report.narrative);

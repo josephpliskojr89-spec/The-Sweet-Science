@@ -143,3 +143,159 @@ describe('simulateFight', () => {
     }
   });
 });
+
+// --- the live fight: cornering ------------------------------------------------
+
+import {
+  createLiveFight,
+  playRound,
+  setTactic,
+  cornerWork,
+  stoolRead,
+  throwTowel,
+  visibleDamage,
+} from './fightEngine';
+
+describe('live fight', () => {
+  it('replays identically given the same seed and the same corner decisions', () => {
+    const run = () => {
+      const lf = createLiveFight({
+        a: man('Turner', attrs(60)),
+        b: man('Morgan', attrs(58)),
+        scheduledRounds: 8,
+        seed: 4242,
+      });
+      while (!lf.result) {
+        setTactic(lf, 'a', lf.round % 2 === 0 ? 'press' : 'box');
+        playRound(lf);
+        if (!lf.result) cornerWork(lf, 'a', 'breathe', 0.5);
+      }
+      return lf.result;
+    };
+    expect(run()).toEqual(run());
+  });
+
+  it('matches simulateFight when both corners run the autopilot', () => {
+    // the wrapper IS the live fight — one seed, same story
+    const input = {
+      a: man('Turner', attrs(62)),
+      b: man('Morgan', attrs(59)),
+      scheduledRounds: 6,
+      seed: 991,
+    };
+    const wrapped = simulateFight(input);
+    expect(wrapped.card.length).toBe(wrapped.endRound);
+    expect(wrapped.narrative.length).toBeGreaterThan(0);
+  });
+
+  it('makes tactics matter — pressing wins more rounds than surviving', () => {
+    // same slightly-better man; count round wins under opposite instructions
+    let pressPts = 0;
+    let survivePts = 0;
+    for (let i = 0; i < 200; i++) {
+      for (const tactic of ['press', 'survive'] as const) {
+        const lf = createLiveFight({
+          a: man('Turner', attrs(58)),
+          b: man('Morgan', attrs(56)),
+          scheduledRounds: 6,
+          seed: i * 31 + 7,
+        });
+        while (!lf.result) {
+          setTactic(lf, 'a', tactic);
+          playRound(lf);
+        }
+        const pts = lf.card.reduce((s, r) => s + (r.a > r.b ? 1 : 0), 0) / lf.card.length;
+        if (tactic === 'press') pressPts += pts;
+        else survivePts += pts;
+      }
+    }
+    expect(pressPts).toBeGreaterThan(survivePts * 1.1);
+  });
+
+  it('makes surviving safer — fewer knockdowns taken than pressing', () => {
+    let pressKds = 0;
+    let surviveKds = 0;
+    for (let i = 0; i < 250; i++) {
+      for (const tactic of ['press', 'survive'] as const) {
+        const lf = createLiveFight({
+          a: man('Glass', attrs(55, { chin: 34 })),
+          b: man('Puncher', attrs(55, { power: 82 })),
+          scheduledRounds: 6,
+          seed: i * 17 + 3,
+        });
+        while (!lf.result) {
+          setTactic(lf, 'a', tactic);
+          playRound(lf);
+        }
+        const taken = lf.knockdowns.filter((k) => k.down === 'a').length;
+        if (tactic === 'press') pressKds += taken;
+        else surviveKds += taken;
+      }
+    }
+    expect(surviveKds).toBeLessThan(pressKds);
+  });
+
+  it('cuts open, the cutman helps, and the doctor can take a fight', () => {
+    let cutsSeen = 0;
+    let doctorStoppages = 0;
+    for (let i = 0; i < 300; i++) {
+      const lf = createLiveFight({
+        a: man('Bleeder', attrs(50, { defense: 34 })),
+        b: man('Sharp', attrs(62)),
+        scheduledRounds: 10,
+        seed: i * 13 + 1,
+      });
+      while (!lf.result) playRound(lf); // NO corner work at all
+      if (visibleDamage(lf, 'a').cut > 0 || lf.narrative.some((l) => l.includes('cut'))) cutsSeen++;
+      if (lf.narrative.some((l) => l.includes('doctor'))) doctorStoppages++;
+    }
+    expect(cutsSeen).toBeGreaterThan(60); // cuts are a real part of the sport
+    expect(doctorStoppages).toBeGreaterThan(2); // untreated, some fights end on them
+
+    // and the hands matter: cornerWork reduces a cut
+    const lf = createLiveFight({
+      a: man('Bleeder', attrs(50)),
+      b: man('Sharp', attrs(62)),
+      scheduledRounds: 10,
+      seed: 5,
+    });
+    lf.st.a.cut = 0.6;
+    cornerWork(lf, 'a', 'cut', 0.8);
+    expect(visibleDamage(lf, 'a').cut).toBeLessThan(0.6);
+  });
+
+  it('lets the corner throw the towel — TKO loss, no further rounds', () => {
+    const lf = createLiveFight({
+      a: man('Turner', attrs(55)),
+      b: man('Morgan', attrs(60)),
+      scheduledRounds: 8,
+      seed: 77,
+    });
+    playRound(lf);
+    playRound(lf);
+    if (!lf.result) {
+      throwTowel(lf, 'a');
+      expect(lf.result!.winner).toBe('b');
+      expect(lf.result!.method).toBe('TKO');
+      expect(lf.result!.endRound).toBe(2);
+      expect(playRound(lf)).toHaveLength(0); // it is over
+    }
+  });
+
+  it('reads the stool honestly at high acuity, noisily at low', () => {
+    const lf = createLiveFight({
+      a: man('Turner', attrs(55)),
+      b: man('Morgan', attrs(55)),
+      scheduledRounds: 8,
+      seed: 3,
+    });
+    playRound(lf);
+    lf.st.a.hurt = 0.7; // his legs are genuinely gone
+    const sharp = stoolRead(lf, 'a', 1);
+    expect(sharp.some((l) => l.includes('legs aren’t honest'))).toBe(true);
+    // reads never mutate the fight
+    const before = JSON.stringify(lf.card);
+    stoolRead(lf, 'a', 0.2);
+    expect(JSON.stringify(lf.card)).toBe(before);
+  });
+});

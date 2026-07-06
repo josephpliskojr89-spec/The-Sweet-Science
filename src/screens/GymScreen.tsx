@@ -16,8 +16,9 @@
   balance, and plain Advance Day / Advance Week buttons.
 */
 
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useGame } from '../state/GameContext';
+import { FightNight } from './FightNight';
 import { formatDate } from '../game/time';
 import { formatMoney } from '../game/economy';
 import { FLOOR_SCENE, type SceneRect } from '../assets/floorScene';
@@ -47,8 +48,10 @@ function monthGrid(dayCount: number) {
 }
 
 export function GymScreen() {
-  const { save, openRoom, goHome, advanceTime } = useGame();
+  const { save, openRoom, goHome, advanceTime, liveBout } = useGame();
+  const [fightOpen, setFightOpen] = useState(false);
   if (!save) return null;
+  const liveMan = liveBout ? save.roster.find((e) => e.fighter.id === liveBout.fighterId) : null;
 
   const walkIns = save.walkIns.length;
   const roster = save.roster.length;
@@ -143,18 +146,31 @@ export function GymScreen() {
           {formatMoney(save.money)}
         </span>
         <span className="stripbar__gap" />
-        <button className="stripbar__btn" onClick={() => advanceTime('day')}>
-          Advance Day
-        </button>
-        <button className="stripbar__btn stripbar__btn--week" onClick={() => advanceTime('week')}>
-          Advance Week
-        </button>
+        {liveBout ? (
+          <button
+            className="stripbar__btn stripbar__btn--fight"
+            onClick={() => setFightOpen(true)}
+          >
+            FIGHT NIGHT — {liveMan ? liveMan.fighter.lastName.toUpperCase() : 'THE BOUT'} AT THE{' '}
+            {liveBout.venue.toUpperCase()}
+          </button>
+        ) : (
+          <>
+            <button className="stripbar__btn" onClick={() => advanceTime('day')}>
+              Advance Day
+            </button>
+            <button className="stripbar__btn stripbar__btn--week" onClick={() => advanceTime('week')}>
+              Advance Week
+            </button>
+          </>
+        )}
         <button className="stripbar__btn stripbar__btn--home" onClick={goHome} title="Leave for the home screen">
           Home
         </button>
       </div>
 
       {/* overlays */}
+      {fightOpen && liveBout && <FightNight onClose={() => setFightOpen(false)} />}
       <ArrivalNotice />
       <RoomRouter />
       <FighterProfile />

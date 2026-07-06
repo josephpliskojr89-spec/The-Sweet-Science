@@ -1,14 +1,15 @@
 /*
-  The Fight Engine (Phase 8 core, built ahead of its UI)
+  The Fight Engine (Phase 8 core — now live and cornerable)
   --------------------------------------------------------------------------
   Simulates a professional bout round by round from the same seven attributes
-  the gym trains, plus traits, condition, and the corner. Everything a fight
-  produces — scorecards, knockdowns, the finish, a typed round-by-round
-  narrative for the eventual fight-night screen — comes out of one call.
+  the gym trains, plus traits, condition, and the corner. The engine is a
+  LIVE object now: createLiveFight → playRound → the stool (reads, corner
+  work, a tactic, the towel) → playRound… simulateFight remains the one-call
+  autoplay wrapper for fights nobody from the gym works.
 
   PURE AND DETERMINISTIC: all randomness flows through a seeded generator, so
-  the same seed replays the same fight. Callers seed from save state (never
-  from the clock), which keeps results reproducible and testable.
+  the same seed AND the same corner decisions replay the same fight. Callers
+  seed from save state (never from the clock).
 
   Design notes:
   - Attributes express as ATTACK (power/speed/footwork/ringIq) and GUARD
@@ -17,6 +18,13 @@
   - Hurt accumulates from clean exchanges and knockdowns, and recovers a
     little between rounds. The referee/corner stops it when a man is done
     (TKO); a knockdown he can't beat the count on is the KO.
+  - CUTS AND SWELLING: blood is public, legs are private. Cuts open on
+    knockdowns and hard rounds, worsen under pressure, and bring the doctor
+    over at 0.85. Swelling closes the eye slowly — it eats guard. The stool
+    can work one problem a round; a good cutman's hands buy real minutes.
+  - TACTICS: the chief second sends the man out with one instruction. Small
+    multipliers, honest trade-offs — press buys offense and bleeds energy,
+    survive buys a round and gives one away.
   - Ten-point must: 10-9 rounds, 10-8 for a knockdown or total domination.
     Three judges re-score close rounds through their own noise, so decisions
     come back UD/SD/MD honestly.
@@ -160,6 +168,39 @@ function modsFor(traits: TraitKey[]): TraitMods {
   return m;
 }
 
+// --- tactics ------------------------------------------------------------------
+
+/** The one instruction a man carries off the stool. 'steady' is the default. */
+export type Tactic = 'steady' | 'press' | 'box' | 'sit_down' | 'survive';
+
+interface TacticMod {
+  atk: number;
+  grd: number;
+  drain: number;
+  /** multiplies own knockdown chance against him */
+  kd: number;
+  /** multiplies the chance of cutting the other man */
+  cutThem: number;
+  /** multiplies the chance of being dropped (openness) */
+  exposure: number;
+}
+
+const TACTIC_MODS: Record<Tactic, TacticMod> = {
+  steady: { atk: 1, grd: 1, drain: 1, kd: 1, cutThem: 1, exposure: 1 },
+  press: { atk: 1.16, grd: 0.94, drain: 1.18, kd: 1.08, cutThem: 1.35, exposure: 1.1 },
+  box: { atk: 1.0, grd: 1.1, drain: 0.9, kd: 0.92, cutThem: 0.9, exposure: 0.9 },
+  sit_down: { atk: 1.06, grd: 0.88, drain: 1.05, kd: 1.3, cutThem: 1.1, exposure: 1.14 },
+  survive: { atk: 0.66, grd: 1.24, drain: 0.72, kd: 0.55, cutThem: 0.6, exposure: 0.78 },
+};
+
+export const TACTIC_META: Array<{ key: Tactic; name: string; blurb: string }> = [
+  { key: 'steady', name: 'Stick to the plan', blurb: 'Nothing fancy. Fight your fight.' },
+  { key: 'press', name: 'Press him', blurb: 'Walk him down. Costs gas, opens cuts — his and yours.' },
+  { key: 'box', name: 'Box smart', blurb: 'Jab, move, don’t trade. Wins rounds quietly.' },
+  { key: 'sit_down', name: 'Sit down on your punches', blurb: 'Look for the one shot. You give some back.' },
+  { key: 'survive', name: 'Survive the round', blurb: 'Grab, hold, breathe. Gives the round away.' },
+];
+
 // --- narrative --------------------------------------------------------------
 
 const EDGE_LINES = [
@@ -191,242 +232,509 @@ const TKO_LINES = [
   'The referee had seen enough — {L} taking too many, it’s stopped. TKO.',
   '{L}’s corner threw the towel in round {R}. Right call.',
 ];
+const CUT_LINES = [
+  'A cut opened over {L}’s eye — the blood came fast.',
+  '{W}’s punches split the skin over {L}’s brow.',
+];
+const CUT_WORSE_LINES = [
+  'The cut over {L}’s eye is weeping again.',
+  '{W} went to the cut like a man reading a map.',
+];
+const DOCTOR_LINES = [
+  'The doctor climbed the steps, took one long look at {L}’s eye, and waved it over. TKO.',
+  'Between rounds the doctor spread the cut with his thumbs and shook his head. They stopped it. TKO.',
+];
 
 function line(rng: Rng, pool: string[], w: string, l: string, r: number): string {
   const t = pool[Math.floor(rng() * pool.length)];
   return t.replace(/\{W\}/g, w).replace(/\{L\}/g, l).replace(/\{R\}/g, String(r));
 }
 
-// --- the engine -------------------------------------------------------------
+// --- live state ----------------------------------------------------------------
 
 interface Fury {
   energy: number;
   hurt: number;
   kdsTaken: number;
   mods: TraitMods;
+  /** 0..1 — worst cut. Blood is public. The doctor takes it at 0.85. */
+  cut: number;
+  /** 0..1 — the closing eye. Eats guard slowly. */
+  swell: number;
+  /** the instruction he carried off the stool */
+  tactic: Tactic;
+  /** one-shot flag so the paper only warns about the cut once */
+  cutWarned: boolean;
 }
 
-export function simulateFight(input: FightInput): FightResult {
-  const rng = makeRng(input.seed);
-  const { a, b, scheduledRounds } = input;
+export interface LiveFight {
+  a: Combatant;
+  b: Combatant;
+  scheduledRounds: number;
+  seed: number;
+  /** rounds completed */
+  round: number;
+  card: RoundScore[];
+  knockdowns: Knockdown[];
+  narrative: string[];
+  /** set once the fight is over — by punch, doctor, towel, or the cards */
+  result: FightResult | null;
+  /** internal — do not read for UI truth; use the stool reads */
+  st: { a: Fury; b: Fury };
+  rng: Rng;
+  roundEdges: number[];
+}
 
-  const st = {
-    a: { energy: 1, hurt: 0, kdsTaken: 0, mods: modsFor(a.traits) } as Fury,
-    b: { energy: 1, hurt: 0, kdsTaken: 0, mods: modsFor(b.traits) } as Fury,
+function freshFury(c: Combatant): Fury {
+  return {
+    energy: 1,
+    hurt: 0,
+    kdsTaken: 0,
+    mods: modsFor(c.traits),
+    cut: 0,
+    swell: 0,
+    tactic: 'steady',
+    cutWarned: false,
   };
+}
 
-  const card: RoundScore[] = [];
-  const roundEdges: number[] = []; // signed round margin, for the judges
-  const knockdowns: Knockdown[] = [];
-  const narrative: string[] = [];
-
-  const drainPerRound = (c: Combatant) =>
-    clamp(0.105 - (c.attributes.stamina / 100) * 0.08, 0.02, 0.105);
-
-  const effMul = (f: Fury, c: Combatant, round: number) => {
-    const fatigue = 0.4 + 0.6 * f.energy;
-    const cond = 0.82 + 0.18 * clamp(c.condition, 0, 1);
-    const lateBoost =
-      round > Math.ceil((scheduledRounds * 2) / 3) ? f.mods.late : 1;
-    return fatigue * cond * lateBoost * (1 - clamp(f.hurt, 0, 0.9) * 0.35);
+export function createLiveFight(input: FightInput): LiveFight {
+  return {
+    a: input.a,
+    b: input.b,
+    scheduledRounds: input.scheduledRounds,
+    seed: input.seed,
+    round: 0,
+    card: [],
+    knockdowns: [],
+    narrative: [],
+    result: null,
+    st: { a: freshFury(input.a), b: freshFury(input.b) },
+    rng: makeRng(input.seed),
+  roundEdges: [],
   };
+}
 
-  const attack = (c: Combatant, f: Fury, round: number) => {
-    const at = c.attributes;
-    return (
-      (at.power * 0.32 + at.speed * 0.3 + at.footwork * 0.18 + at.ringIq * 0.2) *
-      effMul(f, c, round)
-    );
-  };
-  const guard = (c: Combatant, f: Fury, round: number) => {
-    const at = c.attributes;
-    return (
-      (at.defense * 0.4 + at.footwork * 0.22 + at.ringIq * 0.24 + at.speed * 0.14) *
-      effMul(f, c, round) *
-      (1 + c.corner)
-    );
-  };
+/** Set the instruction a side carries into the NEXT round. */
+export function setTactic(lf: LiveFight, side: Side, tactic: Tactic): void {
+  lf.st[side].tactic = tactic;
+}
 
-  let winner: Side | null = null;
-  let method: Method = 'DRAW';
-  let endRound = scheduledRounds;
+// --- the stool -------------------------------------------------------------------
 
-  outer: for (let round = 1; round <= scheduledRounds; round++) {
-    // between rounds: breathe, take the stool's advice
-    if (round > 1) {
-      st.a.hurt = Math.max(0, st.a.hurt - (0.07 + a.corner * 0.5));
-      st.b.hurt = Math.max(0, st.b.hurt - (0.07 + b.corner * 0.5));
-    }
+export type CornerCare = 'cut' | 'swelling' | 'breathe';
 
-    const atkA = attack(a, st.a, round);
-    const atkB = attack(b, st.b, round);
-    const grdA = guard(a, st.a, round);
-    const grdB = guard(b, st.b, round);
-
-    const chaos = (st.a.mods.chaos + st.b.mods.chaos) / 2;
-    const marginRaw = atkA - grdB - (atkB - grdA);
-    const margin = marginRaw + gaussFrom(rng) * 7.5 * chaos;
-    roundEdges.push(margin);
-
-    // clean-work damage accrues to the man losing the exchanges — worse
-    // when his legs are gone
-    const dmgBase = Math.abs(margin) * 0.006 + 0.015;
-    if (margin >= 0) st.b.hurt += dmgBase * (1.7 - st.b.energy * 0.7);
-    else st.a.hurt += dmgBase * (1.7 - st.a.energy * 0.7);
-
-    let ptsA = margin >= 0 ? 10 : 9;
-    let ptsB = margin >= 0 ? 9 : 10;
-    let kdThisRound: Side | null = null;
-
-    // knockdowns — power against chin, through the round's flow
-    const tryKd = (side: Side): boolean => {
-      const me = side === 'a' ? a : b;
-      const him = side === 'a' ? b : a;
-      const meF = side === 'a' ? st.a : st.b;
-      const himF = side === 'a' ? st.b : st.a;
-      const pressure = clamp(
-        (side === 'a' ? atkA - grdB : atkB - grdA) / 40,
-        -0.5,
-        1,
-      );
-      const p =
-        (0.02 + Math.max(0, pressure) * 0.05) *
-        (me.attributes.power / 55) *
-        Math.pow(55 / Math.max(22, him.attributes.chin), 1.35) *
-        meF.mods.kdFor *
-        himF.mods.kdAgainst *
-        (1 + himF.hurt * 0.9);
-      return rng() < clamp(p, 0, 0.42);
-    };
-
-    for (const side of ['a', 'b'] as Side[]) {
-      if (kdThisRound) break;
-      if (!tryKd(side)) continue;
-      const downSide: Side = side === 'a' ? 'b' : 'a';
-      const downC = downSide === 'a' ? a : b;
-      const downF = downSide === 'a' ? st.a : st.b;
-      const upC = side === 'a' ? a : b;
-      kdThisRound = downSide;
-      downF.kdsTaken += 1;
-      downF.hurt += 0.34;
-      knockdowns.push({ round, down: downSide });
-
-      // can he beat the count?
-      const getUp =
-        0.82 -
-        downF.hurt * 0.45 -
-        (1 - downF.energy) * 0.3 +
-        (downC.attributes.chin - 50) / 220 +
-        downF.mods.heart;
-      if (rng() > clamp(getUp, 0.05, 0.97)) {
-        winner = side;
-        method = 'KO';
-        endRound = round;
-        narrative.push(line(rng, KO_LINES, upC.name, downC.name, round));
-        // score the partial round
-        card.push(downSide === 'b' ? { a: 10, b: 8 } : { a: 8, b: 10 });
-        break outer;
-      }
-      narrative.push(line(rng, KD_LINES, upC.name, downC.name, round));
-      if (downSide === 'a') {
-        ptsA = 8;
-        ptsB = 10;
-      } else {
-        ptsA = 10;
-        ptsB = 8;
-      }
-    }
-
-    // domination without a knockdown can still be 10-8
-    if (!kdThisRound && Math.abs(margin) > 26) {
-      if (margin > 0) ptsB = 8;
-      else ptsA = 8;
-    }
-
-    card.push({ a: ptsA, b: ptsB });
-
-    // the stoppage: a man who's out of gas and shipping punishment gets pulled
-    const done = (f: Fury) => f.hurt >= 1 || (f.hurt >= 0.72 && f.energy < 0.3) || f.kdsTaken >= 3;
-    if (done(st.a) || done(st.b)) {
-      const loser: Side = done(st.a) ? 'a' : 'b';
-      winner = loser === 'a' ? 'b' : 'a';
-      method = 'TKO';
-      endRound = round;
-      narrative.push(
-        line(rng, TKO_LINES, (winner === 'a' ? a : b).name, (loser === 'a' ? a : b).name, round),
-      );
-      break;
-    }
-
-    // narrative for a round that went the distance
-    if (!kdThisRound) {
-      const w = margin >= 0 ? a.name : b.name;
-      const l = margin >= 0 ? b.name : a.name;
-      if (Math.abs(margin) < 5) narrative.push(`R${round}: ` + line(rng, CLOSE_LINES, w, l, round));
-      else if ((margin >= 0 ? st.b.hurt : st.a.hurt) > 0.5 && rng() < 0.5)
-        narrative.push(`R${round}: ` + line(rng, HURT_LINES, w, l, round));
-      else narrative.push(`R${round}: ` + line(rng, EDGE_LINES, w, l, round));
-    } else {
-      narrative[narrative.length - 1] = `R${round}: ` + narrative[narrative.length - 1];
-    }
-
-    // the round takes its toll
-    st.a.energy = clamp(st.a.energy - drainPerRound(a) - st.a.hurt * 0.02, 0.05, 1);
-    st.b.energy = clamp(st.b.energy - drainPerRound(b) - st.b.hurt * 0.02, 0.05, 1);
+/**
+ * One job between rounds — the cut, the eye, or the man's lungs.
+ * skill 0..1: the hands doing the work (your cutman's, or whoever's there).
+ * Returns a line for the log, or null if there was nothing to do.
+ */
+export function cornerWork(lf: LiveFight, side: Side, care: CornerCare, skill: number): string | null {
+  const f = lf.st[side];
+  const name = (side === 'a' ? lf.a : lf.b).name;
+  const s = clamp(skill, 0, 1);
+  if (care === 'cut') {
+    if (f.cut <= 0) return null;
+    f.cut = Math.max(0, f.cut - (0.1 + s * 0.28));
+    return s > 0.55
+      ? `The cutman worked ${name}'s cut like a jeweler. It held.`
+      : `They did what they could with ${name}'s cut.`;
   }
-
-  // --- the cards, if it went to them ---------------------------------------
-  let judgeTotals: Array<[number, number]> | null = null;
-  if (winner === null) {
-    judgeTotals = [0, 1, 2].map(() => {
-      let ta = 0;
-      let tb = 0;
-      card.forEach((r, i) => {
-        const edge = roundEdges[i] ?? 0;
-        // judges see close rounds differently; clear rounds hold
-        if (r.a !== r.b && Math.abs(edge) < 6 && rng() < 0.3) {
-          ta += r.b;
-          tb += r.a;
-        } else {
-          ta += r.a;
-          tb += r.b;
-        }
-      });
-      return [ta, tb] as [number, number];
-    });
-    const votes = judgeTotals.map(([ta, tb]) => (ta > tb ? 'a' : tb > ta ? 'b' : 'e'));
-    const aWins = votes.filter((v) => v === 'a').length;
-    const bWins = votes.filter((v) => v === 'b').length;
-    const evens = votes.filter((v) => v === 'e').length;
-    if (aWins === 3 || bWins === 3) {
-      winner = aWins === 3 ? 'a' : 'b';
-      method = 'UD';
-    } else if (aWins === 2 || bWins === 2) {
-      winner = aWins > bWins ? 'a' : 'b';
-      method = evens > 0 ? 'MD' : 'SD';
-    } else {
-      winner = null;
-      method = 'DRAW';
-    }
-    const verdict =
-      method === 'DRAW'
-        ? 'The judges couldn’t split them. A draw.'
-        : `${(winner === 'a' ? a : b).name} takes it on the cards — ${
-            method === 'UD' ? 'all three judges' : method === 'MD' ? 'two judges, one even' : 'split verdict'
-          }.`;
-    narrative.push(verdict);
+  if (care === 'swelling') {
+    if (f.swell <= 0.1) return null;
+    f.swell = Math.max(0, f.swell - (0.12 + s * 0.3));
+    return `The iron went on ${name}'s eye.`;
   }
+  f.hurt = Math.max(0, f.hurt - (0.03 + s * 0.08));
+  f.energy = clamp(f.energy + 0.015 + s * 0.045, 0.05, 1);
+  return `${name} got his minute — water, air, and somebody talking sense.`;
+}
 
+/** Public damage: everyone in the building can see blood and a closing eye. */
+export function visibleDamage(lf: LiveFight, side: Side): { cut: number; swell: number } {
+  return { cut: lf.st[side].cut, swell: lf.st[side].swell };
+}
+
+/**
+ * What your man's corner tells you between rounds. No numbers — a read, in a
+ * trainer's voice, as honest as the eyes doing the reading. acuity 0..1:
+ * a great trainer sees true; a poor one guesses.
+ */
+export function stoolRead(lf: LiveFight, side: Side, acuity: number): string[] {
+  const f = lf.st[side];
+  const other = lf.st[side === 'a' ? 'b' : 'a'];
+  const otherName = (side === 'a' ? lf.b : lf.a).name;
+  // a separate stream: reading the man doesn't change the fight
+  const rng = makeRng(seedFrom(`${lf.seed}:read:${side}:${lf.round}`));
+  const fog = (v: number) => clamp(v + gaussFrom(rng) * (1 - clamp(acuity, 0, 1)) * 0.24, 0, 1);
+
+  const lines: string[] = [];
+
+  const hurt = fog(f.hurt);
+  if (hurt > 0.55) lines.push('His legs aren’t honest. Keep him off the ropes or it’s over.');
+  else if (hurt > 0.28) lines.push('He’s buzzed but he’s hearing me. He’s in it.');
+  else lines.push('He’s clear-eyed. Good.');
+
+  const gas = fog(f.energy);
+  if (gas < 0.32) lines.push('The tank is empty — he’s on heart from here.');
+  else if (gas < 0.58) lines.push('He’s breathing hard. Whatever you want done, do it soon.');
+  else lines.push('His wind is fine.');
+
+  if (f.cut > 0.55) lines.push('That cut is bad. One more round of it and the doctor takes this away from us.');
+  else if (f.cut > 0.2) lines.push('The cut will hold if we keep his head off the jab.');
+  else if (f.swell > 0.5) lines.push('The eye is closing. He’s seeing half the right hands.');
+
+  const otherGas = fog(other.energy);
+  const otherHurt = fog(other.hurt);
+  if (otherHurt > 0.45) lines.push(`${otherName} is hurt worse than he’s showing. He’s there to be taken.`);
+  else if (otherGas < 0.4) lines.push(`${otherName} is slowing. The late rounds belong to us if we’re still in them.`);
+
+  // the corner keeps its own card
+  const myPts = lf.card.reduce((s, r) => s + r[side], 0);
+  const hisPts = lf.card.reduce((s, r) => s + r[side === 'a' ? 'b' : 'a'], 0);
+  const edge = myPts - hisPts;
+  const sure = clamp(acuity, 0, 1) > 0.4 || rng() < 0.7;
+  if (edge < 0 && sure) lines.push('We’re behind on my card. We need these rounds.');
+  else if (edge > 0 && sure && lf.round >= Math.ceil(lf.scheduledRounds / 2))
+    lines.push('We’re up on my card. Don’t give them a reason.');
+
+  return lines;
+}
+
+/** The towel. Ends it now, as a TKO loss for that side. */
+export function throwTowel(lf: LiveFight, side: Side): void {
+  if (lf.result) return;
+  const round = Math.max(1, lf.round);
+  const winner: Side = side === 'a' ? 'b' : 'a';
+  const loserName = (side === 'a' ? lf.a : lf.b).name;
+  lf.narrative.push(`${loserName}’s corner threw the towel after round ${round}. He argued, which is how they knew it was right.`);
+  lf.result = settle(lf, winner, 'TKO', round, null);
+}
+
+// --- playing a round ------------------------------------------------------------
+
+function settle(
+  lf: LiveFight,
+  winner: Side | null,
+  method: Method,
+  endRound: number,
+  judgeTotals: Array<[number, number]> | null,
+): FightResult {
+  const { a: stA, b: stB } = lf.st;
   return {
     winner,
     method,
     endRound,
-    scheduledRounds,
-    card,
+    scheduledRounds: lf.scheduledRounds,
+    card: lf.card,
     judgeTotals,
-    knockdowns,
-    narrative,
-    damageA: clamp(st.a.hurt + st.a.kdsTaken * 0.2 + (winner === 'b' && method !== 'DRAW' ? 0.15 : 0), 0, 1.6),
-    damageB: clamp(st.b.hurt + st.b.kdsTaken * 0.2 + (winner === 'a' && method !== 'DRAW' ? 0.15 : 0), 0, 1.6),
+    knockdowns: lf.knockdowns,
+    narrative: lf.narrative,
+    damageA: clamp(
+      stA.hurt + stA.kdsTaken * 0.2 + stA.cut * 0.25 + (winner === 'b' && method !== 'DRAW' ? 0.15 : 0),
+      0,
+      1.6,
+    ),
+    damageB: clamp(
+      stB.hurt + stB.kdsTaken * 0.2 + stB.cut * 0.25 + (winner === 'a' && method !== 'DRAW' ? 0.15 : 0),
+      0,
+      1.6,
+    ),
   };
+}
+
+function goToTheCards(lf: LiveFight): FightResult {
+  const rng = lf.rng;
+  const judgeTotals: Array<[number, number]> = [0, 1, 2].map(() => {
+    let ta = 0;
+    let tb = 0;
+    lf.card.forEach((r, i) => {
+      const edge = lf.roundEdges[i] ?? 0;
+      // judges see close rounds differently; clear rounds hold
+      if (r.a !== r.b && Math.abs(edge) < 6 && rng() < 0.3) {
+        ta += r.b;
+        tb += r.a;
+      } else {
+        ta += r.a;
+        tb += r.b;
+      }
+    });
+    return [ta, tb] as [number, number];
+  });
+  const votes = judgeTotals.map(([ta, tb]) => (ta > tb ? 'a' : tb > ta ? 'b' : 'e'));
+  const aWins = votes.filter((v) => v === 'a').length;
+  const bWins = votes.filter((v) => v === 'b').length;
+  const evens = votes.filter((v) => v === 'e').length;
+  let winner: Side | null;
+  let method: Method;
+  if (aWins === 3 || bWins === 3) {
+    winner = aWins === 3 ? 'a' : 'b';
+    method = 'UD';
+  } else if (aWins === 2 || bWins === 2) {
+    winner = aWins > bWins ? 'a' : 'b';
+    method = evens > 0 ? 'MD' : 'SD';
+  } else {
+    winner = null;
+    method = 'DRAW';
+  }
+  const verdict =
+    method === 'DRAW'
+      ? 'The judges couldn’t split them. A draw.'
+      : `${(winner === 'a' ? lf.a : lf.b).name} takes it on the cards — ${
+          method === 'UD' ? 'all three judges' : method === 'MD' ? 'two judges, one even' : 'split verdict'
+        }.`;
+  lf.narrative.push(verdict);
+  return settle(lf, winner, method, lf.scheduledRounds, judgeTotals);
+}
+
+/**
+ * Play the next round. Returns the narrative lines it produced; when the
+ * fight ends (any way), lf.result is set.
+ */
+export function playRound(lf: LiveFight): string[] {
+  if (lf.result) return [];
+  const rng = lf.rng;
+  const { a, b, scheduledRounds } = lf;
+  const st = lf.st;
+  const round = lf.round + 1;
+  const linesBefore = lf.narrative.length;
+
+  const tacA = TACTIC_MODS[st.a.tactic];
+  const tacB = TACTIC_MODS[st.b.tactic];
+
+  // between rounds: breathe, take the stool's advice
+  if (round > 1) {
+    st.a.hurt = Math.max(0, st.a.hurt - (0.07 + a.corner * 0.5));
+    st.b.hurt = Math.max(0, st.b.hurt - (0.07 + b.corner * 0.5));
+    st.a.cut = Math.max(0, st.a.cut - (0.02 + a.corner * 0.2));
+    st.b.cut = Math.max(0, st.b.cut - (0.02 + b.corner * 0.2));
+  }
+
+  const drainPerRound = (c: Combatant) =>
+    clamp(0.105 - (c.attributes.stamina / 100) * 0.08, 0.02, 0.105);
+
+  const effMul = (f: Fury, c: Combatant) => {
+    const fatigue = 0.4 + 0.6 * f.energy;
+    const cond = 0.82 + 0.18 * clamp(c.condition, 0, 1);
+    const lateBoost = round > Math.ceil((scheduledRounds * 2) / 3) ? f.mods.late : 1;
+    return fatigue * cond * lateBoost * (1 - clamp(f.hurt, 0, 0.9) * 0.35);
+  };
+
+  const attack = (c: Combatant, f: Fury, tac: TacticMod) => {
+    const at = c.attributes;
+    return (
+      (at.power * 0.32 + at.speed * 0.3 + at.footwork * 0.18 + at.ringIq * 0.2) *
+      effMul(f, c) *
+      tac.atk
+    );
+  };
+  const guard = (c: Combatant, f: Fury, tac: TacticMod) => {
+    const at = c.attributes;
+    return (
+      (at.defense * 0.4 + at.footwork * 0.22 + at.ringIq * 0.24 + at.speed * 0.14) *
+      effMul(f, c) *
+      (1 + c.corner) *
+      tac.grd *
+      (1 - clamp(f.swell, 0, 1) * 0.1)
+    );
+  };
+
+  const atkA = attack(a, st.a, tacA);
+  const atkB = attack(b, st.b, tacB);
+  const grdA = guard(a, st.a, tacA);
+  const grdB = guard(b, st.b, tacB);
+
+  const chaos = (st.a.mods.chaos + st.b.mods.chaos) / 2;
+  const marginRaw = atkA - grdB - (atkB - grdA);
+  const margin = marginRaw + gaussFrom(rng) * 7.5 * chaos;
+  lf.roundEdges.push(margin);
+
+  // clean-work damage accrues to the man losing the exchanges — worse
+  // when his legs are gone
+  const dmgBase = Math.abs(margin) * 0.006 + 0.015;
+  if (margin >= 0) st.b.hurt += dmgBase * (1.7 - st.b.energy * 0.7);
+  else st.a.hurt += dmgBase * (1.7 - st.a.energy * 0.7);
+
+  // the eye takes the round's traffic
+  if (margin >= 0) st.b.swell = clamp(st.b.swell + 0.012 + Math.abs(margin) * 0.0018, 0, 1);
+  else st.a.swell = clamp(st.a.swell + 0.012 + Math.abs(margin) * 0.0018, 0, 1);
+
+  let ptsA = margin >= 0 ? 10 : 9;
+  let ptsB = margin >= 0 ? 9 : 10;
+  let kdThisRound: Side | null = null;
+
+  // knockdowns — power against chin, through the round's flow
+  const tryKd = (side: Side): boolean => {
+    const me = side === 'a' ? a : b;
+    const him = side === 'a' ? b : a;
+    const meF = side === 'a' ? st.a : st.b;
+    const himF = side === 'a' ? st.b : st.a;
+    const meTac = side === 'a' ? tacA : tacB;
+    const himTac = side === 'a' ? tacB : tacA;
+    const pressure = clamp((side === 'a' ? atkA - grdB : atkB - grdA) / 40, -0.5, 1);
+    const p =
+      (0.02 + Math.max(0, pressure) * 0.05) *
+      (me.attributes.power / 55) *
+      Math.pow(55 / Math.max(22, him.attributes.chin), 1.35) *
+      meF.mods.kdFor *
+      himF.mods.kdAgainst *
+      meTac.kd *
+      himTac.exposure *
+      (1 + himF.hurt * 0.9);
+    return rng() < clamp(p, 0, 0.42);
+  };
+
+  for (const side of ['a', 'b'] as Side[]) {
+    if (kdThisRound) break;
+    if (!tryKd(side)) continue;
+    const downSide: Side = side === 'a' ? 'b' : 'a';
+    const downC = downSide === 'a' ? a : b;
+    const downF = downSide === 'a' ? st.a : st.b;
+    const upC = side === 'a' ? a : b;
+    kdThisRound = downSide;
+    downF.kdsTaken += 1;
+    downF.hurt += 0.34;
+    lf.knockdowns.push({ round, down: downSide });
+
+    // can he beat the count?
+    const getUp =
+      0.82 -
+      downF.hurt * 0.45 -
+      (1 - downF.energy) * 0.3 +
+      (downC.attributes.chin - 50) / 220 +
+      downF.mods.heart;
+    if (rng() > clamp(getUp, 0.05, 0.97)) {
+      lf.narrative.push(line(rng, KO_LINES, upC.name, downC.name, round));
+      // score the partial round
+      lf.card.push(downSide === 'b' ? { a: 10, b: 8 } : { a: 8, b: 10 });
+      lf.round = round;
+      lf.result = settle(lf, side, 'KO', round, null);
+      return lf.narrative.slice(linesBefore);
+    }
+    lf.narrative.push(line(rng, KD_LINES, upC.name, downC.name, round));
+    if (downSide === 'a') {
+      ptsA = 8;
+      ptsB = 10;
+    } else {
+      ptsA = 10;
+      ptsB = 8;
+    }
+  }
+
+  // domination without a knockdown can still be 10-8
+  if (!kdThisRound && Math.abs(margin) > 26) {
+    if (margin > 0) ptsB = 8;
+    else ptsA = 8;
+  }
+
+  lf.card.push({ a: ptsA, b: ptsB });
+
+  // cuts open on hard traffic and knockdowns; pressure fighters find them
+  const tryCut = (downSide: Side) => {
+    const f = downSide === 'a' ? st.a : st.b;
+    const himTac = downSide === 'a' ? tacB : tacA;
+    const loserName = (downSide === 'a' ? a : b).name;
+    const winnerName = (downSide === 'a' ? b : a).name;
+    const lostRound = downSide === 'a' ? margin < 0 : margin >= 0;
+    const p =
+      (0.022 + (lostRound ? Math.abs(margin) * 0.0022 : 0) + (kdThisRound === downSide ? 0.1 : 0)) *
+      himTac.cutThem *
+      (1 + f.hurt * 0.5);
+    if (rng() < clamp(p, 0, 0.4)) {
+      const wasCut = f.cut > 0.05;
+      f.cut = clamp(f.cut + 0.14 + rng() * 0.18, 0, 1);
+      lf.narrative.push(line(rng, wasCut ? CUT_WORSE_LINES : CUT_LINES, winnerName, loserName, round));
+    }
+  };
+  tryCut('a');
+  tryCut('b');
+
+  // the doctor's look
+  for (const side of ['a', 'b'] as Side[]) {
+    const f = st[side];
+    const loser = side === 'a' ? a : b;
+    const other: Side = side === 'a' ? 'b' : 'a';
+    if (f.cut >= 0.85) {
+      lf.narrative.push(line(rng, DOCTOR_LINES, (other === 'a' ? a : b).name, loser.name, round));
+      lf.round = round;
+      lf.result = settle(lf, other, 'TKO', round, null);
+      // prefix the round's lines
+      prefixRound(lf, linesBefore, round);
+      return lf.narrative.slice(linesBefore);
+    }
+    if (f.cut >= 0.55 && !f.cutWarned) {
+      f.cutWarned = true;
+      lf.narrative.push(`The referee walked ${loser.name} to the doctor between rounds. He let it go on — for now.`);
+    }
+  }
+
+  // the stoppage: a man who's out of gas and shipping punishment gets pulled
+  const done = (f: Fury) => f.hurt >= 1 || (f.hurt >= 0.72 && f.energy < 0.3) || f.kdsTaken >= 3;
+  if (done(st.a) || done(st.b)) {
+    const loser: Side = done(st.a) ? 'a' : 'b';
+    const winner: Side = loser === 'a' ? 'b' : 'a';
+    lf.narrative.push(
+      line(rng, TKO_LINES, (winner === 'a' ? a : b).name, (loser === 'a' ? a : b).name, round),
+    );
+    lf.round = round;
+    lf.result = settle(lf, winner, 'TKO', round, null);
+    prefixRound(lf, linesBefore, round);
+    return lf.narrative.slice(linesBefore);
+  }
+
+  // narrative for a round that went the distance
+  if (!kdThisRound) {
+    const w = margin >= 0 ? a.name : b.name;
+    const l = margin >= 0 ? b.name : a.name;
+    if (Math.abs(margin) < 5) lf.narrative.push(line(rng, CLOSE_LINES, w, l, round));
+    else if ((margin >= 0 ? st.b.hurt : st.a.hurt) > 0.5 && rng() < 0.5)
+      lf.narrative.push(line(rng, HURT_LINES, w, l, round));
+    else lf.narrative.push(line(rng, EDGE_LINES, w, l, round));
+  }
+  prefixRound(lf, linesBefore, round);
+
+  // the round takes its toll
+  st.a.energy = clamp(st.a.energy - drainPerRound(a) * tacA.drain - st.a.hurt * 0.02, 0.05, 1);
+  st.b.energy = clamp(st.b.energy - drainPerRound(b) * tacB.drain - st.b.hurt * 0.02, 0.05, 1);
+
+  lf.round = round;
+  if (round >= scheduledRounds) {
+    lf.result = goToTheCards(lf);
+  }
+  return lf.narrative.slice(linesBefore);
+}
+
+/** Prefix the first line this round produced with "R{n}: " (report style). */
+function prefixRound(lf: LiveFight, from: number, round: number): void {
+  if (lf.narrative.length > from && !lf.narrative[from].startsWith('R')) {
+    lf.narrative[from] = `R${round}: ` + lf.narrative[from];
+  }
+}
+
+// --- autoplay ---------------------------------------------------------------------
+
+/** The corner nobody watches: fix the worst problem, keep the instruction. */
+export function autoCorner(lf: LiveFight, side: Side): void {
+  autoStool(lf, side);
+}
+
+function autoStool(lf: LiveFight, side: Side): void {
+  const c = side === 'a' ? lf.a : lf.b;
+  const f = lf.st[side];
+  const skill = clamp(c.corner * 8, 0, 0.8);
+  const care: CornerCare = f.cut >= 0.3 ? 'cut' : f.swell >= 0.5 ? 'swelling' : 'breathe';
+  cornerWork(lf, side, care, skill);
+}
+
+/** One call, whole fight — both corners on autopilot. */
+export function simulateFight(input: FightInput): FightResult {
+  const lf = createLiveFight(input);
+  while (!lf.result) {
+    playRound(lf);
+    if (!lf.result) {
+      autoStool(lf, 'a');
+      autoStool(lf, 'b');
+    }
+  }
+  return lf.result;
 }

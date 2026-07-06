@@ -41,12 +41,14 @@ import {
   type WorldFighter,
 } from '../game/world/population';
 import { gymReputation, reputationLabel, competitivenessLabel } from '../game/reputation';
+import { specialtyName } from '../game/coaches';
+import type { BookedFight, CornerPlan } from '../game/fights';
 import { Portrait } from '../assets/portraits';
 import { Stamp } from '../kit/Stamp';
 import { paperTilt } from '../kit/seed';
 import './OfficeRoom.css';
 
-type HeldObject = 'accounts' | 'competition' | 'ledger' | null;
+type HeldObject = 'accounts' | 'competition' | 'ledger' | 'phone' | null;
 
 export function OfficeRoom() {
   const { save, closeRoom, openRoom, profileId, viewerIds } = useGame();
@@ -128,20 +130,32 @@ export function OfficeRoom() {
             </span>
           </button>
 
-          {/* the dead phone — fight booking, line not hooked up yet */}
-          <div
+          {/* the phone — fight booking. Message slips pile up while you're out. */}
+          <button
             className="deskobj deskobj--phone"
-            aria-label="Rotary phone with a tag: fight booking — line not hooked up yet. Comes online in Phase 6."
+            onClick={() => setHeld('phone')}
+            aria-label={
+              save.fightOffers.length > 0
+                ? `The phone — ${save.fightOffers.length} promoter call${save.fightOffers.length === 1 ? '' : 's'} to return, ${save.bookedFights.length} bout${save.bookedFights.length === 1 ? '' : 's'} on the book`
+                : `The phone — no calls waiting, ${save.bookedFights.length} bout${save.bookedFights.length === 1 ? '' : 's'} on the book`
+            }
           >
             <span className="phone__body" aria-hidden="true">
               <span className="phone__dial" />
               <span className="phone__handset" />
               <span className="phone__cord" />
             </span>
-            <span className="phone__tag" aria-hidden="true">
-              FIGHT BOOKING — line not hooked up yet
+            <span
+              className={'phone__tag' + (save.fightOffers.length > 0 ? ' phone__tag--calls' : '')}
+              aria-hidden="true"
+            >
+              {save.fightOffers.length > 0
+                ? `WHILE YOU WERE OUT — ${save.fightOffers.length}`
+                : save.bookedFights.length > 0
+                  ? `${save.bookedFights.length} ON THE BOOK`
+                  : 'FIGHT BOOKING'}
             </span>
-          </div>
+          </button>
 
           <div className="deskobj deskobj--mug" aria-hidden="true" />
 
@@ -175,6 +189,7 @@ export function OfficeRoom() {
       {held === 'accounts' && <AccountsBook onPutDown={() => setHeld(null)} />}
       {held === 'competition' && <CompetitionFolder onPutDown={() => setHeld(null)} />}
       {held === 'ledger' && <GymLedger onPutDown={() => setHeld(null)} />}
+      {held === 'phone' && <PhoneDesk onPutDown={() => setHeld(null)} />}
 
       {/* office rig: one tungsten key upper-left, steep falloff */}
       <div className="rig office-rig" aria-hidden="true" />
@@ -640,5 +655,163 @@ function GymLedger({ onPutDown }: { onPutDown: () => void }) {
         </div>
       </div>
     </Held>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* THE PHONE — fight booking                                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Message slips and the book. Offers read like WHILE YOU WERE OUT memos:
+ * book it or pass. Booked bouts carry a corner plan — the staff works it
+ * off-screen, or you mark it WORK IT MYSELF and the night stops for you.
+ */
+function PhoneDesk({ onPutDown }: { onPutDown: () => void }) {
+  const { save, bookFight, declineFightOffer, setCornerPlan } = useGame();
+  if (!save) return null;
+
+  const offers = save.fightOffers;
+  const booked = [...save.bookedFights].sort((a, b) => a.onDay - b.onDay);
+
+  return (
+    <Held label="The phone — fight booking" className="held--phonedesk" onPutDown={onPutDown}>
+      <div className="phonedesk">
+        <div className="phonedesk__col">
+          <h3 className="book__heading">WHILE YOU WERE OUT</h3>
+          {offers.length === 0 ? (
+            <p className="book__marginalia">no calls. keep winning — the phone learns your number</p>
+          ) : (
+            <ul className="phonedesk__slips">
+              {offers.map((o) => {
+                const entry = save.roster.find((e) => e.fighter.id === o.fighterId);
+                if (!entry) return null;
+                const on = formatDate(o.onDay);
+                const expires = formatDate(o.expiresDay);
+                return (
+                  <li className="callslip" style={paperTilt(o.id, 1.5, 3)} key={o.id}>
+                    <p className="callslip__for">
+                      FOR: <b>{fighterFullName(entry.fighter).toUpperCase()}</b> ·{' '}
+                      {o.rounds} RDS · {on.month.slice(0, 3).toUpperCase()}. {on.day}
+                    </p>
+                    <p className="callslip__pitch">“{o.pitch}”</p>
+                    <p className="callslip__terms">
+                      {formatMoney(o.purse)} at the {o.venue}. Answer by{' '}
+                      {expires.month.slice(0, 3)}. {expires.day} or he books elsewhere.
+                    </p>
+                    <div className="callslip__row">
+                      <button className="callslip__btn" onClick={() => bookFight(o.id)}>
+                        BOOK IT
+                      </button>
+                      <button
+                        className="callslip__btn callslip__btn--pass"
+                        onClick={() => declineFightOffer(o.id)}
+                      >
+                        PASS
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        <div className="phonedesk__col">
+          <h3 className="book__heading">ON THE BOOK</h3>
+          {booked.length === 0 ? (
+            <p className="book__marginalia">nothing signed. a gym eats on purses</p>
+          ) : (
+            <ul className="phonedesk__slips">
+              {booked.map((b) => {
+                const entry = save.roster.find((e) => e.fighter.id === b.fighterId);
+                const opp = save.world.fighters.find((f) => f.id === b.opponentId);
+                if (!entry) return null;
+                const on = formatDate(b.onDay);
+                return (
+                  <li className="bookedcard" style={paperTilt(b.id, 1, 2)} key={b.id}>
+                    <p className="bookedcard__head">
+                      <b>{entry.fighter.lastName.toUpperCase()}</b> v.{' '}
+                      {opp ? worldFighterName(opp).toUpperCase() : 'T.B.A.'} —{' '}
+                      {on.month.slice(0, 3).toUpperCase()}. {on.day}, {b.rounds} RDS,{' '}
+                      {formatMoney(b.purse)}
+                    </p>
+                    <CornerPlanEditor bout={b} onChange={(plan) => setCornerPlan(b.id, plan)} />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+    </Held>
+  );
+}
+
+/** Who works the night: yourself (the fight plays live) or the staff. */
+function CornerPlanEditor({
+  bout,
+  onChange,
+}: {
+  bout: BookedFight;
+  onChange: (plan: CornerPlan) => void;
+}) {
+  const { save } = useGame();
+  if (!save) return null;
+  const plan = bout.corner;
+  const cutmen = save.coaches;
+
+  return (
+    <div className="cornerplan">
+      <div className="cornerplan__mode" role="radiogroup" aria-label="Who works the corner">
+        <button
+          role="radio"
+          aria-checked={plan.mode === 'self'}
+          className={'cornerplan__chip' + (plan.mode === 'self' ? ' cornerplan__chip--on' : '')}
+          onClick={() => onChange({ ...plan, mode: 'self' })}
+        >
+          WORK IT MYSELF
+        </button>
+        <button
+          role="radio"
+          aria-checked={plan.mode === 'staff'}
+          className={'cornerplan__chip' + (plan.mode === 'staff' ? ' cornerplan__chip--on' : '')}
+          onClick={() => onChange({ ...plan, mode: 'staff' })}
+        >
+          SEND THE STAFF
+        </button>
+      </div>
+      <label className="cornerplan__pick">
+        {plan.mode === 'self' ? 'ON THE STOOL WITH YOU' : 'CHIEF SECOND'}
+        <select
+          value={plan.chiefSecondId ?? ''}
+          onChange={(e) => onChange({ ...plan, chiefSecondId: e.target.value || null })}
+        >
+          <option value="">{plan.mode === 'self' ? 'nobody — your own eyes' : 'nobody senior'}</option>
+          {save.coaches.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} ({specialtyName(c.specialty)})
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="cornerplan__pick">
+        CUTMAN
+        <select
+          value={plan.cutmanId ?? ''}
+          onChange={(e) => onChange({ ...plan, cutmanId: e.target.value || null })}
+        >
+          <option value="">nobody — a sponge and hope</option>
+          {cutmen.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} ({specialtyName(c.specialty)})
+            </option>
+          ))}
+        </select>
+      </label>
+      {plan.mode === 'self' && (
+        <p className="cornerplan__note">the clock stops on fight day — you'll be there</p>
+      )}
+    </div>
   );
 }

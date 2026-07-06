@@ -14,7 +14,7 @@
 */
 
 import type { RosterEntry } from './roster';
-import type { Coach } from './coaches';
+import type { Coach, CoachTier } from './coaches';
 import { fighterFullName, type Fighter } from './fighters';
 import { type WeightClassKey } from './weightClasses';
 import { inflationFactor } from './economy';
@@ -32,6 +32,7 @@ import {
   simulateFight,
   seedFrom,
   type Combatant,
+  type FightInput,
   type FightResult,
   type Method,
 } from './engine/fightEngine';
@@ -61,6 +62,19 @@ export interface FightOffer {
   pitch: string;
 }
 
+/**
+ * Who works the corner on fight night. 'self' — you're the chief second and
+ * the fight plays live, round by round; 'staff' — your people handle it and
+ * the bout resolves off-screen. Either way the cutman's hands are whoever's
+ * hands you assigned.
+ */
+export interface CornerPlan {
+  mode: 'self' | 'staff';
+  /** the coach running the stool (staff mode) or beside you reading the man (self) */
+  chiefSecondId: string | null;
+  cutmanId: string | null;
+}
+
 export interface BookedFight {
   id: string;
   fighterId: string;
@@ -70,6 +84,52 @@ export interface BookedFight {
   venue: string;
   purse: number;
   onDay: number;
+  corner: CornerPlan;
+}
+
+/** The default plan: the man's own trainer runs the stool; best cutman available. */
+export function defaultCornerPlan(entry: RosterEntry | null, coaches: Coach[]): CornerPlan {
+  const cutman = coaches.find((c) => c.specialty === 'cutman') ?? null;
+  return {
+    mode: 'staff',
+    chiefSecondId: entry?.coachId ?? null,
+    cutmanId: cutman?.id ?? null,
+  };
+}
+
+const TIER_EDGE: Record<CoachTier, number> = {
+  local: 0.01,
+  regional: 0.02,
+  established: 0.03,
+  elite: 0.04,
+};
+
+/** Corner quality 0..0.1 for the engine — what a good corner buys all night. */
+export function cornerQualityFor(plan: CornerPlan, coaches: Coach[]): number {
+  const chief = coaches.find((c) => c.id === plan.chiefSecondId) ?? null;
+  const cutman = coaches.find((c) => c.id === plan.cutmanId) ?? null;
+  let q = 0.02;
+  if (plan.mode === 'self') q += 0.008; // the owner showed up; the rest is his calls
+  if (chief) q += TIER_EDGE[chief.tier] + (chief.specialty === 'corner_strategist' ? 0.012 : 0);
+  if (cutman) q += TIER_EDGE[cutman.tier] * 0.6 + (cutman.specialty === 'cutman' ? 0.01 : 0);
+  return clamp(q, 0.01, 0.1);
+}
+
+/** The hands on the cut between rounds, 0..1. No cutman = a wet sponge and hope. */
+export function cutmanSkillFor(plan: CornerPlan, coaches: Coach[]): number {
+  const cm = coaches.find((c) => c.id === plan.cutmanId) ?? null;
+  if (!cm) return 0.15;
+  const base = { local: 0.35, regional: 0.5, established: 0.65, elite: 0.8 }[cm.tier];
+  return clamp(base + (cm.specialty === 'cutman' ? 0.18 : -0.1), 0.1, 0.95);
+}
+
+/** How true the stool's read is, 0..1 — the eyes next to you on fight night. */
+export function stoolAcuityFor(plan: CornerPlan, coaches: Coach[]): number {
+  const chief = coaches.find((c) => c.id === plan.chiefSecondId) ?? null;
+  if (!chief) return 0.4; // your own eyes, and you're busy
+  const base = { local: 0.5, regional: 0.62, established: 0.75, elite: 0.88 }[chief.tier];
+  const spec = chief.specialty === 'trainer' || chief.specialty === 'corner_strategist' ? 0.06 : 0;
+  return clamp(base + spec, 0.3, 0.95);
 }
 
 export type BoutOutcome = 'W' | 'L' | 'D';
@@ -268,7 +328,7 @@ export function ageOffers(
   return { keep, expired };
 }
 
-export function bookFromOffer(offer: FightOffer): BookedFight {
+export function bookFromOffer(offer: FightOffer, corner: CornerPlan): BookedFight {
   return {
     id: `bf_${offer.id.slice(3)}`,
     fighterId: offer.fighterId,
@@ -278,6 +338,7 @@ export function bookFromOffer(offer: FightOffer): BookedFight {
     venue: offer.venue,
     purse: offer.purse,
     onDay: offer.onDay,
+    corner,
   };
 }
 
@@ -294,8 +355,44 @@ export interface ResolveArgs {
   booked: BookedFight;
   entry: RosterEntry;
   opponent: WorldFighter;
-  coach: Coach | null;
+  /** 0..0.1, from cornerQualityFor(plan, coaches) */
+  cornerQuality: number;
   dayCount: number;
+}
+
+/** Everything the engine needs, promoted once so both paths meet the same man. */
+export interface FightPrep {
+  input: FightInput;
+  oppFull: Fighter;
+}
+
+export function prepareFight(args: ResolveArgs): FightPrep {
+  const { booked, entry, opponent, cornerQuality, dayCount } = args;
+  const f = entry.fighter;
+  const oppFull = promoteToFull(opponent);
+  const mine: Combatant = {
+    name: f.lastName,
+    attributes: f.attributes,
+    traits: [...f.visibleTraits, ...f.hiddenTraits],
+    condition: conditionOf(entry),
+    corner: cornerQuality,
+  };
+  const theirs: Combatant = {
+    name: oppFull.lastName,
+    attributes: oppFull.attributes,
+    traits: [...oppFull.visibleTraits, ...oppFull.hiddenTraits],
+    condition: 0.88,
+    corner: opponent.affiliation.kind === 'rival' ? 0.04 : 0.02,
+  };
+  return {
+    input: {
+      a: mine,
+      b: theirs,
+      scheduledRounds: booked.rounds,
+      seed: seedFrom(booked.id + ':' + dayCount),
+    },
+    oppFull,
+  };
 }
 
 export interface ResolvedFight {
@@ -315,31 +412,18 @@ export interface ResolvedFight {
 
 /** Run the bout and produce every consequence, ready to merge into the save. */
 export function resolveFight(args: ResolveArgs): ResolvedFight {
-  const { booked, entry, opponent, coach, dayCount } = args;
+  const prep = prepareFight(args);
+  return applyFightResult(args, prep.oppFull, simulateFight(prep.input));
+}
+
+/**
+ * Fan a finished fight's consequences out into the save — shared by the
+ * off-screen sim and a fight you cornered live. oppFull MUST be the same
+ * promoted man the fight was played against (from prepareFight).
+ */
+export function applyFightResult(args: ResolveArgs, oppFull: Fighter, result: FightResult): ResolvedFight {
+  const { booked, entry, opponent, dayCount } = args;
   const f = entry.fighter;
-  const oppFull = promoteToFull(opponent);
-
-  const mine: Combatant = {
-    name: f.lastName,
-    attributes: f.attributes,
-    traits: [...f.visibleTraits, ...f.hiddenTraits],
-    condition: conditionOf(entry),
-    corner: coach ? 0.05 : 0.02,
-  };
-  const theirs: Combatant = {
-    name: oppFull.lastName,
-    attributes: oppFull.attributes,
-    traits: [...oppFull.visibleTraits, ...oppFull.hiddenTraits],
-    condition: 0.88,
-    corner: opponent.affiliation.kind === 'rival' ? 0.04 : 0.02,
-  };
-
-  const result = simulateFight({
-    a: mine,
-    b: theirs,
-    scheduledRounds: booked.rounds,
-    seed: seedFrom(booked.id + ':' + dayCount),
-  });
 
   const outcome: BoutOutcome = result.winner === 'a' ? 'W' : result.winner === 'b' ? 'L' : 'D';
   const won = outcome === 'W';

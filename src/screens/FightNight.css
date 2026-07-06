@@ -1,0 +1,236 @@
+/*
+  FightNight — the arena at night, one typed bill under a hard lamp.
+*/
+
+.fnight {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(217, 154, 78, 0.14), transparent 70%),
+    var(--ink-black);
+}
+
+.fnight__bill {
+  width: min(680px, 94vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  background-color: var(--newsprint);
+  background-image: var(--tex-paper);
+  color: var(--ink-news);
+  padding: 22px 26px 18px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+/* --- the tape ---------------------------------------------------------- */
+
+.fnight__tape {
+  border-bottom: 3px double var(--ink-news);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.fnight__names {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fnight__man {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.fnight__man--right {
+  text-align: right;
+}
+
+.fnight__name {
+  font-family: var(--type-fatface);
+  font-size: clamp(16px, 2.6vw, 24px);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.fnight__vs {
+  font-family: var(--type-poster);
+  font-size: 14px;
+  opacity: 0.7;
+  flex: none;
+}
+
+.fnight__rec {
+  font-family: var(--type-machine);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.fnight__camp {
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+
+.fnight__where {
+  font-family: var(--type-form);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin: 10px 0 4px;
+}
+
+.fnight__corner {
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  text-align: center;
+  color: var(--ink-ribbon);
+  margin: 0;
+}
+
+/* --- the report -------------------------------------------------------- */
+
+.fnight__report {
+  font-family: var(--type-typewriter);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-ribbon);
+  margin-bottom: 12px;
+}
+
+.fnight__line {
+  margin: 0 0 6px;
+}
+
+/* --- the stool ---------------------------------------------------------- */
+
+.fnight__stool {
+  border-top: 1px solid rgba(0, 0, 0, 0.25);
+  padding-top: 10px;
+  margin-bottom: 10px;
+}
+
+.fnight__reads {
+  margin-bottom: 8px;
+}
+
+.fnight__read {
+  font-family: var(--type-hand);
+  font-size: 16px;
+  color: var(--ink-graphite);
+  margin: 0 0 3px;
+}
+
+.fnight__job {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.fnight__job-label {
+  font-family: var(--type-form);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+  flex: none;
+}
+
+.fnight__chip {
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  background: transparent;
+  border: 1.5px solid var(--ink-news);
+  color: var(--ink-news);
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+.fnight__chip--on {
+  opacity: 1;
+  background: var(--ink-news);
+  color: var(--newsprint);
+}
+
+/* --- the end ------------------------------------------------------------ */
+
+.fnight__end {
+  text-align: center;
+  border-top: 3px double var(--ink-news);
+  padding-top: 12px;
+  margin-bottom: 8px;
+}
+
+.fnight__verdict {
+  font-family: var(--type-fatface);
+  font-size: clamp(18px, 3vw, 26px);
+  margin: 0 0 6px;
+  color: var(--ink-stamp-red);
+}
+
+.fnight__verdict--won {
+  color: var(--ink-news);
+}
+
+.fnight__cards {
+  font-family: var(--type-machine);
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.fnight__purse {
+  font-family: var(--type-typewriter);
+  font-size: 12.5px;
+  color: var(--ink-ribbon);
+  margin: 0;
+}
+
+/* --- buttons ------------------------------------------------------------ */
+
+.fnight__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.fnight__btn {
+  font-family: var(--type-poster);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  padding: 9px 18px;
+  cursor: pointer;
+  border: 2px solid var(--ink-news);
+  background: var(--ink-news);
+  color: var(--newsprint);
+}
+
+.fnight__btn--bell:hover {
+  background: var(--ink-ribbon);
+}
+
+.fnight__btn--towel {
+  background: transparent;
+  color: var(--ink-stamp-red);
+  border-color: var(--ink-stamp-red);
+}
+
+.fnight__btn--towel:hover {
+  background: var(--ink-stamp-red);
+  color: var(--newsprint);
+}
+
+.fnight__fallthrough {
+  font-family: var(--type-typewriter);
+  font-size: 13px;
+  text-align: center;
+}

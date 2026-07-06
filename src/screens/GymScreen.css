@@ -234,3 +234,17 @@
     gap: 8px;
   }
 }
+
+/* fight night stops the clock — the advance buttons give way to the bill */
+.stripbar__btn--fight {
+  font-family: var(--type-poster);
+  font-size: 13px;
+  letter-spacing: 0.09em;
+  color: #f0d9a8;
+  border: 2px solid var(--paint-red-faded);
+  background: rgba(143, 68, 56, 0.25);
+}
+.stripbar__btn--fight:hover {
+  background: rgba(143, 68, 56, 0.45);
+  border-color: #b05545;
+}

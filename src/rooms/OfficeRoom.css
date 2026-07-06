@@ -1274,3 +1274,168 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   z-index: 2;
 }
+
+/* ---------------------------------------------------------------- */
+/* THE PHONE DESK — booking (held object)                            */
+/* ---------------------------------------------------------------- */
+
+.phone__tag--calls {
+  background: var(--memo-pink);
+  transform: rotate(-2deg);
+}
+
+.held--phonedesk .phonedesk {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--newsprint);
+  background-image: var(--tex-paper);
+  padding: 18px 20px 46px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+}
+
+.phonedesk__col {
+  min-width: 0;
+}
+
+.phonedesk__slips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* WHILE YOU WERE OUT slip */
+.callslip {
+  background: var(--memo-pink);
+  background-image: var(--tex-paper);
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.callslip__for {
+  font-family: var(--type-form);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  margin: 0 0 4px;
+}
+
+.callslip__pitch {
+  font-family: var(--type-typewriter);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-ribbon);
+  margin: 0 0 4px;
+}
+
+.callslip__terms {
+  font-family: var(--type-typewriter);
+  font-size: 11.5px;
+  color: var(--ink-graphite);
+  margin: 0 0 8px;
+}
+
+.callslip__row {
+  display: flex;
+  gap: 8px;
+}
+
+.callslip__btn {
+  font-family: var(--type-poster);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
+  border: 2px solid var(--ink-news);
+  background: var(--ink-news);
+  color: var(--newsprint);
+  cursor: pointer;
+}
+
+.callslip__btn--pass {
+  background: transparent;
+  color: var(--ink-news);
+  opacity: 0.75;
+}
+
+.callslip__btn--pass:hover {
+  opacity: 1;
+}
+
+/* booked bout card */
+.bookedcard {
+  background: var(--index-card);
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 21px, var(--index-card-rule) 21px 22px),
+    var(--tex-paper);
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.bookedcard__head {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  margin: 0 0 6px;
+}
+
+.cornerplan__mode {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.cornerplan__chip {
+  font-family: var(--type-form);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border: 1.5px solid var(--ink-news);
+  background: transparent;
+  color: var(--ink-news);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.cornerplan__chip--on {
+  opacity: 1;
+  background: var(--ink-news);
+  color: var(--index-card);
+}
+
+.cornerplan__pick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--type-form);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin: 4px 0;
+}
+
+.cornerplan__pick select {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-graphite);
+  color: var(--ink-ribbon);
+  padding: 2px 0;
+}
+
+.cornerplan__note {
+  font-family: var(--type-hand);
+  font-size: 14px;
+  color: var(--ink-graphite);
+  margin: 4px 0 0;
+}
+
+@media (max-width: 860px) {
+  .held--phonedesk .phonedesk {
+    grid-template-columns: 1fr;
+  }
+}

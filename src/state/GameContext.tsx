@@ -21,7 +21,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { advance, formatDate, seasonOf, TIME_STEP_DAYS, type TimeStep } from '../game/time';
+import { advance, formatDate, seasonOf, type TimeStep } from '../game/time';
 import { emitGameEvent } from '../game/events';
 import { type Fighter, fighterFullName } from '../game/fighters';
 import { getCity } from '../game/cities';
@@ -104,9 +104,15 @@ import {
   rollFightOffers,
   ageOffers,
   resolveFight,
+  applyFightResult,
   bookFromOffer,
+  defaultCornerPlan,
+  cornerQualityFor,
   fightEligible,
+  type CornerPlan,
+  type BookedFight,
 } from '../game/fights';
+import type { FightResult } from '../game/engine/fightEngine';
 import { advanceEra } from '../game/era/evaluator';
 import {
   walkInPoachChance,
@@ -212,9 +218,15 @@ interface GameContextValue {
   respondLockerRequest: (id: string, choice: 'grant' | 'wait' | 'honest') => void;
   purchaseUpgrade: (key: UpgradeKey) => void;
   /** Take a promoter's offer — the bout goes on the calendar (game/fights.ts). */
-  bookFight: (offerId: string) => void;
+  bookFight: (offerId: string, corner?: CornerPlan) => void;
   /** Pass on an offer; the promoter looks elsewhere. */
   declineFightOffer: (offerId: string) => void;
+  /** Change who works a booked bout's corner (any time before the bell). */
+  setCornerPlan: (boutId: string, corner: CornerPlan) => void;
+  /** The bout waiting on you tonight — set when a self-cornered fight is due. */
+  liveBout: BookedFight | null;
+  /** Commit a live-cornered fight's result into the save. */
+  settleLiveFight: (boutId: string, result: FightResult, oppFull: Fighter) => void;
   postCoachJob: (posting: CoachPosting) => void;
   cancelCoachJob: () => void;
   hireApplicant: (id: string) => void;
@@ -298,9 +310,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
     (step: TimeStep) => {
       const prev = saveRef.current;
       if (!prev) return;
-      const days = TIME_STEP_DAYS[step];
       const fromDay = prev.dayCount;
-      const toDay = advance(fromDay, step);
+
+      // fight night stops the clock. A bout you're cornering can't pass by
+      // unwatched: the advance lands ON its day, and you can't advance past
+      // it until you've worked it (or handed it to the staff).
+      if (prev.bookedFights.some((b) => b.corner.mode === 'self' && b.onDay <= fromDay)) {
+        setFlash('Fight night. The corner’s waiting on you.');
+        return;
+      }
+      let toDay = advance(fromDay, step);
+      const nextCornered = prev.bookedFights
+        .filter((b) => b.corner.mode === 'self' && b.onDay > fromDay && b.onDay <= toDay)
+        .sort((x, y) => x.onDay - y.onDay)[0];
+      if (nextCornered) toDay = nextCornered.onDay;
+
+      const days = toDay - fromDay;
       const crossesMonth = formatDate(fromDay).month !== formatDate(toDay).month;
 
       // Pure computation, once, in the handler — not in an updater.
@@ -587,10 +612,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
             );
         }
 
-        // bouts on the calendar come due
-        const due = bookedFights.filter((b) => b.onDay <= toDay);
+        // bouts on the calendar come due — the ones you're cornering wait
+        // for you at the arena (advance stopped on their day)
+        const due = bookedFights.filter((b) => b.onDay <= toDay && b.corner.mode !== 'self');
         if (due.length) {
-          bookedFights = bookedFights.filter((b) => b.onDay > toDay);
+          const dueIds = new Set(due.map((b) => b.id));
+          bookedFights = bookedFights.filter((b) => !dueIds.has(b.id));
           for (const bout of due) {
             const idx = rosterAfterFights.findIndex((e) => e.fighter.id === bout.fighterId);
             const opp = world.fighters.find((f) => f.id === bout.opponentId);
@@ -599,14 +626,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
               continue;
             }
             const entry = rosterAfterFights[idx];
-            const coach = entry.coachId
-              ? prev.coaches.find((c) => c.id === entry.coachId) ?? null
-              : null;
             const resolved = resolveFight({
               booked: bout,
               entry,
               opponent: opp,
-              coach,
+              cornerQuality: cornerQualityFor(bout.corner, prev.coaches),
               dayCount: toDay,
             });
             rosterAfterFights = rosterAfterFights.map((e, i) =>
@@ -817,7 +841,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const clearFlash = useCallback(() => setFlash(null), []);
 
   const bookFight = useCallback(
-    (offerId: string) => {
+    (offerId: string, corner?: CornerPlan) => {
       const prev = saveRef.current;
       if (!prev) return;
       const offer = prev.fightOffers.find((o) => o.id === offerId);
@@ -827,7 +851,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         setFlash('He can’t take that fight right now.');
         return;
       }
-      const booked = bookFromOffer(offer);
+      const booked = bookFromOffer(offer, corner ?? defaultCornerPlan(entry, prev.coaches));
       const fd = formatDate(booked.onDay);
       const history = [
         ...prev.history,
@@ -859,6 +883,66 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!prev) return;
       if (!prev.fightOffers.some((o) => o.id === offerId)) return;
       commit({ ...prev, fightOffers: prev.fightOffers.filter((o) => o.id !== offerId) });
+    },
+    [commit],
+  );
+
+  const setCornerPlan = useCallback(
+    (boutId: string, corner: CornerPlan) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      if (!prev.bookedFights.some((b) => b.id === boutId)) return;
+      commit({
+        ...prev,
+        bookedFights: prev.bookedFights.map((b) => (b.id === boutId ? { ...b, corner } : b)),
+      });
+    },
+    [commit],
+  );
+
+  /**
+   * A fight you cornered live is over — fan its consequences into the save.
+   * oppFull must be the promoted opponent from prepareFight (the man who was
+   * actually in the ring), so rematches meet the same fighter.
+   */
+  const settleLiveFight = useCallback(
+    (boutId: string, result: FightResult, oppFull: Fighter) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const bout = prev.bookedFights.find((b) => b.id === boutId);
+      if (!bout || bout.onDay > prev.dayCount) return;
+      const remaining = prev.bookedFights.filter((b) => b.id !== boutId);
+      const entry = prev.roster.find((e) => e.fighter.id === bout.fighterId);
+      const opp = prev.world.fighters.find((f) => f.id === bout.opponentId);
+      if (!entry || !opp) {
+        commit({ ...prev, bookedFights: remaining });
+        return;
+      }
+      const resolved = applyFightResult(
+        {
+          booked: bout,
+          entry,
+          opponent: opp,
+          cornerQuality: cornerQualityFor(bout.corner, prev.coaches),
+          dayCount: prev.dayCount,
+        },
+        oppFull,
+        result,
+      );
+      commit({
+        ...prev,
+        bookedFights: remaining,
+        roster: prev.roster.map((e) => (e.fighter.id === entry.fighter.id ? resolved.entry : e)),
+        world: {
+          ...prev.world,
+          fighters: prev.world.fighters.map((f) => (f.id === opp.id ? resolved.opponent : f)),
+        },
+        money: prev.money + resolved.purse,
+        press: pressItem(prev.press, prev.dayCount, resolved.headline),
+        history: [...prev.history, { dayCount: prev.dayCount, text: resolved.memory }].slice(-250),
+        recentFights: [resolved.report, ...prev.recentFights].slice(0, 10),
+        recentLog: [{ dayCount: prev.dayCount, text: resolved.logLine }, ...prev.recentLog].slice(0, 12),
+      });
     },
     [commit],
   );
@@ -1257,6 +1341,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  // the bout waiting on you tonight — advance stopped on its day
+  const liveBout = useMemo<BookedFight | null>(
+    () =>
+      save?.bookedFights.find((b) => b.corner.mode === 'self' && b.onDay <= save.dayCount) ??
+      null,
+    [save],
+  );
+
   const value = useMemo<GameContextValue>(
     () => ({
       screen,
@@ -1293,6 +1385,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
       purchaseUpgrade,
       bookFight,
       declineFightOffer,
+      setCornerPlan,
+      liveBout,
+      settleLiveFight,
       postCoachJob,
       cancelCoachJob,
       hireApplicant,
@@ -1339,6 +1434,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
       purchaseUpgrade,
       bookFight,
       declineFightOffer,
+      setCornerPlan,
+      liveBout,
+      settleLiveFight,
       postCoachJob,
       cancelCoachJob,
       hireApplicant,
