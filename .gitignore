@@ -21,3 +21,4 @@ npm-debug.log*
 
 # TypeScript incremental build info
 *.tsbuildinfo
+e2e/.tmp/
