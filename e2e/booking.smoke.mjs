@@ -25,7 +25,7 @@ try {
   await page.waitForTimeout(200);
   await page.screenshot({ path: join(TMP, 'phone-booked.png') });
 
-  await page.getByRole('button', { name: /HANG UP/i }).click();
+  await page.getByRole('button', { name: /^CLOSE/ }).click();
   await page.waitForTimeout(300);
   // the booking shows on the desk
   must(await page.getByText(/YOU WORK THE CORNER/i).isVisible(), 'corner plan on the desk');

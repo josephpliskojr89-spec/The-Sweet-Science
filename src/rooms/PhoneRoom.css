@@ -1,75 +1,111 @@
-/* The phone as a standalone overlay — same sheets, no desk required. */
+/* BOOKING — surface-specific pieces (the shared vocabulary is styles/mgmt.css) */
 
-.phone-room {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  padding: 4vh 4vw;
-  background: rgba(8, 6, 4, 0.78);
+.offer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 2px;
 }
 
-.phone-room__sheet {
-  width: min(980px, 94vw);
-  max-height: 90vh;
+.offer__terms {
   display: flex;
   flex-direction: column;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.35);
+  gap: 3px;
+  min-width: 0;
 }
 
-.phone-room__head {
+.offer__pitch {
+  font-family: var(--type-typewriter);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--cream-dim);
+}
+
+.offer__answer {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.offer__btn {
+  margin-top: 0;
+}
+
+.bout {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 2px;
+}
+
+/* the corner plan */
+.cplan {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cplan__mode {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px 8px;
-  border-bottom: 3px double var(--ink-news);
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.phone-room__title {
-  font-family: var(--type-poster);
-  font-size: 18px;
-  letter-spacing: 0.12em;
-  color: var(--ink-news);
-  margin: 0;
-}
-
-.phone-room__close {
+.cplan__chip {
   font-family: var(--type-form);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  padding: 5px 10px;
-  border: 1.5px solid var(--ink-news);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
   background: transparent;
-  color: var(--ink-news);
+  border: 1px solid var(--steel-edge);
+  color: var(--cream-dim);
   cursor: pointer;
 }
 
-.phone-room__close:hover {
-  background: var(--ink-news);
-  color: var(--newsprint);
+.cplan__chip:hover {
+  color: var(--cream);
+  border-color: var(--cream-dim);
 }
 
-.phone-room__esc {
-  opacity: 0.6;
-  margin-left: 6px;
+.cplan__chip--on {
+  background: var(--plate);
+  border-color: var(--plate);
+  color: var(--plate-ink);
 }
 
-/* the sheets fill the standalone frame (the office held version supplies
-   its own chrome via .held--phonedesk) */
-.phone-room__sheet .phonedesk {
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.cplan__note {
+  font-family: var(--type-form);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+}
+
+.cplan__picks {
+  display: flex;
   gap: 18px;
-  padding: 16px 20px 24px;
+  flex-wrap: wrap;
 }
 
-@media (max-width: 860px) {
-  .phone-room__sheet .phonedesk {
-    grid-template-columns: 1fr;
+.cplan__pick {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 220px;
+}
+
+.cplan__label {
+  font-family: var(--type-form);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
+}
+
+@media (max-width: 700px) {
+  .offer {
+    flex-direction: column;
   }
 }

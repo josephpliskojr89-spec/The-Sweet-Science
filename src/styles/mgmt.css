@@ -1,0 +1,460 @@
+/*
+  The management system — shared vocabulary.
+  --------------------------------------------------------------------------
+  One visual language for every management surface: charcoal panels with
+  hairline aluminum edges, cream label plates, muted gold for money and
+  emphasis, one signal red for things that need an answer. Square corners,
+  clean dividers, bold compact type. The gym is rough around the edges;
+  the management isn't.
+
+  Used by the dashboard (GameScreen) and every Surface overlay.
+*/
+
+:root {
+  --steel: rgba(22, 20, 18, 0.88);
+  --steel-solid: #191715;
+  --steel-edge: rgba(158, 150, 136, 0.32);
+  --cream: #ddd5be;
+  --cream-dim: rgba(221, 213, 190, 0.62);
+  --cream-faint: rgba(221, 213, 190, 0.14);
+  --plate: #d8cfb6;
+  --plate-ink: #26231f;
+  --gold: #c9a55c;
+  --signal-red: #a8503f;
+}
+
+/* --- a unit: charcoal panel, cream label plate ------------------------------ */
+
+.unit {
+  background: var(--steel);
+  border: 1px solid var(--steel-edge);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  flex: none;
+}
+
+.unit__plate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 12px;
+  background: linear-gradient(180deg, var(--plate), #c9c0a6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+}
+
+.unit__title {
+  font-family: var(--type-poster);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--plate-ink);
+  margin: 0;
+}
+
+.unit__tally {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--plate-ink);
+  border: 1px solid var(--plate-ink);
+  padding: 0 7px;
+  line-height: 1.5;
+}
+
+.unit__tally--due {
+  background: var(--signal-red);
+  border-color: var(--signal-red);
+  color: var(--plate);
+}
+
+.unit__body {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.unit__empty {
+  font-family: var(--type-form);
+  font-size: 12px;
+  color: var(--cream-dim);
+  margin: 2px 0;
+}
+
+.unit__action {
+  margin-top: 10px;
+  align-self: flex-start;
+  font-family: var(--type-form);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--steel-edge);
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.unit__action:hover {
+  border-color: var(--gold);
+  background: rgba(201, 165, 92, 0.08);
+}
+
+.unit__action--danger {
+  color: var(--signal-red);
+}
+
+.unit__action--danger:hover {
+  border-color: var(--signal-red);
+  background: rgba(168, 80, 63, 0.1);
+}
+
+/* --- rows: clean lines, hairline dividers ------------------------------------ */
+
+.rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rows > li + li {
+  border-top: 1px solid var(--cream-faint);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.row:hover .row__main {
+  color: var(--gold);
+}
+
+.row__main {
+  font-family: var(--type-form);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+}
+
+.row__detail {
+  font-family: var(--type-machine);
+  font-size: 11px;
+  color: var(--cream-dim);
+}
+
+.row__note {
+  font-family: var(--type-form);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
+}
+
+.row__note--gold {
+  color: var(--gold);
+}
+
+.row__rank {
+  display: inline-block;
+  width: 16px;
+  font-family: var(--type-machine);
+  color: var(--cream-dim);
+}
+
+.row__delta {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+/* --- facts: label over value, dates in machine type --------------------------- */
+
+.facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.facts > li + li {
+  border-top: 1px solid var(--cream-faint);
+}
+
+.facts__line {
+  padding: 7px 2px;
+}
+
+.facts__line--quiet {
+  font-family: var(--type-form);
+  font-size: 12px;
+  color: var(--cream-dim);
+}
+
+.facts__what {
+  display: block;
+  font-family: var(--type-form);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+}
+
+.facts__when {
+  display: block;
+  font-family: var(--type-machine);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--cream-dim);
+  margin-top: 1px;
+}
+
+.facts__when--due {
+  color: var(--gold);
+}
+
+.facts__act {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.facts__act:hover .facts__what {
+  color: var(--gold);
+}
+
+/* --- ledger lines: label left, figure right ------------------------------------ */
+
+.ledger__line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 2px;
+}
+
+.ledger__line + .ledger__line {
+  border-top: 1px solid var(--cream-faint);
+}
+
+.ledger__label {
+  font-family: var(--type-form);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
+}
+
+.ledger__figure {
+  font-family: var(--type-machine);
+  font-size: 18px;
+  color: var(--gold);
+}
+
+.ledger__figure--sm {
+  font-size: 13px;
+  color: var(--cream);
+}
+
+.ledger__figure--red {
+  color: var(--signal-red);
+}
+
+/* --- data table: columns, hairline rules ----------------------------------------- */
+
+.mtable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mtable th {
+  font-family: var(--type-form);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
+  text-align: left;
+  padding: 4px 10px 6px 2px;
+  border-bottom: 1px solid var(--steel-edge);
+  white-space: nowrap;
+}
+
+.mtable td {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  color: var(--cream);
+  padding: 7px 10px 7px 2px;
+  border-bottom: 1px solid var(--cream-faint);
+  vertical-align: baseline;
+}
+
+.mtable td.mtable__dim {
+  color: var(--cream-dim);
+}
+
+.mtable td.mtable__gold {
+  color: var(--gold);
+}
+
+.mtable td.mtable__red {
+  color: var(--signal-red);
+}
+
+.mtable__rowlink {
+  cursor: pointer;
+}
+
+.mtable__rowlink:hover td:first-child {
+  color: var(--gold);
+}
+
+/* --- the surface: a full management screen over the game --------------------------- */
+
+.surface {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 3vh 3vw;
+  background: rgba(10, 9, 8, 0.72);
+}
+
+.surface__sheet {
+  width: min(1080px, 96vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--steel-solid);
+  border: 1px solid var(--steel-edge);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75);
+}
+
+.surface__sheet--narrow {
+  width: min(760px, 94vw);
+}
+
+.surface__mast {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(180deg, var(--plate), #c9c0a6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.surface__title {
+  font-family: var(--type-poster);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  color: var(--plate-ink);
+  margin: 0;
+  padding: 9px 16px;
+  white-space: nowrap;
+}
+
+.surface__tabs {
+  display: flex;
+  align-items: stretch;
+}
+
+.surface__tab {
+  font-family: var(--type-form);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  color: rgba(38, 35, 31, 0.6);
+  cursor: pointer;
+}
+
+.surface__tab:hover {
+  color: var(--plate-ink);
+}
+
+.surface__tab[aria-selected='true'] {
+  background: var(--steel-solid);
+  color: var(--cream);
+}
+
+.surface__close {
+  font-family: var(--type-form);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.25);
+  color: var(--plate-ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.surface__close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.surface__esc {
+  opacity: 0.55;
+  margin-left: 6px;
+}
+
+.surface__body {
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* section head inside a surface body */
+.surface__section {
+  font-family: var(--type-form);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--cream-dim);
+  border-bottom: 1px solid var(--steel-edge);
+  padding-bottom: 5px;
+  margin: 0 0 8px;
+}
+
+.surface__note {
+  font-family: var(--type-form);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--cream-dim);
+  margin: 0;
+}
+
+/* select controls in the management voice */
+.mselect {
+  font-family: var(--type-machine);
+  font-size: 12px;
+  background: var(--steel-solid);
+  border: 1px solid var(--steel-edge);
+  color: var(--cream);
+  padding: 4px 8px;
+}
+
+.mselect:focus {
+  outline: none;
+  border-color: var(--gold);
+}

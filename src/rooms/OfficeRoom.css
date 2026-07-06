@@ -1,1441 +1,157 @@
-/*
-  MY OFFICE — object shot, looking down ~30° at the owner's desk.
-  The desk is the room. One tungsten key upper-left; every shadow falls
-  3px 5px down-right. Nothing is centered — objects align to each other,
-  the way a right-handed man arranges a desk.
-*/
+/* OFFICE — surface-specific pieces (shared vocabulary in styles/mgmt.css) */
 
-.office-room {
-  position: absolute;
-  inset: 0;
-  z-index: 45;
-  overflow: hidden;
-  --shadow-dx: 3px;
-  --shadow-dy: 5px;
-}
-
-/* ---------------------------------------------------------------- */
-/* THE DESK                                                          */
-/* ---------------------------------------------------------------- */
-.desk {
-  z-index: 0;
-  background-color: var(--oak);
-  background-image:
-    /* plank grain */
-    repeating-linear-gradient(
-      92deg,
-      transparent 0 34px,
-      rgba(20, 14, 8, 0.16) 34px 36px,
-      transparent 36px 120px,
-      rgba(20, 14, 8, 0.1) 120px 121px,
-      transparent 121px 190px
-    ),
-    var(--tex-steel);
-  background-blend-mode: normal, multiply;
-  background-size:
-    100% 100%,
-    340px 340px;
-}
-/* drawer fronts cropped at the bottom frame edge */
-.desk__drawers {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 7%;
-  background: linear-gradient(180deg, #55401f 0 6%, #6b4f2a 6% 100%);
-  border-top: 2px solid rgba(20, 14, 8, 0.7);
-}
-.desk__drawers::before,
-.desk__drawers::after {
-  content: '';
-  position: absolute;
-  top: 46%;
-  width: 64px;
-  height: 9px;
-  background: linear-gradient(180deg, var(--brass-polished), var(--brass-oxidized));
-  border: 1px solid #55461f;
-  border-radius: 0 0 5px 5px;
-  /* hands darken the handles */
-  box-shadow: 0 0 10px rgba(12, 9, 7, calc(0.25 + var(--gym-age) * 0.3));
-}
-.desk__drawers::before {
-  left: 22%;
-}
-.desk__drawers::after {
-  right: 14%;
-}
-/* the coffee ring in the blotter's margin — never under type */
-.desk__ring {
-  position: absolute;
-  left: 52.5%;
-  top: 14%;
-  width: 34px;
-  height: 30px;
-  border-radius: 50%;
-  border: 4px solid rgba(60, 38, 18, 0.3);
-  filter: blur(0.5px);
-  transform: rotate(-4deg);
-}
-
-/* the pebbled-glass door sliver — the way back, top-left */
-.desk__door {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: clamp(120px, 13%, 210px);
-  height: 15%;
-  min-height: 84px;
-  z-index: 3;
-  padding: 0;
-  transform: skewX(-8deg) translateX(-10px);
-}
-.desk__door-glass {
-  position: absolute;
-  inset: 0 0 12% 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:
-    radial-gradient(ellipse at 40% 40%, #d8c896 0%, #b3985e 55%, #8a6c3a 100%);
-  border: 5px solid var(--oak);
-  border-top-width: 0;
-  border-left-width: 0;
-  overflow: hidden;
-}
-.desk__door-glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--tex-paper);
-  background-size: 80px;
-  mix-blend-mode: multiply;
-  opacity: 0.7;
-}
-/* the gym's name, painted on the street side — reversed from in here */
-.desk__door-name {
-  font-family: var(--type-poster);
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  color: rgba(122, 90, 32, 0.85);
-  transform: scaleX(-1);
-  white-space: nowrap;
-}
-.desk__door:hover .desk__door-glass {
-  filter: brightness(1.09);
-}
-
-/* ---------------------------------------------------------------- */
-/* THE BLOTTER + IN-TRAY                                             */
-/* ---------------------------------------------------------------- */
-.tray {
-  position: absolute;
-  left: 6%;
-  top: 17%;
-  width: 44%;
-  min-width: 420px;
-  max-height: 76%;
-  z-index: 2;
-  /* forest-green blotter paper inside tobacco-leather corners (A16) */
-  background-color: var(--gym-green);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 10px solid var(--tobacco);
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
-    var(--shadow-dx) var(--shadow-dy) 12px var(--shadow-cast);
-  padding: 26px 22px 20px;
-  transition: opacity var(--t-paper) var(--ease-paper);
-}
-/* brass corner caps */
-.tray::before,
-.tray::after {
-  content: '';
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: linear-gradient(135deg, var(--brass-polished), var(--brass-oxidized) 70%);
-  border: 1px solid #55461f;
-}
-.tray::before {
-  top: -10px;
-  left: -10px;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-}
-.tray::after {
-  bottom: -10px;
-  right: -10px;
-  clip-path: polygon(100% 100%, 100% 0, 0 100%);
-}
-.tray--dimmed {
-  opacity: 0.55;
-  pointer-events: none;
-}
-/* the wire tray front rail */
-.tray__wire {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 8px;
-  height: 8px;
-  border: 2px solid #9aa096;
-  border-bottom: none;
-  opacity: 0.9;
-}
-/* typed tray card wired to the front */
-.tray__card {
-  position: absolute;
-  top: -14px;
-  left: 34px;
-  padding: 3px 9px 4px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.45);
-  transform: rotate(-1.4deg);
-}
-/* the trainer's pencil note when the tray is empty */
-.tray__note {
-  font-family: var(--type-hand);
-  font-weight: 600;
-  font-size: 17px;
-  color: #cfd4c6;
-  padding: 26px 8px 30px;
-}
-
-.tray__slips {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-height: calc(76vh - 120px);
-  overflow-y: auto;
-  padding: 4px 2px;
-}
-
-/* --- one registration slip: FORM 3-A on index-card stock (A2) --- */
-.regslip {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  min-height: 76px;
-  padding: 12px 12px 12px 10px;
-  text-align: left;
-  background-color: var(--index-card);
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 17px, var(--index-card-rule) 17px 18px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
-  transition: transform var(--t-paper) var(--ease-paper);
-}
-.regslip:hover {
-  /* the slip slides out of the fan toward your hand */
-  transform: translate(calc(var(--seed-dx, 0px) + 3px), var(--seed-dy, 0))
-    rotate(var(--seed-rot, 0deg));
-}
-.regslip__form {
-  position: absolute;
-  top: 3px;
-  right: 8px;
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 8px;
-  letter-spacing: 0.03em;
-  color: rgba(46, 43, 38, 0.55);
-}
-.regslip__photo {
-  position: relative;
-  flex: none;
-}
-.regslip__photo :first-child {
-  display: block;
-}
-.regslip__clip {
-  position: absolute;
-  top: -6px;
-  left: 4px;
-  width: 9px;
-  height: 20px;
-  border: 2px solid #7c8087;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-}
-.regslip__main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
-.regslip__name {
-  font-family: var(--type-typewriter);
-  font-size: 15px;
-  color: var(--ink-ribbon);
-}
-.regslip__meta {
-  font-family: var(--type-machine);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-}
-.regslip__impression {
-  font-family: var(--type-hand);
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--ink-graphite);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.regslip__right {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-}
-/* the typed patience line — data, so typewriter, not pencil (A10) */
-.regslip__wait {
-  font-family: var(--type-machine);
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  white-space: nowrap;
-}
-
-/* ---------------------------------------------------------------- */
-/* DESK OBJECTS at rest                                              */
-/* ---------------------------------------------------------------- */
-.deskobj {
-  position: absolute;
-  z-index: 2;
-  padding: 0;
-  text-align: center;
-  transition: transform var(--t-paper) var(--ease-paper), filter var(--t-paper) var(--ease-paper);
-}
-.deskobj:hover {
-  /* lamp glint + a 2px slide toward the hand — never levitation */
-  filter: brightness(1.07);
-  transform: translate(2px, 2px);
-}
-
-/* the green accounts book, lower right, corner overlapping the blotter */
-.deskobj--accounts {
-  left: 47%;
-  bottom: 12%;
-  width: 19%;
-  min-width: 200px;
-  height: 26%;
-  background-color: var(--gym-green);
-  background-image: var(--tex-canvas);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
-  transform: rotate(-1.5deg);
-}
-.deskobj--accounts:hover {
-  transform: rotate(-1.5deg) translate(2px, 2px);
-}
-.deskobj__accounts-spine {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 16%;
-  background: var(--paint-red-faded);
-  border-right: 2px solid rgba(0, 0, 0, 0.4);
-}
-.deskobj__accounts-label {
-  position: absolute;
-  left: 30%;
-  right: 12%;
-  top: 38%;
-  padding: 6px 4px;
-  background: rgba(236, 226, 200, 0.92);
-  font-family: var(--type-typewriter);
-  font-size: 14px;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* THE COMPETITION folder, mid right */
-.deskobj--folder {
-  right: 17%;
-  top: 24%;
-  width: 20%;
-  min-width: 210px;
-  height: 24%;
-  background-color: var(--manila);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.35);
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
-  transform: rotate(1.2deg);
-}
-.deskobj--folder:hover {
-  transform: rotate(1.2deg) translate(2px, 2px);
-}
-/* the tie string, wound round its button */
-.deskobj__folder-string {
-  position: absolute;
-  right: 12%;
-  top: 14%;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #8a6d45;
-  box-shadow: -22px 6px 0 -6px #8a6d45;
-}
-.deskobj__folder-label {
-  position: absolute;
-  left: 10%;
-  right: 24%;
-  top: 42%;
-  font-family: var(--type-poster);
-  font-size: clamp(13px, 1.2vw, 17px);
-  letter-spacing: 0.09em; /* stenciled */
-  color: rgba(58, 40, 14, 0.8);
-}
-
-/* the bound gym ledger, cropped by the right frame edge */
-.deskobj--ledger {
-  right: -4%;
-  top: 55%;
-  width: 17%;
-  min-width: 180px;
-  height: 30%;
-  background-color: #3a3126;
-  background-image: var(--tex-canvas);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  border-left: 10px solid #262019;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
-  transform: rotate(-0.6deg);
-}
-.deskobj--ledger:hover {
-  transform: rotate(-0.6deg) translate(2px, 2px);
-}
-.deskobj__ledger-label {
-  position: absolute;
-  left: 18%;
-  top: 34%;
-  padding: 5px 10px;
-  background: rgba(236, 226, 200, 0.9);
-  font-family: var(--type-typewriter);
-  font-size: 13px;
-  color: var(--ink-ribbon);
-}
-
-/* the dead rotary phone, upper right dead zone */
-.deskobj--phone {
-  right: 6%;
-  top: 4%;
-  width: 150px;
-  height: 120px;
-  cursor: default;
-}
-.phone__body {
-  position: absolute;
-  left: 12px;
-  top: 18px;
-  width: 104px;
-  height: 74px;
-  background: linear-gradient(180deg, #2e2b28 0%, #1c1a18 100%);
-  border-radius: 10px 10px 4px 4px; /* bakelite, not chrome — a drawn object */
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 9px var(--shadow-cast);
-  /* dusty, never grayed */
-  filter: saturate(0.7) brightness(0.92);
-}
-.phone__dial {
-  position: absolute;
-  left: 50%;
-  top: 54%;
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #4a4642 0 30%, #26231f 70%);
-  border: 3px solid #14120f;
-}
-.phone__handset {
-  position: absolute;
-  left: 50%;
-  top: -12px;
-  transform: translateX(-50%);
-  width: 108px;
-  height: 22px;
-  background: linear-gradient(180deg, #35322e, #1c1a18);
-  border-radius: 11px;
-}
-.phone__cord {
-  position: absolute;
-  left: -14px;
-  bottom: -8px;
-  width: 30px;
-  height: 26px;
-  border: 2px dashed #3a352f;
-  border-radius: 50%;
-  border-top: none;
-}
-.phone__tag {
-  position: absolute;
-  left: 0;
-  bottom: -14px;
-  right: 0;
-  padding: 3px 6px;
-  background: rgba(217, 211, 194, 0.85);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-  font-family: var(--type-marker);
-  font-size: 11px;
-  line-height: 1.25;
-  color: #33302b;
-  transform: rotate(2deg);
-}
-
-/* the stained mug */
-.deskobj--mug {
-  right: 28%;
-  top: 9%;
-  width: 34px;
-  height: 40px;
-  background: linear-gradient(180deg, #8d8578 0%, #6e675c 100%);
-  border-radius: 3px 3px 8px 8px;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  cursor: default;
-}
-.deskobj--mug::after {
-  content: '';
-  position: absolute;
-  right: -12px;
-  top: 8px;
-  width: 14px;
-  height: 18px;
-  border: 4px solid #6e675c;
-  border-left: none;
-  border-radius: 0 10px 10px 0;
-}
-
-/* ---------------------------------------------------------------- */
-/* HELD OBJECTS — slide up from the bottom third, settle             */
-/* ---------------------------------------------------------------- */
-.held {
-  position: absolute;
-  left: 50%;
-  top: 6%;
-  bottom: 4%;
-  width: min(920px, 82%);
-  z-index: 4;
-  transform: translateX(-54%);
-  animation: pick-up 240ms var(--ease-paper) 1;
-}
-@keyframes pick-up {
-  0% {
-    transform: translateX(-54%) translateY(26%) rotate(0deg);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateX(-54%) translateY(0) rotate(0deg);
-    opacity: 1;
-  }
-}
-.held__putdown {
-  position: absolute;
-  right: 8px;
-  top: -2px;
-  z-index: 5;
-  padding: 7px 12px;
-  min-height: 44px;
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: #efe7cf;
-  background: rgba(20, 14, 8, 0.72);
-  border: 1px solid rgba(236, 226, 200, 0.4);
-}
-.held__putdown:hover {
-  border-color: rgba(236, 226, 200, 0.8);
-}
-.held__esc {
-  margin-left: 6px;
-  padding: 1px 5px;
-  border: 1px solid rgba(236, 226, 200, 0.5);
-  font-size: 10px;
-}
-
-/* ---------------------------------------------------------------- */
-/* THE ACCOUNTS BOOK, OPEN                                           */
-/* ---------------------------------------------------------------- */
-.book {
-  position: relative;
+/* accounts */
+.acct__top {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100%;
-  background: #efe6cd;
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 12px solid var(--gym-green);
-  border-radius: 0;
-  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  gap: 28px;
+  align-items: start;
 }
-/* the gutter */
-.book::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  transform: translateX(-50%);
-  background: linear-gradient(90deg, transparent, rgba(40, 30, 16, 0.4), transparent);
+
+.acct__balance {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--steel-edge);
+  padding: 14px 16px;
 }
-.book__page {
-  padding: 26px 26px 20px;
-  overflow-y: auto;
+
+.acct__figure {
+  font-family: var(--type-machine);
+  font-size: clamp(26px, 3vw, 34px);
+  color: var(--gold);
+}
+
+.acct__figure--red {
+  color: var(--signal-red);
+}
+
+.acct__overdrawn {
+  font-family: var(--type-form);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--signal-red);
+}
+
+.acct__run {
   min-width: 0;
 }
-.book__heading {
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: var(--ink-news);
-  border-bottom: 1px solid rgba(46, 43, 38, 0.5);
-  padding-bottom: 5px;
-  margin-bottom: 10px;
-}
-.book__grid {
-  width: 100%;
-  border-collapse: collapse;
-}
-.book__line td {
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  color: var(--ink-news);
-  padding: 6px 2px;
-  border-bottom: 1px solid rgba(90, 110, 130, 0.35);
-}
-/* the figures: typed, tabular, exactly 0° */
-.book__fig {
-  text-align: right;
-  font-family: var(--type-machine) !important;
-  font-size: 14px !important;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.book__fig--in {
-  color: var(--ink-ballpoint) !important;
-}
-.book__fig--out {
-  color: var(--ink-stamp-red) !important;
-}
-.book__subline td {
-  font-family: var(--type-machine);
-  font-size: 10px;
-  color: rgba(46, 43, 38, 0.65);
-  padding: 0 2px 6px;
-  border-bottom: 1px solid rgba(90, 110, 130, 0.35);
-}
-/* net under a true double rule */
-.book__line--net td {
-  border-top: 1px solid rgba(46, 43, 38, 0.7);
-  border-bottom: 3px double rgba(46, 43, 38, 0.8);
-  font-weight: 700;
-}
-.book__marginalia {
-  margin-top: 12px;
-  font-family: var(--type-hand);
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--ink-graphite);
-}
 
-/* the balance — the last handwritten line, large, circled */
-.book__balance {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-  padding: 10px 6px 12px;
-}
-.book__balance-label {
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: var(--ink-news);
-}
-.book__balance-figure {
-  position: relative;
-  margin-right: 22px;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 30px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ballpoint);
-}
-/* the grease-pencil circle around it */
-.book__balance-figure::after {
-  content: '';
-  position: absolute;
-  inset: -8px -14px;
-  border: 3px solid rgba(74, 70, 63, 0.55);
-  border-radius: 50%;
-  transform: rotate(-3deg) scaleX(1.06);
-  pointer-events: none;
-}
-.book__balance-figure--red {
-  color: var(--ink-stamp-red);
-}
-.book__balance-date {
-  font-family: var(--type-machine);
-  font-size: 12px;
-  color: var(--ink-ribbon);
-}
-.book__overdrawn {
-  font-family: var(--type-hand);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--ink-graphite);
-}
-.book__history {
-  max-height: 52%;
-  overflow-y: auto;
-}
-.book__month {
-  font-family: var(--type-machine) !important;
-  font-size: 12px !important;
-  white-space: nowrap;
-}
-.book__fig--bal {
-  font-weight: 700;
-}
-
-/* the overdraft notice, paperclipped askew to the page corner */
-.book__notice {
-  position: absolute;
-  right: 4%;
-  bottom: 6%;
-  width: 250px;
-  padding: 14px 14px 12px;
-  background: #f4f1e8;
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 10px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 2deg));
-  z-index: 3;
-}
-.book__notice-clip {
-  position: absolute;
-  top: -8px;
-  left: 16px;
-  width: 11px;
-  height: 26px;
-  border: 2.5px solid #8a8d92;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-}
-/* rust bleeds under the clip */
-.book__notice-clip::after {
-  content: '';
-  position: absolute;
-  inset: 6px -3px 0;
-  background: radial-gradient(ellipse, rgba(143, 68, 56, 0.25), transparent 70%);
-}
-.book__notice-head {
-  display: block;
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 10px;
-  letter-spacing: 0.03em;
-  color: var(--ink-news);
-  border-bottom: 1px solid rgba(46, 43, 38, 0.4);
-  padding-bottom: 4px;
-  margin-bottom: 8px;
-}
-.book__notice-body {
-  margin-top: 8px;
-  font-family: var(--type-typewriter);
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-ribbon);
-}
-
-/* ---------------------------------------------------------------- */
-/* THE COMPETITION FOLDER, OPEN                                      */
-/* ---------------------------------------------------------------- */
-.folder {
-  position: relative;
-  height: 100%;
-  background-color: var(--manila);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
-  padding: 22px 46px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-/* die-cut tabs on the right edge */
-.folder__tabs {
-  position: absolute;
-  right: -34px;
-  top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 2;
-}
-.folder__tab {
-  min-height: 44px;
-  padding: 10px 10px;
-  font-family: var(--type-typewriter);
-  font-size: 12px;
-  color: var(--ink-ribbon);
-  background-color: #c2a366;
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  clip-path: polygon(0 6%, 88% 0, 100% 12%, 100% 88%, 88% 100%, 0 94%);
-  writing-mode: vertical-rl;
-  letter-spacing: 0.02em;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-}
-.folder__tab--held {
-  background-color: var(--manila);
-  transform: translateX(6px);
-  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.55);
-}
-.folder__tab--dogear {
-  clip-path: polygon(0 6%, 88% 0, 100% 12%, 100% 78%, 82% 100%, 0 94%);
-}
-
-/* the stapled appraisal memo */
-.folder__memo {
-  position: relative;
-  flex: none;
-  align-self: flex-start;
-  max-width: 82%;
-  padding: 12px 16px 10px;
-  background-color: var(--pulp);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: var(--shadow-dx) var(--shadow-dy) 6px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
-}
-.folder__staple {
-  position: absolute;
-  top: -3px;
-  left: 22px;
-  width: 14px;
-  height: 4px;
-  background: #7c8087;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
-}
-.folder__memo-line {
-  font-family: var(--type-typewriter);
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--ink-ribbon);
-}
-.folder__memo-pencil {
-  margin-top: 4px;
-  font-family: var(--type-hand);
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--ink-graphite);
-}
-
-.folder__sheets {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 6px 4px 12px 2px;
-}
-.folder__citygroup {
-  margin-bottom: 14px;
-}
-.folder__cityname {
-  font-family: var(--type-form);
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.03em;
-  color: rgba(46, 43, 38, 0.85);
-  border-bottom: 1px solid rgba(46, 43, 38, 0.5);
-  padding-bottom: 3px;
-  margin-bottom: 8px;
-}
-
-/* --- dossier half-sheets, shingled (A5) --- */
-.dossier {
-  position: relative;
-  background-color: #ece4cc;
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.18), var(--shadow-dx) var(--shadow-dy) 7px var(--shadow-cast);
-  transform: translate(var(--seed-dx, 0), 0) rotate(var(--seed-rot, 0deg));
-  padding: 0 14px 10px;
-}
-.dossier--shingled {
-  padding-bottom: 0;
-}
-.dossier + .dossier {
-  margin-top: -4px;
-}
-.dossier--open {
-  z-index: 1;
-  margin-bottom: 10px;
-}
-.dossier__head {
+/* rivals */
+.rivals__frame {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 0 6px;
-  text-align: left;
-}
-.dossier__head:hover {
-  background: rgba(60, 44, 20, 0.07); /* fingertip smudge */
-}
-.dossier__name {
-  font-family: var(--type-typewriter);
-  font-size: 15px;
-  color: var(--ink-ribbon);
-  text-decoration: underline;
-}
-.dossier__sub {
-  font-family: var(--type-typewriter);
-  font-size: 12px;
-  color: rgba(51, 56, 62, 0.85);
-  padding-bottom: 6px;
-}
-.dossier__none {
-  font-family: var(--type-typewriter);
-  font-size: 13px;
-  color: rgba(51, 56, 62, 0.75);
-  padding: 4px 0 6px;
-}
-.dossier--indie {
-  margin-top: 14px;
-  background-color: var(--newsprint);
-}
-.dossier--indie .dossier__head {
-  cursor: default;
-}
-/* carbon copies in the regional divider — paper look only, ink stays dark */
-.dossier--carbon {
-  background-color: #d8d3c4;
-}
-.dossier--carbon .dossier__name,
-.dossier--carbon .dossier__sub {
-  color: #43484e;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.dossier__fighters {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 4px;
+.rivals__mark {
+  color: var(--gold);
+  font-weight: 600;
 }
+
+.rivals__scope {
+  display: flex;
+  gap: 8px;
+}
+
+.dossier {
+  border: 1px solid var(--cream-faint);
+  padding: 10px 12px;
+}
+
+.dossier + .dossier {
+  margin-top: 10px;
+}
+
+.dossier__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dossier__tier {
+  font-family: var(--type-form);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--cream-dim);
+  border: 1px solid var(--steel-edge);
+  padding: 1px 7px;
+}
+
+.dossier__sub {
+  font-family: var(--type-machine);
+  font-size: 11px;
+  color: var(--cream-dim);
+  margin: 3px 0 6px;
+}
+
 .fline {
   display: grid;
   grid-template-columns: 1.4fr 1fr 0.9fr 0.9fr;
-  gap: 8px;
+  gap: 10px;
   align-items: baseline;
-  padding: 4px 0;
+  padding: 5px 2px;
+  font-family: var(--type-machine);
+  font-size: 11.5px;
 }
+
 .fline__name {
-  font-family: var(--type-typewriter);
-  font-size: 14px;
-  color: var(--ink-ribbon);
+  font-family: var(--type-form);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cream);
 }
+
 .fline__class,
 .fline__record {
-  font-family: var(--type-machine);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  transform: none; /* data columns: 0°, always */
+  color: var(--cream-dim);
 }
+
 .fline__standing {
-  font-family: var(--type-machine);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
   text-align: right;
-  color: var(--ink-ribbon);
-}
-/* standing encoded by underline weight, never hue alone */
-.fline--gold .fline__standing {
-  text-decoration: underline;
-  text-decoration-style: double;
-}
-.fline--amber .fline__standing {
-  text-decoration: underline;
-}
-.fline--dim .fline__standing {
-  font-weight: 400;
 }
 
-/* ---------------------------------------------------------------- */
-/* THE GYM LEDGER, OPEN                                              */
-/* ---------------------------------------------------------------- */
-.gledger {
-  position: relative;
-  height: 100%;
-  background: #efe6cd;
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 27px, rgba(159, 176, 189, 0.5) 27px 28px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  border: 14px solid #3a3126;
-  border-left-width: 26px;
-  box-shadow: 6px 9px 26px rgba(0, 0, 0, 0.6);
-  padding: 18px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-/* taped spine */
-.gledger::before {
-  content: '';
-  position: absolute;
-  left: -26px;
-  top: 20%;
-  width: 26px;
-  height: 26%;
-  background: rgba(217, 211, 194, 0.28);
-}
-/* the clerk's flyleaf card (A22) */
-.gledger__flyleaf {
-  align-self: flex-start;
-  padding: 5px 10px 6px;
-  background-color: var(--index-card);
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  font-family: var(--type-machine);
-  font-weight: 700;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.4);
-  transform: translate(var(--seed-dx, 0), var(--seed-dy, 0)) rotate(var(--seed-rot, 0deg));
-}
-.gledger__page {
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-}
-.gledger__rows {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-.gledger__row {
-  display: flex;
-  gap: 16px;
-  align-items: baseline;
-  min-height: 28px;
-  padding: 3px 2px;
-}
-.gledger__date {
-  flex: none;
-  width: 84px;
-  font-family: var(--type-machine);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-ribbon);
-}
-.gledger__text {
-  font-family: var(--type-typewriter);
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--ink-ribbon);
-}
-
-/* ---------------------------------------------------------------- */
-/* OFFICE LIGHT RIG — one tungsten key upper-left, steep falloff     */
-/* ---------------------------------------------------------------- */
-.office-rig {
-  z-index: 40;
-  background-image: radial-gradient(
-    ellipse 640px 520px at 22% 18%,
-    rgba(232, 181, 102, 0.55),
-    rgba(232, 181, 102, 0.18) 55%,
-    transparent 78%
-  );
-  mix-blend-mode: soft-light;
-}
-/* the lamp's actual glow — one screen layer, one hot corner */
-.office-rig::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 560px 440px at 20% 16%,
-    rgba(244, 214, 150, 0.26),
-    transparent 70%
-  );
-  mix-blend-mode: screen;
-}
-.office-dark {
-  z-index: 38;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 130% 120% at 24% 16%,
-    transparent 34%,
-    rgba(5, 3, 2, 0.42) 70%,
-    rgba(5, 3, 2, 0.72) 100%
-  );
-}
-
-/* ---------------------------------------------------------------- */
-/* REFLOW below 900px — the desk becomes a stack of objects          */
-/* ---------------------------------------------------------------- */
-@media (max-width: 900px) {
-  .office-room {
-    overflow-y: auto;
-  }
-  .desk__ring {
-    display: none;
-  }
-  .tray {
-    position: relative;
-    inset: auto;
-    width: calc(100% - 28px);
-    min-width: 0;
-    max-height: none;
-    margin: 76px 14px 14px;
-  }
-  .tray__slips {
-    max-height: none;
-    overflow: visible;
-  }
-  .deskobj--accounts,
-  .deskobj--folder,
-  .deskobj--ledger {
-    position: relative;
-    inset: auto;
-    width: calc(100% - 28px);
-    min-width: 0;
-    height: 78px;
-    margin: 10px 14px 0;
-    display: block;
-  }
-  .deskobj--phone,
-  .deskobj--mug {
-    display: none;
-  }
-  .held {
-    left: 2%;
-    right: 2%;
-    width: auto;
-    transform: none;
-  }
-  @keyframes pick-up {
-    0% {
-      transform: translateY(26%);
-      opacity: 0.6;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  .book {
-    grid-template-columns: 1fr;
-    overflow-y: auto;
-  }
-  .book::before {
-    display: none;
-  }
-  .folder__tabs {
-    position: static;
-    flex-direction: row;
-    margin-bottom: 4px;
-  }
-  .folder__tab {
-    writing-mode: horizontal-tb;
-  }
-  .folder {
-    padding-right: 24px;
-  }
-  .fline {
-    grid-template-columns: 1.4fr 1fr 1fr;
-  }
-  .fline__class {
-    display: none;
-  }
-}
-
-/* the week's paper on the desk — opens the press */
-.deskobj--paper {
-  left: 5%;
-  bottom: 7%;
-  width: 15%;
-  min-width: 170px;
-  height: 15%;
-  background-color: var(--newsprint);
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 7px, rgba(46, 43, 38, 0.14) 7px 8px),
-    var(--tex-paper);
-  background-blend-mode: normal, multiply;
-  box-shadow:
-    0 -1px 0 rgba(255, 255, 250, 0.4) inset,
-    var(--shadow-dx) var(--shadow-dy) 8px var(--shadow-cast);
-  transform: rotate(-2.6deg);
-}
-.deskobj--paper:hover {
-  transform: rotate(-2.6deg) translate(2px, 2px);
-}
-.deskobj__paper-fold {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 48%;
-  height: 8%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent);
-}
-.deskobj__paper-name {
-  position: absolute;
-  top: 10%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--type-blackletter);
-  font-size: clamp(14px, 1.3vw, 19px);
-  color: var(--ink-news);
-}
-
-/* the staff clipboard hung by the door — opens the staff wall */
-.deskobj--staff {
-  left: 40%;
-  top: 3%;
-  width: 12%;
-  min-width: 140px;
-  height: 17%;
-  background-color: #8a6d45;
-  background-image: var(--tex-paper);
-  background-blend-mode: multiply;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  transform: rotate(1.2deg);
-}
-.deskobj--staff::after {
-  content: '';
-  position: absolute;
-  inset: 10px 9px 12px;
-  background-color: var(--newsprint);
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0 10px,
-    rgba(51, 56, 62, 0.25) 10px 11px
-  );
-}
-.deskobj--staff:hover {
-  transform: rotate(0.4deg);
-}
-.deskobj__staff-clip {
-  position: absolute;
-  top: -7px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 13px;
-  background: linear-gradient(180deg, #9aa096, #5f665c);
-  border: 1px solid #2c322a;
-  z-index: 2;
-}
-.deskobj__staff-tape {
-  position: absolute;
-  bottom: -9px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-2deg);
-  padding: 2px 8px;
-  background: rgba(222, 214, 194, 0.92);
-  font-family: var(--type-marker);
-  font-size: 11px;
-  white-space: nowrap;
-  color: #2e2a24;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  z-index: 2;
-}
-
-/* ---------------------------------------------------------------- */
-/* THE PHONE DESK — booking (held object)                            */
-/* ---------------------------------------------------------------- */
-
-.phone__tag--calls {
-  background: var(--memo-pink);
-  transform: rotate(-2deg);
-}
-
-.held--phonedesk .phonedesk {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  height: 100%;
-  overflow-y: auto;
-  background-color: var(--newsprint);
-  background-image: var(--tex-paper);
-  padding: 18px 20px 46px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
-}
-
-.phonedesk__col {
-  min-width: 0;
-}
-
-.phonedesk__slips {
+/* history */
+.hist {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.hist__row {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  padding: 6px 2px;
+  border-bottom: 1px solid var(--cream-faint);
 }
 
-/* WHILE YOU WERE OUT slip */
-.callslip {
-  background: var(--memo-pink);
-  background-image: var(--tex-paper);
-  padding: 10px 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.callslip__for {
-  font-family: var(--type-form);
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  margin: 0 0 4px;
-}
-
-.callslip__pitch {
-  font-family: var(--type-typewriter);
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-ribbon);
-  margin: 0 0 4px;
-}
-
-.callslip__terms {
-  font-family: var(--type-typewriter);
-  font-size: 11.5px;
-  color: var(--ink-graphite);
-  margin: 0 0 8px;
-}
-
-.callslip__row {
-  display: flex;
-  gap: 8px;
-}
-
-.callslip__btn {
-  font-family: var(--type-poster);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  padding: 5px 12px;
-  border: 2px solid var(--ink-news);
-  background: var(--ink-news);
-  color: var(--newsprint);
-  cursor: pointer;
-}
-
-.callslip__btn--pass {
-  background: transparent;
-  color: var(--ink-news);
-  opacity: 0.75;
-}
-
-.callslip__btn--pass:hover {
-  opacity: 1;
-}
-
-/* booked bout card */
-.bookedcard {
-  background: var(--index-card);
-  background-image:
-    repeating-linear-gradient(180deg, transparent 0 21px, var(--index-card-rule) 21px 22px),
-    var(--tex-paper);
-  padding: 10px 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.bookedcard__head {
+.hist__date {
+  flex: none;
+  width: 110px;
   font-family: var(--type-machine);
-  font-size: 12px;
-  margin: 0 0 6px;
+  font-size: 11px;
+  color: var(--cream-dim);
+  padding-top: 1px;
 }
 
-.cornerplan__mode {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.cornerplan__chip {
+.hist__text {
   font-family: var(--type-form);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  padding: 3px 8px;
-  border: 1.5px solid var(--ink-news);
-  background: transparent;
-  color: var(--ink-news);
-  cursor: pointer;
-  opacity: 0.6;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--cream);
 }
 
-.cornerplan__chip--on {
-  opacity: 1;
-  background: var(--ink-news);
-  color: var(--index-card);
-}
-
-.cornerplan__pick {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--type-form);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  margin: 4px 0;
-}
-
-.cornerplan__pick select {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--type-typewriter);
-  font-size: 12px;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--ink-graphite);
-  color: var(--ink-ribbon);
-  padding: 2px 0;
-}
-
-.cornerplan__note {
-  font-family: var(--type-hand);
-  font-size: 14px;
-  color: var(--ink-graphite);
-  margin: 4px 0 0;
-}
-
-@media (max-width: 860px) {
-  .held--phonedesk .phonedesk {
+@media (max-width: 760px) {
+  .acct__top {
     grid-template-columns: 1fr;
+  }
+  .fline {
+    grid-template-columns: 1fr 1fr;
   }
 }

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import './styles/fonts.css';
 import './styles/theme.css';
+import './styles/mgmt.css';
 import './styles/global.css';
 
 import { GameProvider } from './state/GameContext';
