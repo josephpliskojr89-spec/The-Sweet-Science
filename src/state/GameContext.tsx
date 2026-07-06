@@ -21,36 +21,18 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { advance, formatDate, seasonOf, type TimeStep } from '../game/time';
+import { formatDate, type TimeStep } from '../game/time';
 import { emitGameEvent } from '../game/events';
 import { type Fighter, fighterFullName } from '../game/fighters';
-import { getCity } from '../game/cities';
-import { observeGym, type LogLine } from '../game/gymLog';
-import { runLifeEvents } from '../game/lifeEvents';
-import { runPressCycle, pressItem, type Clipping } from '../game/press';
+import { pressItem } from '../game/press';
 import {
-  trainFighter,
   snapshotAttrs,
   FOCUS_SLOTS_BASE,
   type TrainingFocus,
 } from '../game/training';
 
-/** Keep ~10 years of monthly progression snapshots per fighter. */
-const MAX_HISTORY = 120;
 /** A small gym can only carry so much staff. */
 const MAX_COACHES = 4;
-/** Pending coach applicants we'll hold at once. */
-const MAX_APPLICANTS = 4;
-/** Days a lockerless trialist must stick around before he'll force the locker
-    question himself. Months in, not weeks — the request should feel earned. */
-const LOCKER_REQUEST_DAYS = 84;
-/** Rival-interest accrual per week at full flight risk, and how fast it cools
-    when a man is settled again (6C-4). Tuned so sustained unhappiness in a
-    competitive city telegraphs for weeks before anyone walks. */
-const POACH_GAIN = 20;
-const POACH_DECAY = 8;
-/** How fast a cut-ruthlessness reputation penalty heals (per month), and its floor. */
-const REP_RECOVER = 0.02;
 const MAX_REP_PENALTY = -0.3;
 
 const randInt = (lo: number, hi: number) => lo + Math.floor(Math.random() * (hi - lo + 1));
@@ -65,7 +47,6 @@ const usedByCoach = (
   roster: { focus: unknown; coachId: string | null }[],
   coachId: string,
 ) => roster.filter((e) => e.focus !== null && e.coachId === coachId).length;
-import { rollNewWalkIns, ageWalkIns, type WalkIn } from '../game/walkins';
 import { DEFAULT_TIER, type HierarchyTier, type RosterEntry } from '../game/roster';
 import {
   initialRelationship,
@@ -73,12 +54,9 @@ import {
   applyLockerGranted,
   applyCutStayed,
   cutMoraleRipple,
-  recover,
-} from '../game/relationship';
+  } from '../game/relationship';
 import {
-  evaluateDepartures,
   resolveCut,
-  type Departure,
   type DepartureReason,
 } from '../game/departures';
 import {
@@ -95,15 +73,6 @@ import {
   type NewGameDraft,
 } from './persistence';
 import {
-  gymReputation,
-  flightRiskScore,
-  interestBand,
-} from '../game/reputation';
-import { advanceWorld } from '../game/world/worldSim';
-import {
-  rollFightOffers,
-  ageOffers,
-  resolveFight,
   applyFightResult,
   bookFromOffer,
   defaultCornerPlan,
@@ -113,25 +82,14 @@ import {
   type BookedFight,
 } from '../game/fights';
 import type { FightResult } from '../game/engine/fightEngine';
-import { advanceEra } from '../game/era/evaluator';
+import { advanceTick, fightNightBlocks } from '../game/tick/advanceTick';
+import type { AdvanceNotice } from '../game/tick/types';
+import { formatMoney, upgradeCost } from '../game/economy';
 import {
-  walkInPoachChance,
-  worldFighterFromFighter,
-  pickWalkInPoacher,
-  pickPoachDestination,
-  cityCompetitiveness,
-  type WorldFighter,
-} from '../game/world/population';
-import { WEIGHT_CLASSES } from '../game/weightClasses';
-import { monthlySummary, formatMoney, upgradeCost } from '../game/economy';
-import {
-  rollCoachApplicants,
-  ageApplicants,
   specialtyName,
   type CoachPosting,
 } from '../game/coaches';
 import {
-  equipmentFactorFor,
   trackName,
   effectGain,
   type UpgradeKey,
@@ -141,38 +99,8 @@ export type Screen = 'home' | 'settings' | 'newgame' | 'game';
 export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker' | 'press';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
-/** Gym reputation 0..1 — how known/regarded your gym is (game/reputation.ts),
-    less any penalty from ruthless cuts. Drives the walk-in draw; ≈0 for a new
-    gym, earned as your men make names. */
-function reputationFor(save: GameSave): number {
-  return Math.max(0, Math.min(1, gymReputation(save.roster) + save.reputationMod));
-}
 
-/** Reputation-driven quality of the walk-in pool. A respected gym draws better
-    men; a new gym draws raw ones (floor near the old constant 0.2). */
-function qualityFor(save: GameSave): number {
-  return Math.max(0.18, Math.min(0.8, 0.18 + reputationFor(save) * 0.5));
-}
-
-/** A walk-in you didn't sign, taken by a named rival gym. */
-export interface PoachEvent {
-  fighter: Fighter;
-  gymName: string;
-}
-
-export interface AdvanceNotice {
-  arrived: Fighter[];
-  expired: Fighter[];
-  departed: Departure[];
-  /** Prospects a rival signed out from under you while you deliberated (6C-3). */
-  poached: PoachEvent[];
-  /** Fresh clippings this advance — the week's front page (the Monday landing). */
-  headlines: Clipping[];
-  paperName: string;
-  dateLabel: string;
-  /** A new issue came out this advance (a week boundary was crossed). */
-  newIssue: boolean;
-}
+export type { AdvanceNotice, PoachEvent } from '../game/tick/types';
 
 interface GameContextValue {
   screen: Screen;
@@ -310,447 +238,20 @@ export function GameProvider({ children }: { children: ReactNode }) {
     (step: TimeStep) => {
       const prev = saveRef.current;
       if (!prev) return;
-      const fromDay = prev.dayCount;
-
       // fight night stops the clock. A bout you're cornering can't pass by
-      // unwatched: the advance lands ON its day, and you can't advance past
-      // it until you've worked it (or handed it to the staff).
-      if (prev.bookedFights.some((b) => b.corner.mode === 'self' && b.onDay <= fromDay)) {
-        setFlash('Fight night. The corner’s waiting on you.');
+      // unwatched: you can't advance past it until you've worked it (or
+      // handed it to the staff).
+      if (fightNightBlocks(prev)) {
+        setFlash('Fight night. The corner\u2019s waiting on you.');
         return;
       }
-      let toDay = advance(fromDay, step);
-      const nextCornered = prev.bookedFights
-        .filter((b) => b.corner.mode === 'self' && b.onDay > fromDay && b.onDay <= toDay)
-        .sort((x, y) => x.onDay - y.onDay)[0];
-      if (nextCornered) toDay = nextCornered.onDay;
-
-      const days = toDay - fromDay;
-      const crossesMonth = formatDate(fromDay).month !== formatDate(toDay).month;
-
-      // Pure computation, once, in the handler — not in an updater.
-      const aged = ageWalkIns(prev.walkIns, days);
-      const fresh = rollNewWalkIns(days, {
-        cityId: prev.cityId,
-        dayCount: fromDay,
-        reputation: reputationFor(prev),
-        quality: qualityFor(prev),
-      });
-
-      // Walk-in competition (6C-3): the men at your door aren't only yours to
-      // sign. Waffle on a real prospect and a named local rival takes him; a man
-      // whose patience finally runs out either gets snapped up (if he's good) or
-      // simply gives up. Either way the winner has a name, and he joins their
-      // stable — to surface later as their contender, your opponent, your regret.
-      const comp = cityCompetitiveness(prev.cityId);
-      const poached: PoachEvent[] = [];
-      const poachedToWorld: WorldFighter[] = [];
-      const stillWaiting: WalkIn[] = [];
-      const gaveUp: WalkIn[] = [];
-      const takeProspect = (w: WalkIn) => {
-        const gym = pickWalkInPoacher(prev.cityId, qualityFor(prev));
-        if (!gym) return false;
-        poached.push({ fighter: w.fighter, gymName: gym.name });
-        poachedToWorld.push(worldFighterFromFighter(w.fighter, gym.id));
-        return true;
-      };
-      for (const w of aged.surviving) {
-        if (Math.random() < walkInPoachChance(w.fighter.potential, comp, days) && takeProspect(w)) {
-          continue;
-        }
-        stillWaiting.push(w);
-      }
-      for (const w of aged.expired) {
-        // A genuine prospect left waiting gets signed by name; the rest move on.
-        if (!(w.fighter.potential >= 60 && takeProspect(w))) gaveUp.push(w);
-      }
-
-      // The gym lives: moods recover, fighters develop on the floor (and age),
-      // the floor gets observed (hidden traits can surface), and the fighters'
-      // lives outside intrude — all before we see who's had enough and walked.
-      const gymArchetype = getCity(prev.cityId).archetype;
-      const equipment = equipmentFactorFor(prev.upgrades);
-      // Each focused fighter develops under his assigned trainer (a coach or
-      // the manager) — skill, specialty, and chemistry all in play.
-      const coachById = new Map(prev.coaches.map((c) => [c.id, c]));
-      const trainingNotes: string[] = [];
-      let roster = prev.roster.map((e) => {
-        const settled = recover(e, days);
-        const coach = e.focus !== null && e.coachId ? coachById.get(e.coachId) ?? null : null;
-        const t = trainFighter(settled, gymArchetype, days, equipment, coach);
-        if (t.note) trainingNotes.push(t.note);
-        return {
-          ...settled,
-          fighter: {
-            ...settled.fighter,
-            attributes: t.attributes,
-            // Time passes for your men too — age advances fractionally (like the
-            // rival world's) so the development/decline curves actually engage.
-            age: settled.fighter.age + days / 365,
-          },
-          lastDelta: t.lastDelta,
-        };
-      });
-      const obs = observeGym(roster, {
-        days,
-        fromDay,
-        region: getCity(prev.cityId).region,
-        season: seasonOf(toDay),
-        crossesMonth,
-      });
-      roster = obs.roster;
-      const life = runLifeEvents(roster, days);
-      roster = life.roster;
-
-      // Rival interest (6C-4): talented, unhappy locker holders get courted by
-      // other gyms. Interest builds — with escalating warnings — before anyone
-      // leaves, so losing a man here is a consequence you could see coming and
-      // head off. Repair his morale/trust and the interest cools.
-      const interestNotes: string[] = [];
-      const interestHeadlines: string[] = [];
-      const poachDepartures: Departure[] = [];
-      const talentToWorld: WorldFighter[] = [];
-      const afterInterest: RosterEntry[] = [];
-      for (const e of roster) {
-        if (!e.hasLocker) {
-          afterInterest.push(e);
-          continue;
-        }
-        const risk = flightRiskScore(e, comp, prev.reputationMod);
-        const before = e.poachInterest;
-        const next =
-          risk > 0.12
-            ? Math.min(100, before + risk * POACH_GAIN * (days / 7))
-            : Math.max(0, before - POACH_DECAY * (days / 7));
-        const name = fighterFullName(e.fighter);
-        const bandUp = interestBand(next);
-        if (bandUp > interestBand(before)) {
-          if (bandUp === 1) {
-            interestNotes.push(`A man nobody recognized stood ringside, watching ${name} work.`);
-          } else if (bandUp === 2) {
-            const suitor = pickPoachDestination(prev.cityId);
-            const line = `Word around the gym: ${suitor?.name ?? 'another gym'} has been asking about ${name}.`;
-            interestNotes.push(line);
-            interestHeadlines.push(line);
-          } else if (bandUp === 3) {
-            interestNotes.push(`${name} took a call after practice and wouldn’t say from who.`);
-          }
-        }
-        // Compound the per-day hazard so daily and weekly advancing carry the
-        // same poach risk (0.4/week at full interest, expressed per day).
-        const leavePerDay = next >= 80 ? (Math.min(1, (next - 80) / 20) * 0.4) / 7 : 0;
-        const leaveChance = leavePerDay > 0 ? 1 - Math.pow(1 - leavePerDay, days) : 0;
-        const gym = leaveChance > 0 && Math.random() < leaveChance ? pickPoachDestination(prev.cityId) : null;
-        if (gym) {
-          poachDepartures.push({ entry: e, reason: 'left_for_opportunity', toGym: gym.name });
-          talentToWorld.push(worldFighterFromFighter(e.fighter, gym.id));
-          continue; // he's gone
-        }
-        afterInterest.push(next === before ? e : { ...e, poachInterest: next });
-      }
-      roster = afterInterest;
-
-      const dep = evaluateDepartures(roster, days);
-      const departedAll: Departure[] = [...poachDepartures, ...dep.departed];
-
-      // A lockerless trialist who's stuck it out for months forces the question
-      // himself — fires rarely, once per man, and surfaces as a request on his
-      // profile (answered via respondLockerRequest).
-      const requestChance = 1 - Math.pow(1 - 0.02, days);
-      const requestNotes: string[] = [];
-      const afterRequests = dep.staying.map((e) => {
-        if (e.hasLocker || e.lockerRequested) return e;
-        if (toDay - e.joinedDayCount < LOCKER_REQUEST_DAYS) return e;
-        if (Math.random() >= requestChance) return e;
-        requestNotes.push(
-          `${fighterFullName(e.fighter)} stopped you on the floor — he wants to know if he has a future here.`,
-        );
-        return { ...e, lockerRequested: true };
-      });
-
-      // If you've got a posting out, coaches answer it over time (and the ones
-      // who waited too long take other work).
-      let coachApplicants = prev.coachApplicants;
-      const coachNotes: string[] = [];
-      if (prev.coachPosting) {
-        const aged = ageApplicants(prev.coachApplicants, days);
-        const fresh = rollCoachApplicants(days, prev.cityId, reputationFor(prev), prev.coachPosting);
-        coachApplicants = [...aged.staying, ...fresh].slice(0, MAX_APPLICANTS);
-        // Only announce arrivals that actually made the (capped) list — a note
-        // for a man the slice dropped would name a coach who exists nowhere.
-        for (const a of fresh.filter((a) => coachApplicants.includes(a))) {
-          coachNotes.push(
-            `A coach answered your ad — ${a.coach.name}, ${specialtyName(a.coach.specialty)}.`,
-          );
-        }
-        for (const a of aged.left) {
-          coachNotes.push(`${a.coach.name} got tired of waiting and took another job.`);
-        }
-      }
-
-      // The paper runs on its own week, whether or not you read it.
-      let press = prev.press;
-      const cycles = Math.floor(toDay / 7) - Math.floor(fromDay / 7);
-      for (let i = 0; i < cycles; i++) {
-        press = runPressCycle(press, prev.cityId, toDay).state;
-      }
-      // Real events make the headlines: a rival signing the prospect you sat on
-      // (6C-3), the courtship of one of your men, and his eventual departure (6C-4).
-      for (const p of poached) {
-        const cls = WEIGHT_CLASSES[p.fighter.weightClass].name.toLowerCase();
-        press = pressItem(
-          press,
-          toDay,
-          `${p.gymName} has signed ${fighterFullName(p.fighter)}, a ${Math.floor(p.fighter.age)}-year-old ${cls}, after weeks of local interest.`,
-        );
-      }
-      for (const line of interestHeadlines) press = pressItem(press, toDay, line);
-      for (const d of poachDepartures) {
-        const cls = WEIGHT_CLASSES[d.entry.fighter.weightClass].name.toLowerCase();
-        press = pressItem(
-          press,
-          toDay,
-          `${d.toGym} has lured ${fighterFullName(d.entry.fighter)} away — a ${cls} who'd grown unhappy where he was.`,
-        );
-      }
-
-      // The competitive world moves on its own — ages, fights, signs, retires —
-      // and absorbs the men you let slip: prospects (6C-3) and your own unhappy
-      // talent (6C-4). Its notes (rival signings, new ranked names) make the paper.
-      const worldAdvance = advanceWorld(prev.world, { days, toDay });
-      let world = worldAdvance.world;
-      for (const note of worldAdvance.notes) {
-        press = pressItem(press, toDay, note);
-      }
-      const joiners = [...poachedToWorld, ...talentToWorld];
-      if (joiners.length) {
-        world = { ...world, fighters: [...world.fighters, ...joiners] };
-      }
-
-      const newLines: LogLine[] = [
-        ...coachNotes.slice(0, 2),
-        ...trainingNotes.slice(0, 1),
-        ...obs.lines,
-        ...life.lines,
-        ...requestNotes,
-        ...interestNotes,
-      ].map((text) => ({
-        dayCount: toDay,
-        text,
-      }));
-      const departureMemories = departedAll.map((d) => {
-        const name = fighterFullName(d.entry.fighter);
-        let text: string;
-        if (d.reason === 'left_for_opportunity' && d.toGym)
-          text = `${name} left for ${d.toGym}. He'd stopped believing you'd give him what he was worth.`;
-        else if (d.reason === 'left_for_opportunity')
-          text = `${name} left for a bigger operation. Someone noticed what you built in him.`;
-        else if (d.reason === 'moved_on')
-          text = `${name} stopped waiting for a gym that wanted him and moved on.`;
-        else text = `${name} quit. He felt forgotten — and maybe he was.`;
-        return { dayCount: toDay, text };
-      });
-      const poachMemories = poached.map((p) => ({
-        dayCount: toDay,
-        text: `${p.gymName} signed ${fighterFullName(p.fighter)} — the ${WEIGHT_CLASSES[
-          p.fighter.weightClass
-        ].name.toLowerCase()} you’d been weighing. You waited a beat too long.`,
-      }));
-      let history = [
-        ...prev.history,
-        ...[...obs.milestones, ...life.milestones].map((text) => ({ dayCount: toDay, text })),
-        ...departureMemories,
-        ...poachMemories,
-      ].slice(-250);
-
-      // Take a monthly progression snapshot of each fighter's attributes.
-      const staying = crossesMonth
-        ? afterRequests.map((e) => ({
-            ...e,
-            history: [...e.history, snapshotAttrs(e.fighter.attributes, toDay)].slice(-MAX_HISTORY),
-          }))
-        : afterRequests;
-
-      // A ruthless-cut reputation penalty heals slowly as the gym lives it down.
-      const reputationMod = Math.min(0, prev.reputationMod + REP_RECOVER * (days / 30));
-
-      // Settle the books on the first of the month.
-      let money = prev.money;
-      let finances = prev.finances;
-      if (crossesMonth) {
-        const fd = formatDate(toDay);
-        const sum = monthlySummary(staying, prev.upgrades, prev.coaches, fd.year);
-        money = prev.money + sum.net;
-        finances = [
-          {
-            dayCount: toDay,
-            label: `${fd.month} ${fd.year}`,
-            duesIncome: sum.duesIncome,
-            overhead: sum.overhead,
-            coachSalaries: sum.coachSalaries,
-            net: sum.net,
-            balance: money,
-          },
-          ...prev.finances,
-        ].slice(0, 36);
-      }
-
-      // --- fight night (6D/8): offers age and arrive; booked bouts resolve ---
-      let fightOffers = prev.fightOffers;
-      let bookedFights = prev.bookedFights;
-      let recentFights = prev.recentFights;
-      let rosterAfterFights = staying;
-      const fightNotes: string[] = [];
-      {
-        const agedOffers = ageOffers(fightOffers, rosterAfterFights, bookedFights, toDay);
-        fightOffers = agedOffers.keep;
-        for (const o of agedOffers.expired) {
-          const man = prev.roster.find((e) => e.fighter.id === o.fighterId);
-          if (man)
-            fightNotes.push(
-              `The offer for ${fighterFullName(man.fighter)} came off the table — the promoter filled his card.`,
-            );
-        }
-
-        // bouts on the calendar come due — the ones you're cornering wait
-        // for you at the arena (advance stopped on their day)
-        const due = bookedFights.filter((b) => b.onDay <= toDay && b.corner.mode !== 'self');
-        if (due.length) {
-          const dueIds = new Set(due.map((b) => b.id));
-          bookedFights = bookedFights.filter((b) => !dueIds.has(b.id));
-          for (const bout of due) {
-            const idx = rosterAfterFights.findIndex((e) => e.fighter.id === bout.fighterId);
-            const opp = world.fighters.find((f) => f.id === bout.opponentId);
-            if (idx < 0 || !opp) {
-              fightNotes.push('A booked bout fell through — the other corner came apart.');
-              continue;
-            }
-            const entry = rosterAfterFights[idx];
-            const resolved = resolveFight({
-              booked: bout,
-              entry,
-              opponent: opp,
-              cornerQuality: cornerQualityFor(bout.corner, prev.coaches),
-              dayCount: toDay,
-            });
-            rosterAfterFights = rosterAfterFights.map((e, i) =>
-              i === idx ? resolved.entry : e,
-            );
-            world = {
-              ...world,
-              fighters: world.fighters.map((f) => (f.id === opp.id ? resolved.opponent : f)),
-            };
-            money += resolved.purse;
-            press = pressItem(press, toDay, resolved.headline);
-            fightNotes.push(resolved.logLine);
-            history = [...history, { dayCount: toDay, text: resolved.memory }].slice(-250);
-            recentFights = [resolved.report, ...recentFights].slice(0, 10);
-          }
-        }
-
-        // and the phone rings with new work
-        const freshOffers = rollFightOffers({
-          roster: rosterAfterFights,
-          world,
-          booked: bookedFights,
-          existing: fightOffers,
-          venues: press.venues,
-          dayCount: toDay,
-          days,
-          year: formatDate(toDay).year,
-          quality: qualityFor(prev),
-          purseWeather: prev.era.purseMultipliers,
-        });
-        for (const o of freshOffers) {
-          const man = rosterAfterFights.find((e) => e.fighter.id === o.fighterId);
-          if (man)
-            fightNotes.push(
-              `The phone rang — a promoter wants ${fighterFullName(man.fighter)} at the ${o.venue}.`,
-            );
-        }
-        fightOffers = [...fightOffers, ...freshOffers];
-      }
-
-      // --- the era: scripted history fires, the registry breathes (game/era) ---
-      const eraResult = advanceEra({
-        era: prev.era,
-        roster: rosterAfterFights,
-        dayCount: toDay,
-        cityName: getCity(prev.cityId).name,
-      });
-      for (const c of eraResult.clippings) press = pressItem(press, toDay, c);
-      for (const h of eraResult.historyLines) {
-        history = [...history, { dayCount: toDay, text: h }].slice(-250);
-      }
-      if (eraResult.worldInjections.length) {
-        world = { ...world, fighters: [...world.fighters, ...eraResult.worldInjections] };
-      }
-      if (eraResult.rosterPatches.length) {
-        const byId = new Map(eraResult.rosterPatches.map((p) => [p.fighterId, p]));
-        rosterAfterFights = rosterAfterFights.map((e) => {
-          const patch = byId.get(e.fighter.id);
-          if (!patch) return e;
-          return {
-            ...e,
-            morale: Math.max(0, Math.min(100, e.morale + (patch.morale ?? 0))),
-            trust: Math.max(0, Math.min(100, e.trust + (patch.trust ?? 0))),
-            fighter: {
-              ...e.fighter,
-              publicReputation: Math.max(
-                0,
-                Math.min(100, e.fighter.publicReputation + (patch.reputation ?? 0)),
-              ),
-              nickname: patch.nickname ?? e.fighter.nickname,
-            },
-          };
-        });
-      }
-
-      commit({
-        ...prev,
-        dayCount: toDay,
-        money,
-        finances,
-        reputationMod,
-        coachApplicants,
-        world,
-        walkIns: [...stillWaiting, ...fresh],
-        roster: rosterAfterFights,
-        era: eraResult.era,
-        fightOffers,
-        bookedFights,
-        recentFights,
-        press,
-        history,
-        recentLog: [
-          ...eraResult.logLines.map((text) => ({ dayCount: toDay, text })),
-          ...fightNotes.map((text) => ({ dayCount: toDay, text })),
-          ...newLines,
-          ...prev.recentLog,
-        ].slice(0, 12),
-      });
-
-      for (const d of departedAll) {
-        emitGameEvent({
-          type: d.reason === 'left_for_opportunity' ? 'fighter_left_for_opportunity' : 'fighter_quit',
-          fighterId: d.entry.fighter.id,
-        });
-      }
-
-      const newIssue = cycles >= 1;
-      const headlines = press.clippings.filter((c) => c.dayCount === toDay);
-      if (newIssue || fresh.length || gaveUp.length || departedAll.length || poached.length) {
-        setArrival({
-          arrived: fresh.map((w) => w.fighter),
-          expired: gaveUp.map((w) => w.fighter),
-          departed: departedAll,
-          poached,
-          headlines,
-          paperName: press.paperName,
-          dateLabel: formatDate(toDay).full,
-          newIssue,
-        });
-      }
+      // The whole day advance is pure (game/tick); this handler only
+      // commits the result and surfaces what happened.
+      const result = advanceTick(prev, step);
+      if (!result) return;
+      commit(result.next);
+      for (const e of result.events) emitGameEvent(e);
+      if (result.notice) setArrival(result.notice);
     },
     [commit],
   );

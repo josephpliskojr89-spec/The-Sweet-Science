@@ -33,7 +33,7 @@ function richSave(): GameSave {
   const entry = {
     fighter,
     hasLocker: true,
-    tier: 'prospect' as const,
+    tier: 'watch' as const,
     joinedDayCount: 0,
     morale: 68,
     trust: 61,
