@@ -82,6 +82,7 @@ export function GameScreen() {
     .slice(0, 3);
 
   const headlines = save.press.clippings.slice(0, 3);
+  const openMail = save.mail.filter((m) => !m.answered);
   const quietReport =
     resting.length === 0 &&
     requests.length === 0 &&
@@ -158,6 +159,37 @@ export function GameScreen() {
               )}
             </div>
           </section>
+
+          {openMail.length > 0 && (
+            <section className="unit" aria-label="Mail — waiting on an answer">
+              <header className="unit__plate">
+                <h2 className="unit__title">MAIL</h2>
+                <span className="unit__tally unit__tally--due">{openMail.length}</span>
+              </header>
+              <div className="unit__body">
+                <ul className="rows">
+                  {openMail.slice(0, 3).map((m) => {
+                    const expires = m.expiresDay !== null ? formatDate(m.expiresDay) : null;
+                    return (
+                      <li key={m.id}>
+                        <button className="row" onClick={() => openRoom('mail')}>
+                          <span className="row__main">{m.subject.toUpperCase()}</span>
+                          <span className="row__detail">
+                            {m.from.toUpperCase()}
+                            {expires &&
+                              ` · ANSWER BY ${expires.month.slice(0, 3).toUpperCase()} ${expires.day}`}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <button className="unit__action" onClick={() => openRoom('mail')}>
+                  THE TRAY →
+                </button>
+              </div>
+            </section>
+          )}
 
           <section className="unit" aria-label="Calls — promoters waiting on an answer">
             <header className="unit__plate">
@@ -409,6 +441,9 @@ export function GameScreen() {
           </button>
           <button className="console__btn" onClick={() => openRoom('phone')}>
             BOOKING
+          </button>
+          <button className="console__btn" onClick={() => openRoom('mail')}>
+            MAIL{openMail.length > 0 ? ` (${openMail.length})` : ''}
           </button>
           <button className="console__btn" onClick={() => openRoom('office')}>
             OFFICE

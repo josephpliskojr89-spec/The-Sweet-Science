@@ -14,6 +14,9 @@
 import type { RosterEntry } from '../roster';
 import { fighterFullName } from '../fighters';
 import type { Rng } from '../engine/fightEngine';
+import type { MailDraft } from '../mail/types';
+import { formatDate } from '../time';
+import { inflationFactor, formatMoney } from '../economy';
 
 export interface TriggerCtx {
   entry: RosterEntry;
@@ -35,6 +38,8 @@ export interface TriggerOutput {
   reputation?: number;
   /** assign a press-coined nickname if he has none */
   coinNickname?: boolean;
+  /** a letter for the tray — the era writing to you (game/mail) */
+  mail?: MailDraft;
 }
 
 export interface TriggerDef {
@@ -147,6 +152,36 @@ export const TRIGGERS: TriggerDef[] = [
       morale: 2,
       trust: 1,
     }),
+  },
+  {
+    // the neighborhood asks — the era's first letter (choice-bearing channel)
+    id: 'the-equipment-letter',
+    category: 'gym',
+    oncePer: 'save',
+    condition: ({ entry, dayCount }) => dayCount >= 90 && entry.record.wins >= 1,
+    fire: ({ dayCount }) => {
+      const year = formatDate(dayCount).year;
+      const cost = Math.max(5, Math.round((40 * inflationFactor(year)) / 5) * 5);
+      return {
+        mail: {
+          kind: 'equipment-letter',
+          form: 'letter',
+          expiresDay: dayCount + 21,
+          from: 'St. Aloysius Boys’ Athletic League',
+          subject: 'The boys’ league asks about your old equipment',
+          body:
+            'We run forty boys a season on three bags and a rope with a knot in it. ' +
+            'Word is your gym came up in the world and the old equipment sits in a corner. ' +
+            `If you could see your way to letting it go — and ${formatMoney(cost)} for new laces and liniment — ` +
+            'there are forty reasons on our floor to say thank you.',
+          refs: { cost },
+          options: [
+            { id: 'donate', label: 'SEND IT OVER', detail: `${formatMoney(cost)} and the old gear` },
+            { id: 'decline', label: 'NOT THIS SEASON', detail: 'costs nothing' },
+          ],
+        },
+      };
+    },
   },
 ];
 

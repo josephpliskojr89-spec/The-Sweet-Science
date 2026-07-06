@@ -51,6 +51,8 @@ function expectSound(save: GameSave, source: Record<string, unknown>) {
   // v24: the identity seed exists and derives deterministically
   expect(save.seed).toBeDefined();
   expect(migrate(source)!.seed).toBe(save.seed);
+  // v25: the mail tray exists
+  expect(Array.isArray(save.mail)).toBe(true);
   // era: present, seeded, schedule intact
   expect(save.era).toBeDefined();
   expect(save.era.schedule.length).toBeGreaterThan(5);
@@ -91,6 +93,14 @@ describe('migrate — historical shapes load intact', () => {
     expect(save.bookedFights[0].corner).toEqual(
       (src.bookedFights as Array<{ corner: unknown }>)[0].corner,
     );
+  });
+
+  it('v24 (seed, no mail): mail backfilled empty, seed preserved', () => {
+    const src = fixture('save-v24.json');
+    const save = migrate(src)!;
+    expectSound(save, src);
+    expect(save.seed).toBe(src.seed);
+    expect(save.mail).toEqual([]);
   });
 
   it('is idempotent — migrating a migrated save changes nothing material', () => {

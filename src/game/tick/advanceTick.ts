@@ -38,6 +38,7 @@ import { paperStage } from './stages/paper';
 import { booksStage } from './stages/books';
 import { fightNightStage } from './stages/fightNight';
 import { eraStage } from './stages/era';
+import { mailStage } from './stages/mail';
 
 /** A self-cornered bout already due — the clock may not move (work it or
     reassign it first). The caller surfaces this; advanceTick refuses. */
@@ -79,6 +80,7 @@ function tickOneDay(prev: GameSave): DayOutcome {
     bookedFights: prev.bookedFights,
     recentFights: prev.recentFights,
     era: prev.era,
+    mail: prev.mail,
     stillWaiting: [],
     freshWalkIns: [],
     worldJoiners: [],
@@ -94,6 +96,7 @@ function tickOneDay(prev: GameSave): DayOutcome {
     interestNotes: [],
     fightNotes: [],
     eraLogLines: [],
+    mailNotes: [],
   };
 
   // --- the pipeline, in its fixed order ------------------------------------
@@ -132,6 +135,7 @@ function tickOneDay(prev: GameSave): DayOutcome {
   booksStage(ctx);
   fightNightStage(ctx);
   eraStage(ctx);
+  mailStage(ctx);
 
   // --- assembly -------------------------------------------------------------
   const newLines: LogLine[] = [
@@ -157,9 +161,11 @@ function tickOneDay(prev: GameSave): DayOutcome {
     fightOffers: ctx.fightOffers,
     bookedFights: ctx.bookedFights,
     recentFights: ctx.recentFights,
+    mail: ctx.mail,
     press: ctx.press,
     history: ctx.history,
     recentLog: [
+      ...ctx.mailNotes.map((text) => ({ dayCount: toDay, text })),
       ...ctx.eraLogLines.map((text) => ({ dayCount: toDay, text })),
       ...ctx.fightNotes.map((text) => ({ dayCount: toDay, text })),
       ...newLines,

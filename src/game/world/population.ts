@@ -447,7 +447,12 @@ export function walkInPoachChance(potential: number, competitiveness: number, da
  * now (his full Fighter is cached), with a rating read off his current
  * attributes — so if you meet him later, in their corner, he's the same fighter.
  */
-export function worldFighterFromFighter(f: Fighter, gymId: string): WorldFighter {
+export function worldFighterFromFighter(
+  f: Fighter,
+  gymId: string,
+  /** his pro record, when he has one — a man sold off the roster keeps his */
+  record?: WorldRecord,
+): WorldFighter {
   const a = f.attributes;
   const avg = (a.power + a.speed + a.chin + a.stamina + a.defense + a.ringIq + a.footwork) / 7;
   const rating = clamp(avg, 14, 90);
@@ -460,10 +465,7 @@ export function worldFighterFromFighter(f: Fighter, gymId: string): WorldFighter
     weightClass: f.weightClass,
     age: f.age,
     rating,
-    // The player KNOWS this man — a prospect at the door, or one of his own.
-    // He had no pro career (there's no fight engine yet), so he starts 0-0-0;
-    // inventing a back-dated record would contradict the signing headline.
-    record: { wins: 0, losses: 0, draws: 0, kos: 0 },
+    record: record ?? { wins: 0, losses: 0, draws: 0, kos: 0 },
     styleTendency: getRivalGym(gymId)?.styleTendency ?? 'workhorse',
     affiliation: { kind: 'rival', gymId },
     fidelity: 'local',

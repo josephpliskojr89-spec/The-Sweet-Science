@@ -64,15 +64,21 @@ export function departuresStage(ctx: TickCtx): DeparturesOut {
         ctx.interestNotes.push(`${name} took a call after practice and wouldn’t say from who.`);
       }
     }
+    // An open buyout letter pauses the walk-out: he's waiting on YOUR answer.
+    // Lapse it or refuse it and the risk resumes.
+    const letterOpen = ctx.mail.some(
+      (m) => !m.answered && m.kind === 'poach-buyout' && m.refs.fighterId === e.fighter.id,
+    );
     // Compound the per-day hazard so daily and weekly advancing carry the
     // same poach risk (0.4/week at full interest, expressed per day).
-    const leavePerDay = next >= 80 ? (Math.min(1, (next - 80) / 20) * 0.4) / 7 : 0;
+    const leavePerDay =
+      next >= 80 && !letterOpen ? (Math.min(1, (next - 80) / 20) * 0.4) / 7 : 0;
     const leaveChance = leavePerDay > 0 ? 1 - Math.pow(1 - leavePerDay, days) : 0;
     const gym =
       leaveChance > 0 && Math.random() < leaveChance ? pickPoachDestination(prev.cityId) : null;
     if (gym) {
       poachDepartures.push({ entry: e, reason: 'left_for_opportunity', toGym: gym.name });
-      ctx.worldJoiners.push(worldFighterFromFighter(e.fighter, gym.id));
+      ctx.worldJoiners.push(worldFighterFromFighter(e.fighter, gym.id, e.record));
       continue; // he's gone
     }
     afterInterest.push(next === before ? e : { ...e, poachInterest: next });

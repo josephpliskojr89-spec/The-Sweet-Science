@@ -83,6 +83,7 @@ import {
 } from '../game/fights';
 import type { FightResult } from '../game/engine/fightEngine';
 import { advanceTick, fightNightBlocks } from '../game/tick/advanceTick';
+import { answerMail as resolveMailAnswer } from '../game/mail/resolve';
 import type { AdvanceNotice } from '../game/tick/types';
 import { formatMoney, upgradeCost } from '../game/economy';
 import {
@@ -96,7 +97,7 @@ import {
 } from '../game/upgrades';
 
 export type Screen = 'home' | 'settings' | 'newgame' | 'game';
-export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker' | 'press' | 'phone';
+export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker' | 'press' | 'phone' | 'mail';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
 
@@ -167,6 +168,8 @@ interface GameActionsValue {
   setCornerPlan: (boutId: string, corner: CornerPlan) => void;
   /** Commit a live-cornered fight's result into the save. */
   settleLiveFight: (boutId: string, result: FightResult, oppFull: Fighter) => void;
+  /** Answer a letter in the tray (game/mail). */
+  answerMail: (mailId: string, optionId: string) => void;
   postCoachJob: (posting: CoachPosting) => void;
   cancelCoachJob: () => void;
   hireApplicant: (id: string) => void;
@@ -447,6 +450,26 @@ export function GameProvider({ children }: { children: ReactNode }) {
         bookedFights: remaining,
         recentLog: [{ dayCount: prev.dayCount, text: resolved.logLine }, ...prev.recentLog].slice(0, 12),
       });
+    },
+    [commit],
+  );
+
+  const answerMail = useCallback(
+    (mailId: string, optionId: string) => {
+      const prev = saveRef.current;
+      if (!prev) return;
+      const out = resolveMailAnswer(prev, mailId, optionId);
+      if (!out) return;
+      commit({
+        ...out.next,
+        history: out.history
+          ? [...out.next.history, { dayCount: prev.dayCount, text: out.history }].slice(-250)
+          : out.next.history,
+        recentLog: out.log
+          ? [{ dayCount: prev.dayCount, text: out.log }, ...out.next.recentLog].slice(0, 12)
+          : out.next.recentLog,
+      });
+      if (out.flash) setFlash(out.flash);
     },
     [commit],
   );
@@ -904,6 +927,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       declineFightOffer,
       setCornerPlan,
       settleLiveFight,
+      answerMail,
       postCoachJob,
       cancelCoachJob,
       hireApplicant,

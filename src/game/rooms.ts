@@ -33,6 +33,13 @@ export const ROOMS: Record<RoomKey, RoomDef> = {
     ],
     arrivesIn: 'Phases 3 & 6',
   },
+  mail: {
+    key: 'mail',
+    name: 'The Mail',
+    tagline: 'The tray. Questions the world is asking you.',
+    contents: ['Letters and telegrams', 'Answers with consequences'],
+    arrivesIn: 'live',
+  },
   phone: {
     key: 'phone',
     name: 'The Phone',

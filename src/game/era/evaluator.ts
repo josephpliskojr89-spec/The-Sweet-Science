@@ -26,6 +26,7 @@ import { makeRng, seedFrom } from '../engine/fightEngine';
 import { makeNationalElite } from '../world/population';
 import type { WorldFighter } from '../world/population';
 import type { WeightClassKey } from '../weightClasses';
+import type { MailDraft } from '../mail/types';
 
 /** at most one triggered event per this many days, gym-wide */
 export const TRIGGER_QUIET_DAYS = 5;
@@ -46,6 +47,8 @@ export interface EraAdvanceResult {
   rosterPatches: RosterPatch[];
   /** fresh world fighters the era injects (Olympic classes etc.) */
   worldInjections: WorldFighter[];
+  /** letters the era wrote this advance (assigned identity by the tick) */
+  mailDrafts: MailDraft[];
 }
 
 export interface EraAdvanceArgs {
@@ -71,6 +74,7 @@ export function advanceEra(args: EraAdvanceArgs): EraAdvanceResult {
     historyLines: [],
     rosterPatches: [],
     worldInjections: [],
+    mailDrafts: [],
   };
 
   let flags = era.flags;
@@ -127,6 +131,7 @@ export function advanceEra(args: EraAdvanceArgs): EraAdvanceResult {
         if (!def.condition(ctx)) continue;
 
         const o: TriggerOutput = def.fire(ctx);
+        if (o.mail) out.mailDrafts.push(o.mail);
         if (o.clipping) out.clippings.push(o.clipping);
         if (o.logLine) out.logLines.push(o.logLine);
         if (o.historyLine) out.historyLines.push(o.historyLine);

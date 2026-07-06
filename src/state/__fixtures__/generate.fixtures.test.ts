@@ -10,7 +10,7 @@
 */
 
 import { it } from 'vitest';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createSaveFromDraft, SAVE_VERSION, type GameSave } from '../persistence';
 import { randomAppearance } from '../../game/appearance';
@@ -103,12 +103,22 @@ function richSave(): GameSave {
   };
 }
 
-it.skipIf(!process.env.MAKE_FIXTURES)('regenerates migration fixtures', () => {
+it.skipIf(!process.env.MAKE_FIXTURES)('captures NEW fixture epochs (never rewrites frozen ones)', () => {
   const now = richSave();
   if (now.version !== SAVE_VERSION) throw new Error('generator out of date');
+  const freeze = (name: string, data: unknown) => {
+    const path = join(DIR, name);
+    if (existsSync(path)) return; // frozen — the contract with players' saves
+    writeFileSync(path, JSON.stringify(data));
+  };
 
-  // v23 — corner plans on booked fights
-  writeFileSync(join(DIR, 'save-v23.json'), JSON.stringify({ ...now, version: 23 }));
+  // v24 — the seed exists; no mail yet
+  const { mail: _mail, ...v24rest } = now;
+  freeze('save-v24.json', { ...v24rest, version: 24 });
+
+  // v23 — corner plans on booked fights, no seed
+  const { seed: _seed, ...v23rest } = v24rest;
+  freeze('save-v23.json', { ...v23rest, version: 23 });
 
   // v22 — era exists; booked fights have no corner plan yet
   const v22 = {
@@ -116,9 +126,9 @@ it.skipIf(!process.env.MAKE_FIXTURES)('regenerates migration fixtures', () => {
     version: 22,
     bookedFights: now.bookedFights.map(({ corner: _corner, ...b }) => b),
   };
-  writeFileSync(join(DIR, 'save-v22.json'), JSON.stringify(v22));
+  freeze('save-v22.json', v22);
 
   // v21 — the fight layer exists (records/bouts/offers) but no era yet
   const { era: _era, ...v21rest } = v22;
-  writeFileSync(join(DIR, 'save-v21.json'), JSON.stringify({ ...v21rest, version: 21 }));
+  freeze('save-v21.json', { ...v21rest, version: 21 });
 });

@@ -8,6 +8,7 @@ import type { TickCtx } from '../types';
 import { advanceEra } from '../../era/evaluator';
 import { getCity } from '../../cities';
 import { pressItem } from '../../press';
+import { mailId } from '../../mail/kinds';
 
 export function eraStage(ctx: TickCtx): void {
   const { prev, toDay } = ctx;
@@ -46,4 +47,8 @@ export function eraStage(ctx: TickCtx): void {
     });
   }
   ctx.eraLogLines.push(...eraResult.logLines);
+  for (const draft of eraResult.mailDrafts) {
+    ctx.mail = [...ctx.mail, { ...draft, id: mailId(ctx.rng, toDay), arrivedDay: toDay }];
+    ctx.mailNotes.push(`A letter came from ${draft.from}.`);
+  }
 }

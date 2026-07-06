@@ -31,11 +31,12 @@ import {
   type Upgrades,
 } from '../game/upgrades';
 import type { LogLine } from '../game/gymLog';
+import type { MailItem } from '../game/mail/types';
 
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 24;
+export const SAVE_VERSION = 25;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -87,6 +88,8 @@ export interface GameSave {
   bookedFights: BookedFight[];
   /** Full reports for recent bouts (for the fight-night screen), newest first. */
   recentFights: FightReport[];
+  /** The mail — open questions first, then a short answered trail (v25). */
+  mail: MailItem[];
   roster: RosterEntry[];
   walkIns: WalkIn[];
   /** The local paper — writers, venues, clippings (game/press.ts). */
@@ -126,6 +129,7 @@ export function createSaveFromDraft(draft: NewGameDraft): GameSave {
     fightOffers: [],
     bookedFights: [],
     recentFights: [],
+    mail: [],
     roster: [],
     walkIns: [],
     press: initPressState(draft.cityId),
@@ -305,6 +309,8 @@ export function migrate(raw: unknown): GameSave | null {
         }),
       ),
       recentFights: Array.isArray(data.recentFights) ? data.recentFights : [],
+      // v25 — the mail; older saves start with an empty tray
+      mail: Array.isArray(data.mail) ? data.mail : [],
       roster,
       walkIns,
       press: data.press ?? initPressState(data.cityId as CityId),

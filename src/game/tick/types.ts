@@ -19,6 +19,7 @@ import type { EraState } from '../era/eraState';
 import type { FightOffer, BookedFight, FightReport } from '../fights';
 import type { FinanceEntry } from '../economy';
 import type { CoachApplicant } from '../coaches';
+import type { MailItem } from '../mail/types';
 import type { Rng } from '../engine/fightEngine';
 
 /** A walk-in you didn't sign, taken by a named rival gym. */
@@ -72,6 +73,8 @@ export interface TickCtx {
   bookedFights: BookedFight[];
   recentFights: FightReport[];
   era: EraState;
+  /** the mail tray being rewritten (game/mail) */
+  mail: MailItem[];
   /** walk-ins still waiting after competition (fresh arrivals appended at assembly) */
   stillWaiting: WalkIn[];
   freshWalkIns: WalkIn[];
@@ -96,6 +99,7 @@ export interface TickCtx {
   interestNotes: string[];
   fightNotes: string[];
   eraLogLines: string[];
+  mailNotes: string[];
 }
 
 export interface TickResult {
