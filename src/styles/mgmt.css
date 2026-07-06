@@ -458,3 +458,33 @@
   outline: none;
   border-color: var(--gold);
 }
+
+/* --- tags: small typed status chips ------------------------------------------- */
+
+.tag {
+  display: inline-block;
+  font-family: var(--type-form);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 1.5px 7px;
+  border: 1px solid var(--steel-edge);
+  color: var(--cream-dim);
+  white-space: nowrap;
+}
+
+.tag--good {
+  color: var(--gold);
+  border-color: rgba(201, 165, 92, 0.45);
+}
+
+.tag--bad {
+  color: var(--signal-red);
+  border-color: rgba(168, 80, 63, 0.55);
+}
+
+.tag--plate {
+  background: var(--plate);
+  border-color: var(--plate);
+  color: var(--plate-ink);
+}
