@@ -43,9 +43,13 @@ const TABS = [
   { key: 'facilities', label: 'FACILITIES' },
 ];
 
-export function MyGymRoom() {
+export function MyGymRoom({ initialTab }: { initialTab?: StaffTab }) {
   const { save, closeRoom } = useGame();
-  const [tab, setTab] = useState<StaffTab>('staff');
+  // smart default: replies waiting on you open straight to HIRING
+  const [tab, setTab] = useState<StaffTab>(() => {
+    if (initialTab) return initialTab;
+    return (save?.coachApplicants.length ?? 0) > 0 ? 'hiring' : 'staff';
+  });
   if (!save) return null;
 
   return (

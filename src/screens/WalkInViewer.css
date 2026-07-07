@@ -58,3 +58,19 @@
 .wiv__more {
   margin-top: 10px;
 }
+
+.wiv__statement {
+  font-family: var(--type-form);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--cream);
+  margin: 0;
+}
+
+.wiv__ceiling {
+  font-family: var(--type-typewriter);
+  font-size: 12px;
+  color: var(--cream-dim);
+  margin: 6px 0 0;
+}

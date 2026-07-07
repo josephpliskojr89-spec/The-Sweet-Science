@@ -29,6 +29,7 @@ import { makeRng, seedFrom } from '../engine/fightEngine';
 import type { LogLine } from '../gymLog';
 import type { TickCtx, TickResult, TickEvent, AdvanceNotice, PoachEvent } from './types';
 import type { WalkIn } from '../walkins';
+import type { Coach } from '../coaches';
 import type { Departure } from '../departures';
 import { walkInsStage } from './stages/walkIns';
 import { gymLifeStage } from './stages/gymLife';
@@ -52,6 +53,7 @@ interface DayOutcome {
   gaveUp: WalkIn[];
   departed: Departure[];
   poached: PoachEvent[];
+  applicants: Coach[];
   newIssue: boolean;
   events: TickEvent[];
 }
@@ -87,6 +89,7 @@ function tickOneDay(prev: GameSave): DayOutcome {
     poached: [],
     gaveUp: [],
     departed: [],
+    newApplicants: [],
     pressCycles: 0,
     coachNotes: [],
     trainingNotes: [],
@@ -179,6 +182,7 @@ function tickOneDay(prev: GameSave): DayOutcome {
     gaveUp: ctx.gaveUp,
     departed: ctx.departed,
     poached: ctx.poached,
+    applicants: ctx.newApplicants,
     newIssue: ctx.pressCycles >= 1,
     events: ctx.departed.map((d) => ({
       type:
@@ -201,6 +205,7 @@ export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
   const gaveUp: WalkIn[] = [];
   const departed: Departure[] = [];
   const poached: PoachEvent[] = [];
+  const applicants: Coach[] = [];
   const events: TickEvent[] = [];
   let newIssue = false;
 
@@ -211,6 +216,7 @@ export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
     gaveUp.push(...day.gaveUp);
     departed.push(...day.departed);
     poached.push(...day.poached);
+    applicants.push(...day.applicants);
     events.push(...day.events);
     newIssue = newIssue || day.newIssue;
     // fight night stops the clock: the advance lands ON a self-cornered
@@ -219,12 +225,18 @@ export function advanceTick(prev: GameSave, step: TimeStep): TickResult | null {
   }
 
   const notice: AdvanceNotice | null =
-    newIssue || arrived.length || gaveUp.length || departed.length || poached.length
+    newIssue ||
+    arrived.length ||
+    gaveUp.length ||
+    departed.length ||
+    poached.length ||
+    applicants.length
       ? {
           arrived: arrived.map((w) => w.fighter),
           expired: gaveUp.map((w) => w.fighter),
           departed,
           poached,
+          applicants,
           headlines: save.press.clippings.filter(
             (c) => c.dayCount > startDay && c.dayCount <= save.dayCount,
           ),

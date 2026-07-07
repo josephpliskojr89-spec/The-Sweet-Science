@@ -20,6 +20,7 @@ export function staffStage(ctx: TickCtx): void {
   // Only announce arrivals that actually made the (capped) list — a note
   // for a man the slice dropped would name a coach who exists nowhere.
   for (const a of fresh.filter((a) => ctx.coachApplicants.includes(a))) {
+    ctx.newApplicants.push(a.coach);
     ctx.coachNotes.push(
       `A coach answered your ad — ${a.coach.name}, ${specialtyName(a.coach.specialty)}.`,
     );

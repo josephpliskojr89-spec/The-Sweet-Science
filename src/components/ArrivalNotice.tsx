@@ -13,6 +13,7 @@
 
 import { useGame } from '../state/GameContext';
 import { fighterFullName } from '../game/fighters';
+import { specialtyName, tierName } from '../game/coaches';
 import type { Departure } from '../game/departures';
 import './ArrivalNotice.css';
 
@@ -28,7 +29,7 @@ export function ArrivalNotice() {
   const { arrival, viewArrivalsNow, dismissArrival, openRoom } = useGame();
   if (!arrival) return null;
 
-  const { arrived, expired, departed, poached, headlines, paperName, dateLabel, newIssue } = arrival;
+  const { arrived, expired, departed, poached, applicants, headlines, paperName, dateLabel, newIssue } = arrival;
   const hasArrivals = arrived.length > 0;
 
   const expiredLine =
@@ -38,7 +39,8 @@ export function ArrivalNotice() {
         ? 'One who’d been waiting gave up and found another gym.'
         : `${expired.length} who’d been waiting gave up and found other gyms.`;
 
-  const hasPersonal = hasArrivals || expired.length > 0 || departed.length > 0 || poached.length > 0;
+  const hasPersonal =
+    hasArrivals || expired.length > 0 || departed.length > 0 || poached.length > 0 || applicants.length > 0;
 
   const arrivedLine = hasArrivals
     ? arrived.length === 1
@@ -59,6 +61,11 @@ export function ArrivalNotice() {
       {poached.map((p) => (
         <p className="fp-news__yours-line" key={p.fighter.id}>
           {fighterFullName(p.fighter)} signed with {p.gymName} while you weighed it.
+        </p>
+      ))}
+      {applicants.map((c) => (
+        <p className="fp-news__yours-line fp-news__yours-line--knock" key={c.id}>
+          A coach answered your ad — {c.name}, {tierName(c.tier)} {specialtyName(c.specialty)}.
         </p>
       ))}
     </div>
@@ -93,6 +100,17 @@ export function ArrivalNotice() {
             {hasArrivals && (
               <button className="fp-news__btn fp-news__btn--primary" onClick={viewArrivalsNow}>
                 Review at the door
+              </button>
+            )}
+            {applicants.length > 0 && (
+              <button
+                className={'fp-news__btn' + (hasArrivals ? '' : ' fp-news__btn--primary')}
+                onClick={() => {
+                  openRoom('gym');
+                  dismissArrival();
+                }}
+              >
+                See the replies →
               </button>
             )}
             <button
@@ -139,10 +157,31 @@ export function ArrivalNotice() {
               ))}
             </ul>
           )}
+          {applicants.length > 0 && (
+            <ul className="arrival__departures">
+              {applicants.map((c) => (
+                <li key={c.id}>
+                  A coach answered your ad — {c.name}, {tierName(c.tier)}{' '}
+                  {specialtyName(c.specialty)}.
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="arrival__actions">
             <button className="arrival__btn arrival__btn--now" onClick={viewArrivalsNow}>
               View Now
             </button>
+            {applicants.length > 0 && (
+              <button
+                className="arrival__btn"
+                onClick={() => {
+                  openRoom('gym');
+                  dismissArrival();
+                }}
+              >
+                See the Replies
+              </button>
+            )}
             <button className="arrival__btn" onClick={dismissArrival}>
               View Later
             </button>
@@ -150,7 +189,14 @@ export function ArrivalNotice() {
         </>
       ) : (
         <>
-          <p className="arrival__eyebrow">While you were busy</p>
+          <p className="arrival__eyebrow">
+            {applicants.length > 0 ? 'An answer to your ad' : 'While you were busy'}
+          </p>
+          {applicants.map((c) => (
+            <p className="arrival__line" key={c.id}>
+              {c.name} answered — {tierName(c.tier)} {specialtyName(c.specialty)}.
+            </p>
+          ))}
           {expiredLine && <p className="arrival__line">{expiredLine}</p>}
           {departed.length > 0 && (
             <ul className="arrival__departures">
@@ -169,6 +215,17 @@ export function ArrivalNotice() {
             </ul>
           )}
           <div className="arrival__actions">
+            {applicants.length > 0 && (
+              <button
+                className="arrival__btn arrival__btn--now"
+                onClick={() => {
+                  openRoom('gym');
+                  dismissArrival();
+                }}
+              >
+                See the Replies
+              </button>
+            )}
             <button className="arrival__btn" onClick={dismissArrival}>
               Noted
             </button>

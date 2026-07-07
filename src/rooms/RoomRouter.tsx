@@ -26,6 +26,8 @@ export function RoomRouter() {
       return <LockerRoom />;
     case 'gym':
       return <MyGymRoom />;
+    case 'facilities':
+      return <MyGymRoom initialTab="facilities" />;
     case 'press':
       return <PressRoom />;
     case 'phone':

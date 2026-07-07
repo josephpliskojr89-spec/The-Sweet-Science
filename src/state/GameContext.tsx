@@ -97,7 +97,15 @@ import {
 } from '../game/upgrades';
 
 export type Screen = 'home' | 'settings' | 'newgame' | 'game';
-export type RoomKey = 'office' | 'calendar' | 'gym' | 'locker' | 'press' | 'phone' | 'mail';
+export type RoomKey =
+  | 'office'
+  | 'calendar'
+  | 'gym'
+  | 'facilities'
+  | 'locker'
+  | 'press'
+  | 'phone'
+  | 'mail';
 export type WalkInDecision = 'locker' | 'no_locker' | 'turn_away';
 
 
@@ -197,6 +205,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // Latest save, readable synchronously in handlers so mutations stay pure.
   const saveRef = useRef<GameSave | null>(null);
+  // Latest arrival notice — actions are created ONCE (stable actions
+  // context), so they must read state through refs, never closures.
+  const arrivalRef = useRef<AdvanceNotice | null>(null);
+  const showArrival = useCallback((n: AdvanceNotice | null) => {
+    arrivalRef.current = n;
+    setArrival(n);
+  }, []);
 
   const commit = useCallback((next: GameSave) => {
     saveRef.current = next;
@@ -207,13 +222,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const goHome = useCallback(() => {
     setActiveRoom(null);
-    setArrival(null);
+    showArrival(null);
     setViewerIds(null);
     setProfileId(null);
     setFlash(null);
     setScreen('home');
     setCanContinue(savedGameExists());
-  }, []);
+  }, [showArrival]);
 
   const openSettings = useCallback(() => setScreen('settings'), []);
   const openNewGame = useCallback(() => setScreen('newgame'), []);
@@ -264,9 +279,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
       if (!result) return;
       commit(result.next);
       for (const e of result.events) emitGameEvent(e);
-      if (result.notice) setArrival(result.notice);
+      if (result.notice) showArrival(result.notice);
     },
-    [commit],
+    [commit, showArrival],
   );
 
   const openWalkIns = useCallback((ids: string[], startIndex = 0) => {
@@ -276,15 +291,15 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const viewArrivalsNow = useCallback(() => {
-    const cur = arrival;
+    const cur = arrivalRef.current;
     if (cur && cur.arrived.length) {
       setViewerIds(cur.arrived.map((f) => f.id));
       setViewerIndex(0);
     }
-    setArrival(null);
-  }, [arrival]);
+    showArrival(null);
+  }, [showArrival]);
 
-  const dismissArrival = useCallback(() => setArrival(null), []);
+  const dismissArrival = useCallback(() => showArrival(null), [showArrival]);
   const closeWalkInViewer = useCallback(() => setViewerIds(null), []);
 
   const decideWalkIn = useCallback(

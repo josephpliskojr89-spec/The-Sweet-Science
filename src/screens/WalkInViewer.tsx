@@ -102,6 +102,10 @@ export function WalkInViewer() {
                   <dd>{formatHeight(f.heightInches)}</dd>
                 </div>
                 <div>
+                  <dt>WEIGHT</dt>
+                  <dd>{f.weightLbs} LBS</dd>
+                </div>
+                <div>
                   <dt>HOME</dt>
                   <dd>{home.name.toUpperCase()}</dd>
                 </div>
@@ -116,9 +120,15 @@ export function WalkInViewer() {
             </div>
           </div>
 
+          <section aria-label="His story">
+            <h4 className="surface__section">WHY I WANT TO TRAIN HERE</h4>
+            <p className="wiv__statement">“{f.statement}”</p>
+          </section>
+
           <section aria-label="Your read">
             <h4 className="surface__section">YOUR READ</h4>
             <p className="wiv__impression">“{f.firstImpression}”</p>
+            <p className="wiv__ceiling">{f.ceilingRead}</p>
           </section>
 
           <section aria-label="The decision">

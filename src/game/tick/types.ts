@@ -18,7 +18,7 @@ import type { PressState, Clipping } from '../press';
 import type { EraState } from '../era/eraState';
 import type { FightOffer, BookedFight, FightReport } from '../fights';
 import type { FinanceEntry } from '../economy';
-import type { CoachApplicant } from '../coaches';
+import type { Coach, CoachApplicant } from '../coaches';
 import type { MailItem } from '../mail/types';
 import type { Rng } from '../engine/fightEngine';
 
@@ -34,6 +34,8 @@ export interface AdvanceNotice {
   departed: Departure[];
   /** Prospects a rival signed out from under you while you deliberated (6C-3). */
   poached: PoachEvent[];
+  /** Coaches who answered your ad this advance. */
+  applicants: Coach[];
   /** Fresh clippings this advance — the week's front page (the Monday landing). */
   headlines: Clipping[];
   paperName: string;
@@ -87,6 +89,8 @@ export interface TickCtx {
   poached: PoachEvent[];
   gaveUp: WalkIn[];
   departed: Departure[];
+  /** coaches who answered the ad today (made the capped list) */
+  newApplicants: Coach[];
   /** press cycles that ran this advance (newIssue when ≥1) */
   pressCycles: number;
 

@@ -449,7 +449,10 @@ export function GameScreen() {
             OFFICE
           </button>
           <button className="console__btn" onClick={() => openRoom('gym')}>
-            STAFF
+            STAFF{save.coachApplicants.length > 0 ? ` (${save.coachApplicants.length})` : ''}
+          </button>
+          <button className="console__btn" onClick={() => openRoom('facilities')}>
+            FACILITIES
           </button>
           <button className="console__btn" onClick={() => openRoom('press')}>
             PRESS
