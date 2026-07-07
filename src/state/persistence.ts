@@ -20,7 +20,7 @@ import { snapshotAttrs } from '../game/training';
 import { initPressState, type PressState } from '../game/press';
 import { generateWorld, type WorldState } from '../game/world/population';
 import type { FightOffer, BookedFight, FightReport } from '../game/fights';
-import { generateEra, type EraState } from '../game/era/eraState';
+import { generateEra, topUpEra, type EraState } from '../game/era/eraState';
 import { seedFrom } from '../game/engine/fightEngine';
 import { STARTING_MONEY, type FinanceEntry } from '../game/economy';
 import type { Coach, CoachApplicant, CoachPosting } from '../game/coaches';
@@ -36,7 +36,7 @@ import type { MailItem } from '../game/mail/types';
 export type { RosterEntry } from '../game/roster';
 
 const STORAGE_KEY = 'sweet-science:save:v1';
-export const SAVE_VERSION = 25;
+export const SAVE_VERSION = 26;
 
 /** One remembered moment in the gym's history. */
 export interface LedgerEntry {
@@ -293,13 +293,18 @@ export function migrate(raw: unknown): GameSave | null {
       // v22 — the era. Older saves roll their history now, seeded from stable
       // identity; beats whose day already passed are marked done silently (no
       // retroactive year of clippings on load).
-      era:
+      // v26 — the full arc registry: an existing era is topped up with any
+      // arcs it predates (rolled from its own seed; past beats silenced)
+      era: topUpEra(
         data.era ??
-        generateEra(
-          `${data.gymName}:${data.cityId}:${data.createdAt ?? 0}`,
-          data.cityId as CityId,
-          data.dayCount,
-        ),
+          generateEra(
+            `${data.gymName}:${data.cityId}:${data.createdAt ?? 0}`,
+            data.cityId as CityId,
+            data.dayCount,
+          ),
+        data.cityId as CityId,
+        data.dayCount,
+      ),
       fightOffers: Array.isArray(data.fightOffers) ? data.fightOffers : [],
       bookedFights: (Array.isArray(data.bookedFights) ? data.bookedFights : []).map(
         (b: BookedFight & { corner?: BookedFight['corner'] }) => ({

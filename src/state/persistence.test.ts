@@ -76,14 +76,45 @@ describe('migrate — historical shapes load intact', () => {
     });
   });
 
-  it('v22 (era, no corner plans): era preserved verbatim, corner backfilled', () => {
+  it('v22 (era, no corner plans): era topped up, never re-rolled', () => {
     const src = fixture('save-v22.json');
     const save = migrate(src)!;
     expectSound(save, src);
-    // the era must NOT re-roll — one save always remembers itself
+    // the era must NOT re-roll — one save always remembers itself:
+    // every ORIGINAL beat survives with its original date...
     expect(save.era.seed).toBe((src.era as { seed: number }).seed);
-    expect(save.era.schedule).toEqual((src.era as { schedule: unknown }).schedule);
+    const srcSchedule = (src.era as { schedule: Array<{ eventId: string; beatKey: string; day: number }> })
+      .schedule;
+    for (const b of srcSchedule) {
+      expect(
+        save.era.schedule.some(
+          (x) => x.eventId === b.eventId && x.beatKey === b.beatKey && x.day === b.day,
+        ),
+      ).toBe(true);
+    }
+    // ...and the full arc registry is topped up around it, with beats
+    // already past marked done (no retroactive decade of clippings)
+    expect(save.era.schedule.length).toBeGreaterThan(srcSchedule.length);
+    expect(save.era.schedule.some((b) => b.eventId === 'four-kings-era')).toBe(true);
+    expect(save.era.schedule.some((b) => b.eventId === 'teen-wrecking-ball')).toBe(true);
+    // NEW arcs (topped up) must silence their own past beats — no retroactive
+    // decade of clippings. Original beats keep the save's own memory verbatim.
+    const originalIds = new Set(srcSchedule.map((b) => b.eventId));
+    for (const b of save.era.schedule) {
+      if (!originalIds.has(b.eventId) && b.day <= save.dayCount) {
+        expect(b.done).toBe(true);
+      }
+    }
+    // top-up is deterministic per era seed
+    expect(migrate(src)!.era.schedule).toEqual(save.era.schedule);
     expect(save.bookedFights[0].corner.mode).toBe('staff');
+  });
+
+  it('v25 (mail): loads intact; top-up is idempotent on a full era', () => {
+    const src = fixture('save-v25.json');
+    const save = migrate(src)!;
+    expectSound(save, src);
+    expect(save.era.schedule).toEqual((src.era as { schedule: unknown }).schedule);
   });
 
   it('v23 (current epoch): loads as-is, corner plans preserved', () => {

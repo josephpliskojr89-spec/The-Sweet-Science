@@ -47,6 +47,15 @@ export function eraStage(ctx: TickCtx): void {
     });
   }
   ctx.eraLogLines.push(...eraResult.logLines);
+  // the venue pool changes as the era's money moves
+  if (eraResult.venueAdds.length || eraResult.venueRemovals > 0) {
+    let venues = [...ctx.press.venues];
+    for (let i = 0; i < eraResult.venueRemovals && venues.length > 1; i++) {
+      venues.shift(); // the oldest hall goes dark; one always survives
+    }
+    venues = [...venues, ...eraResult.venueAdds.filter((v) => !venues.includes(v))];
+    ctx.press = { ...ctx.press, venues };
+  }
   for (const draft of eraResult.mailDrafts) {
     ctx.mail = [...ctx.mail, { ...draft, id: mailId(ctx.rng, toDay), arrivedDay: toDay }];
     ctx.mailNotes.push(`A letter came from ${draft.from}.`);

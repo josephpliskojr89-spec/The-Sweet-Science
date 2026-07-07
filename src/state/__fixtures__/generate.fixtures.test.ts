@@ -112,6 +112,9 @@ it.skipIf(!process.env.MAKE_FIXTURES)('captures NEW fixture epochs (never rewrit
     writeFileSync(path, JSON.stringify(data));
   };
 
+  // v25 — the mail exists; era predates the full arc registry
+  freeze('save-v25.json', { ...now, version: 25 });
+
   // v24 — the seed exists; no mail yet
   const { mail: _mail, ...v24rest } = now;
   freeze('save-v24.json', { ...v24rest, version: 24 });

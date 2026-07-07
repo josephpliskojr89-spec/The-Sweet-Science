@@ -14,6 +14,7 @@
 
 import { makeRng, seedFrom, type Rng } from '../engine/fightEngine';
 import { generateName } from '../names';
+import { ARCS } from './beats';
 import type { CityId } from '../cities';
 import type { WeightClassKey } from '../weightClasses';
 
@@ -74,7 +75,13 @@ export function rollDayInWindow(rng: Rng, yearA: number, yearB: number): number 
   return a + Math.floor(rng() * Math.max(1, b - a));
 }
 
-function npc(rng: Rng, cityId: CityId, key: string, epithet: string, weightClass: WeightClassKey): EraNpc {
+function npc(
+  rng: Rng,
+  cityId: CityId,
+  key: string,
+  epithet: string,
+  weightClass: WeightClassKey,
+): EraNpc {
   const name = generateName(cityId, rng); // era stream: same seed, same cast
   return { key, name: `${name.first} ${name.last}`, epithet, weightClass };
 }
@@ -86,67 +93,56 @@ export interface BeatRoll {
 }
 
 /**
- * The starter script (the Bible's Part I is ported here incrementally —
- * the machinery is the deliverable; the registry grows by data).
- * Each entry rolls its own dates from the era stream.
- */
-export function rollSchedule(rng: Rng, cast: Record<string, EraNpc>): BeatRoll[] {
-  const beats: BeatRoll[] = [];
-  const push = (eventId: string, beatKey: string, day: number) =>
-    beats.push({ eventId, beatKey, day: Math.max(1, day) });
-
-  // --- poet-kings-last-reign: 2-3 defenses across 1975-76 -------------------
-  const defenses = 2 + Math.floor(rng() * 2);
-  for (let i = 0; i < defenses; i++) {
-    push('poet-kings-last-reign', `defense-${i + 1}`, rollDayInWindow(rng, 1975, 1976));
-  }
-
-  // --- poet-king-upset-and-redemption: one upset month, rematch 6-9mo later -
-  const upsetDay = rollDayInWindow(rng, 1977, 1979);
-  push('poet-king-upset', 'the-upset', upsetDay);
-  push('poet-king-upset', 'the-circus', upsetDay + 45 + Math.floor(rng() * 45));
-  push('poet-king-upset', 'the-rematch', upsetDay + 180 + Math.floor(rng() * 90));
-
-  // --- poet-king-sad-ending: the bad loss, then the folding chairs ----------
-  const sadDay = rollDayInWindow(rng, 1980, 1981);
-  push('poet-king-sad-ending', 'the-comeback-announced', sadDay - 60);
-  push('poet-king-sad-ending', 'one-fight-too-many', sadDay);
-  push('poet-king-sad-ending', 'folding-chairs', sadDay + 380 + Math.floor(rng() * 60));
-
-  // --- bicentennial-olympic-class: fixed Games, seeded debuts ---------------
-  push('olympic-class', 'the-games', dayForDate(1976, 6, 20 + Math.floor(rng() * 10)));
-  push('olympic-class', 'pro-debuts', dayForDate(1977, Math.floor(rng() * 5), 10));
-
-  void cast;
-  return beats.sort((x, y) => x.day - y.day);
-}
-
-/**
  * Seed the era once. Deterministic per (seedText): same gym founded the same
- * moment rolls the same history.
+ * moment rolls the same history. Every arc in the registry rolls its cast
+ * and its dated beats from per-arc streams derived from the era seed, so
+ * adding a NEW arc to the registry never disturbs an existing arc's dates.
  */
 export function generateEra(seedText: string, cityId: CityId, startDay: number): EraState {
   const seed = seedFrom(seedText);
-  const rng = makeRng(seed);
-
-  const npcs: Record<string, EraNpc> = {};
-  const add = (n: EraNpc) => (npcs[n.key] = n);
-  add(npc(rng, cityId, 'poet-king', 'the poet-king', 'heavyweight'));
-  add(npc(rng, cityId, 'generational-rival', 'his old rival', 'heavyweight'));
-  add(npc(rng, cityId, 'gap-tooth-novice', 'the gap-toothed kid', 'heavyweight'));
-  add(npc(rng, cityId, 'heir', 'the heir', 'heavyweight'));
-  add(npc(rng, cityId, 'golden-welterweight', 'the golden boy', 'welterweight'));
-
-  const rolls = rollSchedule(rng, npcs);
-  return {
+  const base: EraState = {
     seed,
-    schedule: rolls.map((r) => ({ ...r, done: r.day <= startDay })),
+    schedule: [],
     flags: {},
     purseMultipliers: { heavyweight: 1.2 }, // the king's shine, from day one
-    npcs,
+    npcs: {},
     fired: {},
     lastTriggeredDay: -999,
   };
+  return topUpEra(base, cityId, startDay);
+}
+
+/**
+ * Bring an era up to the full arc registry: any arc with no beats in the
+ * schedule is rolled now (from a stream derived from the era seed and the
+ * arc id — deterministic, and independent of every other arc), its cast is
+ * added, and beats already past are marked done so an old save never gets
+ * a retroactive decade of clippings. Idempotent.
+ */
+export function topUpEra(era: EraState, cityId: CityId, startDay: number): EraState {
+  const present = new Set(era.schedule.map((b) => b.eventId));
+  let schedule = era.schedule;
+  let npcs = era.npcs;
+
+  for (const arc of ARCS) {
+    // cast first — cross-arc copy may reference another arc's names
+    for (const spec of arc.npcs ?? []) {
+      if (npcs[spec.key]) continue;
+      const rng = makeRng(seedFrom(`${era.seed}:npc:${spec.key}`));
+      npcs = { ...npcs, [spec.key]: npc(rng, cityId, spec.key, spec.epithet, spec.weightClass) };
+    }
+    if (present.has(arc.id)) continue;
+    const rng = makeRng(seedFrom(`${era.seed}:arc:${arc.id}`));
+    const rolls = arc.roll(rng).map((r) => ({
+      ...r,
+      day: Math.max(1, r.day),
+      done: r.day <= startDay,
+    }));
+    schedule = [...schedule, ...rolls];
+  }
+
+  if (schedule === era.schedule && npcs === era.npcs) return era;
+  return { ...era, schedule: [...schedule].sort((a, b) => a.day - b.day), npcs };
 }
 
 // --- reads ---------------------------------------------------------------------

@@ -19,13 +19,12 @@
 */
 
 import type { EraState } from './eraState';
-import { BEAT_HANDLERS } from './beats';
+import { BEAT_HANDLERS, type InjectSpec } from './beats';
 import { TRIGGERS, COINED_NICKNAMES, type TriggerOutput } from './triggers';
 import type { RosterEntry } from '../roster';
 import { makeRng, seedFrom } from '../engine/fightEngine';
 import { makeNationalElite } from '../world/population';
 import type { WorldFighter } from '../world/population';
-import type { WeightClassKey } from '../weightClasses';
 import type { MailDraft } from '../mail/types';
 
 /** at most one triggered event per this many days, gym-wide */
@@ -49,6 +48,10 @@ export interface EraAdvanceResult {
   worldInjections: WorldFighter[];
   /** letters the era wrote this advance (assigned identity by the tick) */
   mailDrafts: MailDraft[];
+  /** venues joining the offer pool (casino ballrooms, the desert) */
+  venueAdds: string[];
+  /** how many of the oldest venues go dark this advance */
+  venueRemovals: number;
 }
 
 export interface EraAdvanceArgs {
@@ -58,12 +61,21 @@ export interface EraAdvanceArgs {
   cityName: string;
 }
 
-const OLYMPIC_CLASSES: WeightClassKey[] = [
-  'welterweight',
-  'lightweight',
-  'middleweight',
-  'heavyweight',
-];
+/** Fresh faces for the world from a beat's spec: Olympic classes arrive
+    famous with empty records; stolen classes arrive dangerous and unknown. */
+function castInjection(spec: InjectSpec): WorldFighter[] {
+  const out: WorldFighter[] = [];
+  for (let i = 0; i < spec.count; i++) {
+    const star = makeNationalElite(spec.weightClass, 3);
+    star.nationalRank = null; // nobody is ranked on day one
+    star.record = { wins: 0, losses: 0, draws: 0, kos: 0 };
+    const t = spec.count === 1 ? 0.5 : i / (spec.count - 1);
+    star.age = Math.round(spec.age[0] + t * (spec.age[1] - spec.age[0]));
+    star.publicReputation = Math.round(spec.rep[0] + t * (spec.rep[1] - spec.rep[0]));
+    out.push(star);
+  }
+  return out;
+}
 
 export function advanceEra(args: EraAdvanceArgs): EraAdvanceResult {
   const { era, roster, dayCount, cityName } = args;
@@ -75,6 +87,8 @@ export function advanceEra(args: EraAdvanceArgs): EraAdvanceResult {
     rosterPatches: [],
     worldInjections: [],
     mailDrafts: [],
+    venueAdds: [],
+    venueRemovals: 0,
   };
 
   let flags = era.flags;
@@ -97,17 +111,11 @@ export function advanceEra(args: EraAdvanceArgs): EraAdvanceResult {
       if (o.purseMultipliers) {
         purseMultipliers = { ...purseMultipliers, ...o.purseMultipliers };
       }
-      if (o.injectOlympians) {
-        // fresh network-made elites, reputations ahead of their records
-        for (let i = 0; i < o.injectOlympians; i++) {
-          const wc = OLYMPIC_CLASSES[i % OLYMPIC_CLASSES.length];
-          const star = makeNationalElite(wc, 3);
-          star.nationalRank = null; // they arrive famous, not yet ranked
-          star.record = { wins: 0, losses: 0, draws: 0, kos: 0 };
-          star.age = 19 + (i % 3);
-          star.publicReputation = 60 + ((i * 7) % 15);
-          out.worldInjections.push(star);
-        }
+      if (o.mail) out.mailDrafts.push(o.mail);
+      if (o.venueAdd) out.venueAdds.push(...o.venueAdd);
+      if (o.venueRemoveOldest) out.venueRemovals += 1;
+      if (o.injectFighters) {
+        for (const spec of o.injectFighters) out.worldInjections.push(...castInjection(spec));
       }
     }
     return { ...b, done: true };
